@@ -2,7 +2,7 @@ import { BaseCustomWebComponent, html, css, JsonElementsService } from "../node_
 import serviceContainer from "../node_modules/@node-projects/web-component-designer/dist/elements/services/DefaultServiceBootstrap.js";
 import { DockSpawnTsWebcomponent } from "../node_modules/dock-spawn-ts/lib/js/webcomponent/DockSpawnTsWebcomponent.js";
 import { DocumentContainer } from "./documentContainer.js";
-DockSpawnTsWebcomponent.cssRootDirectory = "../node_modules/dock-spawn-ts/lib/css/";
+DockSpawnTsWebcomponent.cssRootDirectory = "./node_modules/dock-spawn-ts/lib/css/";
 export class AppShell extends BaseCustomWebComponent {
   constructor() {
     super(...arguments);
