@@ -21,8 +21,8 @@ export class DocumentContainer extends BaseCustomWebComponent {
     return html`
         <div>
           <node-projects-designer-tab-control selected-index="0" id="tabControl">
-            <node-projects-canvas-view title="Designer" name="designer" id="canvasView" style="height:100%">
-            </node-projects-canvas-view>
+            <node-projects-designer-view title="Designer" name="designer" id="designerView" style="height:100%">
+            </node-projects-designer-view>
             <node-projects-code-view-ace title="Code" name="code" id="codeView"></node-projects-code-view-ace>
             <node-projects-demo-view title="Preview" name="preview"></node-projects-demo-view>
           </node-projects-designer-tab-control>
@@ -31,21 +31,18 @@ export class DocumentContainer extends BaseCustomWebComponent {
 
   ready() {
     this._tabControl = this._getDomElement('tabControl');
-    this._canvasView = this._getDomElement('canvasView');
+    this._designerView = this._getDomElement('designerView');
     this._codeView = this._getDomElement('codeView');
-    this._canvasView.serviceContainer = this._serviceContainer;
+    this._designerView.serviceContainer = this._serviceContainer;
 
     this._tabControl.onSelectedTabChanged.on(i => {
-      switch (i) {
-        case 1:
-          this._codeView.update(this._canvasView.getCode());
-
-      }
+      if (i.newIndex == 1) this._codeView.update(this._designerView.getHTML());
+      if (i.newIndex == 0) this._designerView.parseHTML(this._codeView.getText());
     });
   }
 
   get instanceServiceContainer() {
-    return this._canvasView.instanceServiceContainer;
+    return this._designerView.instanceServiceContainer;
   }
 
 } //@ts-ignore
