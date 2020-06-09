@@ -54,6 +54,8 @@ let AppShell =
       this._propertyGrid.selectedItems = e.selectedElements;
 
       this._treeView.selectionChanged(e);
+
+      this._treeViewExtended.selectionChanged(e);
     }
 
     _setupServiceContainer() {
