@@ -1,84 +1,80 @@
 import { JsonFileElementsService, DocumentContainer } from "../node_modules/@node-projects/web-component-designer/dist/index.js";
 import serviceContainer from "../node_modules/@node-projects/web-component-designer/dist/elements/services/DefaultServiceBootstrap.js";
 import { DockSpawnTsWebcomponent } from "../node_modules/dock-spawn-ts/lib/js/webcomponent/DockSpawnTsWebcomponent.js";
-import { BaseCustomWebComponent, html, css } from "../node_modules/@node-projects/base-custom-webcomponent/dist/index.js";
+import { BaseCustomWebComponent, css, html } from "../node_modules/@node-projects/base-custom-webcomponent/dist/index.js";
 DockSpawnTsWebcomponent.cssRootDirectory = "./node_modules/dock-spawn-ts/lib/css/";
-
-let AppShell =
-/** @class */
-(() => {
-  class AppShell extends BaseCustomWebComponent {
-    constructor() {
-      super(...arguments);
-      this.mainPage = 'designer';
-      this._documentNumber = 0;
-    }
-
-    ready() {
-      this._dock = this._getDomElement('dock');
-      this._paletteView = this._getDomElement('paletteView');
-      this._treeView = this._getDomElement('treeView');
-      this._treeViewExtended = this._getDomElement('treeViewExtended');
-      this._propertyGrid = this._getDomElement('propertyGrid');
-
-      let newButton = this._getDomElement('newButton');
-
-      newButton.onclick = () => this.newDocument();
-
-      this._dockManager = this._dock.dockManager;
-
-      this._dockManager.addLayoutListener({
-        onActivePanelChange: (manager, panel) => {
-          if (panel) {
-            let element = panel.elementContent.assignedElements()[0];
-
-            if (element && element instanceof DocumentContainer) {
-              let sampleDocument = element;
-              sampleDocument.instanceServiceContainer.selectionService.onSelectionChanged.on(e => this._selectionChanged(e));
-              let selection = sampleDocument.instanceServiceContainer.selectionService.selectedElements;
-              this._propertyGrid.selectedItems = selection;
-
-              this._treeView.createTree(sampleDocument.instanceServiceContainer.contentService.rootDesignItem);
-
-              this._treeViewExtended.createTree(sampleDocument.instanceServiceContainer.contentService.rootDesignItem);
-            }
-          }
-        }
-      });
-
-      this._setupServiceContainer();
-
-      this.newDocument();
-    }
-
-    _selectionChanged(e) {
-      this._propertyGrid.selectedItems = e.selectedElements;
-
-      this._treeView.selectionChanged(e);
-
-      this._treeViewExtended.selectionChanged(e);
-    }
-
-    _setupServiceContainer() {
-      serviceContainer.register('elementsService', new JsonFileElementsService('demo', './src/elements-demo.json'));
-      serviceContainer.register('elementsService', new JsonFileElementsService('native', './node_modules/@node-projects/web-component-designer/src/config/elements-native.json'));
-
-      this._paletteView.loadControls(serviceContainer.elementsServices);
-
-      this._propertyGrid.serviceContainer = serviceContainer;
-    }
-
-    newDocument() {
-      this._documentNumber++;
-      let sampleDocument = new DocumentContainer(serviceContainer);
-      sampleDocument.title = "document-" + this._documentNumber;
-
-      this._dock.appendChild(sampleDocument);
-    }
-
+export class AppShell extends BaseCustomWebComponent {
+  constructor() {
+    super();
+    this.mainPage = 'designer';
+    this._documentNumber = 0; //let paletteView = new PaletteView();
+    //this._getDomElement('p').appendChild(paletteView);
   }
 
-  AppShell.style = css`
+  ready() {
+    this._dock = this._getDomElement('dock');
+    this._paletteView = this._getDomElement('paletteView');
+    this._treeView = this._getDomElement('treeView');
+    this._treeViewExtended = this._getDomElement('treeViewExtended');
+    this._propertyGrid = this._getDomElement('propertyGrid');
+
+    let newButton = this._getDomElement('newButton');
+
+    newButton.onclick = () => this.newDocument();
+
+    this._dockManager = this._dock.dockManager;
+
+    this._dockManager.addLayoutListener({
+      onActivePanelChange: (manager, panel) => {
+        if (panel) {
+          let element = panel.elementContent.assignedElements()[0];
+
+          if (element && element instanceof DocumentContainer) {
+            let sampleDocument = element;
+            sampleDocument.instanceServiceContainer.selectionService.onSelectionChanged.on(e => this._selectionChanged(e));
+            let selection = sampleDocument.instanceServiceContainer.selectionService.selectedElements;
+            this._propertyGrid.selectedItems = selection;
+
+            this._treeView.createTree(sampleDocument.instanceServiceContainer.contentService.rootDesignItem);
+
+            this._treeViewExtended.createTree(sampleDocument.instanceServiceContainer.contentService.rootDesignItem);
+          }
+        }
+      }
+    });
+
+    this._setupServiceContainer();
+
+    this.newDocument();
+  }
+
+  _selectionChanged(e) {
+    this._propertyGrid.selectedItems = e.selectedElements;
+
+    this._treeView.selectionChanged(e);
+
+    this._treeViewExtended.selectionChanged(e);
+  }
+
+  _setupServiceContainer() {
+    serviceContainer.register('elementsService', new JsonFileElementsService('demo', './src/elements-demo.json'));
+    serviceContainer.register('elementsService', new JsonFileElementsService('native', './node_modules/@node-projects/web-component-designer/src/config/elements-native.json'));
+
+    this._paletteView.loadControls(serviceContainer.elementsServices);
+
+    this._propertyGrid.serviceContainer = serviceContainer;
+  }
+
+  newDocument() {
+    this._documentNumber++;
+    let sampleDocument = new DocumentContainer(serviceContainer);
+    sampleDocument.title = "document-" + this._documentNumber;
+
+    this._dock.appendChild(sampleDocument);
+  }
+
+}
+AppShell.style = css`
     :host {
       display: block;
       box-sizing: border-box;
@@ -139,7 +135,7 @@ let AppShell =
       width: 100%;
     }
     `;
-  AppShell.template = html`
+AppShell.template = html`
       <div class="app-header">
         <span class="heavy">web-component-designer <span class="lite">// a design framework for web-components using
             web-components</span></span>
@@ -162,14 +158,10 @@ let AppShell =
           <div id="attributeDock" title="Properties" dock-spawn-dock-type="right" dock-spawn-dock-ratio="0.2">
             <node-projects-property-grid id="propertyGrid"></node-projects-attribute-editor>
           </div>
-          <div title="Elements" dock-spawn-dock-type="down" dock-spawn-dock-to="attributeDock" dock-spawn-dock-ratio="0.4">
+          <div id="p" title="Elements" dock-spawn-dock-type="down" dock-spawn-dock-to="attributeDock" dock-spawn-dock-ratio="0.4">
             <node-projects-palette-view id="paletteView"></node-projects-palette-view>
           </div>
         </dock-spawn-ts>
       </div>
     `;
-  return AppShell;
-})();
-
-export { AppShell };
 window.customElements.define('node-projects-app-shell', AppShell);
