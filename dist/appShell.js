@@ -1,9 +1,9 @@
 import { JsonFileElementsService, DocumentContainer } from "../node_modules/@node-projects/web-component-designer/dist/index.js";
 import serviceContainer from "../node_modules/@node-projects/web-component-designer/dist/elements/services/DefaultServiceBootstrap.js";
 import { DockSpawnTsWebcomponent } from "../node_modules/dock-spawn-ts/lib/js/webcomponent/DockSpawnTsWebcomponent.js";
-import { BaseCustomWebComponent, css, html } from "../node_modules/@node-projects/base-custom-webcomponent/dist/index.js";
+import { BaseCustomWebComponentConstructorAppend, css, html } from "../node_modules/@node-projects/base-custom-webcomponent/dist/index.js";
 DockSpawnTsWebcomponent.cssRootDirectory = "./node_modules/dock-spawn-ts/lib/css/";
-export class AppShell extends BaseCustomWebComponent {
+export class AppShell extends BaseCustomWebComponentConstructorAppend {
   constructor() {
     super();
     this.mainPage = 'designer';
@@ -20,7 +20,11 @@ export class AppShell extends BaseCustomWebComponent {
 
     let newButton = this._getDomElement('newButton');
 
-    newButton.onclick = () => this.newDocument();
+    newButton.onclick = () => this.newDocument(false);
+
+    let newFixedButton = this._getDomElement('newFixedButton');
+
+    newFixedButton.onclick = () => this.newDocument(true);
 
     this._dockManager = this._dock.dockManager;
 
@@ -45,7 +49,7 @@ export class AppShell extends BaseCustomWebComponent {
 
     this._setupServiceContainer();
 
-    this.newDocument();
+    this.newDocument(false);
   }
 
   _selectionChanged(e) {
@@ -65,12 +69,17 @@ export class AppShell extends BaseCustomWebComponent {
     this._propertyGrid.serviceContainer = serviceContainer;
   }
 
-  newDocument() {
+  newDocument(fixedWidth) {
     this._documentNumber++;
     let sampleDocument = new DocumentContainer(serviceContainer);
     sampleDocument.title = "document-" + this._documentNumber;
 
     this._dock.appendChild(sampleDocument);
+
+    if (fixedWidth) {
+      sampleDocument.designerView.designerWidth = '400px';
+      sampleDocument.designerView.designerHeight = '400px';
+    }
   }
 
 }
@@ -140,6 +149,7 @@ AppShell.template = html`
         <span class="heavy">web-component-designer <span class="lite">// a design framework for web-components using
             web-components</span></span>
         <button id="newButton" style="margin-left: 50px;">new</button>
+        <button id="newFixedButton" style="margin-left: 50px;">new fixed</button>
       </div>
       
       <div class="app-body">
@@ -156,9 +166,10 @@ AppShell.template = html`
           </div>
       
           <div id="attributeDock" title="Properties" dock-spawn-dock-type="right" dock-spawn-dock-ratio="0.2">
-            <node-projects-property-grid id="propertyGrid"></node-projects-attribute-editor>
+            <node-projects-property-grid id="propertyGrid"></node-projects-property-grid>
           </div>
-          <div id="p" title="Elements" dock-spawn-dock-type="down" dock-spawn-dock-to="attributeDock" dock-spawn-dock-ratio="0.4">
+          <div id="p" title="Elements" dock-spawn-dock-type="down" dock-spawn-dock-to="attributeDock"
+            dock-spawn-dock-ratio="0.4">
             <node-projects-palette-view id="paletteView"></node-projects-palette-view>
           </div>
         </dock-spawn-ts>
