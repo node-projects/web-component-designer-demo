@@ -1,6 +1,7 @@
-import { JsonFileElementsService, DocumentContainer, NodeHtmlParserService } from "../node_modules/@node-projects/web-component-designer/dist/index.js";
+import { JsonFileElementsService, DocumentContainer, NodeHtmlParserService, CodeViewAce } from "../node_modules/@node-projects/web-component-designer/dist/index.js";
 import serviceContainer from "../node_modules/@node-projects/web-component-designer/dist/elements/services/DefaultServiceBootstrap.js";
 serviceContainer.register("htmlParserService", new NodeHtmlParserService());
+serviceContainer.config.codeViewWidget = CodeViewAce;
 import { DockSpawnTsWebcomponent } from "../node_modules/dock-spawn-ts/lib/js/webcomponent/DockSpawnTsWebcomponent.js";
 import { BaseCustomWebComponentConstructorAppend, css, html } from "../node_modules/@node-projects/base-custom-webcomponent/dist/index.js";
 DockSpawnTsWebcomponent.cssRootDirectory = "./node_modules/dock-spawn-ts/lib/css/";
