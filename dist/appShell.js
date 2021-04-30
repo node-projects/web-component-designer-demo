@@ -4,6 +4,13 @@ serviceContainer.register("htmlParserService", new NodeHtmlParserService());
 serviceContainer.config.codeViewWidget = CodeViewAce;
 import { DockSpawnTsWebcomponent } from "../node_modules/dock-spawn-ts/lib/js/webcomponent/DockSpawnTsWebcomponent.js";
 import { BaseCustomWebComponentConstructorAppend, css, html } from "../node_modules/@node-projects/base-custom-webcomponent/dist/index.js";
+/* imports without usage, for polymer bundler or he will not modify impirt paths */
+
+import "./demo/demoData.js";
+import "./demo/DemoElement.js";
+import "./demo/DemoEnum.js";
+import "./demo/DemoStringEnum.js";
+import "../node_modules/@vanillawc/wc-marquee/index.js";
 DockSpawnTsWebcomponent.cssRootDirectory = "./node_modules/dock-spawn-ts/lib/css/";
 export class AppShell extends BaseCustomWebComponentConstructorAppend {
   constructor() {
