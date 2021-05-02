@@ -2,7 +2,7 @@ import { JsonFileElementsService, DocumentContainer, NodeHtmlParserService, Code
 import serviceContainer from "../node_modules/@node-projects/web-component-designer/dist/elements/services/DefaultServiceBootstrap.js";
 serviceContainer.register("htmlParserService", new NodeHtmlParserService());
 serviceContainer.config.codeViewWidget = CodeViewAce;
-LazyLoader.LoadText('/src/custom-element-properties.json').then(data => serviceContainer.register("propertyService", new ListPropertiesService(JSON.parse(data))));
+LazyLoader.LoadText('./src/custom-element-properties.json').then(data => serviceContainer.register("propertyService", new ListPropertiesService(JSON.parse(data))));
 import { DockSpawnTsWebcomponent } from "../node_modules/dock-spawn-ts/lib/js/webcomponent/DockSpawnTsWebcomponent.js";
 import { BaseCustomWebComponentConstructorAppend, css, html, LazyLoader } from "../node_modules/@node-projects/base-custom-webcomponent/dist/index.js";
 /* imports without usage, for polymer bundler or he will not modify impirt paths */
