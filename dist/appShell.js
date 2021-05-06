@@ -5,6 +5,7 @@ serviceContainer.config.codeViewWidget = CodeViewAce;
 LazyLoader.LoadText('./src/custom-element-properties.json').then(data => serviceContainer.register("propertyService", new ListPropertiesService(JSON.parse(data))));
 import { DockSpawnTsWebcomponent } from "../node_modules/dock-spawn-ts/lib/js/webcomponent/DockSpawnTsWebcomponent.js";
 import { BaseCustomWebComponentConstructorAppend, css, html, LazyLoader } from "../node_modules/@node-projects/base-custom-webcomponent/dist/index.js";
+import { CommandHandling } from "./CommandHandling.js";
 /* imports without usage, for polymer bundler or he will not modify impirt paths */
 
 import "./demo/demoData.js";
@@ -27,16 +28,8 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     this._treeView = this._getDomElement('treeView');
     this._treeViewExtended = this._getDomElement('treeViewExtended');
     this._propertyGrid = this._getDomElement('propertyGrid');
-
-    let newButton = this._getDomElement('newButton');
-
-    newButton.onclick = () => this.newDocument(false);
-
-    let newFixedButton = this._getDomElement('newFixedButton');
-
-    newFixedButton.onclick = () => this.newDocument(true);
-
     this._dockManager = this._dock.dockManager;
+    new CommandHandling(this._dockManager, this);
 
     this._dockManager.addLayoutListener({
       onActivePanelChange: (manager, panel) => {
@@ -52,6 +45,15 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
             this._treeView.createTree(sampleDocument.instanceServiceContainer.contentService.rootDesignItem);
 
             this._treeViewExtended.createTree(sampleDocument.instanceServiceContainer.contentService.rootDesignItem);
+          }
+        }
+      },
+      onClosePanel: (manager, panel) => {
+        if (panel) {
+          let element = panel.elementContent.assignedElements()[0];
+
+          if (element && element instanceof DocumentContainer) {
+            element.dispose();
           }
         }
       }
@@ -82,6 +84,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
   newDocument(fixedWidth) {
     this._documentNumber++;
     let sampleDocument = new DocumentContainer(serviceContainer);
+    sampleDocument.setAttribute('dock-spawn-panel-type', 'document');
     sampleDocument.title = "document-" + this._documentNumber;
 
     this._dock.appendChild(sampleDocument);
@@ -130,7 +133,6 @@ AppShell.style = css`
       box-sizing: border-box;
       display: flex;
       flex-direction: row;
-      padding-top: 60px;
       height: 100%;
       overflow: hidden;
     }
@@ -155,13 +157,6 @@ AppShell.style = css`
     }
     `;
 AppShell.template = html`
-      <div class="app-header">
-        <span class="heavy">web-component-designer <span class="lite">// a design framework for web-components using
-            web-components</span></span>
-        <button id="newButton" style="margin-left: 50px;">new</button>
-        <button id="newFixedButton" style="margin-left: 50px;">new fixed</button>
-      </div>
-      
       <div class="app-body">
         <dock-spawn-ts id="dock" style="width: 100%; height: 100%; position: relative;">
       
