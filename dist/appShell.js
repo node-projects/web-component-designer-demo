@@ -16,10 +16,9 @@ import "../node_modules/@vanillawc/wc-marquee/index.js";
 DockSpawnTsWebcomponent.cssRootDirectory = "./node_modules/dock-spawn-ts/lib/css/";
 export class AppShell extends BaseCustomWebComponentConstructorAppend {
   constructor() {
-    super();
+    super(...arguments);
     this.mainPage = 'designer';
-    this._documentNumber = 0; //let paletteView = new PaletteView();
-    //this._getDomElement('p').appendChild(paletteView);
+    this._documentNumber = 0;
   }
 
   ready() {
