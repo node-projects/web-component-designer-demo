@@ -33,7 +33,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     this._dockManager.addLayoutListener({
       onActivePanelChange: (manager, panel) => {
         if (panel) {
-          let element = panel.elementContent.assignedElements()[0];
+          let element = this._dock.getElementInSlot(panel.elementContent);
 
           if (element && element instanceof DocumentContainer) {
             let sampleDocument = element;
@@ -49,7 +49,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
       },
       onClosePanel: (manager, panel) => {
         if (panel) {
-          let element = panel.elementContent.assignedElements()[0];
+          let element = this._dock.getElementInSlot(panel.elementContent);
 
           if (element && element instanceof DocumentContainer) {
             element.dispose();
