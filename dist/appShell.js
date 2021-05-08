@@ -6,19 +6,7 @@ LazyLoader.LoadText('./src/custom-element-properties.json').then(data => service
 import { DockSpawnTsWebcomponent } from "../node_modules/dock-spawn-ts/lib/js/webcomponent/DockSpawnTsWebcomponent.js";
 import { BaseCustomWebComponentConstructorAppend, css, html, LazyLoader } from "../node_modules/@node-projects/base-custom-webcomponent/dist/index.js";
 import { CommandHandling } from "./CommandHandling.js";
-/* imports without usage, for polymer bundler or he will not modify impirt paths */
-
-import "./demo/demoData.js";
-import "./demo/DemoElement.js";
-import "./demo/DemoEnum.js";
-import "./demo/DemoStringEnum.js";
-import "../node_modules/@vanillawc/wc-marquee/index.js";
-import "../node_modules/@doubletrade/lit-datepicker/lit-datepicker.js";
-import "../node_modules/@material/mwc-button/mwc-button.js";
-import "../node_modules/@material/mwc-checkbox/mwc-checkbox.js";
-import "../node_modules/@material/mwc-circular-progress/mwc-circular-progress.js";
-import "../node_modules/@material/mwc-textfield/mwc-textfield.js";
-import "../node_modules/wired-elements/lib/wired-elements.js";
+import "./loadElements.js";
 DockSpawnTsWebcomponent.cssRootDirectory = "./node_modules/dock-spawn-ts/lib/css/";
 export class AppShell extends BaseCustomWebComponentConstructorAppend {
   constructor() {
