@@ -18,6 +18,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
   ready() {
     this._dock = this._getDomElement('dock');
     this._paletteView = this._getDomElement('paletteView');
+    this._paletteTree = this._getDomElement('paletteTree');
     this._treeView = this._getDomElement('treeView');
     this._treeViewExtended = this._getDomElement('treeViewExtended');
     this._propertyGrid = this._getDomElement('propertyGrid');
@@ -73,6 +74,8 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     serviceContainer.register('elementsService', new JsonFileElementsService('native', './node_modules/@node-projects/web-component-designer/src/config/elements-native.json'));
 
     this._paletteView.loadControls(serviceContainer, serviceContainer.elementsServices);
+
+    this._paletteTree.loadControls(serviceContainer, serviceContainer.elementsServices);
 
     this._propertyGrid.serviceContainer = serviceContainer;
   }
@@ -156,12 +159,17 @@ AppShell.template = html`
       <div class="app-body">
         <dock-spawn-ts id="dock" style="width: 100%; height: 100%; position: relative;">
       
-          <div id="treeUpper" title="Tree" dock-spawn-dock-type="left" dock-spawn-dock-ratio="0.2"
+          <div id="treeUpper" title="Palette" dock-spawn-dock-type="left" dock-spawn-dock-ratio="0.2"
             style="overflow: hidden; width: 100%;">
+            <node-projects-palette-tree-view name="paletteTree" id="paletteTree"></node-projects-palette-tree-view>
+          </div>
+      
+          <div id="treeUpper2" title="Tree" ock-spawn-dock-type="down" dock-spawn-dock-to="treeUpper"
+            dock-spawn-dock-ratio="0.2" style="overflow: hidden; width: 100%;">
             <node-projects-tree-view name="tree" id="treeView"></node-projects-tree-view>
           </div>
       
-          <div title="TreeExtended" dock-spawn-dock-type="down" dock-spawn-dock-to="treeUpper" dock-spawn-dock-ratio="0.5"
+          <div title="TreeExtended" dock-spawn-dock-type="down" dock-spawn-dock-to="treeUpper2" dock-spawn-dock-ratio="0.5"
             style="overflow: hidden; width: 100%;">
             <node-projects-tree-view-extended name="tree" id="treeViewExtended"></node-projects-tree-view-extended>
           </div>
