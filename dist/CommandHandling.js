@@ -10,12 +10,14 @@ export class CommandHandling {
   handleCommandButtonClick(e) {
     let button = e.currentTarget;
     let commandName = button.dataset['command'];
+    let commandParameter = button.dataset['commandParameter'];
     if (commandName === 'new') this.appShell.newDocument(false);else if (commandName === 'newFixedWidth') this.appShell.newDocument(true);else if (commandName === 'github') window.location.href = 'https://github.com/node-projects/web-component-designer';else if (this.dockManager.activeDocument) {
       let target = this.dockManager.activeDocument.elementContent.assignedElements()[0];
 
       if (target.executeCommand) {
         target.executeCommand({
-          type: commandName
+          type: commandName,
+          parameter: commandParameter
         });
       }
     }
