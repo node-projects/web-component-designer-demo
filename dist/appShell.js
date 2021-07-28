@@ -1,5 +1,6 @@
 import { JsonFileElementsService, DocumentContainer, NodeHtmlParserService, CodeViewAce, ListPropertiesService, OldCustomElementsManifestLoader } from "../node_modules/@node-projects/web-component-designer/dist/index.js";
-import serviceContainer from "../node_modules/@node-projects/web-component-designer/dist/elements/services/DefaultServiceBootstrap.js";
+import createDefaultServiceContainer from "../node_modules/@node-projects/web-component-designer/dist/elements/services/DefaultServiceBootstrap.js";
+let serviceContainer = createDefaultServiceContainer();
 serviceContainer.register("htmlParserService", new NodeHtmlParserService());
 serviceContainer.config.codeViewWidget = CodeViewAce;
 LazyLoader.LoadText('./src/custom-element-properties.json').then(data => serviceContainer.register("propertyService", new ListPropertiesService(JSON.parse(data))));
