@@ -2,16 +2,16 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import './actionbar.css';
-import * as platform from '../../../common/platform.js';
-import * as nls from '../../../../nls.js';
-import { Disposable } from '../../../common/lifecycle.js';
-import { Action, ActionRunner, Separator } from '../../../common/actions.js';
-import * as types from '../../../common/types.js';
-import { EventType as TouchEventType, Gesture } from '../../touch.js';
-import { DataTransfers } from '../../dnd.js';
 import { isFirefox } from '../../browser.js';
+import { DataTransfers } from '../../dnd.js';
 import { $, addDisposableListener, append, EventHelper, EventType } from '../../dom.js';
+import { EventType as TouchEventType, Gesture } from '../../touch.js';
+import { Action, ActionRunner, Separator } from '../../../common/actions.js';
+import { Disposable } from '../../../common/lifecycle.js';
+import * as platform from '../../../common/platform.js';
+import * as types from '../../../common/types.js';
+import './actionbar.css';
+import * as nls from '../../../../nls.js';
 export class BaseActionViewItem extends Disposable {
     constructor(context, action, options = {}) {
         super();
@@ -100,7 +100,7 @@ export class BaseActionViewItem extends Disposable {
             EventHelper.stop(e, true);
             // menus do not use the click event
             if (!(this.options && this.options.isMenu)) {
-                platform.setImmediate(() => this.onClick(e));
+                this.onClick(e);
             }
         }));
         this._register(addDisposableListener(element, EventType.DBLCLICK, e => {

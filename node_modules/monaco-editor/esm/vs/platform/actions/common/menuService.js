@@ -28,8 +28,8 @@ let MenuService = class MenuService {
      * sub menu entries. That is more expensive and must be explicitly enabled with the
      * `emitEventsForSubmenuChanges` flag.
      */
-    createMenu(id, contextKeyService, emitEventsForSubmenuChanges = false) {
-        return new Menu(id, emitEventsForSubmenuChanges, this._commandService, contextKeyService, this);
+    createMenu(id, contextKeyService, options) {
+        return new Menu(id, Object.assign({ emitEventsForSubmenuChanges: false, eventDebounceDelay: 50 }, options), this._commandService, contextKeyService, this);
     }
 };
 MenuService = __decorate([
@@ -37,9 +37,9 @@ MenuService = __decorate([
 ], MenuService);
 export { MenuService };
 let Menu = class Menu {
-    constructor(_id, _fireEventsForSubmenuChanges, _commandService, _contextKeyService, _menuService) {
+    constructor(_id, _options, _commandService, _contextKeyService, _menuService) {
         this._id = _id;
-        this._fireEventsForSubmenuChanges = _fireEventsForSubmenuChanges;
+        this._options = _options;
         this._commandService = _commandService;
         this._contextKeyService = _contextKeyService;
         this._menuService = _menuService;
@@ -53,7 +53,7 @@ let Menu = class Menu {
         const rebuildMenuSoon = new RunOnceScheduler(() => {
             this._build();
             this._onDidChange.fire(this);
-        }, 50);
+        }, _options.eventDebounceDelay);
         this._disposables.add(rebuildMenuSoon);
         this._disposables.add(MenuRegistry.onDidChangeMenu(e => {
             if (e.has(_id)) {
@@ -65,7 +65,7 @@ let Menu = class Menu {
         // firing often and (2) menu are often leaked
         const contextKeyListener = this._disposables.add(new DisposableStore());
         const startContextKeyListener = () => {
-            const fireChangeSoon = new RunOnceScheduler(() => this._onDidChange.fire(this), 50);
+            const fireChangeSoon = new RunOnceScheduler(() => this._onDidChange.fire(this), _options.eventDebounceDelay);
             contextKeyListener.add(fireChangeSoon);
             contextKeyListener.add(_contextKeyService.onDidChangeContext(e => {
                 if (e.affectsSome(this._contextKeys)) {
@@ -116,7 +116,7 @@ let Menu = class Menu {
                 Menu._fillInKbExprKeys(toggledExpression, this._contextKeys);
             }
         }
-        else if (this._fireEventsForSubmenuChanges) {
+        else if (this._options.emitEventsForSubmenuChanges) {
             // recursively collect context keys from submenus so that this
             // menu fires events when context key changes affect submenus
             MenuRegistry.getMenuItems(item.submenu).forEach(this._collectContextKeys, this);

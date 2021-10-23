@@ -1,12 +1,8 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-import { createDecorator } from '../../instantiation/common/instantiation.js';
 import { Emitter, PauseableEmitter } from '../../../base/common/event.js';
 import { Disposable } from '../../../base/common/lifecycle.js';
 import { isUndefinedOrNull } from '../../../base/common/types.js';
 import { InMemoryStorageDatabase, Storage } from '../../../base/parts/storage/common/storage.js';
+import { createDecorator } from '../../instantiation/common/instantiation.js';
 const TARGET_KEY = '__$__targetStorageMarker';
 export const IStorageService = createDecorator('storageService');
 export var WillSaveStateReason;

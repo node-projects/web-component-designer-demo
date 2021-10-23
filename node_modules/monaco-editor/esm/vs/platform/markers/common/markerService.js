@@ -3,12 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { isFalsyOrEmpty } from '../../../base/common/arrays.js';
+import { DebounceEmitter } from '../../../base/common/event.js';
+import { Iterable } from '../../../base/common/iterator.js';
+import { ResourceMap } from '../../../base/common/map.js';
 import { Schemas } from '../../../base/common/network.js';
 import { URI } from '../../../base/common/uri.js';
-import { DebounceEmitter } from '../../../base/common/event.js';
 import { MarkerSeverity } from './markers.js';
-import { ResourceMap } from '../../../base/common/map.js';
-import { Iterable } from '../../../base/common/iterator.js';
 class DoubleResourceMap {
     constructor() {
         this._byResource = new ResourceMap();

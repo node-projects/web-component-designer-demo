@@ -61,7 +61,7 @@ export class MyArray {
  * A utility class which helps to create the set of DiffChanges from
  * a difference operation. This class accepts original DiffElements and
  * modified DiffElements that are involved in a particular change. The
- * MarktNextChange() method can be called to mark the separation between
+ * MarkNextChange() method can be called to mark the separation between
  * distinct changes. At the end, the Changes property can be called to retrieve
  * the constructed changes.
  */
@@ -296,7 +296,7 @@ export class LcsDiff {
                 rightChanges = this.ComputeDiffRecursive(midOriginal + 1, originalEnd, midModified + 1, modifiedEnd, quitEarlyArr);
             }
             else {
-                // We did't have time to finish the first half, so we don't have time to compute this half.
+                // We didn't have time to finish the first half, so we don't have time to compute this half.
                 // Consider the entire rest of the sequence different.
                 rightChanges = [
                     new DiffChange(midOriginal + 1, originalEnd - (midOriginal + 1) + 1, midModified + 1, modifiedEnd - (midModified + 1) + 1)
@@ -547,7 +547,7 @@ export class LcsDiff {
                 }
                 else {
                     // We didn't actually remember enough of the history.
-                    //Since we are quiting the diff early, we need to shift back the originalStart and modified start
+                    //Since we are quitting the diff early, we need to shift back the originalStart and modified start
                     //back into the boundary limits since we decremented their value above beyond the boundary limit.
                     originalStart++;
                     modifiedStart++;
