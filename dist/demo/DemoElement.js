@@ -4,7 +4,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { BaseCustomWebComponentConstructorAppend, customElement, html, property } from './node_modules/@node-projects/base-custom-webcomponent/./dist/index.js';
+import { BaseCustomWebComponentConstructorAppend, customElement, html, property } from '/web-component-designer-demo//node_modules/@node-projects/base-custom-webcomponent/./dist/index.js';
 import { DemoEnum } from './DemoEnum.js';
 import { DemoStringEnum } from './DemoStringEnum.js';
 let DemoElement = class DemoElement extends BaseCustomWebComponentConstructorAppend {
