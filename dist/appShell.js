@@ -1,7 +1,8 @@
-import { JsonFileElementsService, DocumentContainer, NodeHtmlParserService, CodeViewAce, ListPropertiesService } from '/web-component-designer-demo/node_modules/@node-projects/web-component-designer/./dist/index.js';
+import { BaseCustomWebcomponentBindingsService, JsonFileElementsService, DocumentContainer, NodeHtmlParserService, CodeViewAce, ListPropertiesService } from '/web-component-designer-demo/node_modules/@node-projects/web-component-designer/./dist/index.js';
 import createDefaultServiceContainer from '/web-component-designer-demo/node_modules/@node-projects/web-component-designer/dist/elements/services/DefaultServiceBootstrap.js';
 let serviceContainer = createDefaultServiceContainer();
-serviceContainer.register("htmlParserService", new NodeHtmlParserService());
+serviceContainer.register("bindingService", new BaseCustomWebcomponentBindingsService());
+serviceContainer.register("htmlParserService", new NodeHtmlParserService('/node_modules/@node-projects/node-html-parser-esm/dist/index.js'));
 serviceContainer.config.codeViewWidget = CodeViewAce;
 LazyLoader.LoadText('./dist/custom-element-properties.json').then(data => serviceContainer.register("propertyService", new ListPropertiesService(JSON.parse(data))));
 import { DockSpawnTsWebcomponent } from '/web-component-designer-demo/node_modules/dock-spawn-ts/lib/js/webcomponent/DockSpawnTsWebcomponent.js';

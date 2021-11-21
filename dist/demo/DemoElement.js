@@ -15,7 +15,6 @@ let DemoElement = class DemoElement extends BaseCustomWebComponentConstructorApp
         this.enumProperty = DemoEnum.value1;
         this.enumStringProperty = DemoStringEnum.value1;
         this._parseAttributesToProperties();
-        this._createObservableProperties();
         this._bindingsParse();
         setInterval(() => {
             this.numberProp++;
