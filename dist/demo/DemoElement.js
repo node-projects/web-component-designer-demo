@@ -32,7 +32,6 @@ DemoElement.template = html `
     <div>[[this.enumProperty]]</div>
     <div id="cnt" style="background: lightblue;">Test JS Access</div>
     <slot></slot>
-    <!--<div>[[DemoEnum[this.enumProperty] ]]</div>-->
   </div>`;
 __decorate([
     property(Number)
