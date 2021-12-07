@@ -1,5 +1,6 @@
 import { BaseCustomWebcomponentBindingsService, JsonFileElementsService, DocumentContainer, NodeHtmlParserService, CodeViewAce, ListPropertiesService } from '/web-component-designer-demo/node_modules/@node-projects/web-component-designer/./dist/index.js';
 import createDefaultServiceContainer from '/web-component-designer-demo/node_modules/@node-projects/web-component-designer/dist/elements/services/DefaultServiceBootstrap.js';
+//import { DesignerViewUseOverlayScollbars } from '/web-component-designer-demo/node_modules/@node-projects/web-component-designer/dist/elements/widgets/designerView/DesignerViewUseOverlayScollbars.js';
 let serviceContainer = createDefaultServiceContainer();
 serviceContainer.register("bindingService", new BaseCustomWebcomponentBindingsService());
 if (window.location.hostname == 'localhost' || window.location.hostname == '127.0.0.1')
@@ -7,11 +8,11 @@ if (window.location.hostname == 'localhost' || window.location.hostname == '127.
 else
     serviceContainer.register("htmlParserService", new NodeHtmlParserService('/web-component-designer-demo/node_modules/@node-projects/node-html-parser-esm/dist/index.js'));
 serviceContainer.config.codeViewWidget = CodeViewAce;
+//serviceContainer.designViewConfigButtons.push(new DesignerViewUseOverlayScollbars())
 LazyLoader.LoadText('./dist/custom-element-properties.json').then(data => serviceContainer.register("propertyService", new ListPropertiesService(JSON.parse(data))));
 import { DockSpawnTsWebcomponent } from '/web-component-designer-demo/node_modules/dock-spawn-ts/lib/js/webcomponent/DockSpawnTsWebcomponent.js';
 import { BaseCustomWebComponentConstructorAppend, css, html, LazyLoader } from '/web-component-designer-demo/node_modules/@node-projects/base-custom-webcomponent/./dist/index.js';
 import { CommandHandling } from './CommandHandling.js';
-//import './loadElements.js';
 DockSpawnTsWebcomponent.cssRootDirectory = "./node_modules/dock-spawn-ts/lib/css/";
 export class AppShell extends BaseCustomWebComponentConstructorAppend {
     constructor() {
@@ -31,7 +32,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         linkElement.href = "./assets/dockspawn.css";
         this._dock.shadowRoot.appendChild(linkElement);
         this._dockManager = this._dock.dockManager;
-        new CommandHandling(this._dockManager, this);
+        new CommandHandling(this._dockManager, this, serviceContainer);
         this._dockManager.addLayoutListener({
             onActiveDocumentChange: (manager, panel) => {
                 if (panel) {

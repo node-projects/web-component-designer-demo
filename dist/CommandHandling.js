@@ -1,10 +1,10 @@
 //Command Handling..
 // Setup commands
 export class CommandHandling {
-    constructor(dockManager, appShell) {
+    constructor(dockManager, appShell, serviceContainer) {
         this.dockManager = dockManager;
         this.appShell = appShell;
-        this.init();
+        this.init(serviceContainer);
     }
     handleCommandButtonClick(e) {
         let button = e.currentTarget;
@@ -23,10 +23,31 @@ export class CommandHandling {
             }
         }
     }
-    init() {
+    handleInputValueChanged(e) {
+        let input = e.currentTarget;
+        let commandName = input.dataset['command'];
+        let commandParameter = input.value;
+        if (this.dockManager.activeDocument) {
+            let target = this.dockManager.activeDocument.elementContent.assignedElements()[0];
+            if (target.executeCommand) {
+                target.executeCommand({ type: commandName, parameter: commandParameter });
+            }
+        }
+    }
+    init(serviceContainer) {
         let buttons = Array.from(document.querySelectorAll('[data-command]'));
         buttons.forEach(b => {
-            b.onclick = (e) => this.handleCommandButtonClick(e);
+            if (b instanceof HTMLButtonElement) {
+                b.onclick = (e) => this.handleCommandButtonClick(e);
+            }
+            else {
+                b.onchange = (e) => this.handleInputValueChanged(e);
+                let commandName = b.dataset['command'];
+                if (commandName == 'setStrokeColor')
+                    serviceContainer.globalContext.onStrokeColorChanged.on(e => b.value = e.newValue);
+                if (commandName == 'setFillBrush')
+                    serviceContainer.globalContext.onFillBrushChanged.on(e => b.value = e.newValue);
+            }
         });
         setInterval(() => {
             if (this.dockManager.activeDocument) {
