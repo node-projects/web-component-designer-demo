@@ -72,9 +72,9 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
             const buttons = Array.from(document.getElementById('tools').querySelectorAll('[data-command]'));
             for (const b of buttons) {
                 if (b.dataset.commandParameter == name)
-                    b.style.background = "green";
+                    b.style.backgroundColor = "green";
                 else
-                    b.style.background = "";
+                    b.style.backgroundColor = "";
             }
         });
         this._paletteView.loadControls(serviceContainer, serviceContainer.elementsServices);
