@@ -21,7 +21,7 @@
     "@web/dev-server": "^0.1.28",
     "copyfiles": "^2.4.1",
     "gulp": "^4.0.2",
-    "typescript": "^4.5.3"
+    "typescript": "^4.5.4"
   },
   "dependencies": {
     "@christianliebel/paint": "^1.1.0",
@@ -34,11 +34,11 @@
     "@node-projects/base-custom-webcomponent": "0.3.8",
     "@node-projects/lean-he-esm": "^3.3.0",
     "@node-projects/node-html-parser-esm": "^2.4.1",
-    "@node-projects/web-component-designer": "^0.0.64",
+    "@node-projects/web-component-designer": "^0.0.65",
     "@patternfly/pfe-badge": "^1.12.2",
     "@patternfly/pfe-button": "^1.12.2",
     "@patternfly/pfe-codeblock": "^1.12.2",
-    "@spectrum-web-components/button": "^0.16.0",
+    "@spectrum-web-components/button": "^0.16.1",
     "@vanillawc/wc-marquee": "^1.0.31",
     "ace-builds": "^1.4.13",
     "codemirror": "^5.64.0",
