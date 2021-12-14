@@ -51,7 +51,6 @@
     "metro4-dist": "^4.5.0",
     "mobile-drag-drop": "^2.3.0-rc.2",
     "monaco-editor": "^0.31.0",
-    "overlayscrollbars": "^1.13.1",
     "wired-elements": "*"
   }
 }
