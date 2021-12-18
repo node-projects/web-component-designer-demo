@@ -170,15 +170,24 @@
           <span class="title">edit</span>
         </div>
         <div class="group flex-column">
-          <div class="group">
-            <button class="tool-button" data-command="arrangeLeft"
-              style="background-image: url('./assets/images/layout/arrange-left.png'); background-size: cover;"
+          <div class="group" style="display: grid; grid-template-columns: auto auto auto;">
+            <button class="tool-button" data-command="arrangeLeft" title="align left"
+              style="background-image: url('./assets/images/layout/AlignLeft.svg'); background-size: cover; background-size: 80%;background-repeat: no-repeat;background-position: center;"
               disabled></button>
-            <button class="tool-button" data-command="arrangeCenter"
-              style="background-image: url('./assets/images/layout/arrange-center.png'); background-size: cover;"
+            <button class="tool-button" data-command="arrangeCenter" title="align center vertically"
+              style="background-image: url('./assets/images/layout/AlignCenter.svg'); background-size: cover; background-size: 80%;background-repeat: no-repeat;background-position: center;"
               disabled></button>
-            <button class="tool-button" data-command="arrangeRight"
-              style="background-image: url('./assets/images/layout/arrange-right.png'); background-size: cover;"
+            <button class="tool-button" data-command="arrangeRight" title="align right"
+              style="background-image: url('./assets/images/layout/AlignRight.svg'); background-size: cover; background-size: 80%;background-repeat: no-repeat;background-position: center;"
+              disabled></button>
+            <button class="tool-button" data-command="arrangeTop" title="align top"
+              style="background-image: url('./assets/images/layout/AlignTop.svg'); background-size: cover; background-size: 80%;background-repeat: no-repeat;background-position: center;"
+              disabled></button>
+            <button class="tool-button" data-command="arrangeCenterHorizontal" title="align center horizontally"
+              style="background-image: url('./assets/images/layout/AlignCenterHorizontal.svg'); background-size: cover; background-size: 80%;background-repeat: no-repeat;background-position: center;"
+              disabled></button>
+            <button class="tool-button" data-command="arrangeBot" title="align bottom"
+              style="background-image: url('./assets/images/layout/AlignBot.svg'); background-size: cover; background-size: 80%;background-repeat: no-repeat;background-position: center;"
               disabled></button>
           </div>
           <span class="title">layout</span>
