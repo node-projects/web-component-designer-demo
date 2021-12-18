@@ -15,8 +15,7 @@
   <script src="./node_modules/jquery/dist/jquery.min.js"></script>
   <script src="./node_modules/jquery.fancytree/dist/jquery.fancytree-all-deps.min.js"></script>
   <script src="./node_modules/jquery.fancytree/dist/modules/jquery.fancytree.table.js"></script>
-  <script src="./node_modules/overlayscrollbars/js/OverlayScrollbars.min.js"></script>
-
+  
   <link rel="stylesheet" href="./node_modules/metro4-dist/css/metro-all.min.css">
   <link rel="stylesheet" href="./node_modules/@fortawesome/fontawesome-free/css/all.min.css">
 
@@ -88,6 +87,15 @@
     .lds-facebook div:nth-child(3) {
       left: 56px;
       animation-delay: 0;
+    }
+
+    .tool-button[disabled] > div {
+      opacity: 0.2;
+    }
+
+    .tool-button > div {
+      width: 100%;
+      height: 100%;
     }
 
     @keyframes lds-facebook {
