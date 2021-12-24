@@ -1,5 +1,8 @@
 import { BindableObjectType } from '/web-component-designer-demo/node_modules/@node-projects/web-component-designer/./dist/index.js';
 export class CustomBindableObjectsService {
+    constructor() {
+        this.name = 'custom';
+    }
     async getBindableObject(fullName) {
         let objs = await this.getBindableObjects();
         let parts = fullName.split('.');
