@@ -2,18 +2,20 @@ import { IBindableObjectsService, IBindableObject, BindableObjectType } from "@n
 
 export class CustomBindableObjectsService implements IBindableObjectsService {
 
-  async getBindableObject(fullName: string): Promise<IBindableObject> {
+  name = 'custom';
+
+  async getBindableObject(fullName: string): Promise<IBindableObject<void>> {
     let objs = await this.getBindableObjects();
     let parts = fullName.split('.');
-    let result: IBindableObject = null;
+    let result: IBindableObject<void> = null;
     for (let p of parts) {
       result = objs.find(x => x.name == p);
-      objs = <IBindableObject[]>result.children
+      objs = <IBindableObject<void>[]>result.children
     }
     return result;
   }
 
-  async getBindableObjects(parent?: IBindableObject): Promise<IBindableObject[]> {
+  async getBindableObjects(parent?: IBindableObject<void>): Promise<IBindableObject<void>[]> {
     return [
       {
         name: 'DemoData', fullName: 'DemoData', type: BindableObjectType.folder, children: [
