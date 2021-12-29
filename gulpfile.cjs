@@ -14,7 +14,7 @@ function fixJsImports() {
 
                     var checkImportRegex = RegExp('(import|export)(\\s*\\{?\\*?[\\s\\w,$]*\\}?\\s*(as)?[\\s\\w{}]*from\\s*|[\\s]*)[\'"]([^\\.\\/][\\w\\/\\-@.]*?)[\'"]', 'g');
                     var checkRelativeImportRegex = RegExp('(import|export)(\\s*\\{?\\*?[\\s\\w,$]*\\}?\\s*(as)?[\\s\\w{}]*from\\s*|[\\s]*)[\'"]([\\.\\/][\\w\\/\\-@.]*?)[\'"]', 'g');
-                    var dynamicImportRegex = RegExp('(import\\s*\\(\\s*[\'"])([^\\.\\/][\\w\\/\\-@.]*?)([\'"]\\s*[,)])');
+                    var dynamicImportRegex = RegExp('(import\\s*\\(\\s*[\'"])([^\\.\\/][\\w\\/\\-@.]*?)([\'"]\\s*[,)])', 'g');
 
                     var pos = 0;
                     var res = '';
