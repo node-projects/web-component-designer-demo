@@ -1,6 +1,11 @@
+import { PropertyType } from '/web-component-designer-demo/node_modules/@node-projects/web-component-designer/./dist/index.js';
+import { BindingTarget } from '/web-component-designer-demo/node_modules/@node-projects/web-component-designer/dist/elements/item/BindingTarget.js';
 export class CustomPropertiesService {
     constructor() {
         this.name = "custom";
+    }
+    getPropertyTarget(designItem, property) {
+        return BindingTarget.property;
     }
     clearValue(designItems, property) {
         // throw new Error('Method not implemented.');
@@ -27,7 +32,7 @@ export class CustomPropertiesService {
     }
     getProperties(designItem) {
         let properties = [];
-        properties.push({ name: "Test 1", type: "string", service: this });
+        properties.push({ name: "Test 1", type: "string", service: this, propertyType: PropertyType.propertyAndAttribute });
         return properties;
     }
 }

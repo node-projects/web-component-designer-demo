@@ -34,7 +34,7 @@
     "@node-projects/base-custom-webcomponent": "0.4.0",
     "@node-projects/lean-he-esm": "^3.3.0",
     "@node-projects/node-html-parser-esm": "^2.4.1",
-    "@node-projects/web-component-designer": "^0.0.70",
+    "@node-projects/web-component-designer": "^0.0.76",
     "@patternfly/pfe-badge": "^1.12.2",
     "@patternfly/pfe-button": "^1.12.2",
     "@patternfly/pfe-codeblock": "^1.12.2",
@@ -47,10 +47,11 @@
     "elix": "^15.0.1",
     "jquery": "^3.6.0",
     "jquery.fancytree": "^2.38.0",
-    "lit": "*",
+    "lit": "^2.0.2",
     "metro4-dist": "^4.5.0",
     "mobile-drag-drop": "^2.3.0-rc.2",
     "monaco-editor": "^0.31.1",
+    "qing-button": "^8.2.3",
     "wired-elements": "*"
   }
 }
