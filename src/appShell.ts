@@ -1,4 +1,4 @@
-import { BaseCustomWebcomponentBindingsService, JsonFileElementsService, TreeView, TreeViewExtended, PaletteView, PropertyGrid, DocumentContainer, NodeHtmlParserService, CodeViewAce, ListPropertiesService, PaletteTreeView } from '@node-projects/web-component-designer';
+import { BaseCustomWebcomponentBindingsService, JsonFileElementsService, TreeView, TreeViewExtended, PaletteView, PropertyGrid, DocumentContainer, NodeHtmlParserService, CodeViewAce, ListPropertiesService, PaletteTreeView, WebcomponentManifestParserService } from '@node-projects/web-component-designer';
 import createDefaultServiceContainer from '@node-projects/web-component-designer/dist/elements/services/DefaultServiceBootstrap';
 
 let serviceContainer = createDefaultServiceContainer();
@@ -164,6 +164,8 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
   }
 
   private async _setupServiceContainer() {
+    serviceContainer.registerMultiple(['elementsService','propertyService'], new WebcomponentManifestParserService ('qing-button', '/node_modules/qing-button/custom-elements.json'));
+  
     serviceContainer.register('elementsService', new JsonFileElementsService('demo', './dist/elements-demo.json'));
     serviceContainer.register('elementsService', new JsonFileElementsService('paint', './dist/elements-paint.json'));
     serviceContainer.register('elementsService', new JsonFileElementsService('wired', './dist/elements-wired.json'));
