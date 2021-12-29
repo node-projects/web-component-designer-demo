@@ -3,10 +3,10 @@ import createDefaultServiceContainer from '@node-projects/web-component-designer
 
 let serviceContainer = createDefaultServiceContainer();
 serviceContainer.register("bindingService", new BaseCustomWebcomponentBindingsService());
+let rootDir = "/web-component-designer-demo";
 if (window.location.hostname == 'localhost' || window.location.hostname == '127.0.0.1')
-  serviceContainer.register("htmlParserService", new NodeHtmlParserService('/node_modules/@node-projects/node-html-parser-esm/dist/index.js'));
-else
-  serviceContainer.register("htmlParserService", new NodeHtmlParserService('/web-component-designer-demo/node_modules/@node-projects/node-html-parser-esm/dist/index.js'));
+  rootDir = '';
+serviceContainer.register("htmlParserService", new NodeHtmlParserService(rootDir + '/node_modules/@node-projects/node-html-parser-esm/dist/index.js'));
 serviceContainer.config.codeViewWidget = CodeViewAce;
 LazyLoader.LoadText('./dist/custom-element-properties.json').then(data => serviceContainer.register("propertyService", new ListPropertiesService(JSON.parse(data))));
 
@@ -164,15 +164,15 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
   }
 
   private async _setupServiceContainer() {
-    serviceContainer.registerMultiple(['elementsService','propertyService'], new WebcomponentManifestParserService ('qing-button', '/node_modules/qing-button/custom-elements.json'));
-  
+    serviceContainer.registerMultiple(['elementsService', 'propertyService'], new WebcomponentManifestParserService('qing-button', rootDir + '/node_modules/qing-button/custom-elements.json'));
+
     serviceContainer.register('elementsService', new JsonFileElementsService('demo', './dist/elements-demo.json'));
     serviceContainer.register('elementsService', new JsonFileElementsService('paint', './dist/elements-paint.json'));
     serviceContainer.register('elementsService', new JsonFileElementsService('wired', './dist/elements-wired.json'));
     serviceContainer.register('elementsService', new JsonFileElementsService('elix', './dist/elements-elix.json'));
     serviceContainer.register('elementsService', new JsonFileElementsService('patternfly', './dist/elements-pfe.json'));
     serviceContainer.register('elementsService', new JsonFileElementsService('mwc', './dist/elements-mwc.json'));
-    serviceContainer.register('elementsService', new JsonFileElementsService('native', './node_modules/@node-projects/web-component-designer/config/elements-native.json'));
+    serviceContainer.register('elementsService', new JsonFileElementsService('native', rootDir + '/node_modules/@node-projects/web-component-designer/config/elements-native.json'));
 
     serviceContainer.globalContext.onToolChanged.on((e) => {
       let name = [...serviceContainer.designerTools.entries()].filter(({ 1: v }) => v === e.newValue).map(([k]) => k)[0];
