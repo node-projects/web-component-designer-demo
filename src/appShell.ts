@@ -1,4 +1,4 @@
-import { BaseCustomWebcomponentBindingsService, JsonFileElementsService, TreeView, TreeViewExtended, PaletteView, PropertyGrid, DocumentContainer, NodeHtmlParserService, CodeViewAce, ListPropertiesService, PaletteTreeView, WebcomponentManifestParserService } from '@node-projects/web-component-designer';
+import { BaseCustomWebcomponentBindingsService, JsonFileElementsService, TreeView, TreeViewExtended, PaletteView, PropertyGrid, DocumentContainer, NodeHtmlParserService, ListPropertiesService, PaletteTreeView, WebcomponentManifestParserService, CodeViewMonaco } from '@node-projects/web-component-designer';
 import createDefaultServiceContainer from '@node-projects/web-component-designer/dist/elements/services/DefaultServiceBootstrap';
 
 let serviceContainer = createDefaultServiceContainer();
@@ -7,13 +7,15 @@ let rootDir = "/web-component-designer-demo";
 if (window.location.hostname == 'localhost' || window.location.hostname == '127.0.0.1')
   rootDir = '';
 serviceContainer.register("htmlParserService", new NodeHtmlParserService(rootDir + '/node_modules/@node-projects/node-html-parser-esm/dist/index.js'));
-serviceContainer.config.codeViewWidget = CodeViewAce;
+serviceContainer.config.codeViewWidget = CodeViewMonaco;
 LazyLoader.LoadText('./dist/custom-element-properties.json').then(data => serviceContainer.register("propertyService", new ListPropertiesService(JSON.parse(data))));
 
 import { DockSpawnTsWebcomponent } from 'dock-spawn-ts/lib/js/webcomponent/DockSpawnTsWebcomponent';
 import { DockManager } from 'dock-spawn-ts/lib/js/DockManager';
-import { BaseCustomWebComponentConstructorAppend, css, html, LazyLoader } from '@node-projects/base-custom-webcomponent';
+import { BaseCustomWebComponentConstructorAppend, css, Disposable, html, LazyLoader } from '@node-projects/base-custom-webcomponent';
 import { CommandHandling } from './CommandHandling'
+import { StyleEditor } from './styleEditor.js';
+import './styleEditor.js';
 
 DockSpawnTsWebcomponent.cssRootDirectory = "./node_modules/dock-spawn-ts/lib/css/";
 
@@ -29,6 +31,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
   _propertyGrid: PropertyGrid;
   _treeView: TreeView;
   _treeViewExtended: TreeViewExtended;
+  _styleEditor: StyleEditor;
 
   static readonly style = css`
     :host {
@@ -116,9 +119,14 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
             dock-spawn-dock-ratio="0.4">
             <node-projects-palette-view id="paletteView"></node-projects-palette-view>
           </div>
+
+          <div id="lower" title="style" dock-spawn-dock-type="down" dock-spawn-dock-ratio="0.25" style="overflow: hidden; width: 100%;">
+            <node-projects-style-editor id="styleEditor"></node-projects-style-editor>
+          </div>
         </dock-spawn-ts>
       </div>
     `;
+  private _styleChangedCb: Disposable;
 
   async ready() {
     this._dock = this._getDomElement('dock');
@@ -127,6 +135,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     this._treeView = this._getDomElement<TreeView>('treeView');
     this._treeViewExtended = this._getDomElement<TreeViewExtended>('treeViewExtended');
     this._propertyGrid = this._getDomElement<PropertyGrid>('propertyGrid');
+    this._styleEditor = this._getDomElement<StyleEditor>('styleEditor');
 
     const linkElement = document.createElement("link");
     linkElement.rel = "stylesheet";
@@ -138,14 +147,20 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
 
     this._dockManager.addLayoutListener({
       onActiveDocumentChange: (manager, panel) => {
+        //await this._waitForChildrenReady();
         if (panel) {
           let element = this._dock.getElementInSlot((<HTMLSlotElement><any>panel.elementContent));
           if (element && element instanceof DocumentContainer) {
             let sampleDocument = element as DocumentContainer;
-
+            if (this._styleChangedCb)
+              this._styleChangedCb.dispose();
+            this._styleEditor.text = sampleDocument.additionalStyleString ?? '';
             this._propertyGrid.instanceServiceContainer = sampleDocument.instanceServiceContainer;
             this._treeViewExtended.instanceServiceContainer = sampleDocument.instanceServiceContainer;
             this._treeView.instanceServiceContainer = sampleDocument.instanceServiceContainer;
+            this._styleChangedCb = this._styleEditor.onTextChanged.single(() => {
+              sampleDocument.additionalStyleString = this._styleEditor.text;
+            });
           }
         }
       },
@@ -154,6 +169,9 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
           let element = this._dock.getElementInSlot((<HTMLSlotElement><any>panel.elementContent));
           if (element && element instanceof DocumentContainer) {
             (<DocumentContainer>element).dispose();
+            if (this._styleChangedCb)
+              this._styleChangedCb.dispose();
+            this._styleChangedCb = null;
           }
         }
       }
@@ -197,6 +215,9 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     let sampleDocument = new DocumentContainer(serviceContainer);
     sampleDocument.setAttribute('dock-spawn-panel-type', 'document');
     sampleDocument.title = "document-" + this._documentNumber;
+    sampleDocument.additionalStyleString = `* { 
+    font-size: 20px;
+}`;
     this._dock.appendChild(sampleDocument);
     if (fixedWidth) {
       sampleDocument.designerView.designerWidth = '400px';
