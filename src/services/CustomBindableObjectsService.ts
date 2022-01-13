@@ -2,6 +2,8 @@ import { IBindableObjectsService, IBindableObject, BindableObjectType } from "@n
 
 export class CustomBindableObjectsService implements IBindableObjectsService {
 
+  readonly name = 'test';
+
   async getBindableObject(fullName: string): Promise<IBindableObject> {
     let objs = await this.getBindableObjects();
     let parts = fullName.split('.');
@@ -17,8 +19,8 @@ export class CustomBindableObjectsService implements IBindableObjectsService {
     return [
       {
         name: 'DemoData', fullName: 'DemoData', type: BindableObjectType.folder, children: [
-          { name: 'value1', fullName: 'DemoData.value1', type: BindableObjectType.number },
-          { name: 'value2', fullName: 'DemoData.value2', type: BindableObjectType.string }
+          { name: 'value1', fullName: 'DemoData.value1', type: BindableObjectType.number, children: false },
+          { name: 'value2', fullName: 'DemoData.value2', type: BindableObjectType.string, children: false }
         ]
       }
     ]

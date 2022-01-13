@@ -1,4 +1,4 @@
-import { BaseCustomWebcomponentBindingsService, JsonFileElementsService, TreeView, TreeViewExtended, PaletteView, PropertyGrid, DocumentContainer, NodeHtmlParserService, CodeViewAce, ListPropertiesService, PaletteTreeView } from '@node-projects/web-component-designer';
+import { BaseCustomWebcomponentBindingsService, JsonFileElementsService, TreeView, TreeViewExtended, PaletteView, PropertyGrid, DocumentContainer, NodeHtmlParserService, CodeViewAce, ListPropertiesService, PaletteTreeView, BindableObjectsBrowser } from '@node-projects/web-component-designer';
 import createDefaultServiceContainer from '@node-projects/web-component-designer/dist/elements/services/DefaultServiceBootstrap';
 
 let serviceContainer = createDefaultServiceContainer();
@@ -14,6 +14,8 @@ import { DockSpawnTsWebcomponent } from 'dock-spawn-ts/lib/js/webcomponent/DockS
 import { DockManager } from 'dock-spawn-ts/lib/js/DockManager';
 import { BaseCustomWebComponentConstructorAppend, css, html, LazyLoader } from '@node-projects/base-custom-webcomponent';
 import { CommandHandling } from './CommandHandling'
+import { CustomBindableObjectsService } from './services/CustomBindableObjectsService';
+import { CustomBindableObjectDragDropService } from './services/CustomBindableObjectDragDropService';
 
 DockSpawnTsWebcomponent.cssRootDirectory = "./node_modules/dock-spawn-ts/lib/css/";
 
@@ -25,7 +27,8 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
   private _dock: DockSpawnTsWebcomponent;
   private _dockManager: DockManager;
   _paletteView: PaletteView;
-  _paletteTree: PaletteTreeView
+  _paletteTree: PaletteTreeView;
+  _bindableObjectsBrowser: BindableObjectsBrowser
   _propertyGrid: PropertyGrid;
   _treeView: TreeView;
   _treeViewExtended: TreeViewExtended;
@@ -99,9 +102,14 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
             <node-projects-palette-tree-view name="paletteTree" id="paletteTree"></node-projects-palette-tree-view>
           </div>
       
-          <div id="treeUpper2" title="Tree" ock-spawn-dock-type="down" dock-spawn-dock-to="treeUpper"
-            dock-spawn-dock-ratio="0.2" style="overflow: hidden; width: 100%;">
+          <div id="treeUpper2" title="Tree" dock-spawn-dock-to="treeUpper"
+            style="overflow: hidden; width: 100%;">
             <node-projects-tree-view name="tree" id="treeView"></node-projects-tree-view>
+          </div>
+
+          <div id="upper3" title="Bind" dock-spawn-dock-to="treeUpper"
+            style="overflow: hidden; width: 100%;">
+            <node-projects-bindable-objects-browser id="bindableObjectsBrowser"></node-projects-bindable-objects-browser>
           </div>
       
           <div title="TreeExtended" dock-spawn-dock-type="down" dock-spawn-dock-to="treeUpper2" dock-spawn-dock-ratio="0.5"
@@ -124,6 +132,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     this._dock = this._getDomElement('dock');
     this._paletteView = this._getDomElement<PaletteView>('paletteView');
     this._paletteTree = this._getDomElement<PaletteTreeView>('paletteTree');
+    this._bindableObjectsBrowser = this._getDomElement<BindableObjectsBrowser>('bindableObjectsBrowser');
     this._treeView = this._getDomElement<TreeView>('treeView');
     this._treeViewExtended = this._getDomElement<TreeViewExtended>('treeViewExtended');
     this._propertyGrid = this._getDomElement<PropertyGrid>('propertyGrid');
@@ -171,6 +180,8 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     serviceContainer.register('elementsService', new JsonFileElementsService('patternfly', './dist/elements-pfe.json'));
     serviceContainer.register('elementsService', new JsonFileElementsService('mwc', './dist/elements-mwc.json'));
     serviceContainer.register('elementsService', new JsonFileElementsService('native', './node_modules/@node-projects/web-component-designer/config/elements-native.json'));
+    serviceContainer.register('bindableObjectsService', new CustomBindableObjectsService());
+    serviceContainer.register('bindableObjectDragDropService', new CustomBindableObjectDragDropService());
 
     serviceContainer.globalContext.onToolChanged.on((e) => {
       let name = [...serviceContainer.designerTools.entries()].filter(({ 1: v }) => v === e.newValue).map(([k]) => k)[0];
@@ -187,6 +198,8 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
 
     this._paletteView.loadControls(serviceContainer, serviceContainer.elementsServices);
     this._paletteTree.loadControls(serviceContainer, serviceContainer.elementsServices);
+    this._paletteTree.loadControls(serviceContainer, serviceContainer.elementsServices);
+    this._bindableObjectsBrowser.initialize(serviceContainer);
     this._propertyGrid.serviceContainer = serviceContainer;
   }
 
