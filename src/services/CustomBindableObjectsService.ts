@@ -4,18 +4,18 @@ export class CustomBindableObjectsService implements IBindableObjectsService {
 
   readonly name = 'test';
 
-  async getBindableObject(fullName: string): Promise<IBindableObject> {
+  async getBindableObject(fullName: string): Promise<IBindableObject<any>> {
     let objs = await this.getBindableObjects();
     let parts = fullName.split('.');
-    let result: IBindableObject = null;
+    let result: IBindableObject<any> = null;
     for (let p of parts) {
       result = objs.find(x => x.name == p);
-      objs = <IBindableObject[]>result.children
+      objs = <IBindableObject<any>[]>result.children
     }
     return result;
   }
 
-  async getBindableObjects(parent?: IBindableObject): Promise<IBindableObject[]> {
+  async getBindableObjects(parent?: IBindableObject<any>): Promise<IBindableObject<any>[]> {
     return [
       {
         name: 'DemoData', fullName: 'DemoData', type: BindableObjectType.folder, children: [

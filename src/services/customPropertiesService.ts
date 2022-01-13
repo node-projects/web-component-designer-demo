@@ -1,16 +1,21 @@
-import { IProperty, IPropertiesService, IDesignItem } from '@node-projects/web-component-designer';
+import { IProperty, IPropertiesService, IDesignItem, PropertyType } from '@node-projects/web-component-designer';
+import { BindingTarget } from '@node-projects/web-component-designer/dist/elements/item/BindingTarget';
 import { ValueType } from '@node-projects/web-component-designer/dist/elements/services/propertiesService/ValueType';
 
 export class CustomPropertiesService implements IPropertiesService {
+    
+    getPropertyTarget(designItem: IDesignItem, property: IProperty): BindingTarget {
+      return BindingTarget.property;
+    }
     
     clearValue(designItems: IDesignItem[], property: IProperty) {
       // throw new Error('Method not implemented.');
     }
     isSet(designItems: IDesignItem[], property: IProperty): ValueType {
-      throw new Error("Method not implemented.");
+      return ValueType.none;
     }
     getUnsetValue(designItems: IDesignItem[], property: IProperty) {
-      throw new Error("Method not implemented.");
+      return null;
     }
 
     setValue(designItems: IDesignItem[], property: IProperty, value: any) {
@@ -34,7 +39,7 @@ export class CustomPropertiesService implements IPropertiesService {
 
     getProperties(designItem: IDesignItem): IProperty[] {
         let properties: IProperty[] = [];
-        properties.push({ name: "Test 1", type: "string", service: this });            
+        properties.push({ name: "Test 1", type: "string", service: this, propertyType: PropertyType.propertyAndAttribute });            
         return properties;
     }
 }

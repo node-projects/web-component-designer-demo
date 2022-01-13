@@ -1,21 +1,26 @@
 import { DesignItem, IBindableObject, IBindableObjectDragDropService, IDesignerCanvas, InsertAction } from "@node-projects/web-component-designer";
 
 export class CustomBindableObjectDragDropService implements IBindableObjectDragDropService {
-  dragOver(event: DragEvent, bindableObject: IBindableObject): "none" | "copy" | "link" | "move" {
+
+  dragEnter(designerCanvas: IDesignerCanvas, event: DragEvent) { }
+
+  dragLeave(designerCanvas: IDesignerCanvas, event: DragEvent) { }
+
+  dragOver(designerCanvas: IDesignerCanvas, event: DragEvent): "none" | "copy" | "link" | "move" {
     return 'copy';
   }
 
-  async drop(designerView: IDesignerCanvas, event: DragEvent, bindableObject: IBindableObject) {
-    const position = designerView.getNormalizedEventCoordinates(event);
+  drop(designerCanvas: IDesignerCanvas, event: DragEvent, bindableObject: IBindableObject<any>) {
+    const position = designerCanvas.getNormalizedEventCoordinates(event);
     const input = document.createElement('input');
-    const di = DesignItem.createDesignItemFromInstance(input, designerView.serviceContainer, designerView.instanceServiceContainer);
+    const di = DesignItem.createDesignItemFromInstance(input, designerCanvas.serviceContainer, designerCanvas.instanceServiceContainer);
     const grp = di.openGroup("Insert");
-    di.setAttribute('value', "[[this.objects['" + bindableObject.fullName+"']]]")
+    di.setAttribute('value', "[[this.objects['" + bindableObject.fullName + "']]]")
     di.setStyle('position', 'absolute');
     di.setStyle('left', position.x + 'px');
     di.setStyle('top', position.y + 'px');
-    designerView.instanceServiceContainer.undoService.execute(new InsertAction(designerView.rootDesignItem, designerView.rootDesignItem.childCount, di));
+    designerCanvas.instanceServiceContainer.undoService.execute(new InsertAction(designerCanvas.rootDesignItem, designerCanvas.rootDesignItem.childCount, di));
     grp.commit();
-    requestAnimationFrame(() => designerView.instanceServiceContainer.selectionService.setSelectedElements([di]));
+    requestAnimationFrame(() => designerCanvas.instanceServiceContainer.selectionService.setSelectedElements([di]));
   }
 }
