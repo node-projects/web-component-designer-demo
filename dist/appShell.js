@@ -109,6 +109,12 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         sampleDocument.additionalStyleString = `* { 
     font-size: 20px;
 }`;
+        sampleDocument.tabIndex = 0;
+        sampleDocument.addEventListener('keydown', (e) => {
+            if (e.key == "Escape") {
+                e.stopPropagation();
+            }
+        }, true);
         this._dock.appendChild(sampleDocument);
         if (fixedWidth) {
             sampleDocument.designerView.designerWidth = '400px';
