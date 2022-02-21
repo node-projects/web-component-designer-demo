@@ -201,7 +201,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     serviceContainer.register('elementsService', new JsonFileElementsService('elix', './dist/elements-elix.json'));
     serviceContainer.register('elementsService', new JsonFileElementsService('patternfly', './dist/elements-pfe.json'));
     serviceContainer.register('elementsService', new JsonFileElementsService('mwc', './dist/elements-mwc.json'));
-    serviceContainer.register('elementsService', new JsonFileElementsService('native',  rootDir + '/node_modules/@node-projects/web-component-designer/config/elements-native.json'));
+    serviceContainer.register('elementsService', new JsonFileElementsService('native', rootDir + '/node_modules/@node-projects/web-component-designer/config/elements-native.json'));
     serviceContainer.register('bindableObjectsService', new CustomBindableObjectsService());
     serviceContainer.register('bindableObjectDragDropService', new CustomBindableObjectDragDropService());
 
@@ -233,6 +233,12 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     sampleDocument.additionalStyleString = `* { 
     font-size: 20px;
 }`;
+    sampleDocument.tabIndex = 0;
+    sampleDocument.addEventListener('keydown', (e) => {
+      if (e.key == "Escape") {
+        e.stopPropagation();
+      }
+    }, true);
     this._dock.appendChild(sampleDocument);
     if (fixedWidth) {
       sampleDocument.designerView.designerWidth = '400px';
