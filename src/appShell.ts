@@ -206,7 +206,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     serviceContainer.register('bindableObjectDragDropService', new CustomBindableObjectDragDropService());
 
     serviceContainer.globalContext.onToolChanged.on((e) => {
-      let name = [...serviceContainer.designerTools.entries()].filter(({ 1: v }) => v === e.newValue).map(([k]) => k)[0];
+      let name = [...serviceContainer.designerTools.entries()].filter(({ 1: v }) => v === e.newValue.tool).map(([k]) => k)[0];
       if (e.newValue == null)
         name = "Pointer"
       const buttons = Array.from<HTMLButtonElement>(document.getElementById('tools').querySelectorAll('[data-command]'));
