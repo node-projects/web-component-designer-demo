@@ -51,7 +51,7 @@ const config = {
             complexSelectors: [
                 {
                     replacement: '::slotted(sp-menu)',
-                    selector: '.spectrum-Menu .spectrum-Menu',
+                    selector: /.spectrum-Menu .spectrum-Menu(?!-)/,
                 },
                 {
                     replacement:
@@ -175,9 +175,19 @@ const config = {
         {
             name: 'menu-divider',
             host: {
-                selector: '.spectrum-Menu-divider',
+                selector: '.spectrum-Menu',
             },
             exclude: [/\.spectrum-Menu(?!-divider)/],
+            complexSelectors: [
+                {
+                    replacement: ':host',
+                    selector: '.spectrum-Menu .spectrum-Menu-divider',
+                },
+                {
+                    replacement: ':host',
+                    selector: /^\.spectrum-Menu-divider/,
+                },
+            ],
         },
     ],
 };
