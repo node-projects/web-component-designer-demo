@@ -213,7 +213,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
   }
 
   private async loadNpmPackage(pkg: string) {
-    const baseUrl = 'http://unpkg.com/' + pkg + '/';
+    const baseUrl = window.location.protocol + '//unpkg.com/' + pkg + '/';
 
     const packageJsonUrl = baseUrl + 'package.json';
     this._npmStatus.innerText = "loading package.json";
@@ -249,7 +249,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
       return;
     }
     this._npmStatus.innerText = "loading dependency: " + dependency;
-    const baseUrl = 'http://unpkg.com/' + dependency + '/';
+    const baseUrl = window.location.protocol + '//unpkg.com/' + dependency + '/';
 
     const packageJsonUrl = baseUrl + 'package.json';
     this._npmStatus.innerText = "loading package.json";
