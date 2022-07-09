@@ -1,4 +1,4 @@
-import { BaseCustomWebcomponentBindingsService, JsonFileElementsService, TreeView, TreeViewExtended, PaletteView, PropertyGrid, DocumentContainer, NodeHtmlParserService, ListPropertiesService, PaletteTreeView, WebcomponentManifestParserService, CodeViewMonaco, BindableObjectsBrowser, ExtensionType, EditTextWithStyloExtensionProvider, WebcomponentManifestElementsService, WebcomponentManifestPropertiesService } from '@node-projects/web-component-designer';
+import { BaseCustomWebcomponentBindingsService, JsonFileElementsService, TreeView, TreeViewExtended, PaletteView, PropertyGrid, DocumentContainer, NodeHtmlParserService, ListPropertiesService, PaletteTreeView, CodeViewMonaco, BindableObjectsBrowser, ExtensionType, EditTextWithStyloExtensionProvider, WebcomponentManifestElementsService, WebcomponentManifestPropertiesService } from '@node-projects/web-component-designer';
 import createDefaultServiceContainer from '@node-projects/web-component-designer/dist/elements/services/DefaultServiceBootstrap';
 
 let serviceContainer = createDefaultServiceContainer();
