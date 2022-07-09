@@ -15,7 +15,7 @@
   <script src="./node_modules/jquery/dist/jquery.min.js"></script>
   <script src="./node_modules/jquery.fancytree/dist/jquery.fancytree-all-deps.min.js"></script>
   <script src="./node_modules/jquery.fancytree/dist/modules/jquery.fancytree.table.js"></script>
-  
+
   <link rel="stylesheet" href="./node_modules/metro4-dist/css/metro-all.min.css">
   <link rel="stylesheet" href="./node_modules/@fortawesome/fontawesome-free/css/all.min.css">
 
@@ -26,7 +26,14 @@
 
   <!-- if you use Moacco Editor -->
   <script src="./node_modules/monaco-editor/min/vs/loader.js"></script>
- 
+
+  <script type="esms-options">
+    {
+      "shimMode": true
+    }
+  </script>
+  <script src="./node_modules/es-module-shims/dist/es-module-shims.js"></script>
+
   <!-- if you use ACE Editor -->
   <!--<script src="./node_modules/ace-builds/src-min-noconflict/ace.js"></script>
   <script src="./node_modules/ace-builds/src-min-noconflict/ext-language_tools.js"></script>-->
@@ -87,11 +94,11 @@
       animation-delay: 0;
     }
 
-    .tool-button[disabled] > div {
+    .tool-button[disabled]>div {
       opacity: 0.2;
     }
 
-    .tool-button > div {
+    .tool-button>div {
       width: 100%;
       height: 100%;
     }
@@ -225,33 +232,38 @@
         </div>
         <div class="group flex-column">
           <div class="toolbar" id="tools">
-              <!-- Is the Rectangle Selector necssary, when the Pointer tool does the same thing? -->
-              <!-- <button class="tool-button" data-command="setTool" data-command-parameter="RectangleSelector" title="Rectangle Selector"><i class="far fa-object-group"></i></button> -->
-              <button class="tool-button" data-command="setTool" data-command-parameter="Pointer" title="Pointer tool"
+            <!-- Is the Rectangle Selector necssary, when the Pointer tool does the same thing? -->
+            <!-- <button class="tool-button" data-command="setTool" data-command-parameter="RectangleSelector" title="Rectangle Selector"><i class="far fa-object-group"></i></button> -->
+            <button class="tool-button" data-command="setTool" data-command-parameter="Pointer" title="Pointer tool"
               style="background: green; background-image: url('./assets/images/layout/PointerTool.svg'); background-size: 60%;background-repeat: no-repeat;background-position: center;"></button>
-              <button class="tool-button" data-command="setTool" data-command-parameter="MagicWandSelector" title="Magic Wand Selector"
+            <button class="tool-button" data-command="setTool" data-command-parameter="MagicWandSelector"
+              title="Magic Wand Selector"
               style="background-image: url('./assets/images/layout/MagicWandTool.svg'); background-size: 60%;background-repeat: no-repeat;background-position: center;"></button>
-              <button class="tool-button" data-command="setTool" data-command-parameter="DrawLine" title="Draw Line"
+            <button class="tool-button" data-command="setTool" data-command-parameter="DrawLine" title="Draw Line"
               style="background-image: url('./assets/images/layout/DrawLineTool.svg'); background-size: 60%;background-repeat: no-repeat;background-position: center;"></button>
-              <button class="tool-button" data-command="setTool" data-command-parameter="DrawPath" title="Draw Path"
+            <button class="tool-button" data-command="setTool" data-command-parameter="DrawPath" title="Draw Path"
               style="background-image: url('./assets/images/layout/DrawPathTool.svg'); background-size: 60%;background-repeat: no-repeat;background-position: center;"></button>
-              <button class="tool-button" data-command="setTool" data-command-parameter="DrawRect" title="Draw Rectangle"
+            <button class="tool-button" data-command="setTool" data-command-parameter="DrawRect" title="Draw Rectangle"
               style="background-image: url('./assets/images/layout/DrawRectTool.svg'); background-size: 60%;background-repeat: no-repeat;background-position: center;"></button>
-              <button class="tool-button" data-command="setTool" data-command-parameter="DrawEllipsis" title="Draw Ellipsis"
+            <button class="tool-button" data-command="setTool" data-command-parameter="DrawEllipsis"
+              title="Draw Ellipsis"
               style="background-image: url('./assets/images/layout/DrawEllipTool.svg'); background-size: 60%;background-repeat: no-repeat;background-position: center;"></button>
-              <button class="tool-button" data-command="setTool" data-command-parameter="PickColor" title="Color picker"
+            <button class="tool-button" data-command="setTool" data-command-parameter="PickColor" title="Color picker"
               style="background-image: url('./assets/images/layout/ColorPickerTool.svg'); background-size: 60%;background-repeat: no-repeat;background-position: center;"></button>
-              <button class="tool-button" data-command="setTool" data-command-parameter="Zoom" title="Zoom tool"
+            <button class="tool-button" data-command="setTool" data-command-parameter="Zoom" title="Zoom tool"
               style="background-image: url('./assets/images/layout/ZoomTool.svg'); background-size: 60%;background-repeat: no-repeat;background-position: center;"></button>
-              <button class="tool-button" data-command="setTool" data-command-parameter="Text" title="Text tool"
+            <button class="tool-button" data-command="setTool" data-command-parameter="Text" title="Text tool"
               style="background-image: url('./assets/images/layout/TextTool.svg'); background-size: 60%;background-repeat: no-repeat;background-position: center;"></button>
-              <button class="tool-button" data-command="setTool" data-command-parameter="TextBoc" title="Textbox Tool"
+            <button class="tool-button" data-command="setTool" data-command-parameter="TextBoc" title="Textbox Tool"
               style="background-image: url('./assets/images/layout/TextBoxTool.svg'); background-size: 60%;background-repeat: no-repeat;background-position: center;"></button>
           </div>
           <div class="toolbar" id="color">
-            <input type="color" title="stroke color" data-command="setStrokeColor" value="#000000" style="padding: 0; width:20px; height:20px; margin-right: 5px;">
-            <input type="color" title="fill brush" data-command="setFillBrush" value="#ffffff" style="padding: 0; width:20px; height:20px; margin-right: 5px;">   
-            <input type="range" title="stroke thickness" data-command="setStrokeThickness" min="1" max="20" value="3" style="padding: 0; width:80px; height:20px; margin-right: 5px;">   
+            <input type="color" title="stroke color" data-command="setStrokeColor" value="#000000"
+              style="padding: 0; width:20px; height:20px; margin-right: 5px;">
+            <input type="color" title="fill brush" data-command="setFillBrush" value="#ffffff"
+              style="padding: 0; width:20px; height:20px; margin-right: 5px;">
+            <input type="range" title="stroke thickness" data-command="setStrokeThickness" min="1" max="20" value="3"
+              style="padding: 0; width:80px; height:20px; margin-right: 5px;">
           </div>
           <span class="title">Tools</span>
         </div>
@@ -269,7 +281,7 @@
             CTL + DragElements -> Disable Snapline placement
           </p>
           <span class="title">info</span>
-          
+
         </div>
         <div style="position: absolute; right: 0;">
           <div class="group" style="height: 111px; border-left: 1px solid #dadbdc; inline-size: fit-content;">
@@ -288,7 +300,8 @@
   </nav>
   <node-projects-app-shell id="shell" style="height: calc(100% - 121px); width: 100%; position: absolute;">
   </node-projects-app-shell>
-  <div id="load" style="position: absolute; width: 100%; height: 100%; z-index: 9999999999; top: 0; left: 0; background: white;">
+  <div id="load"
+    style="position: absolute; width: 100%; height: 100%; z-index: 9999999999; top: 0; left: 0; background: white;">
     <div class="lds-facebook">
       <div></div>
       <div></div>

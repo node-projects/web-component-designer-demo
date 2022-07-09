@@ -1,4 +1,4 @@
-import { BaseCustomWebcomponentBindingsService, JsonFileElementsService, DocumentContainer, NodeHtmlParserService, ListPropertiesService, WebcomponentManifestParserService, CodeViewMonaco, ExtensionType, EditTextWithStyloExtensionProvider } from '/web-component-designer-demo/node_modules/@node-projects/web-component-designer/./dist/index.js';
+import { BaseCustomWebcomponentBindingsService, JsonFileElementsService, DocumentContainer, NodeHtmlParserService, ListPropertiesService, CodeViewMonaco, ExtensionType, EditTextWithStyloExtensionProvider, WebcomponentManifestElementsService, WebcomponentManifestPropertiesService } from '/web-component-designer-demo/node_modules/@node-projects/web-component-designer/./dist/index.js';
 import createDefaultServiceContainer from '/web-component-designer-demo/node_modules/@node-projects/web-component-designer/dist/elements/services/DefaultServiceBootstrap.js';
 let serviceContainer = createDefaultServiceContainer();
 serviceContainer.register("bindingService", new BaseCustomWebcomponentBindingsService());
@@ -31,6 +31,12 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         this._treeViewExtended = this._getDomElement('treeViewExtended');
         this._propertyGrid = this._getDomElement('propertyGrid');
         this._styleEditor = this._getDomElement('styleEditor');
+        this._npmInput = this._getDomElement('npmInput');
+        this._npmStatus = this._getDomElement('npmStatus');
+        this._npmInput.onkeydown = (e) => {
+            if (e.key == 'Enter')
+                this.loadNpmPackage(this._npmInput.value);
+        };
         const linkElement = document.createElement("link");
         linkElement.rel = "stylesheet";
         linkElement.href = "./assets/dockspawn.css";
@@ -72,7 +78,60 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         await this._setupServiceContainer();
         this.newDocument(false);
     }
+    async loadNpmPackage(pkg) {
+        const baseUrl = 'http://unpkg.com/' + pkg + '/';
+        const packageJsonUrl = baseUrl + 'package.json';
+        this._npmStatus.innerText = "loading package.json";
+        const packageJson = await fetch(packageJsonUrl);
+        const packageJsonObj = await packageJson.json();
+        if (packageJsonObj.dependencies) {
+            for (let d in packageJsonObj.dependencies) {
+                console.log('from:', pkg, 'dependency', d);
+                await this.loadDependency(d, packageJsonObj.dependencies[d]);
+            }
+        }
+        let customElementsUrl = baseUrl + 'customElements.json';
+        if (packageJsonObj.customElements) {
+            customElementsUrl = baseUrl + packageJsonObj.customElements;
+        }
+        this._npmStatus.innerText = "loading custom-elements.json";
+        const customElementsJson = await fetch(customElementsUrl);
+        const customElementsJsonObj = await customElementsJson.json();
+        let elements = new WebcomponentManifestElementsService(packageJsonObj.name, baseUrl, customElementsJsonObj);
+        serviceContainer.register('elementsService', elements);
+        let properties = new WebcomponentManifestPropertiesService(packageJsonObj.name, customElementsJsonObj);
+        serviceContainer.register('propertyService', properties);
+        this._paletteTree.loadControls(serviceContainer, serviceContainer.elementsServices);
+        this._npmStatus.innerText = "none";
+    }
+    async loadDependency(dependency, version) {
+        if (dependency.startsWith('@types')) {
+            console.log('ignoring wrong dependency: ', dependency);
+            return;
+        }
+        this._npmStatus.innerText = "loading dependency: " + dependency;
+        const baseUrl = 'http://unpkg.com/' + dependency + '/';
+        const packageJsonUrl = baseUrl + 'package.json';
+        this._npmStatus.innerText = "loading package.json";
+        const packageJson = await fetch(packageJsonUrl);
+        const packageJsonObj = await packageJson.json();
+        if (packageJsonObj.dependencies) {
+            for (let d in packageJsonObj.dependencies) {
+                console.log('from:', dependency, 'dependency', d);
+                await this.loadDependency(d, packageJsonObj.dependencies[d]);
+            }
+        }
+        //console.log('package.json', dependency, packageJsonObj);
+        //todo - use exports of package.json for importMap
+        const importMap = { imports: {}, scopes: {} };
+        importMap.imports[dependency] = baseUrl + packageJsonObj.main;
+        importMap.imports[dependency + '/'] = baseUrl;
+        //console.log('importMap:', importMap);
+        //@ts-ignore
+        importShim.addImportMap(importMap);
+    }
     async _setupServiceContainer() {
+        /*
         serviceContainer.registerMultiple(['elementsService', 'propertyService'], new WebcomponentManifestParserService('qing-button', rootDir + '/node_modules/qing-button/custom-elements.json'));
         serviceContainer.register('elementsService', new JsonFileElementsService('demo', './dist/elements-demo.json'));
         serviceContainer.register('elementsService', new JsonFileElementsService('paint', './dist/elements-paint.json'));
@@ -80,6 +139,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         serviceContainer.register('elementsService', new JsonFileElementsService('elix', './dist/elements-elix.json'));
         serviceContainer.register('elementsService', new JsonFileElementsService('patternfly', './dist/elements-pfe.json'));
         serviceContainer.register('elementsService', new JsonFileElementsService('mwc', './dist/elements-mwc.json'));
+        */
         serviceContainer.register('elementsService', new JsonFileElementsService('native', rootDir + '/node_modules/@node-projects/web-component-designer/config/elements-native.json'));
         serviceContainer.register('bindableObjectsService', new CustomBindableObjectsService());
         serviceContainer.register('bindableObjectDragDropService', new CustomBindableObjectDragDropService());
@@ -96,7 +156,6 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
             }
         });
         this._paletteView.loadControls(serviceContainer, serviceContainer.elementsServices);
-        this._paletteTree.loadControls(serviceContainer, serviceContainer.elementsServices);
         this._paletteTree.loadControls(serviceContainer, serviceContainer.elementsServices);
         this._bindableObjectsBrowser.initialize(serviceContainer);
         this._propertyGrid.serviceContainer = serviceContainer;
@@ -186,8 +245,18 @@ AppShell.template = html `
       <div class="app-body">
         <dock-spawn-ts id="dock" style="width: 100%; height: 100%; position: relative;">
           <div id="treeUpper" title="Palette" dock-spawn-dock-type="left" dock-spawn-dock-ratio="0.2"
-            style="overflow: hidden; width: 100%;">
-            <node-projects-palette-tree-view name="paletteTree" id="paletteTree"></node-projects-palette-tree-view>
+            style="overflow: hidden; width: 100%; height: 100%; display: flex; flex-direction: column;">
+            <node-projects-palette-tree-view name="paletteTree" id="paletteTree" style="height: calc(100% - 44px);"></node-projects-palette-tree-view>
+            <div style="height: 28px;">
+              <input list="npmInputList" id="npmInput" title="NPM Package Name" placeholder="npm-package" type="text" style="height: 100%; border: solid black 1px; box-sizing: border-box; width: 100%">
+              <datalist id="npmInputList">
+                <option value="@patternfly/pfe-card@next"></option>
+                <option value="@patternfly/pfe-button@next"></option>
+                <!--<option value="@shoelace-style/shoelace"></option>-->
+                <!--<option value="@thepassle/generic-components"></option>-->
+              </datalist>
+            </div>
+            <div style="height: 16px; font-size: 10px;" id="npmStatus">none</div>
           </div>
       
           <div id="treeUpper2" title="Tree" dock-spawn-dock-to="treeUpper"
