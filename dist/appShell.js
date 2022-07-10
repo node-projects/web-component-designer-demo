@@ -25,10 +25,10 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     }
     async ready() {
         this._dock = this._getDomElement('dock');
-        this._paletteView = this._getDomElement('paletteView');
+        //this._paletteView = this._getDomElement<PaletteView>('paletteView');
         this._paletteTree = this._getDomElement('paletteTree');
-        this._bindableObjectsBrowser = this._getDomElement('bindableObjectsBrowser');
-        this._treeView = this._getDomElement('treeView');
+        //this._bindableObjectsBrowser = this._getDomElement<BindableObjectsBrowser>('bindableObjectsBrowser');
+        //this._treeView = this._getDomElement<TreeView>('treeView');
         this._treeViewExtended = this._getDomElement('treeViewExtended');
         this._propertyGrid = this._getDomElement('propertyGrid');
         this._styleEditor = this._getDomElement('styleEditor');
@@ -64,7 +64,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
                         this._styleEditor.text = (_a = sampleDocument.additionalStyleString) !== null && _a !== void 0 ? _a : '';
                         this._propertyGrid.instanceServiceContainer = sampleDocument.instanceServiceContainer;
                         this._treeViewExtended.instanceServiceContainer = sampleDocument.instanceServiceContainer;
-                        this._treeView.instanceServiceContainer = sampleDocument.instanceServiceContainer;
+                        //this._treeView.instanceServiceContainer = sampleDocument.instanceServiceContainer;
                         this._styleChangedCb = this._styleEditor.onTextChanged.single(() => {
                             sampleDocument.additionalStyleString = this._styleEditor.text;
                         });
@@ -173,9 +173,9 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
                     b.style.backgroundColor = "";
             }
         });
-        this._paletteView.loadControls(serviceContainer, serviceContainer.elementsServices);
+        //this._paletteView.loadControls(serviceContainer, serviceContainer.elementsServices);
         this._paletteTree.loadControls(serviceContainer, serviceContainer.elementsServices);
-        this._bindableObjectsBrowser.initialize(serviceContainer);
+        //this._bindableObjectsBrowser.initialize(serviceContainer);
         this._propertyGrid.serviceContainer = serviceContainer;
     }
     newDocument(fixedWidth) {
@@ -284,6 +284,7 @@ AppShell.template = html `
             <div style="height: 16px; font-size: 10px; white-space: nowrap;" id="npmStatus">none</div>
           </div>
       
+          <!--
           <div id="treeUpper2" title="Tree" dock-spawn-dock-to="treeUpper"
             style="overflow: hidden; width: 100%;">
             <node-projects-tree-view name="tree" id="treeView"></node-projects-tree-view>
@@ -293,8 +294,9 @@ AppShell.template = html `
             style="overflow: hidden; width: 100%;">
             <node-projects-bindable-objects-browser id="bindableObjectsBrowser"></node-projects-bindable-objects-browser>
           </div>
-      
-          <div title="TreeExtended" dock-spawn-dock-type="down" dock-spawn-dock-to="treeUpper2" dock-spawn-dock-ratio="0.5"
+          -->
+
+          <div title="TreeExtended" dock-spawn-dock-type="down" dock-spawn-dock-to="treeUpper" dock-spawn-dock-ratio="0.5"
             style="overflow: hidden; width: 100%;">
             <node-projects-tree-view-extended name="tree" id="treeViewExtended"></node-projects-tree-view-extended>
           </div>
@@ -302,10 +304,13 @@ AppShell.template = html `
           <div id="attributeDock" title="Properties" dock-spawn-dock-type="right" dock-spawn-dock-ratio="0.2">
             <node-projects-property-grid-with-header id="propertyGrid"></node-projects-property-grid-with-header>
           </div>
+
+          <!--
           <div id="p" title="Elements" dock-spawn-dock-type="down" dock-spawn-dock-to="attributeDock"
             dock-spawn-dock-ratio="0.4">
             <node-projects-palette-view id="paletteView"></node-projects-palette-view>
           </div>
+          -->
 
           <div id="lower" title="style" dock-spawn-dock-type="down" dock-spawn-dock-ratio="0.25" style="overflow: hidden; width: 100%;">
             <node-projects-style-editor id="styleEditor"></node-projects-style-editor>
