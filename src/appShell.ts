@@ -114,7 +114,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
                   <option value="@patternfly/pfe-button@next"></option>
                   <option value="@christianliebel/paint"></option>
                   <option value="wired-elements"></option>
-                  <option value="@spectrum-web-components/action-bar"></option>
+                  <option value="@spectrum-web-components/button"></option>
                   <!--<option value="@shoelace-style/shoelace"></option>-->
                   <!--<option value="@thepassle/generic-components"></option>-->
                 </datalist>
