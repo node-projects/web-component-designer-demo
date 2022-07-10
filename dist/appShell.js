@@ -21,6 +21,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         super(...arguments);
         this.mainPage = 'designer';
         this._documentNumber = 0;
+        this._dependecies = new Map();
     }
     async ready() {
         this._dock = this._getDomElement('dock');
@@ -33,9 +34,16 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         this._styleEditor = this._getDomElement('styleEditor');
         this._npmInput = this._getDomElement('npmInput');
         this._npmStatus = this._getDomElement('npmStatus');
+        this._getNpm = this._getDomElement('getNpm');
         this._npmInput.onkeydown = (e) => {
-            if (e.key == 'Enter')
+            if (e.key == 'Enter') {
                 this.loadNpmPackage(this._npmInput.value);
+                this._npmInput.value = '';
+            }
+        };
+        this._getNpm.onclick = (e) => {
+            this.loadNpmPackage(this._npmInput.value);
+            this._npmInput.value = '';
         };
         const linkElement = document.createElement("link");
         linkElement.rel = "stylesheet";
@@ -86,8 +94,8 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         const packageJsonObj = await packageJson.json();
         if (packageJsonObj.dependencies) {
             for (let d in packageJsonObj.dependencies) {
-                console.log('from:', pkg, 'dependency', d);
-                await this.loadDependency(d, packageJsonObj.dependencies[d]);
+                //console.log('from:', pkg, 'dependency', d);
+                this.loadDependency(d, packageJsonObj.dependencies[d]);
             }
         }
         let customElementsUrl = baseUrl + 'customElements.json';
@@ -96,29 +104,40 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         }
         this._npmStatus.innerText = "loading custom-elements.json";
         const customElementsJson = await fetch(customElementsUrl);
-        const customElementsJsonObj = await customElementsJson.json();
-        let elements = new WebcomponentManifestElementsService(packageJsonObj.name, baseUrl, customElementsJsonObj);
-        serviceContainer.register('elementsService', elements);
-        let properties = new WebcomponentManifestPropertiesService(packageJsonObj.name, customElementsJsonObj);
-        serviceContainer.register('propertyService', properties);
-        this._paletteTree.loadControls(serviceContainer, serviceContainer.elementsServices);
+        if (customElementsJson.ok) {
+            const customElementsJsonObj = await customElementsJson.json();
+            let elements = new WebcomponentManifestElementsService(packageJsonObj.name, baseUrl, customElementsJsonObj);
+            serviceContainer.register('elementsService', elements);
+            let properties = new WebcomponentManifestPropertiesService(packageJsonObj.name, customElementsJsonObj);
+            serviceContainer.register('propertyService', properties);
+            this._paletteTree.loadControls(serviceContainer, serviceContainer.elementsServices);
+        }
+        else {
+            console.warn('npm package: ' + pkg + ' - no custom-elements.json found, only loading javascript module');
+            if (packageJsonObj.module) {
+                //@ts-ignore
+                importShim(baseUrl + packageJsonObj.module);
+            }
+        }
         this._npmStatus.innerText = "none";
     }
     async loadDependency(dependency, version) {
+        if (this._dependecies.has(dependency))
+            return;
+        this._dependecies.set(dependency, true);
         if (dependency.startsWith('@types')) {
-            console.log('ignoring wrong dependency: ', dependency);
+            console.warn('ignoring wrong dependency: ', dependency);
             return;
         }
         this._npmStatus.innerText = "loading dependency: " + dependency;
         const baseUrl = window.location.protocol + '//unpkg.com/' + dependency + '/';
         const packageJsonUrl = baseUrl + 'package.json';
-        this._npmStatus.innerText = "loading package.json";
         const packageJson = await fetch(packageJsonUrl);
         const packageJsonObj = await packageJson.json();
         if (packageJsonObj.dependencies) {
             for (let d in packageJsonObj.dependencies) {
-                console.log('from:', dependency, 'dependency', d);
-                await this.loadDependency(d, packageJsonObj.dependencies[d]);
+                //console.log('from:', dependency, 'dependency', d);
+                this.loadDependency(d, packageJsonObj.dependencies[d]);
             }
         }
         //console.log('package.json', dependency, packageJsonObj);
@@ -131,10 +150,9 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         importShim.addImportMap(importMap);
     }
     async _setupServiceContainer() {
+        serviceContainer.register('elementsService', new JsonFileElementsService('demo', './dist/elements-demo.json'));
         /*
         serviceContainer.registerMultiple(['elementsService', 'propertyService'], new WebcomponentManifestParserService('qing-button', rootDir + '/node_modules/qing-button/custom-elements.json'));
-        serviceContainer.register('elementsService', new JsonFileElementsService('demo', './dist/elements-demo.json'));
-        serviceContainer.register('elementsService', new JsonFileElementsService('paint', './dist/elements-paint.json'));
         serviceContainer.register('elementsService', new JsonFileElementsService('wired', './dist/elements-wired.json'));
         serviceContainer.register('elementsService', new JsonFileElementsService('elix', './dist/elements-elix.json'));
         serviceContainer.register('elementsService', new JsonFileElementsService('patternfly', './dist/elements-pfe.json'));
@@ -248,15 +266,22 @@ AppShell.template = html `
             style="overflow: hidden; width: 100%; height: 100%; display: flex; flex-direction: column;">
             <node-projects-palette-tree-view name="paletteTree" id="paletteTree" style="height: calc(100% - 44px);"></node-projects-palette-tree-view>
             <div style="height: 28px;">
-              <input list="npmInputList" id="npmInput" title="NPM Package Name" placeholder="npm-package" type="text" style="height: 100%; border: solid black 1px; box-sizing: border-box; width: 100%">
-              <datalist id="npmInputList">
-                <option value="@patternfly/pfe-card@next"></option>
-                <option value="@patternfly/pfe-button@next"></option>
-                <!--<option value="@shoelace-style/shoelace"></option>-->
-                <!--<option value="@thepassle/generic-components"></option>-->
-              </datalist>
+              <div style="display: flex; height: 100%;">
+                <input list="npmInputList" id="npmInput" title="NPM Package Name" placeholder="npm-package" type="text" style="height: 100%; border: solid black 1px; box-sizing: border-box; width: 100%">
+                <datalist id="npmInputList">
+                  <option value="@patternfly/pfe-clipboard@next"></option>
+                  <option value="@patternfly/pfe-card@next"></option>
+                  <option value="@patternfly/pfe-button@next"></option>
+                  <option value="@christianliebel/paint"></option>
+                  <option value="wired-elements"></option>
+                  <option value="@spectrum-web-components/action-bar"></option>
+                  <!--<option value="@shoelace-style/shoelace"></option>-->
+                  <!--<option value="@thepassle/generic-components"></option>-->
+                </datalist>
+                <button id="getNpm">get</button>
+              </div>
             </div>
-            <div style="height: 16px; font-size: 10px;" id="npmStatus">none</div>
+            <div style="height: 16px; font-size: 10px; white-space: nowrap;" id="npmStatus">none</div>
           </div>
       
           <div id="treeUpper2" title="Tree" dock-spawn-dock-to="treeUpper"
