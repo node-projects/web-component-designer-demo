@@ -24,37 +24,24 @@
     "typescript": "^4.7.4"
   },
   "dependencies": {
-    "@christianliebel/paint": "^1.1.1",
     "@doubletrade/lit-datepicker": "^1.0.0",
     "@fortawesome/fontawesome-free": "^6.1.1",
-    "@material/mwc-button": "^0.26.1",
-    "@material/mwc-checkbox": "^0.26.1",
-    "@material/mwc-circular-progress": "^0.26.1",
-    "@material/mwc-textfield": "^0.26.1",
     "@node-projects/base-custom-webcomponent": "0.9.1",
     "@node-projects/lean-he-esm": "^3.3.0",
     "@node-projects/node-html-parser-esm": "^2.4.1",
     "@node-projects/web-component-designer": "^0.0.106",
     "@papyrs/stylo": "^0.0.33",
-    "@patternfly/pfe-badge": "^1.12.3",
-    "@patternfly/pfe-button": "^1.12.3",
-    "@patternfly/pfe-codeblock": "^1.12.3",
-    "@spectrum-web-components/bundle": "^0.26.0",
-    "@spectrum-web-components/button": "^0.17.7",
     "@vanillawc/wc-marquee": "^1.0.31",
     "ace-builds": "^1.7.1",
     "codemirror": "^6.0.1",
     "construct-style-sheets-polyfill": "^3.1.0",
     "dock-spawn-ts": "^2.403.0",
-    "elix": "^15.0.1",
     "es-module-shims": "^1.5.8",
     "jquery": "^3.6.0",
     "jquery.fancytree": "^2.38.2",
     "lit": "^2.2.7",
     "metro4-dist": "^4.5.0",
     "mobile-drag-drop": "^3.0.0-beta.0",
-    "monaco-editor": "^0.33.0",
-    "qing-button": "^8.2.6",
-    "wired-elements": "*"
+    "monaco-editor": "^0.33.0"
   }
 }
