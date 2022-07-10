@@ -175,7 +175,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
 
     this._npmInput = this._getDomElement<HTMLInputElement>('npmInput');
     this._npmStatus = this._getDomElement<HTMLDivElement>('npmStatus');
-    this._getNpm =  this._getDomElement<HTMLButtonElement>('getNpm');
+    this._getNpm = this._getDomElement<HTMLButtonElement>('getNpm');
     this._npmInput.onkeydown = (e) => {
       if (e.key == 'Enter') {
         this.loadNpmPackage(this._npmInput.value);
@@ -183,8 +183,8 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
       }
     }
     this._getNpm.onclick = (e) => {
-        this.loadNpmPackage(this._npmInput.value);
-        this._npmInput.value = '';
+      this.loadNpmPackage(this._npmInput.value);
+      this._npmInput.value = '';
     }
 
 
@@ -301,7 +301,10 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     //console.log('package.json', dependency, packageJsonObj);
     //todo - use exports of package.json for importMap
     const importMap = { imports: {}, scopes: {} };
-    importMap.imports[dependency] = baseUrl + packageJsonObj.main;
+    let mainImport = packageJsonObj.main;
+    if (packageJsonObj.module)
+      mainImport = packageJsonObj.module;
+    importMap.imports[dependency] = baseUrl + mainImport;
     importMap.imports[dependency + '/'] = baseUrl;
     //console.log('importMap:', importMap);
 
