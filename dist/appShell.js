@@ -143,7 +143,10 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         //console.log('package.json', dependency, packageJsonObj);
         //todo - use exports of package.json for importMap
         const importMap = { imports: {}, scopes: {} };
-        importMap.imports[dependency] = baseUrl + packageJsonObj.main;
+        let mainImport = packageJsonObj.main;
+        if (packageJsonObj.module)
+            mainImport = packageJsonObj.module;
+        importMap.imports[dependency] = baseUrl + mainImport;
         importMap.imports[dependency + '/'] = baseUrl;
         //console.log('importMap:', importMap);
         //@ts-ignore
