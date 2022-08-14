@@ -11,7 +11,13 @@
   <title>web-component-designer-demo</title>
 
   <script src="./node_modules/construct-style-sheets-polyfill/dist/adoptedStyleSheets.js"></script>
-
+  <script type="esms-options">
+    {
+      "shimMode": true
+    }
+  </script>
+  <script src="./node_modules/es-module-shims/dist/es-module-shims.js"></script>
+  
   <script src="./node_modules/jquery/dist/jquery.min.js"></script>
   <script src="./node_modules/jquery.fancytree/dist/jquery.fancytree-all-deps.min.js"></script>
   <script src="./node_modules/jquery.fancytree/dist/modules/jquery.fancytree.table.js"></script>
@@ -26,13 +32,6 @@
 
   <!-- if you use Moacco Editor -->
   <script src="./node_modules/monaco-editor/min/vs/loader.js"></script>
-
-  <script type="esms-options">
-    {
-      "shimMode": true
-    }
-  </script>
-  <script src="./node_modules/es-module-shims/dist/es-module-shims.js"></script>
 
   <!-- if you use ACE Editor -->
   <!--<script src="./node_modules/ace-builds/src-min-noconflict/ace.js"></script>
