@@ -13,21 +13,19 @@ https://node-projects.github.io/web-component-designer-demo/index.html
   $ npm install
 ```
 
-  * Install dependencies of designer component and build it (as long is not yet a npm package)
+  * Compile typescript after doing changes
 ```
-  $ cd node_modules/@node-projects/web-component-designer
-  $ npm install
-  $ ./node_modules/.bin/tsc
+  $ npm run build (if you use Visual Studio Code, you can also run the build task via Ctrl + Shift + B > tsc:build - tsconfig.json)
 ```
 
-  * Compile Typescript after doing changes
+  * *Link web component designer node module*
+    See https://github.com/node-projects/web-component-designer#readme first
 ```
-  $ npm run build
+  $ npm link "@node-projects/web-component-designer" 
 ```
 
   * Run the app in a local server
 ```
-  $ polymer serve --port 8000 --open
+  $ npm start
 ```
 
-  * Navigate Chrome to [localhost:8000]() to see the app.
