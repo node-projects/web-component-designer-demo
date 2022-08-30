@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "tsc": "tsc",
-    "start": "web-dev-server --node-resolve --open"
+    "start": "web-dev-server --node-resolve --open",
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
