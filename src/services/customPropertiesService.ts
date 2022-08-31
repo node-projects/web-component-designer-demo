@@ -1,8 +1,11 @@
-import { IProperty, IPropertiesService, IDesignItem, PropertyType } from '@node-projects/web-component-designer';
+import { IProperty, IPropertiesService, IDesignItem, PropertyType, IBinding } from '@node-projects/web-component-designer';
 import { BindingTarget } from '@node-projects/web-component-designer/dist/elements/item/BindingTarget';
 import { ValueType } from '@node-projects/web-component-designer/dist/elements/services/propertiesService/ValueType';
 
 export class CustomPropertiesService implements IPropertiesService {
+  getBinding(designItems: IDesignItem[], property: IProperty): IBinding {
+    throw new Error('Method not implemented.');
+  }
 
   getPropertyTarget(designItem: IDesignItem, property: IProperty): BindingTarget {
     return BindingTarget.property;
