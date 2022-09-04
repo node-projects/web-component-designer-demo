@@ -83,7 +83,7 @@ export class StyleEditor extends BaseCustomWebComponentConstructorAppend {
 
     async ready() {
         //@ts-ignore
-        const style = await import("monaco-editor/min/vs/editor/editor.main.css", { assert: { type: 'css' } });
+        const style = await importShim("monaco-editor/min/vs/editor/editor.main.css", { assert: { type: 'css' } });
         //@ts-ignore
         this.shadowRoot.adoptedStyleSheets = [style.default, this.constructor.style];
 
