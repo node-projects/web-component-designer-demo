@@ -242,12 +242,13 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     const packageJson = await fetch(packageJsonUrl);
     const packageJsonObj = await packageJson.json();
 
+    const depPromises : Promise<void>[] = []
     if (packageJsonObj.dependencies) {
       for (let d in packageJsonObj.dependencies) {
-        //console.log('from:', pkg, 'dependency', d);
         this.loadDependency(d, packageJsonObj.dependencies[d]);
       }
     }
+    await Promise.all(depPromises)
     let customElementsUrl = baseUrl + 'customElements.json';
     if (packageJsonObj.customElements) {
       customElementsUrl = baseUrl + packageJsonObj.customElements;
