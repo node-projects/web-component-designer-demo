@@ -95,7 +95,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         const depPromises = [];
         if (packageJsonObj.dependencies) {
             for (let d in packageJsonObj.dependencies) {
-                this.loadDependency(d, packageJsonObj.dependencies[d]);
+                depPromises.push(this.loadDependency(d, packageJsonObj.dependencies[d]));
             }
         }
         await Promise.all(depPromises);
@@ -135,12 +135,13 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         const packageJsonUrl = baseUrl + 'package.json';
         const packageJson = await fetch(packageJsonUrl);
         const packageJsonObj = await packageJson.json();
+        const depPromises = [];
         if (packageJsonObj.dependencies) {
             for (let d in packageJsonObj.dependencies) {
-                //console.log('from:', dependency, 'dependency', d);
-                this.loadDependency(d, packageJsonObj.dependencies[d]);
+                depPromises.push(this.loadDependency(d, packageJsonObj.dependencies[d]));
             }
         }
+        await Promise.all(depPromises);
         //console.log('package.json', dependency, packageJsonObj);
         //todo - use exports of package.json for importMap
         const importMap = { imports: {}, scopes: {} };
