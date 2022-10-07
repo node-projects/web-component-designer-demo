@@ -83,6 +83,30 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
                 }
             }
         });
+        let customElementsRegistry = window.customElements;
+        const registry = {};
+        registry.define = function (name, constructor, options) {
+            try {
+                customElementsRegistry.define(name, constructor, options);
+            }
+            catch (err) {
+                console.error(err);
+            }
+        };
+        registry.get = function (name) {
+            return customElementsRegistry.get(name);
+        };
+        registry.upgrade = function (node) {
+            return customElementsRegistry.upgrade(node);
+        };
+        registry.whenDefined = function (name) {
+            return customElementsRegistry.whenDefined(name);
+        };
+        Object.defineProperty(window, "customElements", {
+            get() {
+                return registry;
+            }
+        });
         await this._setupServiceContainer();
         this.newDocument(false);
     }
@@ -117,7 +141,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
             console.warn('npm package: ' + pkg + ' - no custom-elements.json found, only loading javascript module');
             if (packageJsonObj.module) {
                 //@ts-ignore
-                importShim(baseUrl + packageJsonObj.module);
+                await importShim(baseUrl + packageJsonObj.module);
             }
         }
         this._npmStatus.innerText = "none";
