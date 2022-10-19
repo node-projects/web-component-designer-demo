@@ -1,4 +1,4 @@
-import { BaseCustomWebcomponentBindingsService, JsonFileElementsService, DocumentContainer, NodeHtmlParserService, ListPropertiesService, CodeViewMonaco, ExtensionType, EditTextWithStyloExtensionProvider, WebcomponentManifestElementsService, WebcomponentManifestPropertiesService } from '/web-component-designer-demo/node_modules/@node-projects/web-component-designer/./dist/index.js';
+import { BaseCustomWebcomponentBindingsService, JsonFileElementsService, DocumentContainer, NodeHtmlParserService, ListPropertiesService, CodeViewMonaco, ExtensionType, EditTextWithStyloExtensionProvider, WebcomponentManifestElementsService, WebcomponentManifestPropertiesService, PreDefinedElementsService } from '/web-component-designer-demo/node_modules/@node-projects/web-component-designer/./dist/index.js';
 import createDefaultServiceContainer from '/web-component-designer-demo/node_modules/@node-projects/web-component-designer/dist/elements/services/DefaultServiceBootstrap.js';
 let serviceContainer = createDefaultServiceContainer();
 serviceContainer.register("bindingService", new BaseCustomWebcomponentBindingsService());
@@ -6,6 +6,7 @@ let rootDir = "/web-component-designer-demo";
 if (window.location.hostname == 'localhost' || window.location.hostname == '127.0.0.1')
     rootDir = '';
 serviceContainer.register("htmlParserService", new NodeHtmlParserService(rootDir + '/node_modules/@node-projects/node-html-parser-esm/dist/index.js'));
+//serviceContainer.register("htmlParserService", new LitElementParserService(rootDir + '/node_modules/@node-projects/node-html-parser-esm/dist/index.js', rootDir + '/node_modules/esprima-next/dist/esm/esprima.js'));
 serviceContainer.config.codeViewWidget = CodeViewMonaco;
 serviceContainer.designerExtensions.set(ExtensionType.Doubleclick, [new EditTextWithStyloExtensionProvider()]);
 LazyLoader.LoadText('./dist/custom-element-properties.json').then(data => serviceContainer.register("propertyService", new ListPropertiesService(JSON.parse(data))));
@@ -128,7 +129,13 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
             customElementsUrl = baseUrl + packageJsonObj.customElements;
         }
         this._npmStatus.innerText = "loading custom-elements.json";
-        const customElementsJson = await fetch(customElementsUrl);
+        let customElementsJson = await fetch(customElementsUrl);
+        if (!customElementsJson.ok && packageJsonObj.homepage) {
+            const url = new URL(packageJsonObj.homepage);
+            const newurl = 'https://raw.githubusercontent.com/' + url.pathname + '/master/custom-elements.json';
+            customElementsJson = await fetch(newurl);
+            console.warn("custom-elements.json was missing from npm package, but was loaded from github as a fallback.");
+        }
         if (customElementsJson.ok) {
             const customElementsJsonObj = await customElementsJson.json();
             let elements = new WebcomponentManifestElementsService(packageJsonObj.name, baseUrl, customElementsJsonObj);
@@ -139,10 +146,55 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         }
         else {
             console.warn('npm package: ' + pkg + ' - no custom-elements.json found, only loading javascript module');
+            let customElementsRegistry = window.customElements;
+            const registry = {};
+            const newElements = [];
+            registry.define = function (name, constructor, options) {
+                newElements.push(name);
+                customElementsRegistry.define(name, constructor, options);
+            };
+            registry.get = function (name) {
+                return customElementsRegistry.get(name);
+            };
+            registry.upgrade = function (node) {
+                return customElementsRegistry.upgrade(node);
+            };
+            registry.whenDefined = function (name) {
+                return customElementsRegistry.whenDefined(name);
+            };
+            Object.defineProperty(window, "customElements", {
+                get() {
+                    return registry;
+                }
+            });
             if (packageJsonObj.module) {
                 //@ts-ignore
                 await importShim(baseUrl + packageJsonObj.module);
             }
+            else if (packageJsonObj.main) {
+                //@ts-ignore
+                await importShim(baseUrl + packageJsonObj.main);
+            }
+            else if (packageJsonObj.unpkg) {
+                //@ts-ignore
+                await importShim(baseUrl + packageJsonObj.unpkg);
+            }
+            else {
+                console.warn('npm package: ' + pkg + ' - no entry point in package found.');
+            }
+            if (newElements.length > 0) {
+                const elementsCfg = {
+                    elements: newElements
+                };
+                let elService = new PreDefinedElementsService(pkg, elementsCfg);
+                serviceContainer.register('elementsService', elService);
+                this._paletteTree.loadControls(serviceContainer, serviceContainer.elementsServices);
+            }
+            Object.defineProperty(window, "customElements", {
+                get() {
+                    return customElementsRegistry;
+                }
+            });
         }
         this._npmStatus.innerText = "none";
     }
