@@ -46,6 +46,14 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
             this.loadNpmPackage(this._npmInput.value);
             this._npmInput.value = '';
         };
+        let s = window.location.search;
+        if (s.startsWith('?'))
+            s = s.substring(1);
+        let parts = s.split('&');
+        for (let p of parts) {
+            if (p.startsWith('npm='))
+                this.loadNpmPackage(p.substring(4));
+        }
         const linkElement = document.createElement("link");
         linkElement.rel = "stylesheet";
         linkElement.href = "./assets/dockspawn.css";
