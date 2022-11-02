@@ -4,6 +4,9 @@ export class CustomPropertiesService {
     constructor() {
         this.name = "custom";
     }
+    listNeedsRefresh(designItem) {
+        return true;
+    }
     getBinding(designItems, property) {
         throw new Error('Method not implemented.');
     }
