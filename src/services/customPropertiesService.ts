@@ -3,6 +3,10 @@ import { BindingTarget } from '@node-projects/web-component-designer/dist/elemen
 import { ValueType } from '@node-projects/web-component-designer/dist/elements/services/propertiesService/ValueType';
 
 export class CustomPropertiesService implements IPropertiesService {
+  listNeedsRefresh(designItem: IDesignItem): boolean {
+    return true;
+  }
+
   getBinding(designItems: IDesignItem[], property: IProperty): IBinding {
     throw new Error('Method not implemented.');
   }
