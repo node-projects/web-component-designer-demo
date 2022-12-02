@@ -1,10 +1,5 @@
 import { BaseCustomWebComponentConstructorAppend, css, html, TypedEvent } from '/web-component-designer-demo/node_modules/@node-projects/base-custom-webcomponent/./dist/index.js';
 export class StyleEditor extends BaseCustomWebComponentConstructorAppend {
-    constructor() {
-        super();
-        this.onTextChanged = new TypedEvent();
-        this._parseAttributesToProperties();
-    }
     get text() {
         if (this._editor)
             return this._editor.getValue();
@@ -26,6 +21,11 @@ export class StyleEditor extends BaseCustomWebComponentConstructorAppend {
             ]);
         }
         this._errorLine = value;
+    }
+    constructor() {
+        super();
+        this.onTextChanged = new TypedEvent();
+        this._parseAttributesToProperties();
     }
     static initMonacoEditor() {
         return new Promise(async (resolve) => {

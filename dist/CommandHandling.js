@@ -1,3 +1,4 @@
+import { ContextMenu } from '/web-component-designer-demo/node_modules/@node-projects/web-component-designer/./dist/index.js';
 //Command Handling..
 // Setup commands
 export class CommandHandling {
@@ -49,6 +50,37 @@ export class CommandHandling {
                     serviceContainer.globalContext.onFillBrushChanged.on(e => b.value = e.newValue);
             }
         });
+        let undoButton = document.querySelector('[data-command="undo"]');
+        let mouseDownTimer = null;
+        undoButton.onmousedown = (e) => {
+            mouseDownTimer = setTimeout(() => {
+                let target = this.dockManager.activeDocument.elementContent.assignedElements()[0];
+                let entries = target.instanceServiceContainer.undoService.getUndoEntries();
+                let mnu = Array.from(entries).map(x => ({ title: 'undo: ' + x }));
+                ContextMenu.show(mnu, e);
+            }, 300);
+        };
+        undoButton.onmouseup = (e) => {
+            if (mouseDownTimer) {
+                clearTimeout(mouseDownTimer);
+                mouseDownTimer = null;
+            }
+        };
+        let redoButton = document.querySelector('[data-command="redo"]');
+        redoButton.onmousedown = (e) => {
+            mouseDownTimer = setTimeout(() => {
+                let target = this.dockManager.activeDocument.elementContent.assignedElements()[0];
+                let entries = target.instanceServiceContainer.undoService.getRedoEntries();
+                let mnu = Array.from(entries).map(x => ({ title: 'redo: ' + x }));
+                ContextMenu.show(mnu, e);
+            }, 300);
+        };
+        redoButton.onmouseup = (e) => {
+            if (mouseDownTimer) {
+                clearTimeout(mouseDownTimer);
+                mouseDownTimer = null;
+            }
+        };
         setInterval(() => {
             if (this.dockManager.activeDocument) {
                 let target = this.dockManager.activeDocument.elementContent.assignedElements()[0];
