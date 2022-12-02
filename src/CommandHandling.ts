@@ -1,4 +1,4 @@
-import { ServiceContainer } from '@node-projects/web-component-designer';
+import { ContextMenu, DocumentContainer, IContextMenuItem, ServiceContainer } from '@node-projects/web-component-designer';
 import { IUiCommandHandler } from '@node-projects/web-component-designer/dist/commandHandling/IUiCommandHandler';
 import { DockManager } from 'dock-spawn-ts/lib/js/DockManager';
 import { AppShell } from './appShell';
@@ -61,6 +61,39 @@ export class CommandHandling {
           serviceContainer.globalContext.onFillBrushChanged.on(e => b.value = e.newValue);
       }
     });
+
+    let undoButton = <HTMLButtonElement>document.querySelector('[data-command="undo"]')
+    let mouseDownTimer = null;
+    undoButton.onmousedown = (e) => {
+      mouseDownTimer = setTimeout(() => {
+        let target: DocumentContainer = <any>(<HTMLSlotElement><any>this.dockManager.activeDocument.elementContent).assignedElements()[0];
+        let entries = target.instanceServiceContainer.undoService.getUndoEntries();
+        let mnu: IContextMenuItem[] = Array.from(entries).map(x => ({ title: 'undo: ' + x }));
+        ContextMenu.show(mnu, e)
+      }, 300)
+    }
+    undoButton.onmouseup = (e) => {
+      if (mouseDownTimer) {
+        clearTimeout(mouseDownTimer);
+        mouseDownTimer = null;
+      }
+    }
+
+    let redoButton = <HTMLButtonElement>document.querySelector('[data-command="redo"]')
+    redoButton.onmousedown = (e) => {
+      mouseDownTimer = setTimeout(() => {
+        let target: DocumentContainer = <any>(<HTMLSlotElement><any>this.dockManager.activeDocument.elementContent).assignedElements()[0];
+        let entries = target.instanceServiceContainer.undoService.getRedoEntries();
+        let mnu: IContextMenuItem[] = Array.from(entries).map(x => ({ title: 'redo: ' + x }));
+        ContextMenu.show(mnu, e)
+      }, 300)
+    }
+    redoButton.onmouseup = (e) => {
+      if (mouseDownTimer) {
+        clearTimeout(mouseDownTimer);
+        mouseDownTimer = null;
+      }
+    }
 
     setInterval(() => {
       if (this.dockManager.activeDocument) {
