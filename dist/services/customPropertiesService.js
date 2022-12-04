@@ -1,11 +1,12 @@
 import { PropertyType } from '/web-component-designer-demo/node_modules/@node-projects/web-component-designer/./dist/index.js';
 import { BindingTarget } from '/web-component-designer-demo/node_modules/@node-projects/web-component-designer/dist/elements/item/BindingTarget.js';
+import { RefreshMode } from '/web-component-designer-demo/node_modules/@node-projects/web-component-designer/dist/elements/services/propertiesService/IPropertiesService.js';
 export class CustomPropertiesService {
     constructor() {
         this.name = "custom";
     }
-    listNeedsRefresh(designItem) {
-        return true;
+    getRefreshMode(designItem) {
+        return RefreshMode.full;
     }
     getBinding(designItems, property) {
         throw new Error('Method not implemented.');
