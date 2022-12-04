@@ -1,10 +1,11 @@
 import { IProperty, IPropertiesService, IDesignItem, PropertyType, IBinding } from '@node-projects/web-component-designer';
 import { BindingTarget } from '@node-projects/web-component-designer/dist/elements/item/BindingTarget';
+import { RefreshMode } from '@node-projects/web-component-designer/dist/elements/services/propertiesService/IPropertiesService';
 import { ValueType } from '@node-projects/web-component-designer/dist/elements/services/propertiesService/ValueType';
 
 export class CustomPropertiesService implements IPropertiesService {
-  listNeedsRefresh(designItem: IDesignItem): boolean {
-    return true;
+  getRefreshMode(designItem: IDesignItem) {
+    return RefreshMode.full;
   }
 
   getBinding(designItems: IDesignItem[], property: IProperty): IBinding {
