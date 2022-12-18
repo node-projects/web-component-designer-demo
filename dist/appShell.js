@@ -46,6 +46,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
             this.loadNpmPackage(this._npmInput.value);
             this._npmInput.value = '';
         };
+        let code = "";
         let s = window.location.search;
         if (s.startsWith('?'))
             s = s.substring(1);
@@ -53,6 +54,8 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         for (let p of parts) {
             if (p.startsWith('npm='))
                 this.loadNpmPackage(p.substring(4));
+            if (p.startsWith('html='))
+                code = p.substring(5);
         }
         const linkElement = document.createElement("link");
         linkElement.rel = "stylesheet";
@@ -99,7 +102,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
                 customElementsRegistry.define(name, constructor, options);
             }
             catch (err) {
-                console.error(err);
+                console.warn(err);
             }
         };
         registry.get = function (name) {
@@ -117,7 +120,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
             }
         });
         await this._setupServiceContainer();
-        this.newDocument(false);
+        this.newDocument(false, code);
     }
     async loadNpmPackage(pkg) {
         const baseUrl = window.location.protocol + '//unpkg.com/' + pkg + '/';
@@ -132,7 +135,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
             }
         }
         await Promise.all(depPromises);
-        let customElementsUrl = baseUrl + 'customElements.json';
+        let customElementsUrl = baseUrl + 'custom-elements.json';
         if (packageJsonObj.customElements) {
             customElementsUrl = baseUrl + packageJsonObj.customElements;
         }
@@ -281,7 +284,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         //this._bindableObjectsBrowser.initialize(serviceContainer);
         this._propertyGrid.serviceContainer = serviceContainer;
     }
-    newDocument(fixedWidth) {
+    newDocument(fixedWidth, code) {
         this._documentNumber++;
         let sampleDocument = new DocumentContainer(serviceContainer);
         sampleDocument.setAttribute('dock-spawn-panel-type', 'document');
@@ -299,6 +302,9 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         if (fixedWidth) {
             sampleDocument.designerView.designerWidth = '400px';
             sampleDocument.designerView.designerHeight = '400px';
+        }
+        if (code) {
+            sampleDocument.content = code;
         }
     }
 }
@@ -379,6 +385,7 @@ AppShell.template = html `
                   <option value="wired-elements"></option>
                   <option value="@spectrum-web-components/button"></option>
                   <option value="@node-projects/tab.webcomponent"></option>
+                  <option value="@node-projects/gauge.webcomponent"></option>
                   <!--<option value="@shoelace-style/shoelace"></option>-->
                   <!--<option value="@thepassle/generic-components"></option>-->
                 </datalist>
