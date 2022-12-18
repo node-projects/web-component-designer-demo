@@ -146,10 +146,15 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         this._npmStatus.innerText = "loading custom-elements.json";
         let customElementsJson = await fetch(customElementsUrl);
         if (!customElementsJson.ok && packageJsonObj.homepage) {
-            const url = new URL(packageJsonObj.homepage);
-            const newurl = 'https://raw.githubusercontent.com/' + url.pathname + '/master/custom-elements.json';
-            customElementsJson = await fetch(newurl);
-            console.warn("custom-elements.json was missing from npm package, but was loaded from github as a fallback.");
+            try {
+                const url = new URL(packageJsonObj.homepage);
+                const newurl = 'https://raw.githubusercontent.com/' + url.pathname + '/master/custom-elements.json';
+                customElementsJson = await fetch(newurl);
+                console.warn("custom-elements.json was missing from npm package, but was loaded from github as a fallback.");
+            }
+            catch (err) {
+                console.warn("github custom elments json fallback", err);
+            }
         }
         fetch(webComponentDesignerUrl).then(async (x) => {
             if (x.ok) {
@@ -174,6 +179,12 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
             serviceContainer.register('elementsService', elements);
             let properties = new WebcomponentManifestPropertiesService(packageJsonObj.name, customElementsJsonObj);
             serviceContainer.register('propertyService', properties);
+            if (window.location.search.includes("loadAllImports")) {
+                for (let e of await elements.getElements()) {
+                    //@ts-ignore
+                    importShim(e.import);
+                }
+            }
             this._paletteTree.loadControls(serviceContainer, serviceContainer.elementsServices);
         }
         else {
