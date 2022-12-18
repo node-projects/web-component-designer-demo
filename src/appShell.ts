@@ -117,6 +117,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
                   <option value="@christianliebel/paint"></option>
                   <option value="wired-elements"></option>
                   <option value="@spectrum-web-components/button"></option>
+                  <option value="@node-projects/tab.webcomponent"></option>
                   <!--<option value="@shoelace-style/shoelace"></option>-->
                   <!--<option value="@thepassle/generic-components"></option>-->
                 </datalist>
@@ -289,6 +290,10 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     if (packageJsonObj.customElements) {
       customElementsUrl = baseUrl + packageJsonObj.customElements;
     }
+    let webComponentDesignerUrl = baseUrl + 'web-component-designer.json';
+    if (packageJsonObj.webComponentDesigner) {
+      webComponentDesignerUrl = baseUrl + packageJsonObj.webComponentDesigner;
+    }
     this._npmStatus.innerText = "loading custom-elements.json";
     let customElementsJson = await fetch(customElementsUrl);
 
@@ -298,6 +303,25 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
       customElementsJson = await fetch(newurl);
       console.warn("custom-elements.json was missing from npm package, but was loaded from github as a fallback.")
     }
+
+    fetch(webComponentDesignerUrl).then(async x => {
+      if (x.ok) {
+        const webComponentDesignerJson = await x.json();
+        if (webComponentDesignerJson.services) {
+          for (let o in webComponentDesignerJson.services) {
+            for (let s of webComponentDesignerJson.services[o]) {
+              if (s.startsWith('./'))
+                s = s.substring(2);
+              //@ts-ignore
+              const classDefinition = (await importShim(baseUrl + s)).default;
+              //@ts-ignore
+              serviceContainer.register(o, new classDefinition());
+            }
+          }
+        }
+      }
+
+    })
 
     if (customElementsJson.ok) {
       const customElementsJsonObj = await customElementsJson.json();
@@ -408,13 +432,6 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
 
   private async _setupServiceContainer() {
     serviceContainer.register('elementsService', new JsonFileElementsService('demo', './dist/elements-demo.json'));
-    /*
-    serviceContainer.registerMultiple(['elementsService', 'propertyService'], new WebcomponentManifestParserService('qing-button', rootDir + '/node_modules/qing-button/custom-elements.json'));
-    serviceContainer.register('elementsService', new JsonFileElementsService('wired', './dist/elements-wired.json'));
-    serviceContainer.register('elementsService', new JsonFileElementsService('elix', './dist/elements-elix.json'));
-    serviceContainer.register('elementsService', new JsonFileElementsService('patternfly', './dist/elements-pfe.json'));
-    serviceContainer.register('elementsService', new JsonFileElementsService('mwc', './dist/elements-mwc.json'));
-    */
     serviceContainer.register('elementsService', new JsonFileElementsService('native', rootDir + '/node_modules/@node-projects/web-component-designer/config/elements-native.json'));
     serviceContainer.register('bindableObjectsService', new CustomBindableObjectsService());
     serviceContainer.register('bindableObjectDragDropService', new CustomBindableObjectDragDropService());
