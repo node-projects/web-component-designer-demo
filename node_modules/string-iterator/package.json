@@ -1,0 +1,29 @@
+{
+	"name": "string-iterator",
+	"description": "Helper tool for iterating over a string",
+	"keywords": [ "string", "iterate", "loop" ],
+	"author": "Corey Hart <corey@codenothing.com> (http://www.codenothing.com)",
+	"version": "0.0.1",
+	"main": "./index.js",
+	"homepage": "http://github.com/codenothing/StringIterator/",
+	"engines": {
+		"node": ">=0.8"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/codenothing/StringIterator.git"
+	},
+	"scripts": {
+		"test": "make test-all"
+	},
+	"bugs": {
+		"url": "https://github.com/codenothing/StringIterator/issues",
+		"email": "corey@codenothing.com"
+	},
+	"dependencies": {
+	},
+	"devDependencies": {
+		"nlint": "0.0.6",
+		"munit": "0.0.7"
+	}
+}
