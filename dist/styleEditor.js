@@ -6,9 +6,11 @@ export class StyleEditor extends BaseCustomWebComponentConstructorAppend {
         return this._text;
     }
     set text(value) {
+        this._disableTextChangedEvent = true;
         if (this._editor)
             this._editor.setValue(value == null ? '' : value);
         this._text = value;
+        this._disableTextChangedEvent = false;
     }
     get errorLine() {
         return this._errorLine;
@@ -66,7 +68,8 @@ export class StyleEditor extends BaseCustomWebComponentConstructorAppend {
                 this._editor.setValue(this._text);
             this._model = this._editor.getModel();
             this._model.onDidChangeContent((e) => {
-                this.onTextChanged.emit();
+                if (!this._disableTextChangedEvent)
+                    this.onTextChanged.emit();
             });
         }, 1000);
     }

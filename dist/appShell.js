@@ -87,6 +87,9 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
                                 }
                             ];
                         });
+                        sampleDocument.additionalStylesheetChanged.on(() => {
+                            this._styleEditor.text = sampleDocument.additionalStylesheets[0].stylesheet;
+                        });
                     }
                 }
             },
@@ -446,7 +449,7 @@ AppShell.template = html `
           </div>
           -->
 
-          <div id="lower" title="style" dock-spawn-dock-type="down" dock-spawn-dock-ratio="0.25" style="overflow: hidden; width: 100%;">
+          <div id="lower" title="stylesheet.css" dock-spawn-dock-type="down" dock-spawn-dock-ratio="0.25" style="overflow: hidden; width: 100%;">
             <node-projects-style-editor id="styleEditor"></node-projects-style-editor>
           </div>
         </dock-spawn-ts>
