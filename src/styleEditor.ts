@@ -27,9 +27,11 @@ export class StyleEditor extends BaseCustomWebComponentConstructorAppend {
         return this._text;
     }
     public set text(value: string) {
+        this._disableTextChangedEvent = true;
         if (this._editor)
             this._editor.setValue(value == null ? '' : value);
         this._text = value;
+        this._disableTextChangedEvent = false;
     }
 
     private _errorLine: number;
@@ -48,6 +50,7 @@ export class StyleEditor extends BaseCustomWebComponentConstructorAppend {
 
     public readOnly: boolean;
 
+    private _disableTextChangedEvent: boolean;
     public onTextChanged = new TypedEvent<void>();
 
     static readonly properties = {
@@ -108,7 +111,8 @@ export class StyleEditor extends BaseCustomWebComponentConstructorAppend {
 
             this._model = this._editor.getModel();
             this._model.onDidChangeContent((e) => {
-                this.onTextChanged.emit();
+                if (!this._disableTextChangedEvent)
+                    this.onTextChanged.emit();
             });
         }, 1000);
     }
