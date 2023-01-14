@@ -1,4 +1,4 @@
-import { BaseCustomWebcomponentBindingsService, JsonFileElementsService, TreeView, TreeViewExtended, PaletteView, PropertyGrid, DocumentContainer, NodeHtmlParserService, ListPropertiesService, PaletteTreeView, CodeViewMonaco, BindableObjectsBrowser, ExtensionType, EditTextWithStyloExtensionProvider, WebcomponentManifestElementsService, WebcomponentManifestPropertiesService, PreDefinedElementsService } from '@node-projects/web-component-designer';
+import { BaseCustomWebcomponentBindingsService, JsonFileElementsService, TreeView, TreeViewExtended, PaletteView, PropertyGrid, DocumentContainer, NodeHtmlParserService, ListPropertiesService, PaletteTreeView, CodeViewMonaco, BindableObjectsBrowser, ExtensionType, EditTextWithStyloExtensionProvider, WebcomponentManifestElementsService, WebcomponentManifestPropertiesService, PreDefinedElementsService, CssTreeStylesheetService } from '@node-projects/web-component-designer';
 import createDefaultServiceContainer from '@node-projects/web-component-designer/dist/elements/services/DefaultServiceBootstrap';
 
 let serviceContainer = createDefaultServiceContainer();
@@ -10,6 +10,9 @@ serviceContainer.register("htmlParserService", new NodeHtmlParserService(rootDir
 //serviceContainer.register("htmlParserService", new LitElementParserService(rootDir + '/node_modules/@node-projects/node-html-parser-esm/dist/index.js', rootDir + '/node_modules/esprima-next/dist/esm/esprima.js'));
 serviceContainer.config.codeViewWidget = CodeViewMonaco;
 serviceContainer.designerExtensions.set(ExtensionType.Doubleclick, [new EditTextWithStyloExtensionProvider()]);
+
+//Instance Service Container Factories
+serviceContainer.register("stylesheetService", designerCanvas => new CssTreeStylesheetService());
 
 LazyLoader.LoadText('./dist/custom-element-properties.json').then(data => serviceContainer.register("propertyService", new ListPropertiesService(JSON.parse(data))));
 
@@ -221,12 +224,17 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
             let sampleDocument = element as DocumentContainer;
             if (this._styleChangedCb)
               this._styleChangedCb.dispose();
-            this._styleEditor.text = sampleDocument.additionalStyleString ?? '';
+            if (sampleDocument.additionalStylesheets && sampleDocument.additionalStylesheets.length)
+              this._styleEditor.text = sampleDocument.additionalStylesheets[0].stylesheet ?? '';
             this._propertyGrid.instanceServiceContainer = sampleDocument.instanceServiceContainer;
             this._treeViewExtended.instanceServiceContainer = sampleDocument.instanceServiceContainer;
-            //this._treeView.instanceServiceContainer = sampleDocument.instanceServiceContainer;
             this._styleChangedCb = this._styleEditor.onTextChanged.single(() => {
-              sampleDocument.additionalStyleString = this._styleEditor.text;
+              sampleDocument.additionalStylesheets = [
+                {
+                  name: "stylesheet.css",
+                  stylesheet: this._styleEditor.text,
+                }
+              ];
             });
           }
         }
@@ -477,9 +485,14 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     let sampleDocument = new DocumentContainer(serviceContainer);
     sampleDocument.setAttribute('dock-spawn-panel-type', 'document');
     sampleDocument.title = "document-" + this._documentNumber;
-    sampleDocument.additionalStyleString = `* { 
-    font-size: 20px;
-}`;
+    sampleDocument.additionalStylesheets = [
+      {
+        name: "stylesheet.css",
+        stylesheet: `* { 
+      font-size: 20px;
+  }`
+      }
+    ];
     sampleDocument.tabIndex = 0;
     sampleDocument.addEventListener('keydown', (e) => {
       if (e.key == "Escape") {
