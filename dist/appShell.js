@@ -310,9 +310,9 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         sampleDocument.additionalStylesheets = [
             {
                 name: "stylesheet.css",
-                stylesheet: `* { 
-      font-size: 20px;
-  }`
+                stylesheet: `* {
+    font-size: 20px;
+}`
             }
         ];
         sampleDocument.tabIndex = 0;
