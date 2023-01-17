@@ -25,6 +25,7 @@
     "typescript": "^4.9.4"
   },
   "dependencies": {
+    "@adobe/css-tools": "^4.0.2",
     "@doubletrade/lit-datepicker": "^1.0.0",
     "@fortawesome/fontawesome-free": "^6.2.1",
     "@node-projects/base-custom-webcomponent": "0.10.9",
