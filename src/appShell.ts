@@ -225,19 +225,19 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
             if (this._styleChangedCb)
               this._styleChangedCb.dispose();
             if (sampleDocument.additionalStylesheets && sampleDocument.additionalStylesheets.length)
-              this._styleEditor.text = sampleDocument.additionalStylesheets[0].stylesheet ?? '';
+              this._styleEditor.text = sampleDocument.additionalStylesheets[0].content ?? '';
             this._propertyGrid.instanceServiceContainer = sampleDocument.instanceServiceContainer;
             this._treeViewExtended.instanceServiceContainer = sampleDocument.instanceServiceContainer;
             this._styleChangedCb = this._styleEditor.onTextChanged.single(() => {
               sampleDocument.additionalStylesheets = [
                 {
                   name: "stylesheet.css",
-                  stylesheet: this._styleEditor.text,
+                  content: this._styleEditor.text,
                 }
               ];
             });
             sampleDocument.additionalStylesheetChanged.on(() => {
-              this._styleEditor.text = sampleDocument.additionalStylesheets[0].stylesheet;
+              this._styleEditor.text = sampleDocument.additionalStylesheets[0].content;
             })
           }
         }
@@ -491,7 +491,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     sampleDocument.additionalStylesheets = [
       {
         name: "stylesheet.css",
-        stylesheet: `* {
+        content: `* {
     font-size: 20px;
 }`
       }
