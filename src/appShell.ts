@@ -1,4 +1,4 @@
-import { BaseCustomWebcomponentBindingsService, JsonFileElementsService, TreeView, TreeViewExtended, PaletteView, PropertyGrid, DocumentContainer, NodeHtmlParserService, ListPropertiesService, PaletteTreeView, CodeViewMonaco, BindableObjectsBrowser, ExtensionType, EditTextWithStyloExtensionProvider, WebcomponentManifestElementsService, WebcomponentManifestPropertiesService, PreDefinedElementsService, CssTreeStylesheetService } from '@node-projects/web-component-designer';
+import { BaseCustomWebcomponentBindingsService, JsonFileElementsService, TreeView, TreeViewExtended, PaletteView, PropertyGrid, DocumentContainer, NodeHtmlParserService, ListPropertiesService, PaletteTreeView, CodeViewMonaco, BindableObjectsBrowser, ExtensionType, EditTextWithStyloExtensionProvider, WebcomponentManifestElementsService, WebcomponentManifestPropertiesService, PreDefinedElementsService, CssToolsStylesheetService } from '@node-projects/web-component-designer';
 import createDefaultServiceContainer from '@node-projects/web-component-designer/dist/elements/services/DefaultServiceBootstrap';
 
 let serviceContainer = createDefaultServiceContainer();
@@ -12,7 +12,8 @@ serviceContainer.config.codeViewWidget = CodeViewMonaco;
 serviceContainer.designerExtensions.set(ExtensionType.Doubleclick, [new EditTextWithStyloExtensionProvider()]);
 
 //Instance Service Container Factories
-serviceContainer.register("stylesheetService", designerCanvas => new CssTreeStylesheetService());
+serviceContainer.register("stylesheetService", designerCanvas => new CssToolsStylesheetService());
+//serviceContainer.register("stylesheetService", designerCanvas => new CssTreeStylesheetService());
 
 LazyLoader.LoadText('./dist/custom-element-properties.json').then(data => serviceContainer.register("propertyService", new ListPropertiesService(JSON.parse(data))));
 
@@ -238,7 +239,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
             });
             sampleDocument.additionalStylesheetChanged.on(() => {
               this._styleEditor.text = sampleDocument.additionalStylesheets[0].content;
-            })
+            });
           }
         }
       },
