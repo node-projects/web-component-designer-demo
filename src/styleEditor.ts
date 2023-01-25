@@ -19,8 +19,10 @@ export class StyleEditor extends BaseCustomWebComponentConstructorAppend {
         <div id="container" style="width: 100%; height: 100%; position: absolute;"></div>
     `;
 
-    private _text: string;
     private _model: monaco.editor.ITextModel;
+    private _timeout: NodeJS.Timeout;
+
+    private _text: string;
     public get text() {
         if (this._editor)
             return this._editor.getValue();
@@ -111,8 +113,15 @@ export class StyleEditor extends BaseCustomWebComponentConstructorAppend {
 
             this._model = this._editor.getModel();
             this._model.onDidChangeContent((e) => {
-                if (!this._disableTextChangedEvent)
-                    this.onTextChanged.emit();
+                if (!this._disableTextChangedEvent) {
+                    if (this._timeout)
+                        clearTimeout(this._timeout)
+                    this._timeout = setTimeout(() => {
+                        this.onTextChanged.emit();
+                        this._timeout = null;
+                    }, 100);
+
+                }
             });
         }, 1000);
     }
