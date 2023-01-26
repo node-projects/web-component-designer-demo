@@ -68,8 +68,14 @@ export class StyleEditor extends BaseCustomWebComponentConstructorAppend {
                 this._editor.setValue(this._text);
             this._model = this._editor.getModel();
             this._model.onDidChangeContent((e) => {
-                if (!this._disableTextChangedEvent)
-                    this.onTextChanged.emit();
+                if (!this._disableTextChangedEvent) {
+                    if (this._timeout)
+                        clearTimeout(this._timeout);
+                    this._timeout = setTimeout(() => {
+                        this.onTextChanged.emit();
+                        this._timeout = null;
+                    }, 100);
+                }
             });
         }, 1000);
     }

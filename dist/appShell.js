@@ -1,4 +1,4 @@
-import { BaseCustomWebcomponentBindingsService, JsonFileElementsService, DocumentContainer, NodeHtmlParserService, ListPropertiesService, CodeViewMonaco, ExtensionType, EditTextWithStyloExtensionProvider, WebcomponentManifestElementsService, WebcomponentManifestPropertiesService, PreDefinedElementsService, CssTreeStylesheetService } from '/web-component-designer-demo/node_modules/@node-projects/web-component-designer/./dist/index.js';
+import { BaseCustomWebcomponentBindingsService, JsonFileElementsService, DocumentContainer, NodeHtmlParserService, ListPropertiesService, CodeViewMonaco, ExtensionType, EditTextWithStyloExtensionProvider, WebcomponentManifestElementsService, WebcomponentManifestPropertiesService, PreDefinedElementsService, CssToolsStylesheetService } from '/web-component-designer-demo/node_modules/@node-projects/web-component-designer/./dist/index.js';
 import createDefaultServiceContainer from '/web-component-designer-demo/node_modules/@node-projects/web-component-designer/dist/elements/services/DefaultServiceBootstrap.js';
 let serviceContainer = createDefaultServiceContainer();
 serviceContainer.register("bindingService", new BaseCustomWebcomponentBindingsService());
@@ -10,7 +10,8 @@ serviceContainer.register("htmlParserService", new NodeHtmlParserService(rootDir
 serviceContainer.config.codeViewWidget = CodeViewMonaco;
 serviceContainer.designerExtensions.set(ExtensionType.Doubleclick, [new EditTextWithStyloExtensionProvider()]);
 //Instance Service Container Factories
-serviceContainer.register("stylesheetService", designerCanvas => new CssTreeStylesheetService());
+serviceContainer.register("stylesheetService", designerCanvas => new CssToolsStylesheetService());
+//serviceContainer.register("stylesheetService", designerCanvas => new CssTreeStylesheetService());
 LazyLoader.LoadText('./dist/custom-element-properties.json').then(data => serviceContainer.register("propertyService", new ListPropertiesService(JSON.parse(data))));
 import { DockSpawnTsWebcomponent } from '/web-component-designer-demo/node_modules/dock-spawn-ts/lib/js/webcomponent/DockSpawnTsWebcomponent.js';
 import { BaseCustomWebComponentConstructorAppend, css, html, LazyLoader } from '/web-component-designer-demo/node_modules/@node-projects/base-custom-webcomponent/./dist/index.js';
