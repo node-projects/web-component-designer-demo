@@ -2,6 +2,8 @@ import { ContextMenu } from '/web-component-designer-demo/node_modules/@node-pro
 //Command Handling..
 // Setup commands
 export class CommandHandling {
+    dockManager;
+    appShell;
     constructor(dockManager, appShell, serviceContainer) {
         this.dockManager = dockManager;
         this.appShell = appShell;

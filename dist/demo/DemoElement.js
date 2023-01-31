@@ -8,12 +8,22 @@ import { BaseCustomWebComponentConstructorAppend, customElement, html, property 
 import { DemoEnum } from './DemoEnum.js';
 import { DemoStringEnum } from './DemoStringEnum.js';
 let DemoElement = class DemoElement extends BaseCustomWebComponentConstructorAppend {
+    numberProp = 0;
+    specialText = "abc";
+    enumProperty = DemoEnum.value1;
+    enumStringProperty = DemoStringEnum.value1;
+    static template = html `
+  <div>
+    hello
+    <div>[[this.numberProp]]</div>
+    <div>[[this.specialText]]</div>
+    <div>[[this.enumProperty]]</div>
+    <div id="cnt" style="background: lightblue;">Test JS Access</div>
+    <slot></slot>
+  </div>`;
+    _cnt;
     constructor() {
         super();
-        this.numberProp = 0;
-        this.specialText = "abc";
-        this.enumProperty = DemoEnum.value1;
-        this.enumStringProperty = DemoStringEnum.value1;
         this._parseAttributesToProperties();
         this._bindingsParse();
         setInterval(() => {
@@ -24,15 +34,6 @@ let DemoElement = class DemoElement extends BaseCustomWebComponentConstructorApp
         this._cnt.onclick = () => alert('test');
     }
 };
-DemoElement.template = html `
-  <div>
-    hello
-    <div>[[this.numberProp]]</div>
-    <div>[[this.specialText]]</div>
-    <div>[[this.enumProperty]]</div>
-    <div id="cnt" style="background: lightblue;">Test JS Access</div>
-    <slot></slot>
-  </div>`;
 __decorate([
     property(Number)
 ], DemoElement.prototype, "numberProp", void 0);

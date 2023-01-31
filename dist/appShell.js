@@ -20,13 +20,151 @@ import './styleEditor.js';
 import { CustomBindableObjectsService } from './services/CustomBindableObjectsService.js';
 import { CustomBindableObjectDragDropService } from './services/CustomBindableObjectDragDropService.js';
 DockSpawnTsWebcomponent.cssRootDirectory = "./node_modules/dock-spawn-ts/lib/css/";
+function trimStart(text, char) {
+    if (text.startsWith(char))
+        return text.substring(char.length);
+    return text;
+}
 export class AppShell extends BaseCustomWebComponentConstructorAppend {
-    constructor() {
-        super(...arguments);
-        this.mainPage = 'designer';
-        this._documentNumber = 0;
-        this._dependecies = new Map();
+    activeElement;
+    mainPage = 'designer';
+    _documentNumber = 0;
+    _dock;
+    _dockManager;
+    _paletteView;
+    _paletteTree;
+    _bindableObjectsBrowser;
+    _propertyGrid;
+    _treeView;
+    _treeViewExtended;
+    _styleEditor;
+    static style = css `
+    :host {
+      display: block;
+      box-sizing: border-box;
+      position: relative;
+
+      /* Default colour scheme */
+      --canvas-background: white;
+      --almost-black: #141720;
+      --dark-grey: #232733;
+      --medium-grey: #2f3545;
+      --light-grey: #383f52;
+      --highlight-pink: #e91e63;
+      --highlight-blue: #2196f3;
+      --highlight-green: #99ff33;
+      --input-border-color: #596c7a;
     }
+
+    .app-header {
+      background-color: var(--almost-black);
+      color: white;
+      height: 60px;
+      width: 100%;
+      position: fixed;
+      z-index: 100;
+      display: flex;
+      font-size: var(--app-toolbar-font-size, 20px);
+      align-items: center;
+      font-weight: 900;
+      letter-spacing: 2px;
+      padding-left: 10px;
+    }
+
+    .app-body {
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: row;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .heavy {
+      font-weight: 900;
+      letter-spacing: 2px;
+    }
+    .lite {
+      font-weight: 100;
+      opacity: 0.5;
+      letter-spacing: normal;
+    }
+
+    dock-spawn-ts > div {
+      height: 100%;
+    }
+
+    attribute-editor {
+      height: 100%;
+      width: 100%;
+    }
+    `;
+    static template = html `
+      <div class="app-body">
+        <dock-spawn-ts id="dock" style="width: 100%; height: 100%; position: relative;">
+          <div id="treeUpper" title="Palette" dock-spawn-dock-type="left" dock-spawn-dock-ratio="0.2"
+            style="overflow: hidden; width: 100%; height: 100%; display: flex; flex-direction: column;">
+            <node-projects-palette-tree-view name="paletteTree" id="paletteTree" style="height: calc(100% - 44px);"></node-projects-palette-tree-view>
+            <div style="height: 28px;">
+              <div style="display: flex; height: 100%;">
+                <input list="npmInputList" id="npmInput" title="NPM Package Name" placeholder="npm-package" type="text" style="height: 100%; border: solid black 1px; box-sizing: border-box; width: 100%">
+                <datalist id="npmInputList">
+                  <option value="@patternfly/pfe-clipboard@next"></option>
+                  <option value="@patternfly/pfe-card@next"></option>
+                  <option value="@patternfly/pfe-button@next"></option>
+                  <option value="@christianliebel/paint"></option>
+                  <option value="wired-elements"></option>
+                  <option value="@spectrum-web-components/button"></option>
+                  <option value="@node-projects/tab.webcomponent"></option>
+                  <option value="@node-projects/gauge.webcomponent"></option>
+                  <option value="@zooplus/zoo-web-components"></option>
+                  <option value="@wokwi/elements"></option>
+                  <!--<option value="@shoelace-style/shoelace"></option>-->
+                  <!--<option value="@thepassle/generic-components"></option>-->
+                </datalist>
+                <button id="getNpm">get</button>
+              </div>
+            </div>
+            <div style="height: 16px; font-size: 10px; white-space: nowrap;" id="npmStatus">none</div>
+          </div>
+      
+          <!--
+          <div id="treeUpper2" title="Tree" dock-spawn-dock-to="treeUpper"
+            style="overflow: hidden; width: 100%;">
+            <node-projects-tree-view name="tree" id="treeView"></node-projects-tree-view>
+          </div>
+
+          <div id="upper3" title="Bind" dock-spawn-dock-to="treeUpper"
+            style="overflow: hidden; width: 100%;">
+            <node-projects-bindable-objects-browser id="bindableObjectsBrowser"></node-projects-bindable-objects-browser>
+          </div>
+          -->
+
+          <div title="TreeExtended" dock-spawn-dock-type="down" dock-spawn-dock-to="treeUpper" dock-spawn-dock-ratio="0.5"
+            style="overflow: hidden; width: 100%;">
+            <node-projects-tree-view-extended name="tree" id="treeViewExtended"></node-projects-tree-view-extended>
+          </div>
+      
+          <div id="attributeDock" title="Properties" dock-spawn-dock-type="right" dock-spawn-dock-ratio="0.2">
+            <node-projects-property-grid-with-header id="propertyGrid"></node-projects-property-grid-with-header>
+          </div>
+
+          <!--
+          <div id="p" title="Elements" dock-spawn-dock-type="down" dock-spawn-dock-to="attributeDock"
+            dock-spawn-dock-ratio="0.4">
+            <node-projects-palette-view id="paletteView"></node-projects-palette-view>
+          </div>
+          -->
+
+          <div id="lower" title="stylesheet.css" dock-spawn-dock-type="down" dock-spawn-dock-ratio="0.25" style="overflow: hidden; width: 100%;">
+            <node-projects-style-editor id="styleEditor"></node-projects-style-editor>
+          </div>
+        </dock-spawn-ts>
+      </div>
+    `;
+    _styleChangedCb;
+    _npmInput;
+    _npmStatus;
+    _getNpm;
     async ready() {
         this._dock = this._getDomElement('dock');
         //this._paletteView = this._getDomElement<PaletteView>('paletteView');
@@ -68,7 +206,6 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         new CommandHandling(this._dockManager, this, serviceContainer);
         this._dockManager.addLayoutListener({
             onActiveDocumentChange: (manager, panel) => {
-                var _a;
                 //await this._waitForChildrenReady();
                 if (panel) {
                     let element = this._dock.getElementInSlot(panel.elementContent);
@@ -77,7 +214,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
                         if (this._styleChangedCb)
                             this._styleChangedCb.dispose();
                         if (sampleDocument.additionalStylesheets && sampleDocument.additionalStylesheets.length)
-                            this._styleEditor.text = (_a = sampleDocument.additionalStylesheets[0].content) !== null && _a !== void 0 ? _a : '';
+                            this._styleEditor.text = sampleDocument.additionalStylesheets[0].content ?? '';
                         this._propertyGrid.instanceServiceContainer = sampleDocument.instanceServiceContainer;
                         this._treeViewExtended.instanceServiceContainer = sampleDocument.instanceServiceContainer;
                         this._styleChangedCb = this._styleEditor.onTextChanged.single(() => {
@@ -133,8 +270,11 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         await this._setupServiceContainer();
         this.newDocument(false, code);
     }
+    _dependecies = new Map();
+    packageUrl = '//cdn.jsdelivr.net/npm/';
+    //packageUrl = '//unpkg.com/';
     async loadNpmPackage(pkg) {
-        const baseUrl = window.location.protocol + '//unpkg.com/' + pkg + '/';
+        const baseUrl = window.location.protocol + this.packageUrl + pkg + '/';
         const packageJsonUrl = baseUrl + 'package.json';
         this._npmStatus.innerText = "loading package.json";
         const packageJson = await fetch(packageJsonUrl);
@@ -148,11 +288,11 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         await Promise.all(depPromises);
         let customElementsUrl = baseUrl + 'custom-elements.json';
         if (packageJsonObj.customElements) {
-            customElementsUrl = baseUrl + packageJsonObj.customElements;
+            customElementsUrl = baseUrl + trimStart(packageJsonObj.customElements, '/');
         }
         let webComponentDesignerUrl = baseUrl + 'web-component-designer.json';
         if (packageJsonObj.webComponentDesigner) {
-            webComponentDesignerUrl = baseUrl + packageJsonObj.webComponentDesigner;
+            webComponentDesignerUrl = baseUrl + trimStart(packageJsonObj.webComponentDesigner, '/');
         }
         this._npmStatus.innerText = "loading custom-elements.json";
         let customElementsJson = await fetch(customElementsUrl);
@@ -223,15 +363,15 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
             });
             if (packageJsonObj.module) {
                 //@ts-ignore
-                await importShim(baseUrl + packageJsonObj.module);
+                await importShim(baseUrl + trimStart(packageJsonObj.module, '/'));
             }
             else if (packageJsonObj.main) {
                 //@ts-ignore
-                await importShim(baseUrl + packageJsonObj.main);
+                await importShim(baseUrl + trimStart(packageJsonObj.main, '/'));
             }
             else if (packageJsonObj.unpkg) {
                 //@ts-ignore
-                await importShim(baseUrl + packageJsonObj.unpkg);
+                await importShim(baseUrl + trimStart(packageJsonObj.unpkg, '/'));
             }
             else {
                 console.warn('npm package: ' + pkg + ' - no entry point in package found.');
@@ -261,7 +401,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
             return;
         }
         this._npmStatus.innerText = "loading dependency: " + dependency;
-        const baseUrl = window.location.protocol + '//unpkg.com/' + dependency + '/';
+        const baseUrl = window.location.protocol + this.packageUrl + dependency + '/';
         const packageJsonUrl = baseUrl + 'package.json';
         const packageJson = await fetch(packageJsonUrl);
         const packageJsonObj = await packageJson.json();
@@ -278,7 +418,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         let mainImport = packageJsonObj.main;
         if (packageJsonObj.module)
             mainImport = packageJsonObj.module;
-        importMap.imports[dependency] = baseUrl + mainImport;
+        importMap.imports[dependency] = baseUrl + trimStart(mainImport, '/');
         importMap.imports[dependency + '/'] = baseUrl;
         //console.log('importMap:', importMap);
         //@ts-ignore
@@ -335,125 +475,4 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         }
     }
 }
-AppShell.style = css `
-    :host {
-      display: block;
-      box-sizing: border-box;
-      position: relative;
-
-      /* Default colour scheme */
-      --canvas-background: white;
-      --almost-black: #141720;
-      --dark-grey: #232733;
-      --medium-grey: #2f3545;
-      --light-grey: #383f52;
-      --highlight-pink: #e91e63;
-      --highlight-blue: #2196f3;
-      --highlight-green: #99ff33;
-      --input-border-color: #596c7a;
-    }
-
-    .app-header {
-      background-color: var(--almost-black);
-      color: white;
-      height: 60px;
-      width: 100%;
-      position: fixed;
-      z-index: 100;
-      display: flex;
-      font-size: var(--app-toolbar-font-size, 20px);
-      align-items: center;
-      font-weight: 900;
-      letter-spacing: 2px;
-      padding-left: 10px;
-    }
-
-    .app-body {
-      box-sizing: border-box;
-      display: flex;
-      flex-direction: row;
-      height: 100%;
-      overflow: hidden;
-    }
-
-    .heavy {
-      font-weight: 900;
-      letter-spacing: 2px;
-    }
-    .lite {
-      font-weight: 100;
-      opacity: 0.5;
-      letter-spacing: normal;
-    }
-
-    dock-spawn-ts > div {
-      height: 100%;
-    }
-
-    attribute-editor {
-      height: 100%;
-      width: 100%;
-    }
-    `;
-AppShell.template = html `
-      <div class="app-body">
-        <dock-spawn-ts id="dock" style="width: 100%; height: 100%; position: relative;">
-          <div id="treeUpper" title="Palette" dock-spawn-dock-type="left" dock-spawn-dock-ratio="0.2"
-            style="overflow: hidden; width: 100%; height: 100%; display: flex; flex-direction: column;">
-            <node-projects-palette-tree-view name="paletteTree" id="paletteTree" style="height: calc(100% - 44px);"></node-projects-palette-tree-view>
-            <div style="height: 28px;">
-              <div style="display: flex; height: 100%;">
-                <input list="npmInputList" id="npmInput" title="NPM Package Name" placeholder="npm-package" type="text" style="height: 100%; border: solid black 1px; box-sizing: border-box; width: 100%">
-                <datalist id="npmInputList">
-                  <option value="@patternfly/pfe-clipboard@next"></option>
-                  <option value="@patternfly/pfe-card@next"></option>
-                  <option value="@patternfly/pfe-button@next"></option>
-                  <option value="@christianliebel/paint"></option>
-                  <option value="wired-elements"></option>
-                  <option value="@spectrum-web-components/button"></option>
-                  <option value="@node-projects/tab.webcomponent"></option>
-                  <option value="@node-projects/gauge.webcomponent"></option>
-                  <!--<option value="@shoelace-style/shoelace"></option>-->
-                  <!--<option value="@thepassle/generic-components"></option>-->
-                </datalist>
-                <button id="getNpm">get</button>
-              </div>
-            </div>
-            <div style="height: 16px; font-size: 10px; white-space: nowrap;" id="npmStatus">none</div>
-          </div>
-      
-          <!--
-          <div id="treeUpper2" title="Tree" dock-spawn-dock-to="treeUpper"
-            style="overflow: hidden; width: 100%;">
-            <node-projects-tree-view name="tree" id="treeView"></node-projects-tree-view>
-          </div>
-
-          <div id="upper3" title="Bind" dock-spawn-dock-to="treeUpper"
-            style="overflow: hidden; width: 100%;">
-            <node-projects-bindable-objects-browser id="bindableObjectsBrowser"></node-projects-bindable-objects-browser>
-          </div>
-          -->
-
-          <div title="TreeExtended" dock-spawn-dock-type="down" dock-spawn-dock-to="treeUpper" dock-spawn-dock-ratio="0.5"
-            style="overflow: hidden; width: 100%;">
-            <node-projects-tree-view-extended name="tree" id="treeViewExtended"></node-projects-tree-view-extended>
-          </div>
-      
-          <div id="attributeDock" title="Properties" dock-spawn-dock-type="right" dock-spawn-dock-ratio="0.2">
-            <node-projects-property-grid-with-header id="propertyGrid"></node-projects-property-grid-with-header>
-          </div>
-
-          <!--
-          <div id="p" title="Elements" dock-spawn-dock-type="down" dock-spawn-dock-to="attributeDock"
-            dock-spawn-dock-ratio="0.4">
-            <node-projects-palette-view id="paletteView"></node-projects-palette-view>
-          </div>
-          -->
-
-          <div id="lower" title="stylesheet.css" dock-spawn-dock-type="down" dock-spawn-dock-ratio="0.25" style="overflow: hidden; width: 100%;">
-            <node-projects-style-editor id="styleEditor"></node-projects-style-editor>
-          </div>
-        </dock-spawn-ts>
-      </div>
-    `;
 window.customElements.define('node-projects-app-shell', AppShell);

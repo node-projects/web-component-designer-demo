@@ -1,8 +1,7 @@
 import { DesignItem, InsertAction, OverlayLayer } from '/web-component-designer-demo/node_modules/@node-projects/web-component-designer/./dist/index.js';
 export class CustomBindableObjectDragDropService {
-    constructor() {
-        this.rectMap = new Map();
-    }
+    rectMap = new Map();
+    rect;
     dragEnter(designerCanvas, event) {
         const element = designerCanvas.getElementAtPoint({ x: event.x, y: event.y });
         const designItem = DesignItem.GetDesignItem(element);

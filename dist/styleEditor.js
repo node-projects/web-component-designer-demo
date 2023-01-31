@@ -1,5 +1,22 @@
 import { BaseCustomWebComponentConstructorAppend, css, html, TypedEvent } from '/web-component-designer-demo/node_modules/@node-projects/base-custom-webcomponent/./dist/index.js';
 export class StyleEditor extends BaseCustomWebComponentConstructorAppend {
+    static style = css `
+        :host {
+            display: block;
+            height: 100%;
+            width: 100%;
+        }
+
+        .errorDecoration {
+            background-color: red !important;
+        }
+    `;
+    static template = html `
+        <div id="container" style="width: 100%; height: 100%; position: absolute;"></div>
+    `;
+    _model;
+    _timeout;
+    _text;
     get text() {
         if (this._editor)
             return this._editor.getValue();
@@ -12,6 +29,7 @@ export class StyleEditor extends BaseCustomWebComponentConstructorAppend {
         this._text = value;
         this._disableTextChangedEvent = false;
     }
+    _errorLine;
     get errorLine() {
         return this._errorLine;
     }
@@ -24,9 +42,18 @@ export class StyleEditor extends BaseCustomWebComponentConstructorAppend {
         }
         this._errorLine = value;
     }
+    readOnly;
+    _disableTextChangedEvent;
+    onTextChanged = new TypedEvent();
+    static properties = {
+        text: String,
+        readOnly: Boolean
+    };
+    _container;
+    _editor;
+    static _initalized;
     constructor() {
         super();
-        this.onTextChanged = new TypedEvent();
         this._parseAttributesToProperties();
     }
     static initMonacoEditor() {
@@ -98,22 +125,4 @@ export class StyleEditor extends BaseCustomWebComponentConstructorAppend {
         this._editor.trigger('', 'editor.action.clipboardDeleteAction', null);
     }
 }
-StyleEditor.style = css `
-        :host {
-            display: block;
-            height: 100%;
-            width: 100%;
-        }
-
-        .errorDecoration {
-            background-color: red !important;
-        }
-    `;
-StyleEditor.template = html `
-        <div id="container" style="width: 100%; height: 100%; position: absolute;"></div>
-    `;
-StyleEditor.properties = {
-    text: String,
-    readOnly: Boolean
-};
 customElements.define('node-projects-style-editor', StyleEditor);

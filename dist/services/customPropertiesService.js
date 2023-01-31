@@ -2,9 +2,6 @@ import { PropertyType } from '/web-component-designer-demo/node_modules/@node-pr
 import { BindingTarget } from '/web-component-designer-demo/node_modules/@node-projects/web-component-designer/dist/elements/item/BindingTarget.js';
 import { RefreshMode } from '/web-component-designer-demo/node_modules/@node-projects/web-component-designer/dist/elements/services/propertiesService/IPropertiesService.js';
 export class CustomPropertiesService {
-    constructor() {
-        this.name = "custom";
-    }
     getRefreshMode(designItem) {
         return RefreshMode.full;
     }
@@ -29,6 +26,7 @@ export class CustomPropertiesService {
     getValue(designItems, property) {
         // throw new Error("Method not implemented.");
     }
+    name = "custom";
     isHandledElement(designItem) {
         if (designItem.element.nodeName == "test-element")
             return true;
