@@ -129,6 +129,8 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
                   <option value="@spectrum-web-components/button"></option>
                   <option value="@node-projects/tab.webcomponent"></option>
                   <option value="@node-projects/gauge.webcomponent"></option>
+                  <option value="@zooplus/zoo-web-components"></option>
+                  <option value="@wokwi/elements"></option>
                   <!--<option value="@shoelace-style/shoelace"></option>-->
                   <!--<option value="@thepassle/generic-components"></option>-->
                 </datalist>
@@ -294,8 +296,8 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
 
   _dependecies = new Map<string, boolean>()
 
-  //packageUrl = '//cdn.jsdelivr.net/npm/';
-  packageUrl = '//unpkg.com/';
+  packageUrl = '//cdn.jsdelivr.net/npm/';
+  //packageUrl = '//unpkg.com/';
  
 
   private async loadNpmPackage(pkg: string) {
