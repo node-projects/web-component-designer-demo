@@ -29,6 +29,12 @@ import { IElementsJson } from '@node-projects/web-component-designer';
 
 DockSpawnTsWebcomponent.cssRootDirectory = "./node_modules/dock-spawn-ts/lib/css/";
 
+function trimStart(text: string, char: string) {
+  if (text.startsWith(char))
+    return text.substring(char.length)
+  return text;
+}
+
 export class AppShell extends BaseCustomWebComponentConstructorAppend {
   activeElement: HTMLElement;
   mainPage = 'designer';
@@ -123,6 +129,8 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
                   <option value="@spectrum-web-components/button"></option>
                   <option value="@node-projects/tab.webcomponent"></option>
                   <option value="@node-projects/gauge.webcomponent"></option>
+                  <option value="@zooplus/zoo-web-components"></option>
+                  <option value="@wokwi/elements"></option>
                   <!--<option value="@shoelace-style/shoelace"></option>-->
                   <!--<option value="@thepassle/generic-components"></option>-->
                 </datalist>
@@ -288,8 +296,12 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
 
   _dependecies = new Map<string, boolean>()
 
+  packageUrl = '//cdn.jsdelivr.net/npm/';
+  //packageUrl = '//unpkg.com/';
+ 
+
   private async loadNpmPackage(pkg: string) {
-    const baseUrl = window.location.protocol + '//unpkg.com/' + pkg + '/';
+    const baseUrl = window.location.protocol + this.packageUrl + pkg + '/';
 
     const packageJsonUrl = baseUrl + 'package.json';
     this._npmStatus.innerText = "loading package.json";
@@ -305,11 +317,11 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     await Promise.all(depPromises)
     let customElementsUrl = baseUrl + 'custom-elements.json';
     if (packageJsonObj.customElements) {
-      customElementsUrl = baseUrl + packageJsonObj.customElements;
+      customElementsUrl = baseUrl + trimStart(packageJsonObj.customElements, '/');
     }
     let webComponentDesignerUrl = baseUrl + 'web-component-designer.json';
     if (packageJsonObj.webComponentDesigner) {
-      webComponentDesignerUrl = baseUrl + packageJsonObj.webComponentDesigner;
+      webComponentDesignerUrl = baseUrl + trimStart(packageJsonObj.webComponentDesigner, '/');
     }
     this._npmStatus.innerText = "loading custom-elements.json";
     let customElementsJson = await fetch(customElementsUrl);
@@ -390,13 +402,13 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
 
       if (packageJsonObj.module) {
         //@ts-ignore
-        await importShim(baseUrl + packageJsonObj.module)
+        await importShim(baseUrl + trimStart(packageJsonObj.module, '/'))
       } else if (packageJsonObj.main) {
         //@ts-ignore
-        await importShim(baseUrl + packageJsonObj.main)
+        await importShim(baseUrl + trimStart(packageJsonObj.main, '/'))
       } else if (packageJsonObj.unpkg) {
         //@ts-ignore
-        await importShim(baseUrl + packageJsonObj.unpkg)
+        await importShim(baseUrl + trimStart(packageJsonObj.unpkg, '/'))
       } else {
         console.warn('npm package: ' + pkg + ' - no entry point in package found.');
       }
@@ -431,7 +443,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
       return;
     }
     this._npmStatus.innerText = "loading dependency: " + dependency;
-    const baseUrl = window.location.protocol + '//unpkg.com/' + dependency + '/';
+    const baseUrl = window.location.protocol + this.packageUrl + dependency + '/';
 
     const packageJsonUrl = baseUrl + 'package.json';
     const packageJson = await fetch(packageJsonUrl);
@@ -451,7 +463,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     let mainImport = packageJsonObj.main;
     if (packageJsonObj.module)
       mainImport = packageJsonObj.module;
-    importMap.imports[dependency] = baseUrl + mainImport;
+    importMap.imports[dependency] = baseUrl + trimStart(mainImport, '/');
     importMap.imports[dependency + '/'] = baseUrl;
     //console.log('importMap:', importMap);
 
