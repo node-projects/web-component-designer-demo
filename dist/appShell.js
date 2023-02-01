@@ -118,8 +118,8 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
                   <option value="@node-projects/gauge.webcomponent"></option>
                   <option value="@zooplus/zoo-web-components"></option>
                   <option value="@wokwi/elements"></option>
-                  <!--<option value="@shoelace-style/shoelace"></option>-->
-                  <!--<option value="@thepassle/generic-components"></option>-->
+                  <option value="@shoelace-style/shoelace"></option>
+                  <option value="@generic-components/components"></option>
                 </datalist>
                 <button id="getNpm">get</button>
               </div>
