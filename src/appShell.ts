@@ -1,4 +1,4 @@
-import { BaseCustomWebcomponentBindingsService, JsonFileElementsService, TreeView, TreeViewExtended, PaletteView, PropertyGrid, DocumentContainer, NodeHtmlParserService, ListPropertiesService, PaletteTreeView, CodeViewMonaco, BindableObjectsBrowser, ExtensionType, EditTextWithStyloExtensionProvider, WebcomponentManifestElementsService, WebcomponentManifestPropertiesService, PreDefinedElementsService, CssToolsStylesheetService } from '@node-projects/web-component-designer';
+import { BaseCustomWebcomponentBindingsService, JsonFileElementsService, TreeView, TreeViewExtended, PaletteView, PropertyGrid, DocumentContainer, NodeHtmlParserService, ListPropertiesService, PaletteTreeView, CodeViewMonaco, BindableObjectsBrowser, ExtensionType, EditTextWithStyloExtensionProvider, WebcomponentManifestElementsService, WebcomponentManifestPropertiesService, PreDefinedElementsService, CssToolsStylesheetService, removeLeading, removeTrailing } from '@node-projects/web-component-designer';
 import createDefaultServiceContainer from '@node-projects/web-component-designer/dist/elements/services/DefaultServiceBootstrap';
 
 let serviceContainer = createDefaultServiceContainer();
@@ -28,12 +28,6 @@ import { CustomBindableObjectDragDropService } from './services/CustomBindableOb
 import { IElementsJson } from '@node-projects/web-component-designer';
 
 DockSpawnTsWebcomponent.cssRootDirectory = "./node_modules/dock-spawn-ts/lib/css/";
-
-function trimStart(text: string, char: string) {
-  if (text.startsWith(char))
-    return text.substring(char.length)
-  return text;
-}
 
 export class AppShell extends BaseCustomWebComponentConstructorAppend {
   activeElement: HTMLElement;
@@ -264,6 +258,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
       }
     });
 
+    //Registry with error handling
     let customElementsRegistry = window.customElements;
     const registry: any = {};
     registry.define = function (name, constructor, options) {
@@ -298,7 +293,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
 
   packageUrl = '//cdn.jsdelivr.net/npm/';
   //packageUrl = '//unpkg.com/';
- 
+
 
   private async loadNpmPackage(pkg: string) {
     const baseUrl = window.location.protocol + this.packageUrl + pkg + '/';
@@ -316,12 +311,17 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     }
     await Promise.all(depPromises)
     let customElementsUrl = baseUrl + 'custom-elements.json';
+    let elementsRootPath = baseUrl;
     if (packageJsonObj.customElements) {
-      customElementsUrl = baseUrl + trimStart(packageJsonObj.customElements, '/');
+      customElementsUrl = baseUrl + removeTrailing(packageJsonObj.customElements, '/');
+      if (customElementsUrl.includes('/')) {
+        let idx = customElementsUrl.lastIndexOf('/');
+        elementsRootPath = customElementsUrl.substring(0, idx + 1);
+      }
     }
     let webComponentDesignerUrl = baseUrl + 'web-component-designer.json';
     if (packageJsonObj.webComponentDesigner) {
-      webComponentDesignerUrl = baseUrl + trimStart(packageJsonObj.webComponentDesigner, '/');
+      webComponentDesignerUrl = baseUrl + removeLeading(packageJsonObj.webComponentDesigner, '/');
     }
     this._npmStatus.innerText = "loading custom-elements.json";
     let customElementsJson = await fetch(customElementsUrl);
@@ -359,8 +359,9 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
 
     if (customElementsJson.ok) {
       const customElementsJsonObj = await customElementsJson.json();
-
-      let elements = new WebcomponentManifestElementsService(packageJsonObj.name, baseUrl, customElementsJsonObj);
+      console.log(baseUrl);
+      console.log(elementsRootPath);
+      let elements = new WebcomponentManifestElementsService(packageJsonObj.name, elementsRootPath, customElementsJsonObj);
       serviceContainer.register('elementsService', elements);
       let properties = new WebcomponentManifestPropertiesService(packageJsonObj.name, customElementsJsonObj);
       serviceContainer.register('propertyService', properties);
@@ -463,7 +464,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     let mainImport = packageJsonObj.main;
     if (packageJsonObj.module)
       mainImport = packageJsonObj.module;
-    importMap.imports[dependency] = baseUrl + trimStart(mainImport, '/');
+    importMap.imports[dependency] = baseUrl + removeTrailing(mainImport, '/');
     importMap.imports[dependency + '/'] = baseUrl;
     //console.log('importMap:', importMap);
 
