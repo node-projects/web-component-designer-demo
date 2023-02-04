@@ -403,13 +403,13 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
 
       if (packageJsonObj.module) {
         //@ts-ignore
-        await importShim(baseUrl + trimStart(packageJsonObj.module, '/'))
+        await importShim(baseUrl + removeLeading(packageJsonObj.module, '/'))
       } else if (packageJsonObj.main) {
         //@ts-ignore
-        await importShim(baseUrl + trimStart(packageJsonObj.main, '/'))
+        await importShim(baseUrl + removeLeading(packageJsonObj.main, '/'))
       } else if (packageJsonObj.unpkg) {
         //@ts-ignore
-        await importShim(baseUrl + trimStart(packageJsonObj.unpkg, '/'))
+        await importShim(baseUrl + removeLeading(packageJsonObj.unpkg, '/'))
       } else {
         console.warn('npm package: ' + pkg + ' - no entry point in package found.');
       }
