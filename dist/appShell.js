@@ -1,4 +1,4 @@
-import { BaseCustomWebcomponentBindingsService, JsonFileElementsService, DocumentContainer, NodeHtmlParserService, ListPropertiesService, CodeViewMonaco, ExtensionType, EditTextWithStyloExtensionProvider, WebcomponentManifestElementsService, WebcomponentManifestPropertiesService, PreDefinedElementsService, CssToolsStylesheetService, removeLeading, removeTrailing } from '/web-component-designer-demo/node_modules/@node-projects/web-component-designer/./dist/index.js';
+import { NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, DocumentContainer, NodeHtmlParserService, ListPropertiesService, CodeViewMonaco, ExtensionType, EditTextWithStyloExtensionProvider, CssToolsStylesheetService } from '/web-component-designer-demo/node_modules/@node-projects/web-component-designer/./dist/index.js';
 import createDefaultServiceContainer from '/web-component-designer-demo/node_modules/@node-projects/web-component-designer/dist/elements/services/DefaultServiceBootstrap.js';
 let serviceContainer = createDefaultServiceContainer();
 serviceContainer.register("bindingService", new BaseCustomWebcomponentBindingsService());
@@ -11,7 +11,6 @@ serviceContainer.config.codeViewWidget = CodeViewMonaco;
 serviceContainer.designerExtensions.set(ExtensionType.Doubleclick, [new EditTextWithStyloExtensionProvider()]);
 //Instance Service Container Factories
 serviceContainer.register("stylesheetService", designerCanvas => new CssToolsStylesheetService());
-//serviceContainer.register("stylesheetService", designerCanvas => new CssTreeStylesheetService());
 LazyLoader.LoadText('./dist/custom-element-properties.json').then(data => serviceContainer.register("propertyService", new ListPropertiesService(JSON.parse(data))));
 import { DockSpawnTsWebcomponent } from '/web-component-designer-demo/node_modules/dock-spawn-ts/lib/js/webcomponent/DockSpawnTsWebcomponent.js';
 import { BaseCustomWebComponentConstructorAppend, css, html, LazyLoader } from '/web-component-designer-demo/node_modules/@node-projects/base-custom-webcomponent/./dist/index.js';
@@ -26,11 +25,9 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     _documentNumber = 0;
     _dock;
     _dockManager;
-    _paletteView;
     _paletteTree;
     _bindableObjectsBrowser;
     _propertyGrid;
-    _treeView;
     _treeViewExtended;
     _styleEditor;
     static style = css `
@@ -103,9 +100,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
               <div style="display: flex; height: 100%;">
                 <input list="npmInputList" id="npmInput" title="NPM Package Name" placeholder="npm-package" type="text" style="height: 100%; border: solid black 1px; box-sizing: border-box; width: 100%">
                 <datalist id="npmInputList">
-                  <option value="@patternfly/pfe-clipboard@next"></option>
-                  <option value="@patternfly/pfe-card@next"></option>
-                  <option value="@patternfly/pfe-button@next"></option>
+                  <option value="@patternfly/elements"></option>
                   <option value="@christianliebel/paint"></option>
                   <option value="wired-elements"></option>
                   <option value="@spectrum-web-components/button"></option>
@@ -123,11 +118,6 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
           </div>
       
           <!--
-          <div id="treeUpper2" title="Tree" dock-spawn-dock-to="treeUpper"
-            style="overflow: hidden; width: 100%;">
-            <node-projects-tree-view name="tree" id="treeView"></node-projects-tree-view>
-          </div>
-
           <div id="upper3" title="Bind" dock-spawn-dock-to="treeUpper"
             style="overflow: hidden; width: 100%;">
             <node-projects-bindable-objects-browser id="bindableObjectsBrowser"></node-projects-bindable-objects-browser>
@@ -143,13 +133,6 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
             <node-projects-property-grid-with-header id="propertyGrid"></node-projects-property-grid-with-header>
           </div>
 
-          <!--
-          <div id="p" title="Elements" dock-spawn-dock-type="down" dock-spawn-dock-to="attributeDock"
-            dock-spawn-dock-ratio="0.4">
-            <node-projects-palette-view id="paletteView"></node-projects-palette-view>
-          </div>
-          -->
-
           <div id="lower" title="stylesheet.css" dock-spawn-dock-type="down" dock-spawn-dock-ratio="0.25" style="overflow: hidden; width: 100%;">
             <node-projects-style-editor id="styleEditor"></node-projects-style-editor>
           </div>
@@ -160,12 +143,11 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     _npmInput;
     _npmStatus;
     _getNpm;
+    _npmPackageLoader = new NpmPackageLoader();
     async ready() {
         this._dock = this._getDomElement('dock');
-        //this._paletteView = this._getDomElement<PaletteView>('paletteView');
         this._paletteTree = this._getDomElement('paletteTree');
         //this._bindableObjectsBrowser = this._getDomElement<BindableObjectsBrowser>('bindableObjectsBrowser');
-        //this._treeView = this._getDomElement<TreeView>('treeView');
         this._treeViewExtended = this._getDomElement('treeViewExtended');
         this._propertyGrid = this._getDomElement('propertyGrid');
         this._styleEditor = this._getDomElement('styleEditor');
@@ -174,12 +156,12 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         this._getNpm = this._getDomElement('getNpm');
         this._npmInput.onkeydown = (e) => {
             if (e.key == 'Enter') {
-                this.loadNpmPackage(this._npmInput.value);
+                this._npmPackageLoader.loadNpmPackage(this._npmInput.value, serviceContainer, this._paletteTree, state => this._npmStatus.innerText = state);
                 this._npmInput.value = '';
             }
         };
         this._getNpm.onclick = (e) => {
-            this.loadNpmPackage(this._npmInput.value);
+            this._npmPackageLoader.loadNpmPackage(this._npmInput.value, serviceContainer, this._paletteTree, state => this._npmStatus.innerText = state);
             this._npmInput.value = '';
         };
         let code = "";
@@ -189,7 +171,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         let parts = s.split('&');
         for (let p of parts) {
             if (p.startsWith('npm='))
-                this.loadNpmPackage(p.substring(4));
+                this._npmPackageLoader.loadNpmPackage(p.substring(4), serviceContainer, this._paletteTree, state => this._npmStatus.innerText = state);
             if (p.startsWith('html='))
                 code = decodeURI(p.substring(5));
         }
@@ -201,7 +183,6 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         new CommandHandling(this._dockManager, this, serviceContainer);
         this._dockManager.addLayoutListener({
             onActiveDocumentChange: (manager, panel) => {
-                //await this._waitForChildrenReady();
                 if (panel) {
                     let element = this._dock.getElementInSlot(panel.elementContent);
                     if (element && element instanceof DocumentContainer) {
@@ -238,194 +219,8 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
                 }
             }
         });
-        //Registry with error handling
-        let customElementsRegistry = window.customElements;
-        const registry = {};
-        registry.define = function (name, constructor, options) {
-            try {
-                customElementsRegistry.define(name, constructor, options);
-            }
-            catch (err) {
-                console.warn(err);
-            }
-        };
-        registry.get = function (name) {
-            return customElementsRegistry.get(name);
-        };
-        registry.upgrade = function (node) {
-            return customElementsRegistry.upgrade(node);
-        };
-        registry.whenDefined = function (name) {
-            return customElementsRegistry.whenDefined(name);
-        };
-        Object.defineProperty(window, "customElements", {
-            get() {
-                return registry;
-            }
-        });
         await this._setupServiceContainer();
         this.newDocument(false, code);
-    }
-    _dependecies = new Map();
-    packageUrl = '//cdn.jsdelivr.net/npm/';
-    //packageUrl = '//unpkg.com/';
-    async loadNpmPackage(pkg) {
-        const baseUrl = window.location.protocol + this.packageUrl + pkg + '/';
-        const packageJsonUrl = baseUrl + 'package.json';
-        this._npmStatus.innerText = "loading package.json";
-        const packageJson = await fetch(packageJsonUrl);
-        const packageJsonObj = await packageJson.json();
-        const depPromises = [];
-        if (packageJsonObj.dependencies) {
-            for (let d in packageJsonObj.dependencies) {
-                depPromises.push(this.loadDependency(d, packageJsonObj.dependencies[d]));
-            }
-        }
-        await Promise.all(depPromises);
-        let customElementsUrl = baseUrl + 'custom-elements.json';
-        let elementsRootPath = baseUrl;
-        if (packageJsonObj.customElements) {
-            customElementsUrl = baseUrl + removeTrailing(packageJsonObj.customElements, '/');
-            if (customElementsUrl.includes('/')) {
-                let idx = customElementsUrl.lastIndexOf('/');
-                elementsRootPath = customElementsUrl.substring(0, idx + 1);
-            }
-        }
-        let webComponentDesignerUrl = baseUrl + 'web-component-designer.json';
-        if (packageJsonObj.webComponentDesigner) {
-            webComponentDesignerUrl = baseUrl + removeLeading(packageJsonObj.webComponentDesigner, '/');
-        }
-        this._npmStatus.innerText = "loading custom-elements.json";
-        let customElementsJson = await fetch(customElementsUrl);
-        if (!customElementsJson.ok && packageJsonObj.homepage) {
-            try {
-                const url = new URL(packageJsonObj.homepage);
-                const newurl = 'https://raw.githubusercontent.com/' + url.pathname + '/master/custom-elements.json';
-                customElementsJson = await fetch(newurl);
-                console.warn("custom-elements.json was missing from npm package, but was loaded from github as a fallback.");
-            }
-            catch (err) {
-                console.warn("github custom elments json fallback", err);
-            }
-        }
-        fetch(webComponentDesignerUrl).then(async (x) => {
-            if (x.ok) {
-                const webComponentDesignerJson = await x.json();
-                if (webComponentDesignerJson.services) {
-                    for (let o in webComponentDesignerJson.services) {
-                        for (let s of webComponentDesignerJson.services[o]) {
-                            if (s.startsWith('./'))
-                                s = s.substring(2);
-                            //@ts-ignore
-                            const classDefinition = (await importShim(baseUrl + s)).default;
-                            //@ts-ignore
-                            serviceContainer.register(o, new classDefinition());
-                        }
-                    }
-                }
-            }
-        });
-        if (customElementsJson.ok) {
-            const customElementsJsonObj = await customElementsJson.json();
-            console.log(baseUrl);
-            console.log(elementsRootPath);
-            let elements = new WebcomponentManifestElementsService(packageJsonObj.name, elementsRootPath, customElementsJsonObj);
-            serviceContainer.register('elementsService', elements);
-            let properties = new WebcomponentManifestPropertiesService(packageJsonObj.name, customElementsJsonObj);
-            serviceContainer.register('propertyService', properties);
-            if (window.location.search.includes("loadAllImports")) {
-                for (let e of await elements.getElements()) {
-                    //@ts-ignore
-                    importShim(e.import);
-                }
-            }
-            this._paletteTree.loadControls(serviceContainer, serviceContainer.elementsServices);
-        }
-        else {
-            console.warn('npm package: ' + pkg + ' - no custom-elements.json found, only loading javascript module');
-            let customElementsRegistry = window.customElements;
-            const registry = {};
-            const newElements = [];
-            registry.define = function (name, constructor, options) {
-                newElements.push(name);
-                customElementsRegistry.define(name, constructor, options);
-            };
-            registry.get = function (name) {
-                return customElementsRegistry.get(name);
-            };
-            registry.upgrade = function (node) {
-                return customElementsRegistry.upgrade(node);
-            };
-            registry.whenDefined = function (name) {
-                return customElementsRegistry.whenDefined(name);
-            };
-            Object.defineProperty(window, "customElements", {
-                get() {
-                    return registry;
-                }
-            });
-            if (packageJsonObj.module) {
-                //@ts-ignore
-                await importShim(baseUrl + removeLeading(packageJsonObj.module, '/'));
-            }
-            else if (packageJsonObj.main) {
-                //@ts-ignore
-                await importShim(baseUrl + removeLeading(packageJsonObj.main, '/'));
-            }
-            else if (packageJsonObj.unpkg) {
-                //@ts-ignore
-                await importShim(baseUrl + removeLeading(packageJsonObj.unpkg, '/'));
-            }
-            else {
-                console.warn('npm package: ' + pkg + ' - no entry point in package found.');
-            }
-            if (newElements.length > 0) {
-                const elementsCfg = {
-                    elements: newElements
-                };
-                let elService = new PreDefinedElementsService(pkg, elementsCfg);
-                serviceContainer.register('elementsService', elService);
-                this._paletteTree.loadControls(serviceContainer, serviceContainer.elementsServices);
-            }
-            Object.defineProperty(window, "customElements", {
-                get() {
-                    return customElementsRegistry;
-                }
-            });
-        }
-        this._npmStatus.innerText = "none";
-    }
-    async loadDependency(dependency, version) {
-        if (this._dependecies.has(dependency))
-            return;
-        this._dependecies.set(dependency, true);
-        if (dependency.startsWith('@types')) {
-            console.warn('ignoring wrong dependency: ', dependency);
-            return;
-        }
-        this._npmStatus.innerText = "loading dependency: " + dependency;
-        const baseUrl = window.location.protocol + this.packageUrl + dependency + '/';
-        const packageJsonUrl = baseUrl + 'package.json';
-        const packageJson = await fetch(packageJsonUrl);
-        const packageJsonObj = await packageJson.json();
-        const depPromises = [];
-        if (packageJsonObj.dependencies) {
-            for (let d in packageJsonObj.dependencies) {
-                depPromises.push(this.loadDependency(d, packageJsonObj.dependencies[d]));
-            }
-        }
-        await Promise.all(depPromises);
-        //console.log('package.json', dependency, packageJsonObj);
-        //todo - use exports of package.json for importMap
-        const importMap = { imports: {}, scopes: {} };
-        let mainImport = packageJsonObj.main;
-        if (packageJsonObj.module)
-            mainImport = packageJsonObj.module;
-        importMap.imports[dependency] = baseUrl + removeTrailing(mainImport, '/');
-        importMap.imports[dependency + '/'] = baseUrl;
-        //console.log('importMap:', importMap);
-        //@ts-ignore
-        importShim.addImportMap(importMap);
     }
     async _setupServiceContainer() {
         serviceContainer.register('elementsService', new JsonFileElementsService('demo', './dist/elements-demo.json'));
@@ -444,7 +239,6 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
                     b.style.backgroundColor = "";
             }
         });
-        //this._paletteView.loadControls(serviceContainer, serviceContainer.elementsServices);
         this._paletteTree.loadControls(serviceContainer, serviceContainer.elementsServices);
         //this._bindableObjectsBrowser.initialize(serviceContainer);
         this._propertyGrid.serviceContainer = serviceContainer;

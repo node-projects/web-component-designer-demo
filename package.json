@@ -31,7 +31,7 @@
     "@node-projects/base-custom-webcomponent": "0.10.9",
     "@node-projects/lean-he-esm": "^3.3.0",
     "@node-projects/node-html-parser-esm": "^2.5.1",
-    "@node-projects/web-component-designer": "^0.0.184",
+    "@node-projects/web-component-designer": "^0.0.185",
     "@papyrs/stylo": "^0.0.42",
     "@vanillawc/wc-marquee": "^1.0.31",
     "ace-builds": "^1.15.0",
@@ -43,7 +43,7 @@
     "jquery": "^3.6.3",
     "jquery.fancytree": "^2.38.3",
     "lit": "^2.6.1",
-    "mdn-data": "^2.0.30",
+    "mdn-data": "^2.0.31",
     "metro4-dist": "^4.5.0",
     "mobile-drag-drop": "^3.0.0-rc.0",
     "monaco-editor": "^0.34.1"
