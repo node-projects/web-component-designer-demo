@@ -110,4 +110,4 @@ LanguageFeatureDebounceService = __decorate([
     __param(0, ILogService)
 ], LanguageFeatureDebounceService);
 export { LanguageFeatureDebounceService };
-registerSingleton(ILanguageFeatureDebounceService, LanguageFeatureDebounceService, true);
+registerSingleton(ILanguageFeatureDebounceService, LanguageFeatureDebounceService, 1 /* InstantiationType.Delayed */);

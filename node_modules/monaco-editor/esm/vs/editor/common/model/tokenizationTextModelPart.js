@@ -267,14 +267,15 @@ export class TokenizationTextModelPart extends TextModelPart {
         const lineTokens = this.getLineTokens(position.lineNumber);
         return lineTokens.getLanguageId(lineTokens.findTokenIndexAtOffset(position.column - 1));
     }
-    setLanguageId(languageId) {
+    setLanguageId(languageId, source = 'api') {
         if (this._languageId === languageId) {
             // There's nothing to do
             return;
         }
         const e = {
             oldLanguage: this._languageId,
-            newLanguage: languageId
+            newLanguage: languageId,
+            source
         };
         this._languageId = languageId;
         this.bracketPairsTextModelPart.handleDidChangeLanguage(e);

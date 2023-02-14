@@ -38,6 +38,12 @@ export class HistoryNavigator {
     last() {
         return this._navigator.last();
     }
+    isLast() {
+        return this._currentPosition() === this._elements.length - 1;
+    }
+    isNowhere() {
+        return this._navigator.current() === null;
+    }
     has(t) {
         return this._history.has(t);
     }

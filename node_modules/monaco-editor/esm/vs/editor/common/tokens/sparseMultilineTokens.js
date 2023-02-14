@@ -9,11 +9,6 @@ import { countEOL } from '../core/eolCounter.js';
  * Represents sparse tokens over a contiguous range of lines.
  */
 export class SparseMultilineTokens {
-    constructor(startLineNumber, tokens) {
-        this._startLineNumber = startLineNumber;
-        this._tokens = tokens;
-        this._endLineNumber = this._startLineNumber + this._tokens.getMaxDeltaLine();
-    }
     static create(startLineNumber, tokens) {
         return new SparseMultilineTokens(startLineNumber, new SparseMultilineTokensStorage(tokens));
     }
@@ -28,6 +23,11 @@ export class SparseMultilineTokens {
      */
     get endLineNumber() {
         return this._endLineNumber;
+    }
+    constructor(startLineNumber, tokens) {
+        this._startLineNumber = startLineNumber;
+        this._tokens = tokens;
+        this._endLineNumber = this._startLineNumber + this._tokens.getMaxDeltaLine();
     }
     toString() {
         return this._tokens.toString(this._startLineNumber);

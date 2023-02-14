@@ -41,13 +41,13 @@ function isFastAndSlowPicks(obj) {
     const candidate = obj;
     return !!candidate.picks && candidate.additionalPicks instanceof Promise;
 }
-export class PickerQuickAccessProvider extends Disposable {
+class PickerQuickAccessProvider extends Disposable {
     constructor(prefix, options) {
         super();
         this.prefix = prefix;
         this.options = options;
     }
-    provide(picker, token) {
+    provide(picker, token, runOptions) {
         var _a;
         const disposables = new DisposableStore();
         // Apply options if any
@@ -67,7 +67,7 @@ export class PickerQuickAccessProvider extends Disposable {
             // Collect picks and support both long running and short or combined
             const picksToken = picksCts.token;
             const picksFilter = picker.value.substr(this.prefix.length).trim();
-            const providedPicks = this._getPicks(picksFilter, picksDisposables, picksToken);
+            const providedPicks = this._getPicks(picksFilter, picksDisposables, picksToken, runOptions);
             const applyPicks = (picks, skipEmpty) => {
                 var _a;
                 let items;
@@ -249,3 +249,4 @@ export class PickerQuickAccessProvider extends Disposable {
     }
 }
 PickerQuickAccessProvider.FAST_PICKS_RACE_DELAY = 200; // timeout before we accept fast results before slow results are present
+export { PickerQuickAccessProvider };

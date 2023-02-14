@@ -3,11 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 export class StableEditorScrollState {
-    constructor(_visiblePosition, _visiblePositionScrollDelta, _cursorPosition) {
-        this._visiblePosition = _visiblePosition;
-        this._visiblePositionScrollDelta = _visiblePositionScrollDelta;
-        this._cursorPosition = _cursorPosition;
-    }
     static capture(editor) {
         let visiblePosition = null;
         let visiblePositionScrollDelta = 0;
@@ -20,6 +15,11 @@ export class StableEditorScrollState {
             }
         }
         return new StableEditorScrollState(visiblePosition, visiblePositionScrollDelta, editor.getPosition());
+    }
+    constructor(_visiblePosition, _visiblePositionScrollDelta, _cursorPosition) {
+        this._visiblePosition = _visiblePosition;
+        this._visiblePositionScrollDelta = _visiblePositionScrollDelta;
+        this._cursorPosition = _cursorPosition;
     }
     restore(editor) {
         if (this._visiblePosition) {

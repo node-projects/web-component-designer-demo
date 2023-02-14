@@ -18,6 +18,3 @@ export const DataTransfers = {
      */
     TEXT: Mimes.text
 };
-export const StaticDND = {
-    CurrentDragAndDropData: undefined
-};

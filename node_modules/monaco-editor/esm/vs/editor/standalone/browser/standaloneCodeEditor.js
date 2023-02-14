@@ -17,7 +17,6 @@ import { ICodeEditorService } from '../../browser/services/codeEditorService.js'
 import { CodeEditorWidget } from '../../browser/widget/codeEditorWidget.js';
 import { DiffEditorWidget } from '../../browser/widget/diffEditorWidget.js';
 import { InternalEditorAction } from '../../common/editorAction.js';
-import { IEditorWorkerService } from '../../common/services/editorWorker.js';
 import { StandaloneKeybindingService, updateConfigurationService } from './standaloneServices.js';
 import { IStandaloneThemeService } from '../common/standaloneTheme.js';
 import { MenuId, MenuRegistry } from '../../../platform/actions/common/actions.js';
@@ -131,9 +130,9 @@ let StandaloneCodeEditor = class StandaloneCodeEditor extends CodeEditorWidget {
         // Finally, register an internal editor action
         const internalAction = new InternalEditorAction(uniqueId, label, label, precondition, run, this._contextKeyService);
         // Store it under the original id, such that trigger with the original id will work
-        this._actions[id] = internalAction;
+        this._actions.set(id, internalAction);
         toDispose.add(toDisposable(() => {
-            delete this._actions[id];
+            this._actions.delete(id);
         }));
         return toDispose;
     }
@@ -240,7 +239,7 @@ StandaloneEditor = __decorate([
 ], StandaloneEditor);
 export { StandaloneEditor };
 let StandaloneDiffEditor = class StandaloneDiffEditor extends DiffEditorWidget {
-    constructor(domElement, _options, instantiationService, contextKeyService, editorWorkerService, codeEditorService, themeService, notificationService, configurationService, contextMenuService, editorProgressService, clipboardService) {
+    constructor(domElement, _options, instantiationService, contextKeyService, codeEditorService, themeService, notificationService, configurationService, contextMenuService, editorProgressService, clipboardService) {
         const options = Object.assign({}, _options);
         updateConfigurationService(configurationService, options, true);
         const themeDomRegistration = themeService.registerEditorContainer(domElement);
@@ -250,7 +249,7 @@ let StandaloneDiffEditor = class StandaloneDiffEditor extends DiffEditorWidget {
         if (typeof options.autoDetectHighContrast !== 'undefined') {
             themeService.setAutoDetectHighContrast(Boolean(options.autoDetectHighContrast));
         }
-        super(domElement, options, {}, clipboardService, editorWorkerService, contextKeyService, instantiationService, codeEditorService, themeService, notificationService, contextMenuService, editorProgressService);
+        super(domElement, options, {}, clipboardService, contextKeyService, instantiationService, codeEditorService, themeService, notificationService, contextMenuService, editorProgressService);
         this._configurationService = configurationService;
         this._standaloneThemeService = themeService;
         this._register(themeDomRegistration);
@@ -290,14 +289,13 @@ let StandaloneDiffEditor = class StandaloneDiffEditor extends DiffEditorWidget {
 StandaloneDiffEditor = __decorate([
     __param(2, IInstantiationService),
     __param(3, IContextKeyService),
-    __param(4, IEditorWorkerService),
-    __param(5, ICodeEditorService),
-    __param(6, IStandaloneThemeService),
-    __param(7, INotificationService),
-    __param(8, IConfigurationService),
-    __param(9, IContextMenuService),
-    __param(10, IEditorProgressService),
-    __param(11, IClipboardService)
+    __param(4, ICodeEditorService),
+    __param(5, IStandaloneThemeService),
+    __param(6, INotificationService),
+    __param(7, IConfigurationService),
+    __param(8, IContextMenuService),
+    __param(9, IEditorProgressService),
+    __param(10, IClipboardService)
 ], StandaloneDiffEditor);
 export { StandaloneDiffEditor };
 /**

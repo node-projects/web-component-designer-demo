@@ -16,13 +16,6 @@ export class ModelRawFlush {
  * @internal
  */
 export class LineInjectedText {
-    constructor(ownerId, lineNumber, column, options, order) {
-        this.ownerId = ownerId;
-        this.lineNumber = lineNumber;
-        this.column = column;
-        this.options = options;
-        this.order = order;
-    }
     static applyInjectedText(lineText, injectedTexts) {
         if (!injectedTexts || injectedTexts.length === 0) {
             return lineText;
@@ -57,6 +50,13 @@ export class LineInjectedText {
             return a.lineNumber - b.lineNumber;
         });
         return result;
+    }
+    constructor(ownerId, lineNumber, column, options, order) {
+        this.ownerId = ownerId;
+        this.lineNumber = lineNumber;
+        this.column = column;
+        this.options = options;
+        this.order = order;
     }
 }
 /**

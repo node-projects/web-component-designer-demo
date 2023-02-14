@@ -211,14 +211,14 @@ export class GuidesTextModelPart extends TextModelPart {
         }
         // If requested, this could be made configurable.
         const includeSingleLinePairs = true;
-        const bracketPairs = this.textModel.bracketPairs.getBracketPairsInRangeWithMinIndentation(new Range(startLineNumber, 1, endLineNumber, this.textModel.getLineMaxColumn(endLineNumber)));
+        const bracketPairs = this.textModel.bracketPairs.getBracketPairsInRangeWithMinIndentation(new Range(startLineNumber, 1, endLineNumber, this.textModel.getLineMaxColumn(endLineNumber))).toArray();
         let activeBracketPairRange = undefined;
         if (activePosition && bracketPairs.length > 0) {
             const bracketsContainingActivePosition = (startLineNumber <= activePosition.lineNumber &&
                 activePosition.lineNumber <= endLineNumber
                 // We don't need to query the brackets again if the cursor is in the viewport
                 ? bracketPairs
-                : this.textModel.bracketPairs.getBracketPairsInRange(Range.fromPositions(activePosition))).filter((bp) => Range.strictContainsPosition(bp.range, activePosition));
+                : this.textModel.bracketPairs.getBracketPairsInRange(Range.fromPositions(activePosition)).toArray()).filter((bp) => Range.strictContainsPosition(bp.range, activePosition));
             activeBracketPairRange = (_a = findLast(bracketsContainingActivePosition, (i) => includeSingleLinePairs || i.range.startLineNumber !== i.range.endLineNumber)) === null || _a === void 0 ? void 0 : _a.range;
         }
         const independentColorPoolPerBracketType = this.textModel.getOptions().bracketPairColorizationOptions.independentColorPoolPerBracketType;

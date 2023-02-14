@@ -1,10 +1,6 @@
 const hasBuffer = (typeof Buffer !== 'undefined');
 let textDecoder;
 export class VSBuffer {
-    constructor(buffer) {
-        this.buffer = buffer;
-        this.byteLength = this.buffer.byteLength;
-    }
     /**
      * When running in a nodejs context, if `actual` is not a nodejs Buffer, the backing store for
      * the returned `VSBuffer` instance might use a nodejs Buffer allocated from node's Buffer pool,
@@ -17,6 +13,10 @@ export class VSBuffer {
             actual = Buffer.from(actual.buffer, actual.byteOffset, actual.byteLength);
         }
         return new VSBuffer(actual);
+    }
+    constructor(buffer) {
+        this.buffer = buffer;
+        this.byteLength = this.buffer.byteLength;
     }
     toString() {
         if (hasBuffer) {

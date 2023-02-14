@@ -6,7 +6,7 @@
  * A very VM friendly rgba datastructure.
  * Please don't touch unless you take a look at the IR.
  */
-export class RGBA8 {
+class RGBA8 {
     constructor(r, g, b, a) {
         this._rgba8Brand = undefined;
         this.r = RGBA8._clamp(r);
@@ -31,3 +31,4 @@ export class RGBA8 {
     }
 }
 RGBA8.Empty = new RGBA8(0, 0, 0, 0);
+export { RGBA8 };

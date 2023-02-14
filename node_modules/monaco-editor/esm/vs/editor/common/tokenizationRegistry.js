@@ -100,6 +100,9 @@ export class TokenizationRegistry {
     }
 }
 class TokenizationSupportFactoryData extends Disposable {
+    get isResolved() {
+        return this._isResolved;
+    }
     constructor(_registry, _languageId, _factory) {
         super();
         this._registry = _registry;
@@ -108,9 +111,6 @@ class TokenizationSupportFactoryData extends Disposable {
         this._isDisposed = false;
         this._resolvePromise = null;
         this._isResolved = false;
-    }
-    get isResolved() {
-        return this._isResolved;
     }
     dispose() {
         this._isDisposed = true;

@@ -14,8 +14,7 @@ export class BeforeEditPositionMapper {
     /**
      * @param edits Must be sorted by offset in ascending order.
     */
-    constructor(edits, documentLength) {
-        this.documentLength = documentLength;
+    constructor(edits) {
         this.nextEditIdx = 0;
         this.deltaOldToNewLineCount = 0;
         this.deltaOldToNewColumnCount = 0;
@@ -31,11 +30,15 @@ export class BeforeEditPositionMapper {
     }
     /**
      * @param offset Must be equal to or greater than the last offset this method has been called with.
+     * Returns null if there is no edit anymore.
     */
     getDistanceToNextChange(offset) {
         this.adjustNextEdit(offset);
         const nextEdit = this.edits[this.nextEditIdx];
-        const nextChangeOffset = nextEdit ? this.translateOldToCur(nextEdit.offsetObj) : this.documentLength;
+        const nextChangeOffset = nextEdit ? this.translateOldToCur(nextEdit.offsetObj) : null;
+        if (nextChangeOffset === null) {
+            return null;
+        }
         return lengthDiffNonNegative(offset, nextChangeOffset);
     }
     translateOldToCur(oldOffsetObj) {
@@ -81,12 +84,12 @@ export class BeforeEditPositionMapper {
     }
 }
 class TextEditInfoCache {
+    static from(edit) {
+        return new TextEditInfoCache(edit.startOffset, edit.endOffset, edit.newLength);
+    }
     constructor(startOffset, endOffset, textLength) {
         this.endOffsetBeforeObj = lengthToObj(endOffset);
         this.endOffsetAfterObj = lengthToObj(lengthAdd(startOffset, textLength));
         this.offsetObj = lengthToObj(startOffset);
-    }
-    static from(edit) {
-        return new TextEditInfoCache(edit.startOffset, edit.endOffset, edit.newLength);
     }
 }

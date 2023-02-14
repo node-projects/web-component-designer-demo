@@ -113,13 +113,11 @@ export class StandardWheelEvent {
         }
     }
     preventDefault() {
-        if (this.browserEvent) {
-            this.browserEvent.preventDefault();
-        }
+        var _a;
+        (_a = this.browserEvent) === null || _a === void 0 ? void 0 : _a.preventDefault();
     }
     stopPropagation() {
-        if (this.browserEvent) {
-            this.browserEvent.stopPropagation();
-        }
+        var _a;
+        (_a = this.browserEvent) === null || _a === void 0 ? void 0 : _a.stopPropagation();
     }
 }

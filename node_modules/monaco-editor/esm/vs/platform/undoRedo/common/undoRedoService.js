@@ -1094,4 +1094,4 @@ class WorkspaceVerificationError {
         this.returnValue = returnValue;
     }
 }
-registerSingleton(IUndoRedoService, UndoRedoService);
+registerSingleton(IUndoRedoService, UndoRedoService, 1 /* InstantiationType.Delayed */);

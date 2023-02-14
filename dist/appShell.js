@@ -110,6 +110,8 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
                   <option value="@wokwi/elements"></option>
                   <option value="@shoelace-style/shoelace"></option>
                   <option value="@generic-components/components"></option>
+                  <option value="@visa/charts"></option>
+                  <option value="@carbon/web-components"></option>
                 </datalist>
                 <button id="getNpm">get</button>
               </div>
@@ -154,14 +156,15 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         this._npmInput = this._getDomElement('npmInput');
         this._npmStatus = this._getDomElement('npmStatus');
         this._getNpm = this._getDomElement('getNpm');
+        let loadAllImports = window.location.search.includes("loadAllImports");
         this._npmInput.onkeydown = (e) => {
             if (e.key == 'Enter') {
-                this._npmPackageLoader.loadNpmPackage(this._npmInput.value, serviceContainer, this._paletteTree, state => this._npmStatus.innerText = state);
+                this._npmPackageLoader.loadNpmPackage(this._npmInput.value, serviceContainer, this._paletteTree, loadAllImports, state => this._npmStatus.innerText = state);
                 this._npmInput.value = '';
             }
         };
         this._getNpm.onclick = (e) => {
-            this._npmPackageLoader.loadNpmPackage(this._npmInput.value, serviceContainer, this._paletteTree, state => this._npmStatus.innerText = state);
+            this._npmPackageLoader.loadNpmPackage(this._npmInput.value, serviceContainer, this._paletteTree, loadAllImports, state => this._npmStatus.innerText = state);
             this._npmInput.value = '';
         };
         let code = "";
@@ -171,7 +174,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         let parts = s.split('&');
         for (let p of parts) {
             if (p.startsWith('npm='))
-                this._npmPackageLoader.loadNpmPackage(p.substring(4), serviceContainer, this._paletteTree, state => this._npmStatus.innerText = state);
+                this._npmPackageLoader.loadNpmPackage(p.substring(4), serviceContainer, this._paletteTree, loadAllImports, state => this._npmStatus.innerText = state);
             if (p.startsWith('html='))
                 code = decodeURI(p.substring(5));
         }

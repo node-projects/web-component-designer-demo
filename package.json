@@ -27,17 +27,17 @@
   "dependencies": {
     "@adobe/css-tools": "^4.1.0",
     "@doubletrade/lit-datepicker": "^1.0.0",
-    "@fortawesome/fontawesome-free": "^6.2.1",
+    "@fortawesome/fontawesome-free": "^6.3.0",
     "@node-projects/base-custom-webcomponent": "0.10.9",
     "@node-projects/lean-he-esm": "^3.3.0",
     "@node-projects/node-html-parser-esm": "^2.5.1",
-    "@node-projects/web-component-designer": "^0.0.185",
+    "@node-projects/web-component-designer": "^0.0.190",
     "@papyrs/stylo": "^0.0.42",
     "@vanillawc/wc-marquee": "^1.0.31",
-    "ace-builds": "^1.15.0",
+    "ace-builds": "^1.15.1",
     "codemirror": "^6.0.1",
     "construct-style-sheets-polyfill": "^3.1.0",
-    "dock-spawn-ts": "^2.511.0",
+    "dock-spawn-ts": "^2.512.0",
     "es-module-shims": "^1.6.3",
     "esprima-next": "^5.8.4",
     "jquery": "^3.6.3",
@@ -46,6 +46,6 @@
     "mdn-data": "^2.0.31",
     "metro4-dist": "^4.5.0",
     "mobile-drag-drop": "^3.0.0-rc.0",
-    "monaco-editor": "^0.34.1"
+    "monaco-editor": "^0.35.0"
   }
 }
