@@ -184,6 +184,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     }
 
     let code = "";
+    let style = "";
 
     let s = window.location.search;
     if (s.startsWith('?'))
@@ -194,6 +195,8 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         this._npmPackageLoader.loadNpmPackage(p.substring(4), serviceContainer, this._paletteTree, loadAllImports, state => this._npmStatus.innerText = state);
       if (p.startsWith('html='))
         code = decodeURI(p.substring(5));
+      if (p.startsWith('style='))
+        style = decodeURI(p.substring(6));
     }
 
     const linkElement = document.createElement("link");
@@ -210,23 +213,10 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
           let element = this._dock.getElementInSlot((<HTMLSlotElement><any>panel.elementContent));
           if (element && element instanceof DocumentContainer) {
             let sampleDocument = element as DocumentContainer;
-            if (this._styleChangedCb)
-              this._styleChangedCb.dispose();
-            if (sampleDocument.additionalStylesheets && sampleDocument.additionalStylesheets.length)
-              this._styleEditor.text = sampleDocument.additionalStylesheets[0].content ?? '';
+            this._styleEditor.model = sampleDocument.additionalData.model;
             this._propertyGrid.instanceServiceContainer = sampleDocument.instanceServiceContainer;
             this._treeViewExtended.instanceServiceContainer = sampleDocument.instanceServiceContainer;
-            this._styleChangedCb = this._styleEditor.onTextChanged.single(() => {
-              sampleDocument.additionalStylesheets = [
-                {
-                  name: "stylesheet.css",
-                  content: this._styleEditor.text,
-                }
-              ];
-            });
-            sampleDocument.additionalStylesheetChanged.on(() => {
-              this._styleEditor.text = sampleDocument.additionalStylesheets[0].content;
-            });
+
           }
         }
       },
@@ -244,7 +234,10 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     });
 
     await this._setupServiceContainer();
-    this.newDocument(false, code);
+
+    await StyleEditor.initMonacoEditor();
+
+    this.newDocument(false, code, style);
   }
 
   private async _setupServiceContainer() {
@@ -271,7 +264,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     this._propertyGrid.serviceContainer = serviceContainer;
   }
 
-  public newDocument(fixedWidth: boolean, code?: string) {
+  public newDocument(fixedWidth: boolean, code?: string, style?: string) {
     this._documentNumber++;
     let sampleDocument = new DocumentContainer(serviceContainer);
     sampleDocument.setAttribute('dock-spawn-panel-type', 'document');
@@ -279,11 +272,38 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     sampleDocument.additionalStylesheets = [
       {
         name: "stylesheet.css",
-        content: `* {
+        content: (style ?? '') == '' ? `* {
     font-size: 20px;
-}`
+}` : style
       }
     ];
+    const model = this._styleEditor.createModel(sampleDocument.additionalStylesheets[0].content);
+    sampleDocument.additionalData = { model: model };
+
+    let timer;
+    let disableTextChangedEvent = false;
+    model.onDidChangeContent((e) => {
+      if (!disableTextChangedEvent) {
+        if (timer)
+          clearTimeout(timer)
+        timer = setTimeout(() => {
+          sampleDocument.additionalStylesheets = [
+            {
+              name: "stylesheet.css",
+              content: model.getValue()
+            }
+          ];
+          timer = null;
+        }, 250);
+      }
+    });
+    sampleDocument.additionalStylesheetChanged.on(() => {
+      disableTextChangedEvent = true;
+      if (model.getValue() !== sampleDocument.additionalStylesheets[0].content)
+        model.applyEdits([{ range: model.getFullModelRange(), text: sampleDocument.additionalStylesheets[0].content, forceMoveMarkers: true }]);
+      disableTextChangedEvent = false;
+    });
+
     sampleDocument.tabIndex = 0;
     sampleDocument.addEventListener('keydown', (e) => {
       if (e.key == "Escape") {
