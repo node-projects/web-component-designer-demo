@@ -15,6 +15,7 @@ LazyLoader.LoadText('./dist/custom-element-properties.json').then(data => servic
 import { DockSpawnTsWebcomponent } from '/web-component-designer-demo/node_modules/dock-spawn-ts/lib/js/webcomponent/DockSpawnTsWebcomponent.js';
 import { BaseCustomWebComponentConstructorAppend, css, html, LazyLoader } from '/web-component-designer-demo/node_modules/@node-projects/base-custom-webcomponent/./dist/index.js';
 import { CommandHandling } from './CommandHandling.js';
+import { StyleEditor } from './styleEditor.js';
 import './styleEditor.js';
 import { CustomBindableObjectsService } from './services/CustomBindableObjectsService.js';
 import { CustomBindableObjectDragDropService } from './services/CustomBindableObjectDragDropService.js';
@@ -168,6 +169,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
             this._npmInput.value = '';
         };
         let code = "";
+        let style = "";
         let s = window.location.search;
         if (s.startsWith('?'))
             s = s.substring(1);
@@ -177,6 +179,8 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
                 this._npmPackageLoader.loadNpmPackage(p.substring(4), serviceContainer, this._paletteTree, loadAllImports, state => this._npmStatus.innerText = state);
             if (p.startsWith('html='))
                 code = decodeURI(p.substring(5));
+            if (p.startsWith('style='))
+                style = decodeURI(p.substring(6));
         }
         const linkElement = document.createElement("link");
         linkElement.rel = "stylesheet";
@@ -190,23 +194,9 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
                     let element = this._dock.getElementInSlot(panel.elementContent);
                     if (element && element instanceof DocumentContainer) {
                         let sampleDocument = element;
-                        if (this._styleChangedCb)
-                            this._styleChangedCb.dispose();
-                        if (sampleDocument.additionalStylesheets && sampleDocument.additionalStylesheets.length)
-                            this._styleEditor.text = sampleDocument.additionalStylesheets[0].content ?? '';
+                        this._styleEditor.model = sampleDocument.additionalData.model;
                         this._propertyGrid.instanceServiceContainer = sampleDocument.instanceServiceContainer;
                         this._treeViewExtended.instanceServiceContainer = sampleDocument.instanceServiceContainer;
-                        this._styleChangedCb = this._styleEditor.onTextChanged.single(() => {
-                            sampleDocument.additionalStylesheets = [
-                                {
-                                    name: "stylesheet.css",
-                                    content: this._styleEditor.text,
-                                }
-                            ];
-                        });
-                        sampleDocument.additionalStylesheetChanged.on(() => {
-                            this._styleEditor.text = sampleDocument.additionalStylesheets[0].content;
-                        });
                     }
                 }
             },
@@ -223,7 +213,8 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
             }
         });
         await this._setupServiceContainer();
-        this.newDocument(false, code);
+        await StyleEditor.initMonacoEditor();
+        this.newDocument(false, code, style);
     }
     async _setupServiceContainer() {
         serviceContainer.register('elementsService', new JsonFileElementsService('demo', './dist/elements-demo.json'));
@@ -246,7 +237,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         //this._bindableObjectsBrowser.initialize(serviceContainer);
         this._propertyGrid.serviceContainer = serviceContainer;
     }
-    newDocument(fixedWidth, code) {
+    newDocument(fixedWidth, code, style) {
         this._documentNumber++;
         let sampleDocument = new DocumentContainer(serviceContainer);
         sampleDocument.setAttribute('dock-spawn-panel-type', 'document');
@@ -254,11 +245,36 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         sampleDocument.additionalStylesheets = [
             {
                 name: "stylesheet.css",
-                content: `* {
+                content: (style ?? '') == '' ? `* {
     font-size: 20px;
-}`
+}` : style
             }
         ];
+        const model = this._styleEditor.createModel(sampleDocument.additionalStylesheets[0].content);
+        sampleDocument.additionalData = { model: model };
+        let timer;
+        let disableTextChangedEvent = false;
+        model.onDidChangeContent((e) => {
+            if (!disableTextChangedEvent) {
+                if (timer)
+                    clearTimeout(timer);
+                timer = setTimeout(() => {
+                    sampleDocument.additionalStylesheets = [
+                        {
+                            name: "stylesheet.css",
+                            content: model.getValue()
+                        }
+                    ];
+                    timer = null;
+                }, 250);
+            }
+        });
+        sampleDocument.additionalStylesheetChanged.on(() => {
+            disableTextChangedEvent = true;
+            if (model.getValue() !== sampleDocument.additionalStylesheets[0].content)
+                model.applyEdits([{ range: model.getFullModelRange(), text: sampleDocument.additionalStylesheets[0].content, forceMoveMarkers: true }]);
+            disableTextChangedEvent = false;
+        });
         sampleDocument.tabIndex = 0;
         sampleDocument.addEventListener('keydown', (e) => {
             if (e.key == "Escape") {
