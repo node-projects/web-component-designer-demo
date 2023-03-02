@@ -57,9 +57,10 @@ export class CommandHandling {
         undoButton.onmousedown = (e) => {
             mouseDownTimer = setTimeout(() => {
                 let target = this.dockManager.activeDocument.elementContent.assignedElements()[0];
-                let entries = target.instanceServiceContainer.undoService.getUndoEntries();
-                let mnu = Array.from(entries).map(x => ({ title: 'undo: ' + x }));
-                ContextMenu.show(mnu, e);
+                let entries = target.instanceServiceContainer.undoService.getUndoEntries(20);
+                let mnu = Array.from(entries).map((x, idx) => ({ title: 'undo: ' + x, action: () => { for (let i = 0; i <= idx; i++)
+                        target.instanceServiceContainer.undoService.undo(); } }));
+                ContextMenu.show(mnu, e, { mode: 'undo' });
             }, 300);
         };
         undoButton.onmouseup = (e) => {
@@ -72,9 +73,10 @@ export class CommandHandling {
         redoButton.onmousedown = (e) => {
             mouseDownTimer = setTimeout(() => {
                 let target = this.dockManager.activeDocument.elementContent.assignedElements()[0];
-                let entries = target.instanceServiceContainer.undoService.getRedoEntries();
-                let mnu = Array.from(entries).map(x => ({ title: 'redo: ' + x }));
-                ContextMenu.show(mnu, e);
+                let entries = target.instanceServiceContainer.undoService.getRedoEntries(20);
+                let mnu = Array.from(entries).map((x, idx) => ({ title: 'redo: ' + x, action: () => { for (let i = 0; i <= idx; i++)
+                        target.instanceServiceContainer.undoService.redo(); } }));
+                ContextMenu.show(mnu, e, { mode: 'undo' });
             }, 300);
         };
         redoButton.onmouseup = (e) => {
