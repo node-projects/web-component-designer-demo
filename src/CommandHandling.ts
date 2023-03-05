@@ -29,9 +29,16 @@ export class CommandHandling {
     else if (this.dockManager.activeDocument) {
       let target: any = (<HTMLSlotElement><any>this.dockManager.activeDocument.elementContent).assignedElements()[0];
       if (target.executeCommand) {
-        target.executeCommand({ type: commandName, parameter: commandParameter })
+        target.executeCommand({ type: commandName, parameter: commandParameter, event: e })
       }
     }
+  }
+
+  handleCommandButtonMouseHold(button, e) {
+    let commandName = <string>button.dataset['command'];
+    let commandParameter = button.dataset['commandParameter'];
+    let target: any = (<HTMLSlotElement><any>this.dockManager.activeDocument.elementContent).assignedElements()[0];
+    target.executeCommand({ type: <any>('hold' + commandName[0].toUpperCase() + commandName.substring(1)), parameter: commandParameter, event: e })
   }
 
   handleInputValueChanged(e) {
@@ -42,7 +49,7 @@ export class CommandHandling {
     if (this.dockManager.activeDocument) {
       let target: any = (<HTMLSlotElement><any>this.dockManager.activeDocument.elementContent).assignedElements()[0];
       if (target.executeCommand) {
-        target.executeCommand({ type: commandName, parameter: commandParameter })
+        target.executeCommand({ type: commandName, parameter: commandParameter, event: e })
       }
     }
   }
@@ -52,6 +59,18 @@ export class CommandHandling {
     buttons.forEach(b => {
       if (b instanceof HTMLButtonElement) {
         b.onclick = (e) => this.handleCommandButtonClick(e);
+        let mouseDownTimer = null;
+        b.onmousedown = (e) => {
+          mouseDownTimer = setTimeout(() => {
+            this.handleCommandButtonMouseHold(b, e);
+          }, 300)
+        }
+        b.onmouseup = (e) => {
+          if (mouseDownTimer) {
+            clearTimeout(mouseDownTimer);
+            mouseDownTimer = null;
+          }
+        }
       } else {
         b.onchange = (e) => this.handleInputValueChanged(e);
         let commandName = b.dataset['command'];
@@ -69,7 +88,7 @@ export class CommandHandling {
         let target: DocumentContainer = <any>(<HTMLSlotElement><any>this.dockManager.activeDocument.elementContent).assignedElements()[0];
         let entries = target.instanceServiceContainer.undoService.getUndoEntries(20);
         let mnu: IContextMenuItem[] = Array.from(entries).map((x, idx) => ({ title: 'undo: ' + x, action: () => { for (let i = 0; i <= idx; i++) target.instanceServiceContainer.undoService.undo() } }));
-        ContextMenu.show(mnu, e, { mode: 'undo' })
+        ContextMenu.show(mnu, e, { mode: 'undo' });
       }, 300)
     }
     undoButton.onmouseup = (e) => {
