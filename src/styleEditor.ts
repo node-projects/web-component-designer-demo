@@ -45,7 +45,7 @@ export class StyleEditor extends BaseCustomWebComponentConstructorAppend {
 
     constructor() {
         super();
-        this._parseAttributesToProperties();
+        this._restoreCachedInititalValues();
     }
 
     static _initPromise: Promise<void>
@@ -65,6 +65,7 @@ export class StyleEditor extends BaseCustomWebComponentConstructorAppend {
     }
 
     async ready() {
+        this._parseAttributesToProperties();
         //@ts-ignore
         const style = await importShim("monaco-editor/min/vs/editor/editor.main.css", { assert: { type: 'css' } });
         //@ts-ignore
