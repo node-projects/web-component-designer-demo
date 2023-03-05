@@ -22,9 +22,15 @@ export class CommandHandling {
         else if (this.dockManager.activeDocument) {
             let target = this.dockManager.activeDocument.elementContent.assignedElements()[0];
             if (target.executeCommand) {
-                target.executeCommand({ type: commandName, parameter: commandParameter });
+                target.executeCommand({ type: commandName, parameter: commandParameter, event: e });
             }
         }
+    }
+    handleCommandButtonMouseHold(button, e) {
+        let commandName = button.dataset['command'];
+        let commandParameter = button.dataset['commandParameter'];
+        let target = this.dockManager.activeDocument.elementContent.assignedElements()[0];
+        target.executeCommand({ type: ('hold' + commandName[0].toUpperCase() + commandName.substring(1)), parameter: commandParameter, event: e });
     }
     handleInputValueChanged(e) {
         let input = e.currentTarget;
@@ -33,7 +39,7 @@ export class CommandHandling {
         if (this.dockManager.activeDocument) {
             let target = this.dockManager.activeDocument.elementContent.assignedElements()[0];
             if (target.executeCommand) {
-                target.executeCommand({ type: commandName, parameter: commandParameter });
+                target.executeCommand({ type: commandName, parameter: commandParameter, event: e });
             }
         }
     }
@@ -42,6 +48,18 @@ export class CommandHandling {
         buttons.forEach(b => {
             if (b instanceof HTMLButtonElement) {
                 b.onclick = (e) => this.handleCommandButtonClick(e);
+                let mouseDownTimer = null;
+                b.onmousedown = (e) => {
+                    mouseDownTimer = setTimeout(() => {
+                        this.handleCommandButtonMouseHold(b, e);
+                    }, 300);
+                };
+                b.onmouseup = (e) => {
+                    if (mouseDownTimer) {
+                        clearTimeout(mouseDownTimer);
+                        mouseDownTimer = null;
+                    }
+                };
             }
             else {
                 b.onchange = (e) => this.handleInputValueChanged(e);
