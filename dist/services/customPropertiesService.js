@@ -1,6 +1,6 @@
-import { PropertyType } from '/web-component-designer-demo/node_modules/@node-projects/web-component-designer/./dist/index.js';
-import { BindingTarget } from '/web-component-designer-demo/node_modules/@node-projects/web-component-designer/dist/elements/item/BindingTarget.js';
-import { RefreshMode } from '/web-component-designer-demo/node_modules/@node-projects/web-component-designer/dist/elements/services/propertiesService/IPropertiesService.js';
+import { PropertyType } from '@node-projects/web-component-designer';
+import { BindingTarget } from '@node-projects/web-component-designer/dist/elements/item/BindingTarget';
+import { RefreshMode } from '@node-projects/web-component-designer/dist/elements/services/propertiesService/IPropertiesService';
 export class CustomPropertiesService {
     getRefreshMode(designItem) {
         return RefreshMode.full;

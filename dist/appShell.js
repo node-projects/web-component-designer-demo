@@ -1,5 +1,5 @@
-import { NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, DocumentContainer, NodeHtmlParserService, ListPropertiesService, CodeViewMonaco, ExtensionType, EditTextWithStyloExtensionProvider, CssToolsStylesheetService } from '/web-component-designer-demo/node_modules/@node-projects/web-component-designer/./dist/index.js';
-import createDefaultServiceContainer from '/web-component-designer-demo/node_modules/@node-projects/web-component-designer/dist/elements/services/DefaultServiceBootstrap.js';
+import { NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, DocumentContainer, NodeHtmlParserService, ListPropertiesService, CodeViewMonaco, ExtensionType, EditTextWithStyloExtensionProvider, CssToolsStylesheetService } from '@node-projects/web-component-designer';
+import createDefaultServiceContainer from '@node-projects/web-component-designer/dist/elements/services/DefaultServiceBootstrap';
 let serviceContainer = createDefaultServiceContainer();
 serviceContainer.register("bindingService", new BaseCustomWebcomponentBindingsService());
 let rootDir = "/web-component-designer-demo";
@@ -12,13 +12,13 @@ serviceContainer.designerExtensions.set(ExtensionType.Doubleclick, [new EditText
 //Instance Service Container Factories
 serviceContainer.register("stylesheetService", designerCanvas => new CssToolsStylesheetService(designerCanvas));
 LazyLoader.LoadText('./dist/custom-element-properties.json').then(data => serviceContainer.register("propertyService", new ListPropertiesService(JSON.parse(data))));
-import { DockSpawnTsWebcomponent } from '/web-component-designer-demo/node_modules/dock-spawn-ts/lib/js/webcomponent/DockSpawnTsWebcomponent.js';
-import { BaseCustomWebComponentConstructorAppend, css, html, LazyLoader } from '/web-component-designer-demo/node_modules/@node-projects/base-custom-webcomponent/./dist/index.js';
-import { CommandHandling } from './CommandHandling.js';
+import { DockSpawnTsWebcomponent } from 'dock-spawn-ts/lib/js/webcomponent/DockSpawnTsWebcomponent';
+import { BaseCustomWebComponentConstructorAppend, css, html, LazyLoader } from '@node-projects/base-custom-webcomponent';
+import { CommandHandling } from './CommandHandling';
 import { StyleEditor } from './styleEditor.js';
 import './styleEditor.js';
-import { CustomBindableObjectsService } from './services/CustomBindableObjectsService.js';
-import { CustomBindableObjectDragDropService } from './services/CustomBindableObjectDragDropService.js';
+import { CustomBindableObjectsService } from './services/CustomBindableObjectsService';
+import { CustomBindableObjectDragDropService } from './services/CustomBindableObjectDragDropService';
 DockSpawnTsWebcomponent.cssRootDirectory = "./node_modules/dock-spawn-ts/lib/css/";
 export class AppShell extends BaseCustomWebComponentConstructorAppend {
     activeElement;

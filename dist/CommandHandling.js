@@ -1,4 +1,4 @@
-import { ContextMenu } from '/web-component-designer-demo/node_modules/@node-projects/web-component-designer/./dist/index.js';
+import { ContextMenu } from '@node-projects/web-component-designer';
 //Command Handling..
 // Setup commands
 export class CommandHandling {

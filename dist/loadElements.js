@@ -1,10 +1,10 @@
 /* imports without usage, for polymer bundler or he will not modify import paths */
-import './demo/demoData.js';
-import './demo/DemoElement.js';
-import './demo/DemoEnum.js';
-import './demo/DemoStringEnum.js';
-import '/web-component-designer-demo/node_modules/@vanillawc/wc-marquee/index.js';
-import '/web-component-designer-demo/node_modules/@doubletrade/lit-datepicker/lit-datepicker.js';
+import './demo/demoData';
+import './demo/DemoElement';
+import './demo/DemoEnum';
+import './demo/DemoStringEnum';
+import '@vanillawc/wc-marquee';
+import '@doubletrade/lit-datepicker';
 /*import '@material/mwc-button'
 import '@material/mwc-checkbox'
 import '@material/mwc-circular-progress'

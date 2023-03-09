@@ -1,4 +1,4 @@
-import { DesignItem, InsertAction, OverlayLayer } from '/web-component-designer-demo/node_modules/@node-projects/web-component-designer/./dist/index.js';
+import { DesignItem, InsertAction, OverlayLayer } from "@node-projects/web-component-designer";
 export class CustomBindableObjectDragDropService {
     rectMap = new Map();
     rect;
