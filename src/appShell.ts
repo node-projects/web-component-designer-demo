@@ -1,5 +1,5 @@
 import { NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, TreeViewExtended, PropertyGrid, DocumentContainer, NodeHtmlParserService, ListPropertiesService, PaletteTreeView, CodeViewMonaco, BindableObjectsBrowser, ExtensionType, EditTextWithStyloExtensionProvider, CssToolsStylesheetService } from '@node-projects/web-component-designer';
-import createDefaultServiceContainer from '@node-projects/web-component-designer/dist/elements/services/DefaultServiceBootstrap';
+import createDefaultServiceContainer from '@node-projects/web-component-designer/dist/elements/services/DefaultServiceBootstrap.js';
 
 let serviceContainer = createDefaultServiceContainer();
 serviceContainer.register("bindingService", new BaseCustomWebcomponentBindingsService());
@@ -16,14 +16,14 @@ serviceContainer.register("stylesheetService", designerCanvas => new CssToolsSty
 
 LazyLoader.LoadText('./dist/custom-element-properties.json').then(data => serviceContainer.register("propertyService", new ListPropertiesService(JSON.parse(data))));
 
-import { DockSpawnTsWebcomponent } from 'dock-spawn-ts/lib/js/webcomponent/DockSpawnTsWebcomponent';
-import { DockManager } from 'dock-spawn-ts/lib/js/DockManager';
+import { DockSpawnTsWebcomponent } from 'dock-spawn-ts/lib/js/webcomponent/DockSpawnTsWebcomponent.js';
+import { DockManager } from 'dock-spawn-ts/lib/js/DockManager.js';
 import { BaseCustomWebComponentConstructorAppend, css, Disposable, html, LazyLoader } from '@node-projects/base-custom-webcomponent';
-import { CommandHandling } from './CommandHandling'
+import { CommandHandling } from './CommandHandling.js'
 import { StyleEditor } from './styleEditor.js';
 import './styleEditor.js';
-import { CustomBindableObjectsService } from './services/CustomBindableObjectsService';
-import { CustomBindableObjectDragDropService } from './services/CustomBindableObjectDragDropService';
+import { CustomBindableObjectsService } from './services/CustomBindableObjectsService.js';
+import { CustomBindableObjectDragDropService } from './services/CustomBindableObjectDragDropService.js';
 
 DockSpawnTsWebcomponent.cssRootDirectory = "./node_modules/dock-spawn-ts/lib/css/";
 
