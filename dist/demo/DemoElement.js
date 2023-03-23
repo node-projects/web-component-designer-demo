@@ -7,6 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { BaseCustomWebComponentConstructorAppend, customElement, html, property } from "@node-projects/base-custom-webcomponent";
 import { DemoEnum } from './DemoEnum';
 import { DemoStringEnum } from "./DemoStringEnum";
+import { inDesigner } from "@node-projects/web-component-designer";
 let DemoElement = class DemoElement extends BaseCustomWebComponentConstructorAppend {
     numberProp = 0;
     specialText = "abc";
@@ -16,22 +17,30 @@ let DemoElement = class DemoElement extends BaseCustomWebComponentConstructorApp
   <div>
     hello
     <div>[[this.numberProp]]</div>
-    <div>[[this.specialText]]</div>
+    <div css:background="[[this.inDesigner ? 'red' : '']]">[[this.specialText]]</div>
     <div>[[this.enumProperty]]</div>
     <div id="cnt" style="background: lightblue;">Test JS Access</div>
     <slot></slot>
   </div>`;
     _cnt;
+    _interval;
+    inDesigner;
     constructor() {
         super();
         this._parseAttributesToProperties();
         this._bindingsParse();
-        setInterval(() => {
-            this.numberProp++;
-            this._bindingsRefresh();
-        }, 500);
         this._cnt = this._getDomElement('cnt');
         this._cnt.onclick = () => alert('test');
+    }
+    connectedCallback() {
+        this._interval = setInterval(() => {
+            this.numberProp++;
+            this.inDesigner = inDesigner(this);
+            this._bindingsRefresh();
+        }, 500);
+    }
+    disconnectedCallback() {
+        clearInterval(this._interval);
     }
 };
 __decorate([
@@ -46,6 +55,9 @@ __decorate([
 __decorate([
     property(DemoStringEnum)
 ], DemoElement.prototype, "enumStringProperty", void 0);
+__decorate([
+    property(Boolean)
+], DemoElement.prototype, "inDesigner", void 0);
 DemoElement = __decorate([
     customElement('demo-element')
 ], DemoElement);

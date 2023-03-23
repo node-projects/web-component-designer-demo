@@ -20,7 +20,7 @@ import './styleEditor.js';
 import { CustomBindableObjectsService } from './services/CustomBindableObjectsService.js';
 import { CustomBindableObjectDragDropService } from './services/CustomBindableObjectDragDropService.js';
 DockSpawnTsWebcomponent.cssRootDirectory = "./node_modules/dock-spawn-ts/lib/css/";
-export class AppShell extends BaseCustomWebComponentConstructorAppend {
+class AppShell extends BaseCustomWebComponentConstructorAppend {
     activeElement;
     mainPage = 'designer';
     _documentNumber = 0;
@@ -291,4 +291,5 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         }
     }
 }
+export { AppShell };
 window.customElements.define('node-projects-app-shell', AppShell);
