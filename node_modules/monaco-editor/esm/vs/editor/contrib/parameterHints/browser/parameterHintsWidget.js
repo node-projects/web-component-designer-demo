@@ -32,7 +32,7 @@ import { ThemeIcon } from '../../../../base/common/themables.js';
 const $ = dom.$;
 const parameterHintsNextIcon = registerIcon('parameter-hints-next', Codicon.chevronDown, nls.localize('parameterHintsNextIcon', 'Icon for show next parameter hint.'));
 const parameterHintsPreviousIcon = registerIcon('parameter-hints-previous', Codicon.chevronUp, nls.localize('parameterHintsPreviousIcon', 'Icon for show previous parameter hint.'));
-let ParameterHintsWidget = class ParameterHintsWidget extends Disposable {
+export let ParameterHintsWidget = class ParameterHintsWidget extends Disposable {
     constructor(editor, model, contextKeyService, openerService, languageService) {
         super();
         this.editor = editor;
@@ -89,13 +89,13 @@ let ParameterHintsWidget = class ParameterHintsWidget extends Disposable {
             if (!this.domNodes) {
                 return;
             }
-            const fontInfo = this.editor.getOption(47 /* EditorOption.fontInfo */);
+            const fontInfo = this.editor.getOption(48 /* EditorOption.fontInfo */);
             this.domNodes.element.style.fontSize = `${fontInfo.fontSize}px`;
             this.domNodes.element.style.lineHeight = `${fontInfo.lineHeight / fontInfo.fontSize}`;
         };
         updateFont();
         this._register(Event.chain(this.editor.onDidChangeConfiguration.bind(this.editor))
-            .filter(e => e.hasChanged(47 /* EditorOption.fontInfo */))
+            .filter(e => e.hasChanged(48 /* EditorOption.fontInfo */))
             .on(updateFont, null));
         this._register(this.editor.onDidLayoutChange(e => this.updateMaxHeight()));
         this.updateMaxHeight();
@@ -152,7 +152,7 @@ let ParameterHintsWidget = class ParameterHintsWidget extends Disposable {
             return;
         }
         const code = dom.append(this.domNodes.signature, $('.code'));
-        const fontInfo = this.editor.getOption(47 /* EditorOption.fontInfo */);
+        const fontInfo = this.editor.getOption(48 /* EditorOption.fontInfo */);
         code.style.fontSize = `${fontInfo.fontSize}px`;
         code.style.fontFamily = fontInfo.fontFamily;
         const hasParameters = signature.parameters.length > 0;
@@ -308,5 +308,4 @@ ParameterHintsWidget = __decorate([
     __param(3, IOpenerService),
     __param(4, ILanguageService)
 ], ParameterHintsWidget);
-export { ParameterHintsWidget };
 registerColor('editorHoverWidget.highlightForeground', { dark: listHighlightForeground, light: listHighlightForeground, hcDark: listHighlightForeground, hcLight: listHighlightForeground }, nls.localize('editorHoverWidgetHighlightForeground', 'Foreground color of the active item in the parameter hint.'));

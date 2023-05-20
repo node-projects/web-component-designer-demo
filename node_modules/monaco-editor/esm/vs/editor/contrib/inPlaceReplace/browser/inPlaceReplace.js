@@ -112,7 +112,7 @@ class InPlaceReplaceUp extends EditorAction {
             precondition: EditorContextKeys.writable,
             kbOpts: {
                 kbExpr: EditorContextKeys.editorTextFocus,
-                primary: 2048 /* KeyMod.CtrlCmd */ | 1024 /* KeyMod.Shift */ | 82 /* KeyCode.Comma */,
+                primary: 2048 /* KeyMod.CtrlCmd */ | 1024 /* KeyMod.Shift */ | 87 /* KeyCode.Comma */,
                 weight: 100 /* KeybindingWeight.EditorContrib */
             }
         });
@@ -122,7 +122,7 @@ class InPlaceReplaceUp extends EditorAction {
         if (!controller) {
             return Promise.resolve(undefined);
         }
-        return controller.run(this.id, true);
+        return controller.run(this.id, false);
     }
 }
 class InPlaceReplaceDown extends EditorAction {
@@ -134,7 +134,7 @@ class InPlaceReplaceDown extends EditorAction {
             precondition: EditorContextKeys.writable,
             kbOpts: {
                 kbExpr: EditorContextKeys.editorTextFocus,
-                primary: 2048 /* KeyMod.CtrlCmd */ | 1024 /* KeyMod.Shift */ | 84 /* KeyCode.Period */,
+                primary: 2048 /* KeyMod.CtrlCmd */ | 1024 /* KeyMod.Shift */ | 89 /* KeyCode.Period */,
                 weight: 100 /* KeybindingWeight.EditorContrib */
             }
         });
@@ -144,7 +144,7 @@ class InPlaceReplaceDown extends EditorAction {
         if (!controller) {
             return Promise.resolve(undefined);
         }
-        return controller.run(this.id, false);
+        return controller.run(this.id, true);
     }
 }
 registerEditorContribution(InPlaceReplaceController.ID, InPlaceReplaceController, 4 /* EditorContributionInstantiation.Lazy */);

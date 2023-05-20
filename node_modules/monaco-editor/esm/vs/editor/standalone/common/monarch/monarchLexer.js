@@ -294,7 +294,7 @@ class MonarchModernTokensCollector {
         return new languages.EncodedTokenizationResult(MonarchModernTokensCollector._merge(this._prependTokens, this._tokens, null), endState);
     }
 }
-let MonarchTokenizer = class MonarchTokenizer {
+export let MonarchTokenizer = class MonarchTokenizer {
     constructor(languageService, standaloneThemeService, languageId, lexer, _configurationService) {
         this._configurationService = _configurationService;
         this._languageService = languageService;
@@ -319,7 +319,7 @@ let MonarchTokenizer = class MonarchTokenizer {
             }
             if (isOneOfMyEmbeddedModes) {
                 emitting = true;
-                languages.TokenizationRegistry.fire([this._languageId]);
+                languages.TokenizationRegistry.handleChange([this._languageId]);
                 emitting = false;
             }
         });
@@ -726,6 +726,7 @@ let MonarchTokenizer = class MonarchTokenizer {
         }
         if (languageId !== this._languageId) {
             // Fire language loading event
+            this._languageService.requestBasicLanguageFeatures(languageId);
             languages.TokenizationRegistry.getOrCreate(languageId);
             this._embeddedLanguages[languageId] = true;
         }
@@ -739,7 +740,6 @@ let MonarchTokenizer = class MonarchTokenizer {
 MonarchTokenizer = __decorate([
     __param(4, IConfigurationService)
 ], MonarchTokenizer);
-export { MonarchTokenizer };
 /**
  * Searches for a bracket in the 'brackets' attribute that matches the input.
  */

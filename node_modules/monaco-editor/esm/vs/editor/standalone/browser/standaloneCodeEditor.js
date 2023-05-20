@@ -57,7 +57,7 @@ function createAriaDomNode(parent) {
 /**
  * A code editor to be used both by the standalone editor and the standalone diff editor.
  */
-let StandaloneCodeEditor = class StandaloneCodeEditor extends CodeEditorWidget {
+export let StandaloneCodeEditor = class StandaloneCodeEditor extends CodeEditorWidget {
     constructor(domElement, _options, instantiationService, codeEditorService, commandService, contextKeyService, keybindingService, themeService, notificationService, accessibilityService, languageConfigurationService, languageFeaturesService) {
         const options = Object.assign({}, _options);
         options.ariaLabel = options.ariaLabel || StandaloneCodeEditorNLS.editorViewAccessibleLabel;
@@ -100,7 +100,7 @@ let StandaloneCodeEditor = class StandaloneCodeEditor extends CodeEditorWidget {
         const keybindingsWhen = ContextKeyExpr.and(precondition, ContextKeyExpr.deserialize(_descriptor.keybindingContext));
         const contextMenuGroupId = _descriptor.contextMenuGroupId || null;
         const contextMenuOrder = _descriptor.contextMenuOrder || 0;
-        const run = (accessor, ...args) => {
+        const run = (_accessor, ...args) => {
             return Promise.resolve(_descriptor.run(this, ...args));
         };
         const toDispose = new DisposableStore();
@@ -128,7 +128,7 @@ let StandaloneCodeEditor = class StandaloneCodeEditor extends CodeEditorWidget {
             }
         }
         // Finally, register an internal editor action
-        const internalAction = new InternalEditorAction(uniqueId, label, label, precondition, run, this._contextKeyService);
+        const internalAction = new InternalEditorAction(uniqueId, label, label, precondition, (...args) => Promise.resolve(_descriptor.run(this, ...args)), this._contextKeyService);
         // Store it under the original id, such that trigger with the original id will work
         this._actions.set(id, internalAction);
         toDispose.add(toDisposable(() => {
@@ -164,8 +164,7 @@ StandaloneCodeEditor = __decorate([
     __param(10, ILanguageConfigurationService),
     __param(11, ILanguageFeaturesService)
 ], StandaloneCodeEditor);
-export { StandaloneCodeEditor };
-let StandaloneEditor = class StandaloneEditor extends StandaloneCodeEditor {
+export let StandaloneEditor = class StandaloneEditor extends StandaloneCodeEditor {
     constructor(domElement, _options, instantiationService, codeEditorService, commandService, contextKeyService, keybindingService, themeService, notificationService, configurationService, accessibilityService, modelService, languageService, languageConfigurationService, languageFeaturesService) {
         const options = Object.assign({}, _options);
         updateConfigurationService(configurationService, options, false);
@@ -237,8 +236,7 @@ StandaloneEditor = __decorate([
     __param(13, ILanguageConfigurationService),
     __param(14, ILanguageFeaturesService)
 ], StandaloneEditor);
-export { StandaloneEditor };
-let StandaloneDiffEditor = class StandaloneDiffEditor extends DiffEditorWidget {
+export let StandaloneDiffEditor = class StandaloneDiffEditor extends DiffEditorWidget {
     constructor(domElement, _options, instantiationService, contextKeyService, codeEditorService, themeService, notificationService, configurationService, contextMenuService, editorProgressService, clipboardService) {
         const options = Object.assign({}, _options);
         updateConfigurationService(configurationService, options, true);
@@ -297,7 +295,6 @@ StandaloneDiffEditor = __decorate([
     __param(9, IEditorProgressService),
     __param(10, IClipboardService)
 ], StandaloneDiffEditor);
-export { StandaloneDiffEditor };
 /**
  * @internal
  */

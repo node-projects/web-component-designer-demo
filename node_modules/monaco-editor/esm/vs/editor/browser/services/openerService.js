@@ -106,7 +106,7 @@ let EditorOpener = class EditorOpener {
 EditorOpener = __decorate([
     __param(0, ICodeEditorService)
 ], EditorOpener);
-let OpenerService = class OpenerService {
+export let OpenerService = class OpenerService {
     constructor(editorService, commandService) {
         this._openers = new LinkedList();
         this._validators = new LinkedList();
@@ -142,6 +142,10 @@ let OpenerService = class OpenerService {
         });
         this._openers.push(new CommandOpener(commandService));
         this._openers.push(new EditorOpener(editorService));
+    }
+    registerOpener(opener) {
+        const remove = this._openers.unshift(opener);
+        return { dispose: remove };
     }
     open(target, options) {
         var _a;
@@ -227,4 +231,3 @@ OpenerService = __decorate([
     __param(0, ICodeEditorService),
     __param(1, ICommandService)
 ], OpenerService);
-export { OpenerService };

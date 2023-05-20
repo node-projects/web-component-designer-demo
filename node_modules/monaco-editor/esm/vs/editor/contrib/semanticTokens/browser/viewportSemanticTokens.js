@@ -23,7 +23,7 @@ import { ILanguageFeatureDebounceService } from '../../../common/services/langua
 import { StopWatch } from '../../../../base/common/stopwatch.js';
 import { ILanguageFeaturesService } from '../../../common/services/languageFeatures.js';
 import { ISemanticTokensStylingService } from '../../../common/services/semanticTokensStyling.js';
-let ViewportSemanticTokensContribution = class ViewportSemanticTokensContribution extends Disposable {
+export let ViewportSemanticTokensContribution = class ViewportSemanticTokensContribution extends Disposable {
     constructor(editor, _semanticTokensStylingService, _themeService, _configurationService, languageFeatureDebounceService, languageFeaturesService) {
         super();
         this._semanticTokensStylingService = _semanticTokensStylingService;

@@ -2,9 +2,19 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 import './standalone-tokens.css';
 import { Disposable, DisposableStore } from '../../../base/common/lifecycle.js';
 import { splitLines } from '../../../base/common/strings.js';
+import { URI } from '../../../base/common/uri.js';
 import { FontMeasurements } from '../../browser/config/fontMeasurements.js';
 import { ICodeEditorService } from '../../browser/services/codeEditorService.js';
 import { DiffNavigator } from '../../browser/widget/diffNavigator.js';
@@ -30,7 +40,10 @@ import { EditorCommand } from '../../browser/editorExtensions.js';
 import { MenuRegistry, MenuId } from '../../../platform/actions/common/actions.js';
 import { ContextKeyExpr } from '../../../platform/contextkey/common/contextkey.js';
 import { PLAINTEXT_LANGUAGE_ID } from '../../common/languages/modesRegistry.js';
-import { LineRange, LineRangeMapping, RangeMapping } from '../../common/diff/linesDiffComputer.js';
+import { LineRangeMapping, RangeMapping } from '../../common/diff/linesDiffComputer.js';
+import { LineRange } from '../../common/core/lineRange.js';
+import { EditorZoom } from '../../common/config/editorZoom.js';
+import { IOpenerService } from '../../../platform/opener/common/opener.js';
 /**
  * Create a new editor under `domElement`.
  * `domElement` should be empty (not contain other dom nodes).
@@ -181,9 +194,8 @@ export function createModel(value, language, uri) {
  */
 export function setModelLanguage(model, mimeTypeOrLanguageId) {
     const languageService = StandaloneServices.get(ILanguageService);
-    const modelService = StandaloneServices.get(IModelService);
     const languageId = languageService.getLanguageIdByMimeType(mimeTypeOrLanguageId) || mimeTypeOrLanguageId || PLAINTEXT_LANGUAGE_ID;
-    modelService.setMode(model, languageService.createById(languageId));
+    model.setLanguage(languageService.createById(languageId));
 }
 /**
  * Set the markers for a model.
@@ -352,6 +364,54 @@ export function registerCommand(id, handler) {
     return CommandsRegistry.registerCommand({ id, handler });
 }
 /**
+ * Registers a handler that is called when a link is opened in any editor. The handler callback should return `true` if the link was handled and `false` otherwise.
+ * The handler that was registered last will be called first when a link is opened.
+ *
+ * Returns a disposable that can unregister the opener again.
+ */
+export function registerLinkOpener(opener) {
+    const openerService = StandaloneServices.get(IOpenerService);
+    return openerService.registerOpener({
+        open(resource) {
+            return __awaiter(this, void 0, void 0, function* () {
+                if (typeof resource === 'string') {
+                    resource = URI.parse(resource);
+                }
+                return opener.open(resource);
+            });
+        }
+    });
+}
+/**
+ * Registers a handler that is called when a resource other than the current model should be opened in the editor (e.g. "go to definition").
+ * The handler callback should return `true` if the request was handled and `false` otherwise.
+ *
+ * Returns a disposable that can unregister the opener again.
+ *
+ * If no handler is registered the default behavior is to do nothing for models other than the currently attached one.
+ */
+export function registerEditorOpener(opener) {
+    const codeEditorService = StandaloneServices.get(ICodeEditorService);
+    return codeEditorService.registerCodeEditorOpenHandler((input, source, sideBySide) => __awaiter(this, void 0, void 0, function* () {
+        var _a;
+        if (!source) {
+            return null;
+        }
+        const selection = (_a = input.options) === null || _a === void 0 ? void 0 : _a.selection;
+        let selectionOrPosition;
+        if (selection && typeof selection.endLineNumber === 'number' && typeof selection.endColumn === 'number') {
+            selectionOrPosition = selection;
+        }
+        else if (selection) {
+            selectionOrPosition = { lineNumber: selection.startLineNumber, column: selection.startColumn };
+        }
+        if (yield opener.openCodeEditor(source, input.resource, selectionOrPosition)) {
+            return source; // return source editor to indicate that this handler has successfully handled the opening
+        }
+        return null; // fallback to other registered handlers
+    }));
+}
+/**
  * @internal
  */
 export function createMonacoEditorAPI() {
@@ -388,6 +448,8 @@ export function createMonacoEditorAPI() {
         setTheme: setTheme,
         remeasureFonts: remeasureFonts,
         registerCommand: registerCommand,
+        registerLinkOpener: registerLinkOpener,
+        registerEditorOpener: registerEditorOpener,
         // enums
         AccessibilitySupport: standaloneEnums.AccessibilitySupport,
         ContentWidgetPositionPreference: standaloneEnums.ContentWidgetPositionPreference,
@@ -401,6 +463,7 @@ export function createMonacoEditorAPI() {
         MouseTargetType: standaloneEnums.MouseTargetType,
         OverlayWidgetPositionPreference: standaloneEnums.OverlayWidgetPositionPreference,
         OverviewRulerLane: standaloneEnums.OverviewRulerLane,
+        GlyphMarginLane: standaloneEnums.GlyphMarginLane,
         RenderLineNumbersType: standaloneEnums.RenderLineNumbersType,
         RenderMinimap: standaloneEnums.RenderMinimap,
         ScrollbarVisibility: standaloneEnums.ScrollbarVisibility,
@@ -421,6 +484,7 @@ export function createMonacoEditorAPI() {
         LineRange: LineRange,
         LineRangeMapping: LineRangeMapping,
         RangeMapping: RangeMapping,
+        EditorZoom: EditorZoom,
         // vars
         EditorType: EditorType,
         EditorOptions: EditorOptions

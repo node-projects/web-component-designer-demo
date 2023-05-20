@@ -12,7 +12,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { stringDiff } from '../../../base/common/diff/diff.js';
-import { globals } from '../../../base/common/platform.js';
 import { URI } from '../../../base/common/uri.js';
 import { Position } from '../core/position.js';
 import { Range } from '../core/range.js';
@@ -25,6 +24,7 @@ import { StopWatch } from '../../../base/common/stopwatch.js';
 import { UnicodeTextModelHighlighter } from './unicodeTextModelHighlighter.js';
 import { linesDiffComputers } from '../diff/linesDiffComputers.js';
 import { createProxyObject, getAllMethodNames } from '../../../base/common/objects.js';
+import { computeDefaultDocumentColors } from '../languages/defaultDocumentColorsComputer.js';
 /**
  * @internal
  */
@@ -37,6 +37,21 @@ class MirrorModel extends BaseMirrorModel {
     }
     getValue() {
         return this.getText();
+    }
+    findMatches(regex) {
+        const matches = [];
+        for (let i = 0; i < this._lines.length; i++) {
+            const line = this._lines[i];
+            const offsetToAdd = this.offsetAt(new Position(i + 1, 1));
+            const iteratorOverMatches = line.matchAll(regex);
+            for (const match of iteratorOverMatches) {
+                if (match.index || match.index === 0) {
+                    match.index = match.index + offsetToAdd;
+                }
+                matches.push(match);
+            }
+        }
+        return matches;
     }
     getLinesContent() {
         return this._lines.slice(0);
@@ -197,7 +212,7 @@ class MirrorModel extends BaseMirrorModel {
 /**
  * @internal
  */
-class EditorSimpleWorker {
+export class EditorSimpleWorker {
     constructor(host, foreignModuleFactory) {
         this._host = host;
         this._models = Object.create(null);
@@ -252,14 +267,14 @@ class EditorSimpleWorker {
         });
     }
     static computeDiff(originalTextModel, modifiedTextModel, options, algorithm) {
-        const diffAlgorithm = algorithm === 'experimental' ? linesDiffComputers.experimental : linesDiffComputers.smart;
+        const diffAlgorithm = algorithm === 'advanced' ? linesDiffComputers.advanced : linesDiffComputers.legacy;
         const originalLines = originalTextModel.getLinesContent();
         const modifiedLines = modifiedTextModel.getLinesContent();
         const result = diffAlgorithm.computeDiff(originalLines, modifiedLines, options);
         const identical = (result.changes.length > 0 ? false : this._modelsAreIdentical(originalTextModel, modifiedTextModel));
         return {
             identical,
-            quitEarly: result.quitEarly,
+            quitEarly: result.hitTimeout,
             changes: result.changes.map(m => {
                 var _a;
                 return ([m.originalRange.startLineNumber, m.originalRange.endLineNumberExclusive, m.modifiedRange.startLineNumber, m.modifiedRange.endLineNumberExclusive, (_a = m.innerChanges) === null || _a === void 0 ? void 0 : _a.map(m => [
@@ -290,7 +305,7 @@ class EditorSimpleWorker {
         }
         return true;
     }
-    computeMoreMinimalEdits(modelUrl, edits) {
+    computeMoreMinimalEdits(modelUrl, edits, pretty) {
         return __awaiter(this, void 0, void 0, function* () {
             const model = this._getModel(modelUrl);
             if (!model) {
@@ -327,7 +342,7 @@ class EditorSimpleWorker {
                     continue;
                 }
                 // compute diff between original and edit.text
-                const changes = stringDiff(original, text, false);
+                const changes = stringDiff(original, text, pretty);
                 const editOffset = model.offsetAt(Range.lift(range).getStartPosition());
                 for (const change of changes) {
                     const start = model.positionAt(editOffset + change.originalStart);
@@ -355,6 +370,16 @@ class EditorSimpleWorker {
                 return null;
             }
             return computeLinks(model);
+        });
+    }
+    // --- BEGIN default document colors -----------------------------------------------------------
+    computeDefaultDocumentColors(modelUrl) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const model = this._getModel(modelUrl);
+            if (!model) {
+                return null;
+            }
+            return computeDefaultDocumentColors(model);
         });
     }
     textualSuggest(modelUrls, leadingWord, wordDef, wordDefFlags) {
@@ -487,7 +512,6 @@ class EditorSimpleWorker {
 EditorSimpleWorker._diffLimit = 100000;
 // ---- BEGIN suggest --------------------------------------------------------------------------
 EditorSimpleWorker._suggestionsLimit = 10000;
-export { EditorSimpleWorker };
 /**
  * Called on the worker side
  * @internal
@@ -497,5 +521,5 @@ export function create(host) {
 }
 if (typeof importScripts === 'function') {
     // Running in a web worker
-    globals.monaco = createMonacoBaseAPI();
+    globalThis.monaco = createMonacoBaseAPI();
 }

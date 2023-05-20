@@ -10,7 +10,7 @@ import { MarkdownRenderer } from '../../markdownRenderer/browser/markdownRendere
 import { HoverOperation } from './hoverOperation.js';
 import { HoverWidget } from '../../../../base/browser/ui/hover/hoverWidget.js';
 const $ = dom.$;
-class MarginHoverWidget extends Disposable {
+export class MarginHoverWidget extends Disposable {
     constructor(editor, languageService, openerService) {
         super();
         this._renderDisposeables = this._register(new DisposableStore());
@@ -27,7 +27,7 @@ class MarginHoverWidget extends Disposable {
         }));
         this._register(this._editor.onDidChangeModelDecorations(() => this._onModelDecorationsChanged()));
         this._register(this._editor.onDidChangeConfiguration((e) => {
-            if (e.hasChanged(47 /* EditorOption.fontInfo */)) {
+            if (e.hasChanged(48 /* EditorOption.fontInfo */)) {
                 this._updateFont();
             }
         }));
@@ -112,7 +112,7 @@ class MarginHoverWidget extends Disposable {
         const editorLayout = this._editor.getLayoutInfo();
         const topForLineNumber = this._editor.getTopForLineNumber(lineNumber);
         const editorScrollTop = this._editor.getScrollTop();
-        const lineHeight = this._editor.getOption(63 /* EditorOption.lineHeight */);
+        const lineHeight = this._editor.getOption(64 /* EditorOption.lineHeight */);
         const nodeHeight = this._hover.containerDomNode.clientHeight;
         const top = topForLineNumber - editorScrollTop - ((nodeHeight - lineHeight) / 2);
         this._hover.containerDomNode.style.left = `${editorLayout.glyphMarginLeft + editorLayout.glyphMarginWidth}px`;
@@ -120,7 +120,6 @@ class MarginHoverWidget extends Disposable {
     }
 }
 MarginHoverWidget.ID = 'editor.contrib.modesGlyphHoverWidget';
-export { MarginHoverWidget };
 class MarginHoverComputer {
     get lineNumber() {
         return this._lineNumber;

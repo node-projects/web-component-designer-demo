@@ -177,7 +177,7 @@ class ReferencesTree extends WorkbenchAsyncDataTree {
 /**
  * ZoneWidget that is shown inside the editor
  */
-let ReferenceWidget = class ReferenceWidget extends peekView.PeekViewWidget {
+export let ReferenceWidget = class ReferenceWidget extends peekView.PeekViewWidget {
     constructor(editor, _defaultTreeKeyboardSupport, layoutData, themeService, _textModelResolverService, _instantiationService, _peekViewService, _uriLabel, _undoRedoService, _keybindingService, _languageService, _languageConfigurationService) {
         super(editor, { showFrame: false, showArrow: true, isResizeable: true, isAccessible: true, supportOnTitleClick: true }, _instantiationService);
         this._defaultTreeKeyboardSupport = _defaultTreeKeyboardSupport;
@@ -266,7 +266,7 @@ let ReferenceWidget = class ReferenceWidget extends peekView.PeekViewWidget {
                 enabled: false
             }
         };
-        this._preview = this._instantiationService.createInstance(EmbeddedCodeEditorWidget, this._previewContainer, options, this.editor);
+        this._preview = this._instantiationService.createInstance(EmbeddedCodeEditorWidget, this._previewContainer, options, {}, this.editor);
         dom.hide(this._previewContainer);
         this._previewNotAvailableMessage = new TextModel(nls.localize('missingPreviewMessage', "no preview available"), PLAINTEXT_LANGUAGE_ID, TextModel.DEFAULT_CREATION_OPTIONS, null, this._undoRedoService, this._languageService, this._languageConfigurationService);
         // tree
@@ -493,4 +493,3 @@ ReferenceWidget = __decorate([
     __param(10, ILanguageService),
     __param(11, ILanguageConfigurationService)
 ], ReferenceWidget);
-export { ReferenceWidget };

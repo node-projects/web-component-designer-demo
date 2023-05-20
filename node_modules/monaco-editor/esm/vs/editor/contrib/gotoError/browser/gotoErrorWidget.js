@@ -139,7 +139,7 @@ class MessageWidget {
         this._editor.applyFontInfo(this._relatedBlock);
         if (isNonEmptyArray(relatedInformation)) {
             const relatedInformationNode = this._relatedBlock.appendChild(document.createElement('div'));
-            relatedInformationNode.style.paddingTop = `${Math.floor(this._editor.getOption(63 /* EditorOption.lineHeight */) * 0.66)}px`;
+            relatedInformationNode.style.paddingTop = `${Math.floor(this._editor.getOption(64 /* EditorOption.lineHeight */) * 0.66)}px`;
             this._lines += 1;
             for (const related of relatedInformation) {
                 const container = document.createElement('div');
@@ -156,7 +156,7 @@ class MessageWidget {
                 relatedInformationNode.appendChild(container);
             }
         }
-        const fontInfo = this._editor.getOption(47 /* EditorOption.fontInfo */);
+        const fontInfo = this._editor.getOption(48 /* EditorOption.fontInfo */);
         const scrollWidth = Math.ceil(fontInfo.typicalFullwidthCharacterWidth * this._longestLineLength * 0.75);
         const scrollHeight = fontInfo.lineHeight * this._lines;
         this._scrollable.setScrollDimensions({ scrollWidth, scrollHeight });
@@ -194,7 +194,7 @@ class MessageWidget {
         return ariaLabel;
     }
 }
-let MarkerNavigationWidget = class MarkerNavigationWidget extends PeekViewWidget {
+export let MarkerNavigationWidget = class MarkerNavigationWidget extends PeekViewWidget {
     constructor(editor, _themeService, _openerService, _menuService, instantiationService, _contextKeyService, _labelService) {
         super(editor, { showArrow: true, showFrame: true, isAccessible: true, frameWidth: 1 }, instantiationService);
         this._themeService = _themeService;
@@ -326,7 +326,6 @@ MarkerNavigationWidget = __decorate([
     __param(5, IContextKeyService),
     __param(6, ILabelService)
 ], MarkerNavigationWidget);
-export { MarkerNavigationWidget };
 // theming
 const errorDefault = oneOf(editorErrorForeground, editorErrorBorder);
 const warningDefault = oneOf(editorWarningForeground, editorWarningBorder);

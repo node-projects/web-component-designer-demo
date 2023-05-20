@@ -11,6 +11,7 @@ import { ScrollableElement } from '../scrollbar/scrollableElement.js';
 import { Widget } from '../widget.js';
 import { Emitter, Event } from '../../../common/event.js';
 import { HistoryNavigator } from '../../../common/history.js';
+import { equals } from '../../../common/objects.js';
 import './inputBox.css';
 import * as nls from '../../../../nls.js';
 const $ = dom.$;
@@ -124,18 +125,6 @@ export class InputBox extends Widget {
         this.tooltip = tooltip;
         this.input.title = tooltip;
     }
-    setAriaLabel(label) {
-        this.ariaLabel = label;
-        if (label) {
-            this.input.setAttribute('aria-label', this.ariaLabel);
-        }
-        else {
-            this.input.removeAttribute('aria-label');
-        }
-    }
-    getAriaLabel() {
-        return this.ariaLabel;
-    }
     get inputElement() {
         return this.input;
     }
@@ -198,6 +187,10 @@ export class InputBox extends Widget {
         this.scrollableElement.setScrollPosition({ scrollTop });
     }
     showMessage(message, force) {
+        if (this.state === 'open' && equals(this.message, message)) {
+            // Already showing
+            return;
+        }
         this.message = message;
         this.element.classList.remove('idle');
         this.element.classList.remove('info');
@@ -460,10 +453,8 @@ export class HistoryInputBox extends InputBox {
         if (next) {
             next = next === this.value ? this.getNextValue() : next;
         }
-        if (next) {
-            this.value = next;
-            aria.status(this.value);
-        }
+        this.value = next !== null && next !== void 0 ? next : '';
+        aria.status(this.value ? this.value : nls.localize('clearedInput', "Cleared Input"));
     }
     showPreviousValue() {
         if (!this.history.has(this.value)) {
@@ -498,6 +489,6 @@ export class HistoryInputBox extends InputBox {
         return this.history.previous() || this.history.first();
     }
     getNextValue() {
-        return this.history.next() || this.history.last();
+        return this.history.next();
     }
 }
