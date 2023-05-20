@@ -8,10 +8,10 @@ export class CustomBindableObjectDragDropService implements IBindableObjectDragD
   dragEnter(designerCanvas: IDesignerCanvas, event: DragEvent) {
     const element = designerCanvas.getElementAtPoint({ x: event.x, y: event.y });
     const designItem = DesignItem.GetDesignItem(element);
-    console.log("enter",event,designItem);
+    console.log("enter", event, designItem);
     if (designItem && !designItem.isRootItem) {
       let itemRect = designerCanvas.getNormalizedElementCoordinates(element);
-      this.rect = designerCanvas.overlayLayer.drawRect(itemRect.x, itemRect.y, itemRect.width, itemRect.height, '', null, OverlayLayer.Background);
+      this.rect = designerCanvas.overlayLayer.drawRect(this.constructor.name, itemRect.x, itemRect.y, itemRect.width, itemRect.height, '', null, OverlayLayer.Background);
       this.rect.style.fill = '#ff0000';
       this.rect.style.opacity = '0.3';
       this.rectMap.set(element, this.rect);
@@ -21,7 +21,7 @@ export class CustomBindableObjectDragDropService implements IBindableObjectDragD
   dragLeave(designerCanvas: IDesignerCanvas, event: DragEvent) {
     const element = designerCanvas.getElementAtPoint({ x: event.x, y: event.y });
     const designItem = DesignItem.GetDesignItem(element);
-    console.log("leave",event,designItem);
+    console.log("leave", event, designItem);
     if (designItem && !designItem.isRootItem) {
       const rect = this.rectMap.get(element);
       designerCanvas.overlayLayer.removeOverlay(rect);
