@@ -19,34 +19,34 @@
   },
   "homepage": "https://github.com/node-projects/web-component-designer-demo#readme",
   "devDependencies": {
-    "@web/dev-server": "^0.1.36",
+    "@web/dev-server": "^0.2.1",
     "copyfiles": "^2.4.1",
-    "gulp": "^4.0.2",
-    "typescript": "^5.0.2"
+    "gulp": "^4.0.2"
   },
   "dependencies": {
     "@adobe/css-tools": "4.3.0-beta.1",
     "@doubletrade/lit-datepicker": "^1.0.0",
-    "@fortawesome/fontawesome-free": "^6.3.0",
+    "@fortawesome/fontawesome-free": "^6.4.0",
     "@node-projects/base-custom-webcomponent": "0.10.9",
     "@node-projects/lean-he-esm": "^3.3.0",
     "@node-projects/node-html-parser-esm": "^6.1.5",
-    "@node-projects/web-component-designer": "^0.0.218",
-    "@papyrs/stylo": "^0.0.42",
+    "@node-projects/web-component-designer": "^0.0.232",
+    "@papyrs/stylo": "^0.0.45",
     "@vanillawc/wc-marquee": "^1.0.31",
-    "ace-builds": "^1.16.0",
+    "ace-builds": "^1.21.1",
     "codejar": "^3.7.0",
     "codemirror": "^6.0.1",
     "construct-style-sheets-polyfill": "^3.1.0",
-    "dock-spawn-ts": "^2.513.1",
-    "es-module-shims": "^1.7.0",
+    "dock-spawn-ts": "^2.514.0",
+    "es-module-shims": "^1.7.2",
     "esprima-next": "^5.8.4",
-    "jquery": "^3.6.4",
+    "jquery": "^3.7.0",
     "jquery.fancytree": "^2.38.3",
-    "lit": "^2.7.0",
-    "mdn-data": "^2.0.31",
+    "lit": "^2.7.4",
+    "mdn-data": "^2.0.32",
     "metro4-dist": "^4.5.0",
     "mobile-drag-drop": "^3.0.0-rc.0",
-    "monaco-editor": "^0.36.1"
+    "monaco-editor": "^0.38.0",
+    "typescript": "^5.0.4"
   }
 }
