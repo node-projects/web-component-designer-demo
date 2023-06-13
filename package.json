@@ -19,7 +19,7 @@
   },
   "homepage": "https://github.com/node-projects/web-component-designer-demo#readme",
   "devDependencies": {
-    "@web/dev-server": "^0.2.1",
+    "@web/dev-server": "^0.2.2",
     "copyfiles": "^2.4.1",
     "gulp": "^4.0.2"
   },
@@ -30,10 +30,10 @@
     "@node-projects/base-custom-webcomponent": "0.10.9",
     "@node-projects/lean-he-esm": "^3.3.0",
     "@node-projects/node-html-parser-esm": "^6.1.5",
-    "@node-projects/web-component-designer": "^0.0.236",
+    "@node-projects/web-component-designer": "^0.0.237",
     "@papyrs/stylo": "^0.0.45",
     "@vanillawc/wc-marquee": "^1.0.31",
-    "ace-builds": "^1.22.0",
+    "ace-builds": "^1.22.1",
     "codejar": "^3.7.0",
     "codemirror": "^6.0.1",
     "construct-style-sheets-polyfill": "^3.1.0",
@@ -46,7 +46,7 @@
     "mdn-data": "^2.0.32",
     "metro4-dist": "^4.5.0",
     "mobile-drag-drop": "^3.0.0-rc.0",
-    "monaco-editor": "^0.38.0",
+    "monaco-editor": "^0.39.0",
     "typescript": "^5.1.3"
   }
 }
