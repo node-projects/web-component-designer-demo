@@ -128,7 +128,7 @@ export class CommandHandling {
     }, 100);
   }
 
-  handleCommand(buttons: HTMLButtonElement[], target: IUiCommandHandler) {
+  handleCommand(buttons: (HTMLButtonElement | HTMLInputElement)[], target: IUiCommandHandler) {
     buttons.forEach(b => {
       let command = b.dataset['command'];
       let commandParameter = b.dataset['commandParameter'];
