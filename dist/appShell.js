@@ -1,12 +1,15 @@
-import { NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, DocumentContainer, NodeHtmlParserService, ListPropertiesService, CodeViewMonaco, ExtensionType, EditTextWithStyloExtensionProvider, CssToolsStylesheetService } from '@node-projects/web-component-designer';
+import { NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, DocumentContainer, NodeHtmlParserService, ListPropertiesService, CodeViewMonaco, ExtensionType, EditTextWithStyloExtensionProvider, CssToolsStylesheetService, CopyPasteAsJsonService } from '@node-projects/web-component-designer';
 import createDefaultServiceContainer from '@node-projects/web-component-designer/dist/elements/services/DefaultServiceBootstrap.js';
+//import { BaseCustomWebcomponentParserService } from '@node-projects/web-component-designer/dist/elements/services/htmlParserService/BaseCustomWebcomponentParserService.js';
 let serviceContainer = createDefaultServiceContainer();
 serviceContainer.register("bindingService", new BaseCustomWebcomponentBindingsService());
 let rootDir = "/web-component-designer-demo";
 if (window.location.hostname == 'localhost' || window.location.hostname == '127.0.0.1')
     rootDir = '';
-serviceContainer.register("htmlParserService", new NodeHtmlParserService(rootDir + '/node_modules/@node-projects/node-html-parser-esm/dist/index.js'));
-//serviceContainer.register("htmlParserService", new LitElementParserService(rootDir + '/node_modules/@node-projects/node-html-parser-esm/dist/index.js', rootDir + '/node_modules/esprima-next/dist/esm/esprima.js'));
+let nodeParserService = new NodeHtmlParserService(rootDir + '/node_modules/@node-projects/node-html-parser-esm/dist/index.js');
+serviceContainer.register("htmlParserService", nodeParserService);
+serviceContainer.register("copyPasteService", new CopyPasteAsJsonService());
+//serviceContainer.register("htmlParserService", new BaseCustomWebcomponentParserService(nodeParserService));
 serviceContainer.config.codeViewWidget = CodeViewMonaco;
 serviceContainer.designerExtensions.set(ExtensionType.Doubleclick, [new EditTextWithStyloExtensionProvider()]);
 //Instance Service Container Factories
@@ -20,7 +23,7 @@ import './styleEditor.js';
 import { CustomBindableObjectsService } from './services/CustomBindableObjectsService.js';
 import { CustomBindableObjectDragDropService } from './services/CustomBindableObjectDragDropService.js';
 DockSpawnTsWebcomponent.cssRootDirectory = "./node_modules/dock-spawn-ts/lib/css/";
-class AppShell extends BaseCustomWebComponentConstructorAppend {
+export class AppShell extends BaseCustomWebComponentConstructorAppend {
     activeElement;
     mainPage = 'designer';
     _documentNumber = 0;
@@ -291,5 +294,4 @@ class AppShell extends BaseCustomWebComponentConstructorAppend {
         }
     }
 }
-export { AppShell };
 window.customElements.define('node-projects-app-shell', AppShell);

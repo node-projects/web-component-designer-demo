@@ -1,5 +1,5 @@
 import { BaseCustomWebComponentConstructorAppend, css, html } from "@node-projects/base-custom-webcomponent";
-class StyleEditor extends BaseCustomWebComponentConstructorAppend {
+export class StyleEditor extends BaseCustomWebComponentConstructorAppend {
     static style = css `
         :host {
             display: block;
@@ -90,5 +90,4 @@ class StyleEditor extends BaseCustomWebComponentConstructorAppend {
         this._editor.trigger('', 'editor.action.clipboardDeleteAction', null);
     }
 }
-export { StyleEditor };
 customElements.define('node-projects-style-editor', StyleEditor);

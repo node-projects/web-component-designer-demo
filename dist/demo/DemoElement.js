@@ -8,7 +8,7 @@ import { BaseCustomWebComponentConstructorAppend, customElement, html, property 
 import { DemoEnum } from './DemoEnum';
 import { DemoStringEnum } from "./DemoStringEnum";
 import { inDesigner } from "@node-projects/web-component-designer";
-let DemoElement = class DemoElement extends BaseCustomWebComponentConstructorAppend {
+export let DemoElement = class DemoElement extends BaseCustomWebComponentConstructorAppend {
     numberProp = 0;
     specialText = "abc";
     enumProperty = DemoEnum.value1;
@@ -61,4 +61,3 @@ __decorate([
 DemoElement = __decorate([
     customElement('demo-element')
 ], DemoElement);
-export { DemoElement };
