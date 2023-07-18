@@ -1,4 +1,4 @@
-import { NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, TreeViewExtended, PropertyGrid, DocumentContainer, NodeHtmlParserService, ListPropertiesService, PaletteTreeView, CodeViewMonaco, BindableObjectsBrowser, ExtensionType, EditTextWithStyloExtensionProvider, CssToolsStylesheetService, CopyPasteAsJsonService } from '@node-projects/web-component-designer';
+import { NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, TreeViewExtended, PropertyGrid, DocumentContainer, NodeHtmlParserService, ListPropertiesService, PaletteTreeView, CodeViewMonaco, BindableObjectsBrowser, ExtensionType, EditTextWithStyloExtensionProvider, CssToolsStylesheetService, CopyPasteAsJsonService, DebugView } from '@node-projects/web-component-designer';
 import createDefaultServiceContainer from '@node-projects/web-component-designer/dist/elements/services/DefaultServiceBootstrap.js';
 //import { BaseCustomWebcomponentParserService } from '@node-projects/web-component-designer/dist/elements/services/htmlParserService/BaseCustomWebcomponentParserService.js';
 
@@ -11,6 +11,7 @@ let nodeParserService = new NodeHtmlParserService(rootDir + '/node_modules/@node
 serviceContainer.register("htmlParserService", nodeParserService);
 serviceContainer.register("copyPasteService", new CopyPasteAsJsonService());
 //serviceContainer.register("htmlParserService", new BaseCustomWebcomponentParserService(nodeParserService));
+//serviceContainer.config.codeViewWidget = CodeViewCodeMirror6;
 serviceContainer.config.codeViewWidget = CodeViewMonaco;
 serviceContainer.designerExtensions.set(ExtensionType.Doubleclick, [new EditTextWithStyloExtensionProvider()]);
 
@@ -40,6 +41,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
   _paletteTree: PaletteTreeView;
   _bindableObjectsBrowser: BindableObjectsBrowser
   _propertyGrid: PropertyGrid;
+  _debugView: DebugView;
   _treeViewExtended: TreeViewExtended;
   _styleEditor: StyleEditor;
 
@@ -149,6 +151,10 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
             <node-projects-property-grid-with-header id="propertyGrid"></node-projects-property-grid-with-header>
           </div>
 
+          <div id="debugDock" title="Debug" dock-spawn-dock-type="down" dock-spawn-dock-to="attributeDock" dock-spawn-dock-ratio="0.2">
+            <node-projects-debug-view id="debugView"></node-projects-debug-view>
+          </div>
+
           <div id="lower" title="stylesheet.css" dock-spawn-dock-type="down" dock-spawn-dock-ratio="0.25" style="overflow: hidden; width: 100%;">
             <node-projects-style-editor id="styleEditor"></node-projects-style-editor>
           </div>
@@ -168,6 +174,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     //this._bindableObjectsBrowser = this._getDomElement<BindableObjectsBrowser>('bindableObjectsBrowser');
     this._treeViewExtended = this._getDomElement<TreeViewExtended>('treeViewExtended');
     this._propertyGrid = this._getDomElement<PropertyGrid>('propertyGrid');
+    this._debugView = this._getDomElement<DebugView>('debugView');
     this._styleEditor = this._getDomElement<StyleEditor>('styleEditor');
 
     this._npmInput = this._getDomElement<HTMLInputElement>('npmInput');
@@ -219,7 +226,9 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
             this._styleEditor.model = sampleDocument.additionalData.model;
             this._propertyGrid.instanceServiceContainer = sampleDocument.instanceServiceContainer;
             this._treeViewExtended.instanceServiceContainer = sampleDocument.instanceServiceContainer;
-
+            sampleDocument.instanceServiceContainer.selectionService.onSelectionChanged.on(e => {
+              this._debugView.update(e.selectedElements[0]);
+            });
           }
         }
       },
@@ -263,7 +272,6 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     });
 
     this._paletteTree.loadControls(serviceContainer, serviceContainer.elementsServices);
-    //this._bindableObjectsBrowser.initialize(serviceContainer);
     this._propertyGrid.serviceContainer = serviceContainer;
   }
 
