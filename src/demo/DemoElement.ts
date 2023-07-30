@@ -1,6 +1,6 @@
 import { BaseCustomWebComponentConstructorAppend, customElement, html, property } from "@node-projects/base-custom-webcomponent";
-import { DemoEnum } from './DemoEnum';
-import { DemoStringEnum } from "./DemoStringEnum";
+import { DemoEnum } from './DemoEnum.js';
+import { DemoStringEnum } from "./DemoStringEnum.js";
 import { inDesigner } from "@node-projects/web-component-designer";
 
 @customElement('demo-element')
