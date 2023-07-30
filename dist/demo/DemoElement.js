@@ -5,8 +5,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { BaseCustomWebComponentConstructorAppend, customElement, html, property } from "@node-projects/base-custom-webcomponent";
-import { DemoEnum } from './DemoEnum';
-import { DemoStringEnum } from "./DemoStringEnum";
+import { DemoEnum } from './DemoEnum.js';
+import { DemoStringEnum } from "./DemoStringEnum.js";
 import { inDesigner } from "@node-projects/web-component-designer";
 export let DemoElement = class DemoElement extends BaseCustomWebComponentConstructorAppend {
     numberProp = 0;
