@@ -33,17 +33,17 @@ function writeIgnoreState(codeEditorService, model, state) {
 function readIgnoreState(codeEditorService, model) {
     return codeEditorService.getModelProperty(model.uri, ignoreUnusualLineTerminators);
 }
-export let UnusualLineTerminatorsDetector = class UnusualLineTerminatorsDetector extends Disposable {
+let UnusualLineTerminatorsDetector = class UnusualLineTerminatorsDetector extends Disposable {
     constructor(_editor, _dialogService, _codeEditorService) {
         super();
         this._editor = _editor;
         this._dialogService = _dialogService;
         this._codeEditorService = _codeEditorService;
         this._isPresentingDialog = false;
-        this._config = this._editor.getOption(123 /* EditorOption.unusualLineTerminators */);
+        this._config = this._editor.getOption(124 /* EditorOption.unusualLineTerminators */);
         this._register(this._editor.onDidChangeConfiguration((e) => {
-            if (e.hasChanged(123 /* EditorOption.unusualLineTerminators */)) {
-                this._config = this._editor.getOption(123 /* EditorOption.unusualLineTerminators */);
+            if (e.hasChanged(124 /* EditorOption.unusualLineTerminators */)) {
+                this._config = this._editor.getOption(124 /* EditorOption.unusualLineTerminators */);
                 this._checkForUnusualLineTerminators();
             }
         }));
@@ -76,7 +76,7 @@ export let UnusualLineTerminatorsDetector = class UnusualLineTerminatorsDetector
                 // this model should be ignored
                 return;
             }
-            if (this._editor.getOption(88 /* EditorOption.readOnly */)) {
+            if (this._editor.getOption(89 /* EditorOption.readOnly */)) {
                 // read only editor => sorry!
                 return;
             }
@@ -118,4 +118,5 @@ UnusualLineTerminatorsDetector = __decorate([
     __param(1, IDialogService),
     __param(2, ICodeEditorService)
 ], UnusualLineTerminatorsDetector);
+export { UnusualLineTerminatorsDetector };
 registerEditorContribution(UnusualLineTerminatorsDetector.ID, UnusualLineTerminatorsDetector, 1 /* EditorContributionInstantiation.AfterFirstRender */);

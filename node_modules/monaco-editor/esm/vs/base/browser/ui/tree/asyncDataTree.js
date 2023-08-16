@@ -196,6 +196,7 @@ function dfs(node, fn) {
     node.children.forEach(child => dfs(child, fn));
 }
 export class AsyncDataTree {
+    get onDidScroll() { return this.tree.onDidScroll; }
     get onDidChangeFocus() { return Event.map(this.tree.onDidChangeFocus, asTreeEvent); }
     get onDidChangeSelection() { return Event.map(this.tree.onDidChangeSelection, asTreeEvent); }
     get onMouseDblClick() { return Event.map(this.tree.onMouseDblClick, asTreeMouseEvent); }
@@ -254,6 +255,12 @@ export class AsyncDataTree {
     }
     set scrollTop(scrollTop) {
         this.tree.scrollTop = scrollTop;
+    }
+    get scrollHeight() {
+        return this.tree.scrollHeight;
+    }
+    get renderHeight() {
+        return this.tree.renderHeight;
     }
     domFocus() {
         this.tree.domFocus();

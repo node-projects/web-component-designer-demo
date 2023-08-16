@@ -39,6 +39,7 @@ import { PLAINTEXT_LANGUAGE_ID } from '../../common/languages/modesRegistry.js';
 import { ILanguageConfigurationService } from '../../common/languages/languageConfigurationRegistry.js';
 import { ILanguageFeaturesService } from '../../common/services/languageFeatures.js';
 import { DiffEditorWidget2 } from '../../browser/widget/diffEditorWidget2/diffEditorWidget2.js';
+import { IAudioCueService } from '../../../platform/audioCues/browser/audioCueService.js';
 let LAST_GENERATED_COMMAND_ID = 0;
 let ariaDomNodeCreated = false;
 /**
@@ -58,7 +59,7 @@ function createAriaDomNode(parent) {
 /**
  * A code editor to be used both by the standalone editor and the standalone diff editor.
  */
-export let StandaloneCodeEditor = class StandaloneCodeEditor extends CodeEditorWidget {
+let StandaloneCodeEditor = class StandaloneCodeEditor extends CodeEditorWidget {
     constructor(domElement, _options, instantiationService, codeEditorService, commandService, contextKeyService, keybindingService, themeService, notificationService, accessibilityService, languageConfigurationService, languageFeaturesService) {
         const options = Object.assign({}, _options);
         options.ariaLabel = options.ariaLabel || StandaloneCodeEditorNLS.editorViewAccessibleLabel;
@@ -165,7 +166,8 @@ StandaloneCodeEditor = __decorate([
     __param(10, ILanguageConfigurationService),
     __param(11, ILanguageFeaturesService)
 ], StandaloneCodeEditor);
-export let StandaloneEditor = class StandaloneEditor extends StandaloneCodeEditor {
+export { StandaloneCodeEditor };
+let StandaloneEditor = class StandaloneEditor extends StandaloneCodeEditor {
     constructor(domElement, _options, instantiationService, codeEditorService, commandService, contextKeyService, keybindingService, themeService, notificationService, configurationService, accessibilityService, modelService, languageService, languageConfigurationService, languageFeaturesService) {
         const options = Object.assign({}, _options);
         updateConfigurationService(configurationService, options, false);
@@ -237,7 +239,8 @@ StandaloneEditor = __decorate([
     __param(13, ILanguageConfigurationService),
     __param(14, ILanguageFeaturesService)
 ], StandaloneEditor);
-export let StandaloneDiffEditor = class StandaloneDiffEditor extends DiffEditorWidget {
+export { StandaloneEditor };
+let StandaloneDiffEditor = class StandaloneDiffEditor extends DiffEditorWidget {
     constructor(domElement, _options, instantiationService, contextKeyService, codeEditorService, themeService, notificationService, configurationService, contextMenuService, editorProgressService, clipboardService) {
         const options = Object.assign({}, _options);
         updateConfigurationService(configurationService, options, true);
@@ -296,8 +299,9 @@ StandaloneDiffEditor = __decorate([
     __param(9, IEditorProgressService),
     __param(10, IClipboardService)
 ], StandaloneDiffEditor);
-export let StandaloneDiffEditor2 = class StandaloneDiffEditor2 extends DiffEditorWidget2 {
-    constructor(domElement, _options, instantiationService, contextKeyService, codeEditorService, themeService, notificationService, configurationService, contextMenuService, editorProgressService, clipboardService) {
+export { StandaloneDiffEditor };
+let StandaloneDiffEditor2 = class StandaloneDiffEditor2 extends DiffEditorWidget2 {
+    constructor(domElement, _options, instantiationService, contextKeyService, codeEditorService, themeService, notificationService, configurationService, contextMenuService, editorProgressService, clipboardService, audioCueService) {
         const options = Object.assign({}, _options);
         updateConfigurationService(configurationService, options, true);
         const themeDomRegistration = themeService.registerEditorContainer(domElement);
@@ -307,7 +311,7 @@ export let StandaloneDiffEditor2 = class StandaloneDiffEditor2 extends DiffEdito
         if (typeof options.autoDetectHighContrast !== 'undefined') {
             themeService.setAutoDetectHighContrast(Boolean(options.autoDetectHighContrast));
         }
-        super(domElement, options, {}, contextKeyService, instantiationService, codeEditorService);
+        super(domElement, options, {}, contextKeyService, instantiationService, codeEditorService, audioCueService);
         this._configurationService = configurationService;
         this._standaloneThemeService = themeService;
         this._register(themeDomRegistration);
@@ -353,8 +357,10 @@ StandaloneDiffEditor2 = __decorate([
     __param(7, IConfigurationService),
     __param(8, IContextMenuService),
     __param(9, IEditorProgressService),
-    __param(10, IClipboardService)
+    __param(10, IClipboardService),
+    __param(11, IAudioCueService)
 ], StandaloneDiffEditor2);
+export { StandaloneDiffEditor2 };
 /**
  * @internal
  */

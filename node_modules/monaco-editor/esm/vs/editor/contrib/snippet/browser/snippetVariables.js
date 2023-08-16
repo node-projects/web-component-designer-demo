@@ -204,7 +204,7 @@ export class ClipboardBasedVariableResolver {
         return clipboardText;
     }
 }
-export let CommentBasedVariableResolver = class CommentBasedVariableResolver {
+let CommentBasedVariableResolver = class CommentBasedVariableResolver {
     constructor(_model, _selection, _languageConfigurationService) {
         this._model = _model;
         this._selection = _selection;
@@ -233,6 +233,7 @@ export let CommentBasedVariableResolver = class CommentBasedVariableResolver {
 CommentBasedVariableResolver = __decorate([
     __param(2, ILanguageConfigurationService)
 ], CommentBasedVariableResolver);
+export { CommentBasedVariableResolver };
 export class TimeBasedVariableResolver {
     constructor() {
         this._date = new Date();

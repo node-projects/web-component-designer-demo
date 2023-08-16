@@ -92,7 +92,7 @@ let InlineCompletionResults = class InlineCompletionResults extends RefCountedDi
 InlineCompletionResults = __decorate([
     __param(5, ISuggestMemoryService)
 ], InlineCompletionResults);
-export let SuggestInlineCompletions = class SuggestInlineCompletions {
+let SuggestInlineCompletions = class SuggestInlineCompletions {
     constructor(_getEditorOption, _languageFeatureService, _clipboardService, _suggestMemoryService) {
         this._getEditorOption = _getEditorOption;
         this._languageFeatureService = _languageFeatureService;
@@ -105,7 +105,7 @@ export let SuggestInlineCompletions = class SuggestInlineCompletions {
             if (context.selectedSuggestionInfo) {
                 return;
             }
-            const config = this._getEditorOption(86 /* EditorOption.quickSuggestions */, model);
+            const config = this._getEditorOption(87 /* EditorOption.quickSuggestions */, model);
             if (QuickSuggestionsOptions.isAllOff(config)) {
                 // quick suggest is off (for this model/language)
                 return;
@@ -154,7 +154,7 @@ export let SuggestInlineCompletions = class SuggestInlineCompletions {
                 if (completions.needsClipboard) {
                     clipboardText = yield this._clipboardService.readText();
                 }
-                const completionModel = new CompletionModel(completions.items, position.column, new LineContext(leadingLineContents, 0), WordDistance.None, this._getEditorOption(115 /* EditorOption.suggest */, model), this._getEditorOption(109 /* EditorOption.snippetSuggestions */, model), { boostFullMatch: false, firstMatchCanBeWeak: false }, clipboardText);
+                const completionModel = new CompletionModel(completions.items, position.column, new LineContext(leadingLineContents, 0), WordDistance.None, this._getEditorOption(116 /* EditorOption.suggest */, model), this._getEditorOption(110 /* EditorOption.snippetSuggestions */, model), { boostFullMatch: false, firstMatchCanBeWeak: false }, clipboardText);
                 result = new InlineCompletionResults(model, position.lineNumber, wordInfo, completionModel, completions, this._suggestMemoryService);
             }
             this._lastResult = result;
@@ -187,6 +187,7 @@ SuggestInlineCompletions = __decorate([
     __param(2, IClipboardService),
     __param(3, ISuggestMemoryService)
 ], SuggestInlineCompletions);
+export { SuggestInlineCompletions };
 let EditorContribution = class EditorContribution {
     constructor(_editor, languageFeatureService, editorService, instaService) {
         // HACK - way to contribute something only once

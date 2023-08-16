@@ -91,7 +91,7 @@ class ActiveInlayHintInfo {
     }
 }
 // --- controller
-export let InlayHintsController = class InlayHintsController {
+let InlayHintsController = class InlayHintsController {
     static get(editor) {
         var _a;
         return (_a = editor.getContribution(InlayHintsController.ID)) !== null && _a !== void 0 ? _a : undefined;
@@ -113,7 +113,7 @@ export let InlayHintsController = class InlayHintsController {
         this._disposables.add(_editor.onDidChangeModel(() => this._update()));
         this._disposables.add(_editor.onDidChangeModelLanguage(() => this._update()));
         this._disposables.add(_editor.onDidChangeConfiguration(e => {
-            if (e.hasChanged(137 /* EditorOption.inlayHints */)) {
+            if (e.hasChanged(138 /* EditorOption.inlayHints */)) {
                 this._update();
             }
         }));
@@ -127,7 +127,7 @@ export let InlayHintsController = class InlayHintsController {
     _update() {
         this._sessionDisposables.clear();
         this._removeAllDecorations();
-        const options = this._editor.getOption(137 /* EditorOption.inlayHints */);
+        const options = this._editor.getOption(138 /* EditorOption.inlayHints */);
         if (options.enabled === 'off') {
             return;
         }
@@ -526,10 +526,10 @@ export let InlayHintsController = class InlayHintsController {
         }
     }
     _getLayoutInfo() {
-        const options = this._editor.getOption(137 /* EditorOption.inlayHints */);
+        const options = this._editor.getOption(138 /* EditorOption.inlayHints */);
         const padding = options.padding;
-        const editorFontSize = this._editor.getOption(50 /* EditorOption.fontSize */);
-        const editorFontFamily = this._editor.getOption(47 /* EditorOption.fontFamily */);
+        const editorFontSize = this._editor.getOption(51 /* EditorOption.fontSize */);
+        const editorFontFamily = this._editor.getOption(48 /* EditorOption.fontFamily */);
         let fontSize = options.fontSize;
         if (!fontSize || fontSize < 5 || fontSize > editorFontSize) {
             fontSize = editorFontSize;
@@ -558,6 +558,7 @@ InlayHintsController = __decorate([
     __param(5, INotificationService),
     __param(6, IInstantiationService)
 ], InlayHintsController);
+export { InlayHintsController };
 // Prevents the view from potentially visible whitespace
 function fixSpace(str) {
     const noBreakWhitespace = '\xa0';

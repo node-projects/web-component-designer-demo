@@ -1,4 +1,3 @@
-var _a;
 import { createDecorator } from '../../instantiation/common/instantiation.js';
 import { localize } from '../../../nls.js';
 export const IAudioCueService = createDecorator('audioCue');
@@ -31,20 +30,24 @@ Sound.chatResponseReceived1 = Sound.register({ fileName: 'chatResponseReceived1.
 Sound.chatResponseReceived2 = Sound.register({ fileName: 'chatResponseReceived2.mp3' });
 Sound.chatResponseReceived3 = Sound.register({ fileName: 'chatResponseReceived3.mp3' });
 Sound.chatResponseReceived4 = Sound.register({ fileName: 'chatResponseReceived4.mp3' });
+export class SoundSource {
+    constructor(randomOneOf) {
+        this.randomOneOf = randomOneOf;
+    }
+}
 export class AudioCue {
     static register(options) {
-        const audioCue = new AudioCue(options.sound, options.name, options.settingsKey, options.groupId);
+        const soundSource = new SoundSource('randomOneOf' in options.sound ? options.sound.randomOneOf : [options.sound]);
+        const audioCue = new AudioCue(soundSource, options.name, options.settingsKey);
         AudioCue._audioCues.add(audioCue);
         return audioCue;
     }
-    constructor(sound, name, settingsKey, groupId) {
+    constructor(sound, name, settingsKey) {
         this.sound = sound;
         this.name = name;
         this.settingsKey = settingsKey;
-        this.groupId = groupId;
     }
 }
-_a = AudioCue;
 AudioCue._audioCues = new Set();
 AudioCue.error = AudioCue.register({
     name: localize('audioCues.lineHasError.name', 'Error on Line'),
@@ -136,15 +139,18 @@ AudioCue.chatRequestSent = AudioCue.register({
     sound: Sound.chatRequestSent,
     settingsKey: 'audioCues.chatRequestSent'
 });
-AudioCue.chatResponseReceived = {
+AudioCue.chatResponseReceived = AudioCue.register({
     name: localize('audioCues.chatResponseReceived', 'Chat Response Received'),
     settingsKey: 'audioCues.chatResponseReceived',
-    groupId: "chatResponseReceived" /* AudioCueGroupId.chatResponseReceived */
-};
-AudioCue.chatResponseReceived1 = AudioCue.register(Object.assign({ sound: Sound.chatResponseReceived1 }, _a.chatResponseReceived));
-AudioCue.chatResponseReceived2 = AudioCue.register(Object.assign({ sound: Sound.chatResponseReceived2 }, _a.chatResponseReceived));
-AudioCue.chatResponseReceived3 = AudioCue.register(Object.assign({ sound: Sound.chatResponseReceived3 }, _a.chatResponseReceived));
-AudioCue.chatResponseReceived4 = AudioCue.register(Object.assign({ sound: Sound.chatResponseReceived4 }, _a.chatResponseReceived));
+    sound: {
+        randomOneOf: [
+            Sound.chatResponseReceived1,
+            Sound.chatResponseReceived2,
+            Sound.chatResponseReceived3,
+            Sound.chatResponseReceived4
+        ]
+    }
+});
 AudioCue.chatResponsePending = AudioCue.register({
     name: localize('audioCues.chatResponsePending', 'Chat Response Pending'),
     sound: Sound.chatResponsePending,

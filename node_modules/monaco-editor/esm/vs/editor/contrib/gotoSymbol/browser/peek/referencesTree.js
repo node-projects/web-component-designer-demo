@@ -25,7 +25,7 @@ import { IKeybindingService } from '../../../../../platform/keybinding/common/ke
 import { ILabelService } from '../../../../../platform/label/common/label.js';
 import { defaultCountBadgeStyles } from '../../../../../platform/theme/browser/defaultStyles.js';
 import { FileReferences, OneReference, ReferencesModel } from '../referencesModel.js';
-export let DataSource = class DataSource {
+let DataSource = class DataSource {
     constructor(_resolverService) {
         this._resolverService = _resolverService;
     }
@@ -58,6 +58,7 @@ export let DataSource = class DataSource {
 DataSource = __decorate([
     __param(0, ITextModelService)
 ], DataSource);
+export { DataSource };
 //#endregion
 export class Delegate {
     getHeight() {
@@ -72,7 +73,7 @@ export class Delegate {
         }
     }
 }
-export let StringRepresentationProvider = class StringRepresentationProvider {
+let StringRepresentationProvider = class StringRepresentationProvider {
     constructor(_keybindingService) {
         this._keybindingService = _keybindingService;
     }
@@ -91,6 +92,7 @@ export let StringRepresentationProvider = class StringRepresentationProvider {
 StringRepresentationProvider = __decorate([
     __param(0, IKeybindingService)
 ], StringRepresentationProvider);
+export { StringRepresentationProvider };
 export class IdentityProvider {
     getId(element) {
         return element instanceof OneReference ? element.id : element.uri;
@@ -123,7 +125,7 @@ let FileReferencesTemplate = class FileReferencesTemplate extends Disposable {
 FileReferencesTemplate = __decorate([
     __param(1, ILabelService)
 ], FileReferencesTemplate);
-export let FileReferencesRenderer = class FileReferencesRenderer {
+let FileReferencesRenderer = class FileReferencesRenderer {
     constructor(_instantiationService) {
         this._instantiationService = _instantiationService;
         this.templateId = FileReferencesRenderer.id;
@@ -142,6 +144,7 @@ FileReferencesRenderer.id = 'FileReferencesRenderer';
 FileReferencesRenderer = __decorate([
     __param(0, IInstantiationService)
 ], FileReferencesRenderer);
+export { FileReferencesRenderer };
 //#endregion
 //#region render: Reference
 class OneReferenceTemplate {

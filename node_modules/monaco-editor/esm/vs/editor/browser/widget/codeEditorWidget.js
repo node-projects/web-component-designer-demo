@@ -80,7 +80,7 @@ class ModelData {
         this.viewModel.dispose();
     }
 }
-export let CodeEditorWidget = class CodeEditorWidget extends Disposable {
+let CodeEditorWidget = class CodeEditorWidget extends Disposable {
     //#endregion
     get isSimpleWidget() {
         return this._configuration.isSimpleWidget;
@@ -181,8 +181,8 @@ export let CodeEditorWidget = class CodeEditorWidget extends Disposable {
         this._register(this._configuration.onDidChange((e) => {
             this._onDidChangeConfiguration.fire(e);
             const options = this._configuration.options;
-            if (e.hasChanged(141 /* EditorOption.layoutInfo */)) {
-                const layoutInfo = options.get(141 /* EditorOption.layoutInfo */);
+            if (e.hasChanged(142 /* EditorOption.layoutInfo */)) {
+                const layoutInfo = options.get(142 /* EditorOption.layoutInfo */);
                 this._onDidLayoutChange.fire(layoutInfo);
             }
         }));
@@ -223,8 +223,8 @@ export let CodeEditorWidget = class CodeEditorWidget extends Disposable {
             this._actions.set(internalAction.id, internalAction);
         }
         const isDropIntoEnabled = () => {
-            return !this._configuration.options.get(88 /* EditorOption.readOnly */)
-                && this._configuration.options.get(34 /* EditorOption.dropIntoEditor */).enabled;
+            return !this._configuration.options.get(89 /* EditorOption.readOnly */)
+                && this._configuration.options.get(35 /* EditorOption.dropIntoEditor */).enabled;
         };
         this._register(new dom.DragAndDropObserver(this._domElement, {
             onDragEnter: () => undefined,
@@ -305,7 +305,7 @@ export let CodeEditorWidget = class CodeEditorWidget extends Disposable {
         if (!this._modelData) {
             return null;
         }
-        return WordOperations.getWordAtPosition(this._modelData.model, this._configuration.options.get(127 /* EditorOption.wordSeparators */), position);
+        return WordOperations.getWordAtPosition(this._modelData.model, this._configuration.options.get(128 /* EditorOption.wordSeparators */), position);
     }
     getValue(options = null) {
         if (!this._modelData) {
@@ -700,6 +700,10 @@ export let CodeEditorWidget = class CodeEditorWidget extends Disposable {
             this._modelData.view.restoreState(reducedState);
         }
     }
+    handleInitialized() {
+        var _a;
+        (_a = this._getViewModel()) === null || _a === void 0 ? void 0 : _a.visibleLinesStabilized();
+    }
     getContribution(id) {
         return this._contributions.get(id);
     }
@@ -838,7 +842,7 @@ export let CodeEditorWidget = class CodeEditorWidget extends Disposable {
         if (!this._modelData) {
             return false;
         }
-        if (this._configuration.options.get(88 /* EditorOption.readOnly */)) {
+        if (this._configuration.options.get(89 /* EditorOption.readOnly */)) {
             // read only editor => sorry!
             return false;
         }
@@ -849,7 +853,7 @@ export let CodeEditorWidget = class CodeEditorWidget extends Disposable {
         if (!this._modelData) {
             return false;
         }
-        if (this._configuration.options.get(88 /* EditorOption.readOnly */)) {
+        if (this._configuration.options.get(89 /* EditorOption.readOnly */)) {
             // read only editor => sorry!
             return false;
         }
@@ -860,7 +864,7 @@ export let CodeEditorWidget = class CodeEditorWidget extends Disposable {
         if (!this._modelData) {
             return false;
         }
-        if (this._configuration.options.get(88 /* EditorOption.readOnly */)) {
+        if (this._configuration.options.get(89 /* EditorOption.readOnly */)) {
             // read only editor => sorry!
             return false;
         }
@@ -946,7 +950,7 @@ export let CodeEditorWidget = class CodeEditorWidget extends Disposable {
     }
     getLayoutInfo() {
         const options = this._configuration.options;
-        const layoutInfo = options.get(141 /* EditorOption.layoutInfo */);
+        const layoutInfo = options.get(142 /* EditorOption.layoutInfo */);
         return layoutInfo;
     }
     createOverviewRuler(cssClassName) {
@@ -1112,13 +1116,13 @@ export let CodeEditorWidget = class CodeEditorWidget extends Disposable {
         }
         const position = this._modelData.model.validatePosition(rawPosition);
         const options = this._configuration.options;
-        const layoutInfo = options.get(141 /* EditorOption.layoutInfo */);
+        const layoutInfo = options.get(142 /* EditorOption.layoutInfo */);
         const top = CodeEditorWidget._getVerticalOffsetForPosition(this._modelData, position.lineNumber, position.column) - this.getScrollTop();
         const left = this._modelData.view.getOffsetForColumn(position.lineNumber, position.column) + layoutInfo.glyphMarginWidth + layoutInfo.lineNumbersWidth + layoutInfo.decorationsWidth - this.getScrollLeft();
         return {
             top: top,
             left: left,
-            height: options.get(64 /* EditorOption.lineHeight */)
+            height: options.get(65 /* EditorOption.lineHeight */)
         };
     }
     getOffsetForColumn(lineNumber, column) {
@@ -1140,7 +1144,7 @@ export let CodeEditorWidget = class CodeEditorWidget extends Disposable {
         this._modelData.view.setAriaOptions(options);
     }
     applyFontInfo(target) {
-        applyFontInfo(target, this._configuration.options.get(48 /* EditorOption.fontInfo */));
+        applyFontInfo(target, this._configuration.options.get(49 /* EditorOption.fontInfo */));
     }
     setBanner(domNode, domNodeHeight) {
         if (this._bannerDomNode && this._domElement.contains(this._bannerDomNode)) {
@@ -1187,7 +1191,7 @@ export let CodeEditorWidget = class CodeEditorWidget extends Disposable {
                     break;
                 case 6 /* OutgoingViewModelEventKind.CursorStateChanged */: {
                     if (e.reachedMaxCursorCount) {
-                        const multiCursorLimit = this.getOption(77 /* EditorOption.multiCursorLimit */);
+                        const multiCursorLimit = this.getOption(78 /* EditorOption.multiCursorLimit */);
                         const message = nls.localize('cursors.maximum', "The number of cursors has been limited to {0}. Consider using [find and replace](https://code.visualstudio.com/docs/editor/codebasics#_find-and-replace) for larger changes or increase the editor multi cursor limit setting.", multiCursorLimit);
                         this._notificationService.prompt(Severity.Warning, message, [
                             {
@@ -1342,7 +1346,7 @@ export let CodeEditorWidget = class CodeEditorWidget extends Disposable {
         viewUserInputEvents.onMouseDrop = (e) => this._onMouseDrop.fire(e);
         viewUserInputEvents.onMouseDropCanceled = (e) => this._onMouseDropCanceled.fire(e);
         viewUserInputEvents.onMouseWheel = (e) => this._onMouseWheel.fire(e);
-        const view = new View(commandDelegate, this._configuration, this._themeService.getColorTheme(), viewModel, viewUserInputEvents, this._overflowWidgetsDomNode);
+        const view = new View(commandDelegate, this._configuration, this._themeService.getColorTheme(), viewModel, viewUserInputEvents, this._overflowWidgetsDomNode, this._instantiationService);
         return [view, true];
     }
     _postDetachModelCleanup(detachedModel) {
@@ -1382,6 +1386,9 @@ export let CodeEditorWidget = class CodeEditorWidget extends Disposable {
     removeDropIndicator() {
         this._dropIntoEditorDecorations.clear();
     }
+    setContextValue(key, value) {
+        this._contextKeyService.createKey(key, value);
+    }
 };
 CodeEditorWidget.dropIntoEditorDecorationOptions = ModelDecorationOptions.register({
     description: 'workbench-dnd-target',
@@ -1398,6 +1405,7 @@ CodeEditorWidget = __decorate([
     __param(10, ILanguageConfigurationService),
     __param(11, ILanguageFeaturesService)
 ], CodeEditorWidget);
+export { CodeEditorWidget };
 export class BooleanEventEmitter extends Disposable {
     constructor(_emitterOptions) {
         super();
@@ -1470,9 +1478,9 @@ class EditorContextKeysManager extends Disposable {
     _updateFromConfig() {
         const options = this._editor.getOptions();
         this._editorTabMovesFocus.set(TabFocus.getTabFocusMode("editorFocus" /* TabFocusContext.Editor */));
-        this._editorReadonly.set(options.get(88 /* EditorOption.readOnly */));
-        this._inDiffEditor.set(options.get(59 /* EditorOption.inDiffEditor */));
-        this._editorColumnSelection.set(options.get(20 /* EditorOption.columnSelection */));
+        this._editorReadonly.set(options.get(89 /* EditorOption.readOnly */));
+        this._inDiffEditor.set(options.get(60 /* EditorOption.inDiffEditor */));
+        this._editorColumnSelection.set(options.get(21 /* EditorOption.columnSelection */));
     }
     _updateFromSelection() {
         const selections = this._editor.getSelections();

@@ -1,6 +1,6 @@
 /*!-----------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
- * Version: 0.40.0(83b3cf23ca80c94cccca7c5b3e48351b220f8e35)
+ * Version: 0.41.0(38e1e3d097f84e336c311d071a9ffb5191d4ffd1)
  * Released under the MIT license
  * https://github.com/microsoft/vscode/blob/main/LICENSE.txt
  *-----------------------------------------------------------*/
@@ -87,7 +87,10 @@ define("vs/editor/editor.main.nls.es", {
 	],
 	"vs/editor/browser/controller/textAreaHandler": [
 		"editor",
-		"El editor no es accesible en este momento. Pulse {0} para ver las opciones.",
+		"No se puede acceder al editor en este momento.",
+		"{0} Para habilitar el modo optimizado para lectores de pantalla, use {1}",
+		"{0} Para habilitar el modo optimizado para lector de pantalla, abra la selección rápida con {1} y ejecute el comando Alternar modo de accesibilidad del lector de pantalla, que actualmente no se puede desencadenar mediante el teclado.",
+		"{0} Para asignar un enlace de teclado para el comando Alternar modo de accesibilidad del lector de pantalla, acceda al editor de enlaces de teclado con {1} y ejecútelo.",
 	],
 	"vs/editor/browser/coreCommands": [
 		"Anclar al final incluso cuando se vayan a líneas más largas",
@@ -107,7 +110,9 @@ define("vs/editor/editor.main.nls.es", {
 		"Aumentar el límite de varios cursores",
 	],
 	"vs/editor/browser/widget/diffEditor.contribution": [
+		"Visor de diferencias accesibles",
 		"Ir a la siguiente diferencia",
+		"Abrir visor de diferencias accesibles",
 		"Ir a la diferencia anterior",
 	],
 	"vs/editor/browser/widget/diffEditorWidget": [
@@ -117,19 +122,12 @@ define("vs/editor/editor.main.nls.es", {
 		"Los archivos no se pueden comparar porque uno de ellos es demasiado grande.",
 		"Haga clic para revertir el cambio",
 	],
-	"vs/editor/browser/widget/diffEditorWidget2/decorations": [
-		"Decoración de línea para las inserciones en el editor de diferencias.",
-		"Decoración de línea para las eliminaciones en el editor de diferencias.",
-		"Haga clic para revertir el cambio",
-	],
-	"vs/editor/browser/widget/diffEditorWidget2/diffEditorEditors": [
-		" usar Mayús + F7 para navegar por los cambios",
-	],
-	"vs/editor/browser/widget/diffEditorWidget2/diffReview": [
-		"Icono para \"Insertar\" en la revisión de diferencias.",
-		"Icono para \"Quitar\" en la revisión de diferencias.",
-		"Icono para \"Cerrar\" en la revisión de diferencias.",
+	"vs/editor/browser/widget/diffEditorWidget2/accessibleDiffViewer": [
+		"Icono de \"Insertar\" en el visor de diferencias accesible.",
+		"Icono de \"Quitar\" en el visor de diferencias accesible.",
+		"Icono de \"Cerrar\" en el visor de diferencias accesible.",
 		"Cerrar",
+		"Visor de diferencias accesible. Utilice la flecha hacia arriba y hacia abajo para navegar.",
 		"no se han cambiado líneas",
 		"1 línea cambiada",
 		"{0} líneas cambiadas",
@@ -139,6 +137,17 @@ define("vs/editor/editor.main.nls.es", {
 		"{0} línea original {1} línea modificada {2}",
 		"+ {0} línea modificada {1}",
 		"- {0} línea original {1}",
+	],
+	"vs/editor/browser/widget/diffEditorWidget2/colors": [
+		"Color del borde del texto que se movió en el editor de diferencias.",
+	],
+	"vs/editor/browser/widget/diffEditorWidget2/decorations": [
+		"Decoración de línea para las inserciones en el editor de diferencias.",
+		"Decoración de línea para las eliminaciones en el editor de diferencias.",
+		"Haga clic para revertir el cambio",
+	],
+	"vs/editor/browser/widget/diffEditorWidget2/diffEditorEditors": [
+		" use {0} para abrir la ayuda de accesibilidad.",
 	],
 	"vs/editor/browser/widget/diffEditorWidget2/inlineDiffDeletedCodeMargin": [
 		"Copiar líneas eliminadas",
@@ -575,9 +584,23 @@ define("vs/editor/editor.main.nls.es", {
 		"Color del cursor del editor.",
 		"Color de fondo del cursor de edición. Permite personalizar el color del caracter solapado por el bloque del cursor.",
 		"Color de los caracteres de espacio en blanco del editor.",
-		"Color de las guías de sangría del editor.",
-		"Color de las guías de sangría activas del editor.",
 		"Color de números de línea del editor.",
+		"Color de las guías de sangría del editor.",
+		"\"editorIndentGuide.background\" está en desuso. Use \"editorIndentGuide.background1\" en su lugar.",
+		"Color de las guías de sangría activas del editor.",
+		"\"editorIndentGuide.activeBackground\" está en desuso. Use \"editorIndentGuide.activeBackground1\" en su lugar.",
+		"Color de las guías de sangría del editor (1).",
+		"Color de las guías de sangría del editor (2).",
+		"Color de las guías de sangría del editor (3).",
+		"Color de las guías de sangría del editor (4).",
+		"Color de las guías de sangría del editor (5).",
+		"Color de las guías de sangría del editor (6).",
+		"Color de las guías de sangría del editor activo (1).",
+		"Color de las guías de sangría del editor activo (2).",
+		"Color de las guías de sangría del editor activo (3).",
+		"Color de las guías de sangría del editor activo (4).",
+		"Color de las guías de sangría del editor activo (5).",
+		"Color de las guías de sangría del editor activo (6).",
 		"Color del número de línea activa en el editor",
 		"ID es obsoleto. Usar en lugar \'editorLineNumber.activeForeground\'. ",
 		"Color del número de línea activa en el editor",
@@ -627,6 +650,7 @@ define("vs/editor/editor.main.nls.es", {
 		"Si el editor es de solo lectura",
 		"Si el contexto es un editor de diferencias",
 		"Si el contexto es un editor de diferencias incrustado",
+		"Si el visor de diferencias accesible está visible",
 		"Si \"editor.columnSelection\" se ha habilitado",
 		"Si el editor tiene texto seleccionado",
 		"Si el editor tiene varias selecciones",
@@ -657,6 +681,35 @@ define("vs/editor/editor.main.nls.es", {
 		"Si el editor tiene un proveedor de formatos de selección de documentos",
 		"Si el editor tiene varios proveedores de formatos del documento",
 		"Si el editor tiene varios proveedores de formato de la selección de documentos",
+	],
+	"vs/editor/common/languages": [
+		"matriz",
+		"booleano",
+		"clase",
+		"constante",
+		"constructor",
+		"enumeración",
+		"miembro de la enumeración",
+		"evento",
+		"campo",
+		"archivo",
+		"función",
+		"interfaz",
+		"clave",
+		"método",
+		"módulo",
+		"espacio de nombres",
+		"NULL",
+		"número",
+		"objeto",
+		"operador",
+		"paquete",
+		"propiedad",
+		"cadena",
+		"estructura",
+		"parámetro de tipo",
+		"variable",
+		"{0} ({1})",
 	],
 	"vs/editor/common/languages/modesRegistry": [
 		"Texto sin formato",
@@ -1039,6 +1092,8 @@ define("vs/editor/editor.main.nls.es", {
 	],
 	"vs/editor/contrib/hover/browser/hover": [
 		"Mostrar o centrarse al mantener el puntero",
+		"Inspeccione esto en la vista accesible con {0}",
+		"Inspeccione esto en la vista accesible mediante el comando Abrir vista accesible, que actualmente no se puede desencadenar mediante el enlace de teclado.",
 		"Mostrar vista previa de la definición que aparece al mover el puntero",
 		"Desplazar hacia arriba al mantener el puntero",
 		"Desplazar hacia abajo al mantener el puntero",
@@ -1048,7 +1103,6 @@ define("vs/editor/editor.main.nls.es", {
 		"Desplazamiento de página hacia abajo",
 		"Ir al puntero superior",
 		"Ir a la parte inferior al mantener el puntero",
-		"Foco de escape al mantener el puntero",
 	],
 	"vs/editor/contrib/hover/browser/markdownHoverParticipant": [
 		"Cargando...",
@@ -1386,8 +1440,8 @@ define("vs/editor/editor.main.nls.es", {
 		"Cargando...",
 		"No hay sugerencias.",
 		"Sugerir",
-		"{0}{1}, {2}",
-		"{0}{1}",
+		"{0} {1}, {2}",
+		"{0} {1}",
 		"{0}, {1}",
 		"{0}, documentos: {1}",
 	],

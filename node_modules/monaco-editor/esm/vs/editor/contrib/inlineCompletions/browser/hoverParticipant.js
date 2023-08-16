@@ -38,7 +38,7 @@ export class InlineCompletionsHover {
             && this.range.endColumn >= anchor.range.endColumn);
     }
 }
-export let InlineCompletionsHoverParticipant = class InlineCompletionsHoverParticipant {
+let InlineCompletionsHoverParticipant = class InlineCompletionsHoverParticipant {
     constructor(_editor, _languageService, _openerService, accessibilityService, _instantiationService, _telemetryService) {
         this._editor = _editor;
         this._languageService = _languageService;
@@ -77,7 +77,7 @@ export let InlineCompletionsHoverParticipant = class InlineCompletionsHoverParti
         return null;
     }
     computeSync(anchor, lineDecorations) {
-        if (this._editor.getOption(60 /* EditorOption.inlineSuggest */).showToolbar === 'always') {
+        if (this._editor.getOption(61 /* EditorOption.inlineSuggest */).showToolbar === 'always') {
             return [];
         }
         const controller = InlineCompletionsController.get(this._editor);
@@ -90,7 +90,7 @@ export let InlineCompletionsHoverParticipant = class InlineCompletionsHoverParti
         const disposableStore = new DisposableStore();
         const part = hoverParts[0];
         this._telemetryService.publicLog2('inlineCompletionHover.shown');
-        if (this.accessibilityService.isScreenReaderOptimized()) {
+        if (this.accessibilityService.isScreenReaderOptimized() && !this._editor.getOption(7 /* EditorOption.screenReaderAnnounceInlineSuggestion */)) {
             this.renderScreenReaderText(context, part, disposableStore);
         }
         const model = part.controller.model.get();
@@ -135,3 +135,4 @@ InlineCompletionsHoverParticipant = __decorate([
     __param(4, IInstantiationService),
     __param(5, ITelemetryService)
 ], InlineCompletionsHoverParticipant);
+export { InlineCompletionsHoverParticipant };

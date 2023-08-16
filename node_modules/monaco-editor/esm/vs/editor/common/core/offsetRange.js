@@ -56,6 +56,9 @@ export class OffsetRange {
     containsRange(other) {
         return this.start <= other.start && other.endExclusive <= this.endExclusive;
     }
+    contains(offset) {
+        return this.start <= offset && offset < this.endExclusive;
+    }
     /**
      * for all numbers n: range1.contains(n) or range2.contains(n) => range1.join(range2).contains(n)
      * The joined range is the smallest range that contains both ranges.

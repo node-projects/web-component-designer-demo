@@ -55,7 +55,7 @@ function canSyncModel(modelService, resource) {
     }
     return true;
 }
-export let EditorWorkerService = class EditorWorkerService extends Disposable {
+let EditorWorkerService = class EditorWorkerService extends Disposable {
     constructor(modelService, configurationService, logService, languageConfigurationService, languageFeaturesService) {
         super();
         this._modelService = modelService;
@@ -139,6 +139,7 @@ EditorWorkerService = __decorate([
     __param(3, ILanguageConfigurationService),
     __param(4, ILanguageFeaturesService)
 ], EditorWorkerService);
+export { EditorWorkerService };
 class WordBasedCompletionItemProvider {
     constructor(workerManager, configurationService, modelService, languageConfigurationService) {
         this.languageConfigurationService = languageConfigurationService;

@@ -45,14 +45,14 @@ export class InlineDiffDeletedCodeMargin extends Disposable {
         this._diffActions = document.createElement('div');
         this._diffActions.className = ThemeIcon.asClassName(Codicon.lightBulb) + ' lightbulb-glyph';
         this._diffActions.style.position = 'absolute';
-        const lineHeight = this._modifiedEditor.getOption(64 /* EditorOption.lineHeight */);
+        const lineHeight = this._modifiedEditor.getOption(65 /* EditorOption.lineHeight */);
         this._diffActions.style.right = '0px';
         this._diffActions.style.visibility = 'hidden';
         this._diffActions.style.height = `${lineHeight}px`;
         this._diffActions.style.lineHeight = `${lineHeight}px`;
         this._marginDomNode.appendChild(this._diffActions);
         let currentLineNumberOffset = 0;
-        const useShadowDOM = _modifiedEditor.getOption(124 /* EditorOption.useShadowDOM */) && !isIOS; // Do not use shadow dom on IOS #122035
+        const useShadowDOM = _modifiedEditor.getOption(125 /* EditorOption.useShadowDOM */) && !isIOS; // Do not use shadow dom on IOS #122035
         const showContextMenu = (x, y) => {
             var _a;
             this._contextMenuService.showContextMenu({
@@ -85,7 +85,7 @@ export class InlineDiffDeletedCodeMargin extends Disposable {
                             yield this._clipboardService.writeText(lineContent);
                         })));
                     }
-                    const readOnly = _modifiedEditor.getOption(88 /* EditorOption.readOnly */);
+                    const readOnly = _modifiedEditor.getOption(89 /* EditorOption.readOnly */);
                     if (!readOnly) {
                         actions.push(new Action('diff.inline.revertChange', localize('diff.inline.revertChange.label', "Revert this change"), undefined, true, () => __awaiter(this, void 0, void 0, function* () {
                             this._editor.revert(this._diff);

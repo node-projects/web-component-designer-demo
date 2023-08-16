@@ -27,7 +27,9 @@ import { UriList, createStringDataTransferItem, matchesMimeType } from '../../..
 import { Disposable } from '../../../../base/common/lifecycle.js';
 import { Mimes } from '../../../../base/common/mime.js';
 import * as platform from '../../../../base/common/platform.js';
+import { withUndefinedAsNull } from '../../../../base/common/types.js';
 import { generateUuid } from '../../../../base/common/uuid.js';
+import { ClipboardEventUtils } from '../../../browser/controller/textAreaInput.js';
 import { toExternalVSDataTransfer, toVSDataTransfer } from '../../../browser/dnd.js';
 import { IBulkEditService } from '../../../browser/services/bulkEditService.js';
 import { Range } from '../../../common/core/range.js';
@@ -45,7 +47,7 @@ import { PostEditWidgetManager } from './postEditWidget.js';
 export const changePasteTypeCommandId = 'editor.changePasteType';
 export const pasteWidgetVisibleCtx = new RawContextKey('pasteWidgetVisible', false, localize('pasteWidgetVisible', "Whether the paste widget is showing"));
 const vscodeClipboardMime = 'application/vnd.code.copyMetadata';
-export let CopyPasteController = class CopyPasteController extends Disposable {
+let CopyPasteController = class CopyPasteController extends Disposable {
     static get(editor) {
         return editor.getContribution(CopyPasteController.ID);
     }
@@ -78,8 +80,8 @@ export let CopyPasteController = class CopyPasteController extends Disposable {
         }
     }
     isPasteAsEnabled() {
-        return this._editor.getOption(82 /* EditorOption.pasteAs */).enabled
-            && !this._editor.getOption(88 /* EditorOption.readOnly */);
+        return this._editor.getOption(83 /* EditorOption.pasteAs */).enabled
+            && !this._editor.getOption(89 /* EditorOption.readOnly */);
     }
     handleCopy(e) {
         var _a, _b;
@@ -100,7 +102,7 @@ export let CopyPasteController = class CopyPasteController extends Disposable {
         if (!model || !(selections === null || selections === void 0 ? void 0 : selections.length)) {
             return;
         }
-        const enableEmptySelectionClipboard = this._editor.getOption(35 /* EditorOption.emptySelectionClipboard */);
+        const enableEmptySelectionClipboard = this._editor.getOption(36 /* EditorOption.emptySelectionClipboard */);
         let ranges = selections;
         const wasFromEmptySelection = selections.length === 1 && selections[0].isEmpty();
         if (wasFromEmptySelection) {
@@ -171,7 +173,7 @@ export let CopyPasteController = class CopyPasteController extends Disposable {
             if (!this.isPasteAsEnabled()) {
                 return;
             }
-            const metadata = this.fetchCopyMetadata(e.clipboardData);
+            const metadata = this.fetchCopyMetadata(e);
             const dataTransfer = toExternalVSDataTransfer(e.clipboardData);
             dataTransfer.delete(vscodeClipboardMime);
             const allPotentialMimeTypes = [
@@ -232,7 +234,7 @@ export let CopyPasteController = class CopyPasteController extends Disposable {
                     return;
                 }
                 if (providerEdits.length) {
-                    const canShowWidget = editor.getOption(82 /* EditorOption.pasteAs */).showPasteSelector === 'afterPaste';
+                    const canShowWidget = editor.getOption(83 /* EditorOption.pasteAs */).showPasteSelector === 'afterPaste';
                     return this._postPasteWidgetManager.applyEditAndShowIfNeeded(selections, { activeEditIndex: 0, allEdits: providerEdits }, canShowWidget, tokenSource.token);
                 }
                 yield this.applyDefaultPasteHandler(dataTransfer, metadata, tokenSource.token);
@@ -306,8 +308,12 @@ export let CopyPasteController = class CopyPasteController extends Disposable {
     setCopyMetadata(dataTransfer, metadata) {
         dataTransfer.setData(vscodeClipboardMime, JSON.stringify(metadata));
     }
-    fetchCopyMetadata(dataTransfer) {
-        const rawMetadata = dataTransfer.getData(vscodeClipboardMime);
+    fetchCopyMetadata(e) {
+        if (!e.clipboardData) {
+            return;
+        }
+        // Prefer using the clipboard data we saved off
+        const rawMetadata = e.clipboardData.getData(vscodeClipboardMime);
         if (rawMetadata) {
             try {
                 return JSON.parse(rawMetadata);
@@ -315,6 +321,17 @@ export let CopyPasteController = class CopyPasteController extends Disposable {
             catch (_a) {
                 return undefined;
             }
+        }
+        // Otherwise try to extract the generic text editor metadata
+        const [_, metadata] = ClipboardEventUtils.getTextData(e.clipboardData);
+        if (metadata) {
+            return {
+                defaultPastePayload: {
+                    mode: metadata.mode,
+                    multicursorText: withUndefinedAsNull(metadata.multicursorText),
+                    pasteOnNewLine: !!metadata.isFromEmptySelection,
+                },
+            };
         }
         return undefined;
     }
@@ -387,6 +404,7 @@ CopyPasteController = __decorate([
     __param(5, IQuickInputService),
     __param(6, IProgressService)
 ], CopyPasteController);
+export { CopyPasteController };
 function isSupportedPasteProvider(provider, dataTransfer) {
     var _a;
     return Boolean((_a = provider.pasteMimeTypes) === null || _a === void 0 ? void 0 : _a.some(type => dataTransfer.matches(type)));

@@ -187,6 +187,11 @@ export class LineRange {
         }
         return result;
     }
+    forEach(f) {
+        for (let lineNumber = this.startLineNumber; lineNumber < this.endLineNumberExclusive; lineNumber++) {
+            f(lineNumber);
+        }
+    }
     /**
      * @internal
      */

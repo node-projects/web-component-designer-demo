@@ -29,7 +29,7 @@ import { LineDecoration } from '../../../common/viewLayout/lineDecorations.js';
 import { RenderLineInput, renderViewLine } from '../../../common/viewLayout/viewLineRenderer.js';
 import { GhostTextReplacement } from './ghostText.js';
 import { ColumnRange, applyObservableDecorations } from './utils.js';
-export let GhostTextWidget = class GhostTextWidget extends Disposable {
+let GhostTextWidget = class GhostTextWidget extends Disposable {
     constructor(editor, model, languageService) {
         super();
         this.editor = editor;
@@ -155,6 +155,7 @@ export let GhostTextWidget = class GhostTextWidget extends Disposable {
 GhostTextWidget = __decorate([
     __param(2, ILanguageService)
 ], GhostTextWidget);
+export { GhostTextWidget };
 class AdditionalLinesWidget extends Disposable {
     get viewZoneId() { return this._viewZoneId; }
     constructor(editor, languageIdCodec, lines) {
@@ -163,13 +164,13 @@ class AdditionalLinesWidget extends Disposable {
         this.languageIdCodec = languageIdCodec;
         this.lines = lines;
         this._viewZoneId = undefined;
-        this.editorOptionsChanged = observableSignalFromEvent('editorOptionChanged', Event.filter(this.editor.onDidChangeConfiguration, e => e.hasChanged(31 /* EditorOption.disableMonospaceOptimizations */)
-            || e.hasChanged(114 /* EditorOption.stopRenderingLineAfter */)
-            || e.hasChanged(96 /* EditorOption.renderWhitespace */)
-            || e.hasChanged(91 /* EditorOption.renderControlCharacters */)
-            || e.hasChanged(49 /* EditorOption.fontLigatures */)
-            || e.hasChanged(48 /* EditorOption.fontInfo */)
-            || e.hasChanged(64 /* EditorOption.lineHeight */)));
+        this.editorOptionsChanged = observableSignalFromEvent('editorOptionChanged', Event.filter(this.editor.onDidChangeConfiguration, e => e.hasChanged(32 /* EditorOption.disableMonospaceOptimizations */)
+            || e.hasChanged(115 /* EditorOption.stopRenderingLineAfter */)
+            || e.hasChanged(97 /* EditorOption.renderWhitespace */)
+            || e.hasChanged(92 /* EditorOption.renderControlCharacters */)
+            || e.hasChanged(50 /* EditorOption.fontLigatures */)
+            || e.hasChanged(49 /* EditorOption.fontInfo */)
+            || e.hasChanged(65 /* EditorOption.lineHeight */)));
         this._register(autorun('update view zone', reader => {
             const lines = this.lines.read(reader);
             this.editorOptionsChanged.read(reader);
@@ -219,14 +220,14 @@ class AdditionalLinesWidget extends Disposable {
     }
 }
 function renderLines(domNode, tabSize, lines, opts, languageIdCodec) {
-    const disableMonospaceOptimizations = opts.get(31 /* EditorOption.disableMonospaceOptimizations */);
-    const stopRenderingLineAfter = opts.get(114 /* EditorOption.stopRenderingLineAfter */);
+    const disableMonospaceOptimizations = opts.get(32 /* EditorOption.disableMonospaceOptimizations */);
+    const stopRenderingLineAfter = opts.get(115 /* EditorOption.stopRenderingLineAfter */);
     // To avoid visual confusion, we don't want to render visible whitespace
     const renderWhitespace = 'none';
-    const renderControlCharacters = opts.get(91 /* EditorOption.renderControlCharacters */);
-    const fontLigatures = opts.get(49 /* EditorOption.fontLigatures */);
-    const fontInfo = opts.get(48 /* EditorOption.fontInfo */);
-    const lineHeight = opts.get(64 /* EditorOption.lineHeight */);
+    const renderControlCharacters = opts.get(92 /* EditorOption.renderControlCharacters */);
+    const fontLigatures = opts.get(50 /* EditorOption.fontLigatures */);
+    const fontInfo = opts.get(49 /* EditorOption.fontInfo */);
+    const lineHeight = opts.get(65 /* EditorOption.lineHeight */);
     const sb = new StringBuilder(10000);
     sb.appendString('<div class="suggest-preview-text">');
     for (let i = 0, len = lines.length; i < len; i++) {

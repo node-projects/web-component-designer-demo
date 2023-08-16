@@ -25,7 +25,7 @@ import { EditorContextKeys } from '../../../common/editorContextKeys.js';
 import { IQuickInputService, ItemActivation } from '../../../../platform/quickinput/common/quickInput.js';
 import { IOutlineModelService } from '../../../contrib/documentSymbols/browser/outlineModel.js';
 import { ILanguageFeaturesService } from '../../../common/services/languageFeatures.js';
-export let StandaloneGotoSymbolQuickAccessProvider = class StandaloneGotoSymbolQuickAccessProvider extends AbstractGotoSymbolQuickAccessProvider {
+let StandaloneGotoSymbolQuickAccessProvider = class StandaloneGotoSymbolQuickAccessProvider extends AbstractGotoSymbolQuickAccessProvider {
     constructor(editorService, languageFeaturesService, outlineModelService) {
         super(languageFeaturesService, outlineModelService);
         this.editorService = editorService;
@@ -40,6 +40,7 @@ StandaloneGotoSymbolQuickAccessProvider = __decorate([
     __param(1, ILanguageFeaturesService),
     __param(2, IOutlineModelService)
 ], StandaloneGotoSymbolQuickAccessProvider);
+export { StandaloneGotoSymbolQuickAccessProvider };
 export class GotoSymbolAction extends EditorAction {
     constructor() {
         super({

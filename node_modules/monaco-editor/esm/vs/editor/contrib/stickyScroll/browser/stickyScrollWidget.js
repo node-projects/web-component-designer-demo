@@ -51,7 +51,7 @@ export class StickyScrollWidget extends Disposable {
         dom.clearNode(this._rootDomNode);
         this._disposableStore.clear();
         this._lineNumbers.length = 0;
-        const editorLineHeight = this._editor.getOption(64 /* EditorOption.lineHeight */);
+        const editorLineHeight = this._editor.getOption(65 /* EditorOption.lineHeight */);
         const futureWidgetHeight = state.lineNumbers.length * editorLineHeight + state.lastLineRelativePosition;
         if (futureWidgetHeight > 0) {
             this._lastLineRelativePosition = state.lastLineRelativePosition;
@@ -71,12 +71,12 @@ export class StickyScrollWidget extends Disposable {
             const childNode = this._renderChildNode(index, line);
             this._rootDomNode.appendChild(childNode);
         }
-        const editorLineHeight = this._editor.getOption(64 /* EditorOption.lineHeight */);
+        const editorLineHeight = this._editor.getOption(65 /* EditorOption.lineHeight */);
         const widgetHeight = this._lineNumbers.length * editorLineHeight + this._lastLineRelativePosition;
         this._rootDomNode.style.display = widgetHeight > 0 ? 'block' : 'none';
         this._rootDomNode.style.height = widgetHeight.toString() + 'px';
         this._rootDomNode.setAttribute('role', 'list');
-        const minimapSide = this._editor.getOption(70 /* EditorOption.minimap */).side;
+        const minimapSide = this._editor.getOption(71 /* EditorOption.minimap */).side;
         if (minimapSide === 'left') {
             this._rootDomNode.style.marginLeft = this._editor.getLayoutInfo().minimap.minimapCanvasOuterWidth + 'px';
         }
@@ -88,9 +88,9 @@ export class StickyScrollWidget extends Disposable {
         const lineRenderingData = viewModel.getViewLineRenderingData(viewLineNumber);
         const layoutInfo = this._editor.getLayoutInfo();
         const width = layoutInfo.width - layoutInfo.minimap.minimapCanvasOuterWidth - layoutInfo.verticalScrollbarWidth;
-        const minimapSide = this._editor.getOption(70 /* EditorOption.minimap */).side;
-        const lineHeight = this._editor.getOption(64 /* EditorOption.lineHeight */);
-        const lineNumberOption = this._editor.getOption(65 /* EditorOption.lineNumbers */);
+        const minimapSide = this._editor.getOption(71 /* EditorOption.minimap */).side;
+        const lineHeight = this._editor.getOption(65 /* EditorOption.lineHeight */);
+        const lineNumberOption = this._editor.getOption(66 /* EditorOption.lineNumbers */);
         let actualInlineDecorations;
         try {
             actualInlineDecorations = LineDecoration.filter(lineRenderingData.inlineDecorations, viewLineNumber, lineRenderingData.minColumn, lineRenderingData.maxColumn);

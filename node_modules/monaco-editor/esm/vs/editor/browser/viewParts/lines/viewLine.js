@@ -37,25 +37,25 @@ export class ViewLineOptions {
     constructor(config, themeType) {
         this.themeType = themeType;
         const options = config.options;
-        const fontInfo = options.get(48 /* EditorOption.fontInfo */);
-        const experimentalWhitespaceRendering = options.get(36 /* EditorOption.experimentalWhitespaceRendering */);
+        const fontInfo = options.get(49 /* EditorOption.fontInfo */);
+        const experimentalWhitespaceRendering = options.get(37 /* EditorOption.experimentalWhitespaceRendering */);
         if (experimentalWhitespaceRendering === 'off') {
-            this.renderWhitespace = options.get(96 /* EditorOption.renderWhitespace */);
+            this.renderWhitespace = options.get(97 /* EditorOption.renderWhitespace */);
         }
         else {
             // whitespace is rendered in a different layer
             this.renderWhitespace = 'none';
         }
-        this.renderControlCharacters = options.get(91 /* EditorOption.renderControlCharacters */);
+        this.renderControlCharacters = options.get(92 /* EditorOption.renderControlCharacters */);
         this.spaceWidth = fontInfo.spaceWidth;
         this.middotWidth = fontInfo.middotWidth;
         this.wsmiddotWidth = fontInfo.wsmiddotWidth;
         this.useMonospaceOptimizations = (fontInfo.isMonospace
-            && !options.get(31 /* EditorOption.disableMonospaceOptimizations */));
+            && !options.get(32 /* EditorOption.disableMonospaceOptimizations */));
         this.canUseHalfwidthRightwardsArrow = fontInfo.canUseHalfwidthRightwardsArrow;
-        this.lineHeight = options.get(64 /* EditorOption.lineHeight */);
-        this.stopRenderingLineAfter = options.get(114 /* EditorOption.stopRenderingLineAfter */);
-        this.fontLigatures = options.get(49 /* EditorOption.fontLigatures */);
+        this.lineHeight = options.get(65 /* EditorOption.lineHeight */);
+        this.stopRenderingLineAfter = options.get(115 /* EditorOption.stopRenderingLineAfter */);
+        this.fontLigatures = options.get(50 /* EditorOption.fontLigatures */);
     }
     equals(other) {
         return (this.themeType === other.themeType

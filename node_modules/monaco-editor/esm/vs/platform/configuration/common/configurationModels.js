@@ -158,7 +158,7 @@ export class ConfigurationModel {
             }
         };
         for (const override of this.overrides) {
-            if (arrays.equals(override.identifiers, [identifier])) {
+            if (override.identifiers.length === 1 && override.identifiers[0] === identifier) {
                 contentsForIdentifierOnly = override.contents;
             }
             else if (override.identifiers.includes(identifier)) {
@@ -235,8 +235,9 @@ export class ConfigurationModelParser {
         return { contents, keys, overrides, restricted: filtered.restricted, hasExcludedProperties: filtered.hasExcludedProperties };
     }
     filter(properties, configurationProperties, filterOverriddenProperties, options) {
+        var _a, _b, _c;
         let hasExcludedProperties = false;
-        if (!(options === null || options === void 0 ? void 0 : options.scopes) && !(options === null || options === void 0 ? void 0 : options.skipRestricted)) {
+        if (!(options === null || options === void 0 ? void 0 : options.scopes) && !(options === null || options === void 0 ? void 0 : options.skipRestricted) && !((_a = options === null || options === void 0 ? void 0 : options.exclude) === null || _a === void 0 ? void 0 : _a.length)) {
             return { raw: properties, restricted: [], hasExcludedProperties };
         }
         const raw = {};
@@ -254,9 +255,10 @@ export class ConfigurationModelParser {
                 if (propertySchema === null || propertySchema === void 0 ? void 0 : propertySchema.restricted) {
                     restricted.push(key);
                 }
-                // Load unregistered configurations always.
-                if ((scope === undefined || options.scopes === undefined || options.scopes.includes(scope)) // Check scopes
-                    && !(options.skipRestricted && (propertySchema === null || propertySchema === void 0 ? void 0 : propertySchema.restricted))) { // Check restricted
+                if (!((_b = options.exclude) === null || _b === void 0 ? void 0 : _b.includes(key)) /* Check exclude */
+                    && (((_c = options.include) === null || _c === void 0 ? void 0 : _c.includes(key) /* Check include */)
+                        || ((scope === undefined || options.scopes === undefined || options.scopes.includes(scope)) /* Check scopes */
+                            && !(options.skipRestricted && (propertySchema === null || propertySchema === void 0 ? void 0 : propertySchema.restricted))))) /* Check restricted */ {
                     raw[key] = properties[key];
                 }
                 else {

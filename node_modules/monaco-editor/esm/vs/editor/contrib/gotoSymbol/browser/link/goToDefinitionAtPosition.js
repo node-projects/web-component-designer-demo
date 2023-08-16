@@ -39,7 +39,7 @@ import { DefinitionAction } from '../goToCommands.js';
 import { getDefinitionsAtPosition } from '../goToSymbol.js';
 import { ILanguageFeaturesService } from '../../../../common/services/languageFeatures.js';
 import { ModelDecorationInjectedTextOptions } from '../../../../common/model/textModel.js';
-export let GotoDefinitionAtPositionEditorContribution = class GotoDefinitionAtPositionEditorContribution {
+let GotoDefinitionAtPositionEditorContribution = class GotoDefinitionAtPositionEditorContribution {
     constructor(editor, textModelResolverService, languageService, languageFeaturesService) {
         this.textModelResolverService = textModelResolverService;
         this.languageService = languageService;
@@ -253,7 +253,7 @@ export let GotoDefinitionAtPositionEditorContribution = class GotoDefinitionAtPo
     gotoDefinition(position, openToSide) {
         this.editor.setPosition(position);
         return this.editor.invokeWithinContext((accessor) => {
-            const canPeek = !openToSide && this.editor.getOption(85 /* EditorOption.definitionLinkOpensInPeek */) && !this.isInPeekEditor(accessor);
+            const canPeek = !openToSide && this.editor.getOption(86 /* EditorOption.definitionLinkOpensInPeek */) && !this.isInPeekEditor(accessor);
             const action = new DefinitionAction({ openToSide, openInPeek: canPeek, muteMessage: true }, { title: { value: '', original: '' }, id: '', precondition: undefined });
             return action.run(accessor);
         });
@@ -274,4 +274,5 @@ GotoDefinitionAtPositionEditorContribution = __decorate([
     __param(2, ILanguageService),
     __param(3, ILanguageFeaturesService)
 ], GotoDefinitionAtPositionEditorContribution);
+export { GotoDefinitionAtPositionEditorContribution };
 registerEditorContribution(GotoDefinitionAtPositionEditorContribution.ID, GotoDefinitionAtPositionEditorContribution, 2 /* EditorContributionInstantiation.BeforeFirstInteraction */);

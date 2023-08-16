@@ -12,7 +12,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { assertNever } from '../../../../base/common/assert.js';
+import { DeferredPromise } from '../../../../base/common/async.js';
 import { CancellationToken } from '../../../../base/common/cancellation.js';
+import { SetMap } from '../../../../base/common/collections.js';
 import { onUnexpectedExternalError } from '../../../../base/common/errors.js';
 import { Range } from '../../../common/core/range.js';
 import { fixBracketsInLine } from '../../../common/model/bracketPairsTextModelPart/fixBrackets.js';
@@ -23,16 +25,81 @@ export function provideInlineCompletions(registry, position, model, context, tok
         // Important: Don't use position after the await calls, as the model could have been changed in the meantime!
         const defaultReplaceRange = getDefaultRange(position, model);
         const providers = registry.all(model);
-        const providerResults = yield Promise.all(providers.map((provider) => __awaiter(this, void 0, void 0, function* () {
+        const multiMap = new SetMap();
+        for (const provider of providers) {
+            if (provider.groupId) {
+                multiMap.add(provider.groupId, provider);
+            }
+        }
+        function getPreferredProviders(provider) {
+            if (!provider.yieldsToGroupIds) {
+                return [];
+            }
+            const result = [];
+            for (const groupId of provider.yieldsToGroupIds || []) {
+                const providers = multiMap.get(groupId);
+                for (const p of providers) {
+                    result.push(p);
+                }
+            }
+            return result;
+        }
+        const states = new Map();
+        const seen = new Set();
+        function findPreferredProviderCircle(provider, stack) {
+            stack = [...stack, provider];
+            if (seen.has(provider)) {
+                return stack;
+            }
+            seen.add(provider);
             try {
-                const completions = yield provider.provideInlineCompletions(model, position, context, token);
-                return ({ provider, completions });
+                const preferred = getPreferredProviders(provider);
+                for (const p of preferred) {
+                    const c = findPreferredProviderCircle(p, stack);
+                    if (c) {
+                        return c;
+                    }
+                }
             }
-            catch (e) {
-                onUnexpectedExternalError(e);
+            finally {
+                seen.delete(provider);
             }
-            return ({ provider, completions: undefined });
-        })));
+            return undefined;
+        }
+        function processProvider(provider) {
+            const state = states.get(provider);
+            if (state) {
+                return state;
+            }
+            const circle = findPreferredProviderCircle(provider, []);
+            if (circle) {
+                onUnexpectedExternalError(new Error(`Inline completions: cyclic yield-to dependency detected. Path: ${circle.map(s => s.toString ? s.toString() : ('' + s)).join(' -> ')}`));
+            }
+            const deferredPromise = new DeferredPromise();
+            states.set(provider, deferredPromise.p);
+            (() => __awaiter(this, void 0, void 0, function* () {
+                if (!circle) {
+                    const preferred = getPreferredProviders(provider);
+                    for (const p of preferred) {
+                        const result = yield processProvider(p);
+                        if (result && result.items.length > 0) {
+                            // Skip provider
+                            return undefined;
+                        }
+                    }
+                }
+                try {
+                    const completions = yield provider.provideInlineCompletions(model, position, context, token);
+                    return completions;
+                }
+                catch (e) {
+                    onUnexpectedExternalError(e);
+                    return undefined;
+                }
+            }))().then(c => deferredPromise.complete(c), e => deferredPromise.error(e));
+            return deferredPromise.p;
+        }
+        const providerResults = yield Promise.all(providers.map((provider) => __awaiter(this, void 0, void 0, function* () { return ({ provider, completions: yield processProvider(provider) }); })));
         const itemsByHash = new Map();
         const lists = [];
         for (const result of providerResults) {

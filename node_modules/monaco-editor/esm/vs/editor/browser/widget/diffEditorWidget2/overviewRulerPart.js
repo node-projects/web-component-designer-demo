@@ -13,6 +13,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 import { EventType, addDisposableListener, addStandardDisposableListener, h } from '../../../../base/browser/dom.js';
 import { createFastDomNode } from '../../../../base/browser/fastDomNode.js';
+import { ScrollbarState } from '../../../../base/browser/ui/scrollbar/scrollbarState.js';
 import { Disposable } from '../../../../base/common/lifecycle.js';
 import { autorun, derived, observableFromEvent, observableSignalFromEvent } from '../../../../base/common/observable.js';
 import { autorunWithStore2 } from '../../../../base/common/observableImpl/autorun.js';
@@ -21,7 +22,7 @@ import { Position } from '../../../common/core/position.js';
 import { OverviewRulerZone } from '../../../common/viewModel/overviewZoneManager.js';
 import { defaultInsertColor, defaultRemoveColor, diffInserted, diffOverviewRulerInserted, diffOverviewRulerRemoved, diffRemoved } from '../../../../platform/theme/common/colorRegistry.js';
 import { IThemeService } from '../../../../platform/theme/common/themeService.js';
-export let OverviewRulerPart = class OverviewRulerPart extends Disposable {
+let OverviewRulerPart = class OverviewRulerPart extends Disposable {
     constructor(_editors, _rootElement, _diffModel, _rootWidth, _rootHeight, _modifiedEditorLayoutInfo, _options, _themeService) {
         super();
         this._editors = _editors;
@@ -41,7 +42,6 @@ export let OverviewRulerPart = class OverviewRulerPart extends Disposable {
         });
         const scrollTopObservable = observableFromEvent(this._editors.modified.onDidScrollChange, () => this._editors.modified.getScrollTop());
         const scrollHeightObservable = observableFromEvent(this._editors.modified.onDidScrollChange, () => this._editors.modified.getScrollHeight());
-        // overview ruler
         this._register(autorunWithStore2('create diff editor overview ruler if enabled', (reader, store) => {
             if (!this._options.renderOverviewRuler.read(reader)) {
                 return;
@@ -124,13 +124,10 @@ export let OverviewRulerPart = class OverviewRulerPart extends Disposable {
                         });
                         const scrollTop = scrollTopObservable.read(reader);
                         const scrollHeight = scrollHeightObservable.read(reader);
-                        const computedAvailableSize = Math.max(0, layoutInfo.height);
-                        const computedRepresentableSize = Math.max(0, computedAvailableSize - 2 * 0);
-                        const computedRatio = scrollHeight > 0 ? (computedRepresentableSize / scrollHeight) : 0;
-                        const computedSliderSize = Math.max(0, Math.floor(layoutInfo.height * computedRatio));
-                        const computedSliderPosition = Math.floor(scrollTop * computedRatio);
-                        viewportDomElement.setTop(computedSliderPosition);
-                        viewportDomElement.setHeight(computedSliderSize);
+                        const scrollBarOptions = this._editors.modified.getOption(101 /* EditorOption.scrollbar */);
+                        const state = new ScrollbarState(scrollBarOptions.verticalHasArrows ? scrollBarOptions.arrowSize : 0, scrollBarOptions.verticalScrollbarSize, 0, layoutInfo.height, scrollHeight, scrollTop);
+                        viewportDomElement.setTop(state.getSliderPosition());
+                        viewportDomElement.setHeight(state.getSliderSize());
                     }
                     else {
                         viewportDomElement.setTop(0);
@@ -149,3 +146,4 @@ OverviewRulerPart.ENTIRE_DIFF_OVERVIEW_WIDTH = OverviewRulerPart.ONE_OVERVIEW_WI
 OverviewRulerPart = __decorate([
     __param(7, IThemeService)
 ], OverviewRulerPart);
+export { OverviewRulerPart };

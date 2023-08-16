@@ -79,6 +79,9 @@ export class PagedList {
     get onDidFocus() {
         return this.list.onDidFocus;
     }
+    get widget() {
+        return this.list;
+    }
     get onDidDispose() {
         return this.list.onDidDispose;
     }

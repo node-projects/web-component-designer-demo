@@ -36,7 +36,7 @@ import { INotificationService } from '../../../../platform/notification/common/n
 import { IQuickInputService } from '../../../../platform/quickinput/common/quickInput.js';
 import { ILanguageFeatureDebounceService } from '../../../common/services/languageFeatureDebounce.js';
 import { ILanguageFeaturesService } from '../../../common/services/languageFeatures.js';
-export let CodeLensContribution = class CodeLensContribution {
+let CodeLensContribution = class CodeLensContribution {
     constructor(_editor, _languageFeaturesService, debounceService, _commandService, _notificationService, _codeLensCache) {
         this._editor = _editor;
         this._languageFeaturesService = _languageFeaturesService;
@@ -53,10 +53,10 @@ export let CodeLensContribution = class CodeLensContribution {
         this._disposables.add(this._editor.onDidChangeModel(() => this._onModelChange()));
         this._disposables.add(this._editor.onDidChangeModelLanguage(() => this._onModelChange()));
         this._disposables.add(this._editor.onDidChangeConfiguration((e) => {
-            if (e.hasChanged(48 /* EditorOption.fontInfo */) || e.hasChanged(17 /* EditorOption.codeLensFontSize */) || e.hasChanged(16 /* EditorOption.codeLensFontFamily */)) {
+            if (e.hasChanged(49 /* EditorOption.fontInfo */) || e.hasChanged(18 /* EditorOption.codeLensFontSize */) || e.hasChanged(17 /* EditorOption.codeLensFontFamily */)) {
                 this._updateLensStyle();
             }
-            if (e.hasChanged(15 /* EditorOption.codeLens */)) {
+            if (e.hasChanged(16 /* EditorOption.codeLens */)) {
                 this._onModelChange();
             }
         }));
@@ -72,10 +72,10 @@ export let CodeLensContribution = class CodeLensContribution {
         (_a = this._currentCodeLensModel) === null || _a === void 0 ? void 0 : _a.dispose();
     }
     _getLayoutInfo() {
-        const lineHeightFactor = Math.max(1.3, this._editor.getOption(64 /* EditorOption.lineHeight */) / this._editor.getOption(50 /* EditorOption.fontSize */));
-        let fontSize = this._editor.getOption(17 /* EditorOption.codeLensFontSize */);
+        const lineHeightFactor = Math.max(1.3, this._editor.getOption(65 /* EditorOption.lineHeight */) / this._editor.getOption(51 /* EditorOption.fontSize */));
+        let fontSize = this._editor.getOption(18 /* EditorOption.codeLensFontSize */);
         if (!fontSize || fontSize < 5) {
-            fontSize = (this._editor.getOption(50 /* EditorOption.fontSize */) * .9) | 0;
+            fontSize = (this._editor.getOption(51 /* EditorOption.fontSize */) * .9) | 0;
         }
         return {
             fontSize,
@@ -84,8 +84,8 @@ export let CodeLensContribution = class CodeLensContribution {
     }
     _updateLensStyle() {
         const { codeLensHeight, fontSize } = this._getLayoutInfo();
-        const fontFamily = this._editor.getOption(16 /* EditorOption.codeLensFontFamily */);
-        const editorFontInfo = this._editor.getOption(48 /* EditorOption.fontInfo */);
+        const fontFamily = this._editor.getOption(17 /* EditorOption.codeLensFontFamily */);
+        const editorFontInfo = this._editor.getOption(49 /* EditorOption.fontInfo */);
         const { style } = this._editor.getContainerDomNode();
         style.setProperty('--vscode-editorCodeLens-lineHeight', `${codeLensHeight}px`);
         style.setProperty('--vscode-editorCodeLens-fontSize', `${fontSize}px`);
@@ -117,7 +117,7 @@ export let CodeLensContribution = class CodeLensContribution {
         if (!model) {
             return;
         }
-        if (!this._editor.getOption(15 /* EditorOption.codeLens */)) {
+        if (!this._editor.getOption(16 /* EditorOption.codeLens */)) {
             return;
         }
         const cachedLenses = this._codeLensCache.get(model);
@@ -402,6 +402,7 @@ CodeLensContribution = __decorate([
     __param(4, INotificationService),
     __param(5, ICodeLensCache)
 ], CodeLensContribution);
+export { CodeLensContribution };
 registerEditorContribution(CodeLensContribution.ID, CodeLensContribution, 1 /* EditorContributionInstantiation.AfterFirstRender */);
 registerEditorAction(class ShowLensesInCurrentLine extends EditorAction {
     constructor() {

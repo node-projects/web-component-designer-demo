@@ -12,12 +12,12 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 import { IContextKeyService, RawContextKey } from '../../../../platform/contextkey/common/contextkey.js';
-export let WordContextKey = class WordContextKey {
+let WordContextKey = class WordContextKey {
     constructor(_editor, contextKeyService) {
         this._editor = _editor;
         this._enabled = false;
         this._ckAtEnd = WordContextKey.AtEnd.bindTo(contextKeyService);
-        this._configListener = this._editor.onDidChangeConfiguration(e => e.hasChanged(120 /* EditorOption.tabCompletion */) && this._update());
+        this._configListener = this._editor.onDidChangeConfiguration(e => e.hasChanged(121 /* EditorOption.tabCompletion */) && this._update());
         this._update();
     }
     dispose() {
@@ -28,7 +28,7 @@ export let WordContextKey = class WordContextKey {
     }
     _update() {
         // only update this when tab completions are enabled
-        const enabled = this._editor.getOption(120 /* EditorOption.tabCompletion */) === 'on';
+        const enabled = this._editor.getOption(121 /* EditorOption.tabCompletion */) === 'on';
         if (this._enabled === enabled) {
             return;
         }
@@ -62,3 +62,4 @@ WordContextKey.AtEnd = new RawContextKey('atEndOfWord', false);
 WordContextKey = __decorate([
     __param(1, IContextKeyService)
 ], WordContextKey);
+export { WordContextKey };

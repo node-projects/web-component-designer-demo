@@ -34,7 +34,7 @@ import { IDialogService } from '../../../../platform/dialogs/common/dialogs.js';
 import { EditorAction, registerEditorAction } from '../../../browser/editorExtensions.js';
 import { EditorContextKeys } from '../../../common/editorContextKeys.js';
 import { IQuickInputService } from '../../../../platform/quickinput/common/quickInput.js';
-export let StandaloneCommandsQuickAccessProvider = class StandaloneCommandsQuickAccessProvider extends AbstractEditorCommandsQuickAccessProvider {
+let StandaloneCommandsQuickAccessProvider = class StandaloneCommandsQuickAccessProvider extends AbstractEditorCommandsQuickAccessProvider {
     get activeTextEditorControl() { return withNullAsUndefined(this.codeEditorService.getFocusedCodeEditor()); }
     constructor(instantiationService, codeEditorService, keybindingService, commandService, telemetryService, dialogService) {
         super({ showAlias: false }, instantiationService, keybindingService, commandService, telemetryService, dialogService);
@@ -62,6 +62,7 @@ StandaloneCommandsQuickAccessProvider = __decorate([
     __param(4, ITelemetryService),
     __param(5, IDialogService)
 ], StandaloneCommandsQuickAccessProvider);
+export { StandaloneCommandsQuickAccessProvider };
 export class GotoLineAction extends EditorAction {
     constructor() {
         super({

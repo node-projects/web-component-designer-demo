@@ -20,18 +20,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
-    if (kind === "m") throw new TypeError("Private method is not writable");
-    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
-    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
-    return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
-};
-var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
-    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
-    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
-    return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
-};
-var _CodeActionController_disposed;
 import { getDomNodePagePosition } from '../../../../base/browser/dom.js';
 import { onUnexpectedError } from '../../../../base/common/errors.js';
 import { Lazy } from '../../../../base/common/lazy.js';
@@ -53,7 +41,7 @@ import { IMarkerService } from '../../../../platform/markers/common/markers.js';
 import { IEditorProgressService } from '../../../../platform/progress/common/progress.js';
 import { CodeActionTriggerSource } from '../common/types.js';
 import { CodeActionModel } from './codeActionModel.js';
-export let CodeActionController = class CodeActionController extends Disposable {
+let CodeActionController = class CodeActionController extends Disposable {
     static get(editor) {
         return editor.getContribution(CodeActionController.ID);
     }
@@ -65,7 +53,7 @@ export let CodeActionController = class CodeActionController extends Disposable 
         this._instantiationService = _instantiationService;
         this._activeCodeActions = this._register(new MutableDisposable());
         this._showDisabled = false;
-        _CodeActionController_disposed.set(this, false);
+        this._disposed = false;
         this._editor = editor;
         this._model = this._register(new CodeActionModel(this._editor, languageFeaturesService.codeActionProvider, markerService, contextKeyService, progressService));
         this._register(this._model.onDidChangeState(newState => this.update(newState)));
@@ -80,7 +68,7 @@ export let CodeActionController = class CodeActionController extends Disposable 
         this._register(this._editor.onDidLayoutChange(() => this._actionWidgetService.hide()));
     }
     dispose() {
-        __classPrivateFieldSet(this, _CodeActionController_disposed, true, "f");
+        this._disposed = true;
         super.dispose();
     }
     showCodeActions(_trigger, actions, at) {
@@ -125,7 +113,7 @@ export let CodeActionController = class CodeActionController extends Disposable 
                 onUnexpectedError(e);
                 return;
             }
-            if (__classPrivateFieldGet(this, _CodeActionController_disposed, "f")) {
+            if (this._disposed) {
                 return;
             }
             (_b = this._lightBulbWidget.value) === null || _b === void 0 ? void 0 : _b.update(actions, newState.trigger, newState.position);
@@ -280,7 +268,6 @@ export let CodeActionController = class CodeActionController extends Disposable 
         return resultActions;
     }
 };
-_CodeActionController_disposed = new WeakMap();
 CodeActionController.ID = 'editor.contrib.codeActionController';
 CodeActionController = __decorate([
     __param(1, IMarkerService),
@@ -293,3 +280,4 @@ CodeActionController = __decorate([
     __param(8, IActionWidgetService),
     __param(9, IInstantiationService)
 ], CodeActionController);
+export { CodeActionController };

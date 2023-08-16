@@ -407,6 +407,10 @@ exports.languages = [
     "entry": "vs/basic-languages/markdown/markdown.contribution"
   },
   {
+    "label": "mdx",
+    "entry": "vs/basic-languages/mdx/mdx.contribution"
+  },
+  {
     "label": "mips",
     "entry": "vs/basic-languages/mips/mips.contribution"
   },

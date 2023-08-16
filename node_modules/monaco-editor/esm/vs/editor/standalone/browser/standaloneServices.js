@@ -231,7 +231,7 @@ export class StandaloneNotificationService {
     }
 }
 StandaloneNotificationService.NO_OP = new NoOpNotification();
-export let StandaloneCommandService = class StandaloneCommandService {
+let StandaloneCommandService = class StandaloneCommandService {
     constructor(instantiationService) {
         this._onWillExecuteCommand = new Emitter();
         this._onDidExecuteCommand = new Emitter();
@@ -257,7 +257,8 @@ export let StandaloneCommandService = class StandaloneCommandService {
 StandaloneCommandService = __decorate([
     __param(0, IInstantiationService)
 ], StandaloneCommandService);
-export let StandaloneKeybindingService = class StandaloneKeybindingService extends AbstractKeybindingService {
+export { StandaloneCommandService };
+let StandaloneKeybindingService = class StandaloneKeybindingService extends AbstractKeybindingService {
     constructor(contextKeyService, commandService, telemetryService, notificationService, logService, codeEditorService) {
         super(contextKeyService, commandService, telemetryService, notificationService, logService);
         this._cachedResolver = null;
@@ -294,13 +295,13 @@ export let StandaloneKeybindingService = class StandaloneKeybindingService exten
             }
         };
         const addCodeEditor = (codeEditor) => {
-            if (codeEditor.getOption(59 /* EditorOption.inDiffEditor */)) {
+            if (codeEditor.getOption(60 /* EditorOption.inDiffEditor */)) {
                 return;
             }
             addContainer(codeEditor.getContainerDomNode());
         };
         const removeCodeEditor = (codeEditor) => {
-            if (codeEditor.getOption(59 /* EditorOption.inDiffEditor */)) {
+            if (codeEditor.getOption(60 /* EditorOption.inDiffEditor */)) {
                 return;
             }
             removeContainer(codeEditor.getContainerDomNode());
@@ -400,6 +401,7 @@ StandaloneKeybindingService = __decorate([
     __param(4, ILogService),
     __param(5, ICodeEditorService)
 ], StandaloneKeybindingService);
+export { StandaloneKeybindingService };
 class DomNodeListeners extends Disposable {
     constructor(domNode, disposables) {
         super();
@@ -719,6 +721,7 @@ export var StandaloneServices;
     }
     StandaloneServices.get = get;
     let initialized = false;
+    const onDidInitialize = new Emitter();
     function initialize(overrides) {
         if (initialized) {
             return instantiationService;
@@ -751,7 +754,23 @@ export var StandaloneServices;
                 onUnexpectedError(err);
             }
         }
+        onDidInitialize.fire();
         return instantiationService;
     }
     StandaloneServices.initialize = initialize;
+    /**
+     * Executes callback once services are initialized.
+     */
+    function withServices(callback) {
+        if (initialized) {
+            return callback();
+        }
+        const disposable = new DisposableStore();
+        const listener = disposable.add(onDidInitialize.event(() => {
+            listener.dispose();
+            disposable.add(callback());
+        }));
+        return disposable;
+    }
+    StandaloneServices.withServices = withServices;
 })(StandaloneServices || (StandaloneServices = {}));

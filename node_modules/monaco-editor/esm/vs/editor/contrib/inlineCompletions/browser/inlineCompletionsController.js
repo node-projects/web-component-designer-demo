@@ -31,7 +31,7 @@ import { ICommandService } from '../../../../platform/commands/common/commands.j
 import { IConfigurationService } from '../../../../platform/configuration/common/configuration.js';
 import { IContextKeyService } from '../../../../platform/contextkey/common/contextkey.js';
 import { IInstantiationService } from '../../../../platform/instantiation/common/instantiation.js';
-export let InlineCompletionsController = class InlineCompletionsController extends Disposable {
+let InlineCompletionsController = class InlineCompletionsController extends Disposable {
     static get(editor) {
         return editor.getContribution(InlineCompletionsController.ID);
     }
@@ -49,7 +49,7 @@ export let InlineCompletionsController = class InlineCompletionsController exten
         this.textModelVersionId = observableValue('textModelVersionId', -1);
         this.cursorPosition = observableValue('cursorPosition', new Position(1, 1));
         this.suggestWidgetAdaptor = this._register(new SuggestWidgetAdaptor(this.editor, () => { var _a, _b; return (_b = (_a = this.model.get()) === null || _a === void 0 ? void 0 : _a.selectedInlineCompletion.get()) === null || _b === void 0 ? void 0 : _b.toSingleTextEdit(undefined); }, (tx) => this.updateObservables(tx, VersionIdChangeReason.Other)));
-        this._enabled = observableFromEvent(this.editor.onDidChangeConfiguration, () => this.editor.getOption(60 /* EditorOption.inlineSuggest */).enabled);
+        this._enabled = observableFromEvent(this.editor.onDidChangeConfiguration, () => this.editor.getOption(61 /* EditorOption.inlineSuggest */).enabled);
         this.ghostTextWidget = this._register(this.instantiationService.createInstance(GhostTextWidget, this.editor, {
             ghostText: this.model.map((v, reader) => v === null || v === void 0 ? void 0 : v.ghostText.read(reader)),
             minReservedLineCount: constObservable(0),
@@ -63,7 +63,7 @@ export let InlineCompletionsController = class InlineCompletionsController exten
             this.updateObservables(tx, VersionIdChangeReason.Other);
             const textModel = editor.getModel();
             if (textModel) {
-                const model = instantiationService.createInstance(InlineCompletionsModel, textModel, this.suggestWidgetAdaptor.selectedItem, this.cursorPosition, this.textModelVersionId, this._debounceValue, observableFromEvent(editor.onDidChangeConfiguration, () => editor.getOption(115 /* EditorOption.suggest */).preview), observableFromEvent(editor.onDidChangeConfiguration, () => editor.getOption(115 /* EditorOption.suggest */).previewMode), observableFromEvent(editor.onDidChangeConfiguration, () => editor.getOption(60 /* EditorOption.inlineSuggest */).mode), this._enabled);
+                const model = instantiationService.createInstance(InlineCompletionsModel, textModel, this.suggestWidgetAdaptor.selectedItem, this.cursorPosition, this.textModelVersionId, this._debounceValue, observableFromEvent(editor.onDidChangeConfiguration, () => editor.getOption(116 /* EditorOption.suggest */).preview), observableFromEvent(editor.onDidChangeConfiguration, () => editor.getOption(116 /* EditorOption.suggest */).previewMode), observableFromEvent(editor.onDidChangeConfiguration, () => editor.getOption(61 /* EditorOption.inlineSuggest */).mode), this._enabled);
                 this.model.set(model, tx);
             }
         })));
@@ -119,7 +119,7 @@ export let InlineCompletionsController = class InlineCompletionsController exten
         this._register(this.editor.onDidBlurEditorWidget(() => {
             // This is a hidden setting very useful for debugging
             if (this.configurationService.getValue('editor.inlineSuggest.keepOnBlur') ||
-                editor.getOption(60 /* EditorOption.inlineSuggest */).keepOnBlur) {
+                editor.getOption(61 /* EditorOption.inlineSuggest */).keepOnBlur) {
                 return;
             }
             if (InlineSuggestionHintsContentWidget.dropDownVisible) {
@@ -150,18 +150,15 @@ export let InlineCompletionsController = class InlineCompletionsController exten
         this._register(autorun('play audio cue & read suggestion', reader => {
             const model = this.model.read(reader);
             const state = model === null || model === void 0 ? void 0 : model.state.read(reader);
-            if (!model || !state || !state.completion) {
+            if (!model || !state || !state.inlineCompletion) {
                 lastInlineCompletionId = undefined;
                 return;
             }
-            if (state.completion.semanticId !== lastInlineCompletionId) {
-                lastInlineCompletionId = state.completion.semanticId;
-                if (model.isNavigatingCurrentInlineCompletion) {
-                    return;
-                }
+            if (state.inlineCompletion.semanticId !== lastInlineCompletionId) {
+                lastInlineCompletionId = state.inlineCompletion.semanticId;
+                const lineText = model.textModel.getLineContent(state.ghostText.lineNumber);
                 this.audioCueService.playAudioCue(AudioCue.inlineSuggestion).then(() => {
-                    if (this.editor.getOption(6 /* EditorOption.screenReaderAnnounceInlineSuggestion */)) {
-                        const lineText = model.textModel.getLineContent(state.ghostText.lineNumber);
+                    if (this.editor.getOption(7 /* EditorOption.screenReaderAnnounceInlineSuggestion */)) {
                         alert(state.ghostText.renderForScreenReader(lineText));
                     }
                 });
@@ -202,3 +199,4 @@ InlineCompletionsController = __decorate([
     __param(6, ILanguageFeaturesService),
     __param(7, IAudioCueService)
 ], InlineCompletionsController);
+export { InlineCompletionsController };

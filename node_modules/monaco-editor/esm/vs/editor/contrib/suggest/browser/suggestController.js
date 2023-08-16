@@ -87,7 +87,7 @@ class LineSuffix {
         }
     }
 }
-export let SuggestController = class SuggestController {
+let SuggestController = class SuggestController {
     static get(editor) {
         return editor.getContribution(SuggestController.ID);
     }
@@ -110,8 +110,8 @@ export let SuggestController = class SuggestController {
         });
         // context key: update insert/replace mode
         const ctxInsertMode = SuggestContext.InsertMode.bindTo(_contextKeyService);
-        ctxInsertMode.set(editor.getOption(115 /* EditorOption.suggest */).insertMode);
-        this.model.onDidTrigger(() => ctxInsertMode.set(editor.getOption(115 /* EditorOption.suggest */).insertMode));
+        ctxInsertMode.set(editor.getOption(116 /* EditorOption.suggest */).insertMode);
+        this.model.onDidTrigger(() => ctxInsertMode.set(editor.getOption(116 /* EditorOption.suggest */).insertMode));
         this.widget = this._toDispose.add(new IdleValue(() => {
             const widget = this._instantiationService.createInstance(SuggestWidget, this.editor);
             this._toDispose.add(widget);
@@ -195,7 +195,7 @@ export let SuggestController = class SuggestController {
             let noFocus = false;
             if (e.triggerOptions.auto) {
                 // don't "focus" item when configured to do
-                const options = this.editor.getOption(115 /* EditorOption.suggest */);
+                const options = this.editor.getOption(116 /* EditorOption.suggest */);
                 if (options.selectionMode === 'never' || options.selectionMode === 'always') {
                     // simple: always or never
                     noFocus = options.selectionMode === 'never';
@@ -414,7 +414,7 @@ export let SuggestController = class SuggestController {
     }
     getOverwriteInfo(item, toggleMode) {
         assertType(this.editor.hasModel());
-        let replace = this.editor.getOption(115 /* EditorOption.suggest */).insertMode === 'replace';
+        let replace = this.editor.getOption(116 /* EditorOption.suggest */).insertMode === 'replace';
         if (toggleMode) {
             replace = !replace;
         }
@@ -580,6 +580,7 @@ SuggestController = __decorate([
     __param(5, ILogService),
     __param(6, ITelemetryService)
 ], SuggestController);
+export { SuggestController };
 class PriorityRegistry {
     constructor(prioritySelector) {
         this.prioritySelector = prioritySelector;

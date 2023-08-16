@@ -26,7 +26,7 @@ import { DeferredPromise } from '../../../base/common/async.js';
 import { Disposable } from '../../../base/common/lifecycle.js';
 import { ILayoutService } from '../../layout/browser/layoutService.js';
 import { ILogService } from '../../log/common/log.js';
-export let BrowserClipboardService = class BrowserClipboardService extends Disposable {
+let BrowserClipboardService = class BrowserClipboardService extends Disposable {
     constructor(layoutService, logService) {
         super();
         this.layoutService = layoutService;
@@ -157,3 +157,4 @@ BrowserClipboardService = __decorate([
     __param(0, ILayoutService),
     __param(1, ILogService)
 ], BrowserClipboardService);
+export { BrowserClipboardService };

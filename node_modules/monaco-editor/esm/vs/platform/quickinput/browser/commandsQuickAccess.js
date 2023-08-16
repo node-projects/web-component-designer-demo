@@ -35,7 +35,7 @@ import { IKeybindingService } from '../../keybinding/common/keybinding.js';
 import { PickerQuickAccessProvider } from './pickerQuickAccess.js';
 import { IStorageService } from '../../storage/common/storage.js';
 import { ITelemetryService } from '../../telemetry/common/telemetry.js';
-export let AbstractCommandsQuickAccessProvider = class AbstractCommandsQuickAccessProvider extends PickerQuickAccessProvider {
+let AbstractCommandsQuickAccessProvider = class AbstractCommandsQuickAccessProvider extends PickerQuickAccessProvider {
     constructor(options, instantiationService, keybindingService, commandService, telemetryService, dialogService) {
         super(AbstractCommandsQuickAccessProvider.PREFIX, options);
         this.instantiationService = instantiationService;
@@ -192,7 +192,8 @@ AbstractCommandsQuickAccessProvider = __decorate([
     __param(4, ITelemetryService),
     __param(5, IDialogService)
 ], AbstractCommandsQuickAccessProvider);
-export let CommandsHistory = class CommandsHistory extends Disposable {
+export { AbstractCommandsQuickAccessProvider };
+let CommandsHistory = class CommandsHistory extends Disposable {
     constructor(storageService, configurationService) {
         super();
         this.storageService = storageService;
@@ -277,3 +278,4 @@ CommandsHistory = __decorate([
     __param(0, IStorageService),
     __param(1, IConfigurationService)
 ], CommandsHistory);
+export { CommandsHistory };

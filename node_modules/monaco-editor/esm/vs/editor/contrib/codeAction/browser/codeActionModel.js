@@ -2,18 +2,6 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
-    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
-    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
-    return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
-};
-var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
-    if (kind === "m") throw new TypeError("Private method is not writable");
-    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
-    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
-    return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
-};
-var _CodeActionModel_isDisposed;
 import { createCancelablePromise, TimeoutTimer } from '../../../../base/common/async.js';
 import { isCancellationError } from '../../../../base/common/errors.js';
 import { Emitter } from '../../../../base/common/event.js';
@@ -125,7 +113,7 @@ export class CodeActionModel extends Disposable {
         this._state = CodeActionsState.Empty;
         this._onDidChangeState = this._register(new Emitter());
         this.onDidChangeState = this._onDidChangeState.event;
-        _CodeActionModel_isDisposed.set(this, false);
+        this._disposed = false;
         this._supportedCodeActions = SUPPORTED_CODE_ACTIONS.bindTo(contextKeyService);
         this._register(this._editor.onDidChangeModel(() => this._update()));
         this._register(this._editor.onDidChangeModelLanguage(() => this._update()));
@@ -133,15 +121,15 @@ export class CodeActionModel extends Disposable {
         this._update();
     }
     dispose() {
-        if (__classPrivateFieldGet(this, _CodeActionModel_isDisposed, "f")) {
+        if (this._disposed) {
             return;
         }
-        __classPrivateFieldSet(this, _CodeActionModel_isDisposed, true, "f");
+        this._disposed = true;
         super.dispose();
         this.setState(CodeActionsState.Empty, true);
     }
     _update() {
-        if (__classPrivateFieldGet(this, _CodeActionModel_isDisposed, "f")) {
+        if (this._disposed) {
             return;
         }
         this._codeActionOracle.value = undefined;
@@ -149,7 +137,7 @@ export class CodeActionModel extends Disposable {
         const model = this._editor.getModel();
         if (model
             && this._registry.has(model)
-            && !this._editor.getOption(88 /* EditorOption.readOnly */)) {
+            && !this._editor.getOption(89 /* EditorOption.readOnly */)) {
             const supportedActions = this._registry.all(model).flatMap(provider => { var _a; return (_a = provider.providedCodeActionKinds) !== null && _a !== void 0 ? _a : []; });
             this._supportedCodeActions.set(supportedActions.join(' '));
             this._codeActionOracle.value = new CodeActionOracle(this._editor, this._markerService, trigger => {
@@ -183,9 +171,8 @@ export class CodeActionModel extends Disposable {
             this._state.cancel();
         }
         this._state = newState;
-        if (!skipNotify && !__classPrivateFieldGet(this, _CodeActionModel_isDisposed, "f")) {
+        if (!skipNotify && !this._disposed) {
             this._onDidChangeState.fire(newState);
         }
     }
 }
-_CodeActionModel_isDisposed = new WeakMap();

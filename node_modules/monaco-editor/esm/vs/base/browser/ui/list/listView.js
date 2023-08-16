@@ -133,6 +133,7 @@ class ListViewAccessibilityProvider {
  */
 export class ListView {
     get contentHeight() { return this.rangeMap.size; }
+    get onDidScroll() { return this.scrollableElement.onScroll; }
     get horizontalScrolling() { return this._horizontalScrolling; }
     set horizontalScrolling(value) {
         if (value === this._horizontalScrolling) {
@@ -158,7 +159,7 @@ export class ListView {
         }
     }
     constructor(container, virtualDelegate, renderers, options = DefaultOptions) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
         this.virtualDelegate = virtualDelegate;
         this.domId = `list_id_${++ListView.InstanceCount}`;
         this.renderers = new Map();
@@ -181,7 +182,7 @@ export class ListView {
         }
         this.items = [];
         this.itemId = 0;
-        this.rangeMap = new RangeMap();
+        this.rangeMap = new RangeMap((_a = options.paddingTop) !== null && _a !== void 0 ? _a : 0);
         for (const renderer of renderers) {
             this.renderers.set(renderer.templateId, renderer);
         }
@@ -193,13 +194,13 @@ export class ListView {
         this.domNode.classList.add(this.domId);
         this.domNode.tabIndex = 0;
         this.domNode.classList.toggle('mouse-support', typeof options.mouseSupport === 'boolean' ? options.mouseSupport : true);
-        this._horizontalScrolling = (_a = options.horizontalScrolling) !== null && _a !== void 0 ? _a : DefaultOptions.horizontalScrolling;
+        this._horizontalScrolling = (_b = options.horizontalScrolling) !== null && _b !== void 0 ? _b : DefaultOptions.horizontalScrolling;
         this.domNode.classList.toggle('horizontal-scrolling', this._horizontalScrolling);
-        this.additionalScrollHeight = typeof options.additionalScrollHeight === 'undefined' ? 0 : options.additionalScrollHeight;
+        this.paddingBottom = typeof options.paddingBottom === 'undefined' ? 0 : options.paddingBottom;
         this.accessibilityProvider = new ListViewAccessibilityProvider(options.accessibilityProvider);
         this.rowsContainer = document.createElement('div');
         this.rowsContainer.className = 'monaco-list-rows';
-        const transformOptimization = (_b = options.transformOptimization) !== null && _b !== void 0 ? _b : DefaultOptions.transformOptimization;
+        const transformOptimization = (_c = options.transformOptimization) !== null && _c !== void 0 ? _c : DefaultOptions.transformOptimization;
         if (transformOptimization) {
             this.rowsContainer.style.transform = 'translate3d(0px, 0px, 0px)';
             this.rowsContainer.style.overflow = 'hidden';
@@ -208,14 +209,14 @@ export class ListView {
         this.disposables.add(Gesture.addTarget(this.rowsContainer));
         this.scrollable = new Scrollable({
             forceIntegerValues: true,
-            smoothScrollDuration: ((_c = options.smoothScrolling) !== null && _c !== void 0 ? _c : false) ? 125 : 0,
+            smoothScrollDuration: ((_d = options.smoothScrolling) !== null && _d !== void 0 ? _d : false) ? 125 : 0,
             scheduleAtNextAnimationFrame: cb => scheduleAtNextAnimationFrame(cb)
         });
         this.scrollableElement = this.disposables.add(new SmoothScrollableElement(this.rowsContainer, {
-            alwaysConsumeMouseWheel: (_d = options.alwaysConsumeMouseWheel) !== null && _d !== void 0 ? _d : DefaultOptions.alwaysConsumeMouseWheel,
+            alwaysConsumeMouseWheel: (_e = options.alwaysConsumeMouseWheel) !== null && _e !== void 0 ? _e : DefaultOptions.alwaysConsumeMouseWheel,
             horizontal: 1 /* ScrollbarVisibility.Auto */,
-            vertical: (_e = options.verticalScrollMode) !== null && _e !== void 0 ? _e : DefaultOptions.verticalScrollMode,
-            useShadows: (_f = options.useShadows) !== null && _f !== void 0 ? _f : DefaultOptions.useShadows,
+            vertical: (_f = options.verticalScrollMode) !== null && _f !== void 0 ? _f : DefaultOptions.verticalScrollMode,
+            useShadows: (_g = options.useShadows) !== null && _g !== void 0 ? _g : DefaultOptions.useShadows,
             mouseWheelScrollSensitivity: options.mouseWheelScrollSensitivity,
             fastScrollSensitivity: options.fastScrollSensitivity,
             scrollByPage: options.scrollByPage
@@ -231,15 +232,15 @@ export class ListView {
         this.disposables.add(addDisposableListener(this.domNode, 'drop', e => this.onDrop(this.toDragEvent(e))));
         this.disposables.add(addDisposableListener(this.domNode, 'dragleave', e => this.onDragLeave(this.toDragEvent(e))));
         this.disposables.add(addDisposableListener(this.domNode, 'dragend', e => this.onDragEnd(e)));
-        this.setRowLineHeight = (_g = options.setRowLineHeight) !== null && _g !== void 0 ? _g : DefaultOptions.setRowLineHeight;
-        this.setRowHeight = (_h = options.setRowHeight) !== null && _h !== void 0 ? _h : DefaultOptions.setRowHeight;
-        this.supportDynamicHeights = (_j = options.supportDynamicHeights) !== null && _j !== void 0 ? _j : DefaultOptions.supportDynamicHeights;
-        this.dnd = (_k = options.dnd) !== null && _k !== void 0 ? _k : DefaultOptions.dnd;
-        this.layout((_l = options.initialSize) === null || _l === void 0 ? void 0 : _l.height, (_m = options.initialSize) === null || _m === void 0 ? void 0 : _m.width);
+        this.setRowLineHeight = (_h = options.setRowLineHeight) !== null && _h !== void 0 ? _h : DefaultOptions.setRowLineHeight;
+        this.setRowHeight = (_j = options.setRowHeight) !== null && _j !== void 0 ? _j : DefaultOptions.setRowHeight;
+        this.supportDynamicHeights = (_k = options.supportDynamicHeights) !== null && _k !== void 0 ? _k : DefaultOptions.supportDynamicHeights;
+        this.dnd = (_l = options.dnd) !== null && _l !== void 0 ? _l : DefaultOptions.dnd;
+        this.layout((_m = options.initialSize) === null || _m === void 0 ? void 0 : _m.height, (_o = options.initialSize) === null || _o === void 0 ? void 0 : _o.width);
     }
     updateOptions(options) {
-        if (options.additionalScrollHeight !== undefined) {
-            this.additionalScrollHeight = options.additionalScrollHeight;
+        if (options.paddingBottom !== undefined) {
+            this.paddingBottom = options.paddingBottom;
             this.scrollableElement.setScrollDimensions({ scrollHeight: this.scrollHeight });
         }
         if (options.smoothScrolling !== undefined) {
@@ -260,6 +261,18 @@ export class ListView {
         }
         if (scrollableOptions) {
             this.scrollableElement.updateOptions(scrollableOptions);
+        }
+        if (options.paddingTop !== undefined && options.paddingTop !== this.rangeMap.paddingTop) {
+            // trigger a rerender
+            const lastRenderRange = this.getRenderRange(this.lastRenderTop, this.lastRenderHeight);
+            const offset = options.paddingTop - this.rangeMap.paddingTop;
+            this.rangeMap.paddingTop = options.paddingTop;
+            this.render(lastRenderRange, Math.max(0, this.lastRenderTop + offset), this.lastRenderHeight, undefined, undefined, true);
+            this.setScrollTop(this.lastRenderTop);
+            this.eventuallyUpdateScrollDimensions();
+            if (this.supportDynamicHeights) {
+                this._rerender(this.lastRenderTop, this.lastRenderHeight);
+            }
         }
     }
     splice(start, deleteCount, elements = []) {
@@ -319,7 +332,7 @@ export class ListView {
         let deleted;
         // TODO@joao: improve this optimization to catch even more cases
         if (start === 0 && deleteCount >= this.items.length) {
-            this.rangeMap = new RangeMap();
+            this.rangeMap = new RangeMap(this.rangeMap.paddingTop);
             this.rangeMap.splice(0, 0, inserted);
             deleted = this.items;
             this.items = inserted;
@@ -615,7 +628,7 @@ export class ListView {
         this.setScrollTop(scrollTop);
     }
     get scrollHeight() {
-        return this._scrollHeight + (this.horizontalScrolling ? 10 : 0) + this.additionalScrollHeight;
+        return this._scrollHeight + (this.horizontalScrolling ? 10 : 0) + this.paddingBottom;
     }
     // Events
     get onMouseClick() { return Event.map(this.disposables.add(new DomEmitter(this.domNode, 'click')).event, e => this.toMouseEvent(e), this.disposables); }

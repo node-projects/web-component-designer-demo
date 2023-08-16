@@ -13,49 +13,49 @@ const autoCloseNever = () => false;
 const autoCloseBeforeWhitespace = (chr) => (chr === ' ' || chr === '\t');
 export class CursorConfiguration {
     static shouldRecreate(e) {
-        return (e.hasChanged(141 /* EditorOption.layoutInfo */)
-            || e.hasChanged(127 /* EditorOption.wordSeparators */)
-            || e.hasChanged(35 /* EditorOption.emptySelectionClipboard */)
-            || e.hasChanged(74 /* EditorOption.multiCursorMergeOverlapping */)
-            || e.hasChanged(76 /* EditorOption.multiCursorPaste */)
-            || e.hasChanged(77 /* EditorOption.multiCursorLimit */)
-            || e.hasChanged(5 /* EditorOption.autoClosingBrackets */)
-            || e.hasChanged(9 /* EditorOption.autoClosingQuotes */)
-            || e.hasChanged(7 /* EditorOption.autoClosingDelete */)
-            || e.hasChanged(8 /* EditorOption.autoClosingOvertype */)
-            || e.hasChanged(12 /* EditorOption.autoSurround */)
-            || e.hasChanged(125 /* EditorOption.useTabStops */)
-            || e.hasChanged(48 /* EditorOption.fontInfo */)
-            || e.hasChanged(88 /* EditorOption.readOnly */));
+        return (e.hasChanged(142 /* EditorOption.layoutInfo */)
+            || e.hasChanged(128 /* EditorOption.wordSeparators */)
+            || e.hasChanged(36 /* EditorOption.emptySelectionClipboard */)
+            || e.hasChanged(75 /* EditorOption.multiCursorMergeOverlapping */)
+            || e.hasChanged(77 /* EditorOption.multiCursorPaste */)
+            || e.hasChanged(78 /* EditorOption.multiCursorLimit */)
+            || e.hasChanged(6 /* EditorOption.autoClosingBrackets */)
+            || e.hasChanged(10 /* EditorOption.autoClosingQuotes */)
+            || e.hasChanged(8 /* EditorOption.autoClosingDelete */)
+            || e.hasChanged(9 /* EditorOption.autoClosingOvertype */)
+            || e.hasChanged(13 /* EditorOption.autoSurround */)
+            || e.hasChanged(126 /* EditorOption.useTabStops */)
+            || e.hasChanged(49 /* EditorOption.fontInfo */)
+            || e.hasChanged(89 /* EditorOption.readOnly */));
     }
     constructor(languageId, modelOptions, configuration, languageConfigurationService) {
         this.languageConfigurationService = languageConfigurationService;
         this._cursorMoveConfigurationBrand = undefined;
         this._languageId = languageId;
         const options = configuration.options;
-        const layoutInfo = options.get(141 /* EditorOption.layoutInfo */);
-        const fontInfo = options.get(48 /* EditorOption.fontInfo */);
-        this.readOnly = options.get(88 /* EditorOption.readOnly */);
+        const layoutInfo = options.get(142 /* EditorOption.layoutInfo */);
+        const fontInfo = options.get(49 /* EditorOption.fontInfo */);
+        this.readOnly = options.get(89 /* EditorOption.readOnly */);
         this.tabSize = modelOptions.tabSize;
         this.indentSize = modelOptions.indentSize;
         this.insertSpaces = modelOptions.insertSpaces;
-        this.stickyTabStops = options.get(113 /* EditorOption.stickyTabStops */);
+        this.stickyTabStops = options.get(114 /* EditorOption.stickyTabStops */);
         this.lineHeight = fontInfo.lineHeight;
         this.typicalHalfwidthCharacterWidth = fontInfo.typicalHalfwidthCharacterWidth;
         this.pageSize = Math.max(1, Math.floor(layoutInfo.height / this.lineHeight) - 2);
-        this.useTabStops = options.get(125 /* EditorOption.useTabStops */);
-        this.wordSeparators = options.get(127 /* EditorOption.wordSeparators */);
-        this.emptySelectionClipboard = options.get(35 /* EditorOption.emptySelectionClipboard */);
-        this.copyWithSyntaxHighlighting = options.get(23 /* EditorOption.copyWithSyntaxHighlighting */);
-        this.multiCursorMergeOverlapping = options.get(74 /* EditorOption.multiCursorMergeOverlapping */);
-        this.multiCursorPaste = options.get(76 /* EditorOption.multiCursorPaste */);
-        this.multiCursorLimit = options.get(77 /* EditorOption.multiCursorLimit */);
-        this.autoClosingBrackets = options.get(5 /* EditorOption.autoClosingBrackets */);
-        this.autoClosingQuotes = options.get(9 /* EditorOption.autoClosingQuotes */);
-        this.autoClosingDelete = options.get(7 /* EditorOption.autoClosingDelete */);
-        this.autoClosingOvertype = options.get(8 /* EditorOption.autoClosingOvertype */);
-        this.autoSurround = options.get(12 /* EditorOption.autoSurround */);
-        this.autoIndent = options.get(10 /* EditorOption.autoIndent */);
+        this.useTabStops = options.get(126 /* EditorOption.useTabStops */);
+        this.wordSeparators = options.get(128 /* EditorOption.wordSeparators */);
+        this.emptySelectionClipboard = options.get(36 /* EditorOption.emptySelectionClipboard */);
+        this.copyWithSyntaxHighlighting = options.get(24 /* EditorOption.copyWithSyntaxHighlighting */);
+        this.multiCursorMergeOverlapping = options.get(75 /* EditorOption.multiCursorMergeOverlapping */);
+        this.multiCursorPaste = options.get(77 /* EditorOption.multiCursorPaste */);
+        this.multiCursorLimit = options.get(78 /* EditorOption.multiCursorLimit */);
+        this.autoClosingBrackets = options.get(6 /* EditorOption.autoClosingBrackets */);
+        this.autoClosingQuotes = options.get(10 /* EditorOption.autoClosingQuotes */);
+        this.autoClosingDelete = options.get(8 /* EditorOption.autoClosingDelete */);
+        this.autoClosingOvertype = options.get(9 /* EditorOption.autoClosingOvertype */);
+        this.autoSurround = options.get(13 /* EditorOption.autoSurround */);
+        this.autoIndent = options.get(11 /* EditorOption.autoIndent */);
         this.surroundingPairs = {};
         this._electricChars = null;
         this.shouldAutoCloseBefore = {

@@ -43,7 +43,7 @@ var Status;
     Status[Status["INVALID"] = 1] = "INVALID";
     Status[Status["CANCELED"] = 2] = "CANCELED";
 })(Status || (Status = {}));
-export let StickyModelProvider = class StickyModelProvider {
+let StickyModelProvider = class StickyModelProvider {
     constructor(_editor, _languageConfigurationService, _languageFeaturesService, defaultModel) {
         this._editor = _editor;
         this._languageConfigurationService = _languageConfigurationService;
@@ -112,6 +112,7 @@ StickyModelProvider = __decorate([
     __param(1, ILanguageConfigurationService),
     __param(2, ILanguageFeaturesService)
 ], StickyModelProvider);
+export { StickyModelProvider };
 class StickyModelCandidateProvider {
     constructor() {
         this._stickyModel = null;

@@ -25,7 +25,7 @@ import { IInstantiationService } from '../../../../platform/instantiation/common
 export function canExpandCompletionItem(item) {
     return !!item && Boolean(item.completion.documentation || item.completion.detail && item.completion.detail !== item.completion.label);
 }
-export let SuggestDetailsWidget = class SuggestDetailsWidget {
+let SuggestDetailsWidget = class SuggestDetailsWidget {
     constructor(_editor, instaService) {
         this._editor = _editor;
         this._onDidClose = new Emitter();
@@ -52,7 +52,7 @@ export let SuggestDetailsWidget = class SuggestDetailsWidget {
         this._docs = dom.append(this._body, dom.$('p.docs'));
         this._configureFont();
         this._disposables.add(this._editor.onDidChangeConfiguration(e => {
-            if (e.hasChanged(48 /* EditorOption.fontInfo */)) {
+            if (e.hasChanged(49 /* EditorOption.fontInfo */)) {
                 this._configureFont();
             }
         }));
@@ -63,10 +63,10 @@ export let SuggestDetailsWidget = class SuggestDetailsWidget {
     }
     _configureFont() {
         const options = this._editor.getOptions();
-        const fontInfo = options.get(48 /* EditorOption.fontInfo */);
+        const fontInfo = options.get(49 /* EditorOption.fontInfo */);
         const fontFamily = fontInfo.getMassagedFontFamily();
-        const fontSize = options.get(116 /* EditorOption.suggestFontSize */) || fontInfo.fontSize;
-        const lineHeight = options.get(117 /* EditorOption.suggestLineHeight */) || fontInfo.lineHeight;
+        const fontSize = options.get(117 /* EditorOption.suggestFontSize */) || fontInfo.fontSize;
+        const lineHeight = options.get(118 /* EditorOption.suggestLineHeight */) || fontInfo.lineHeight;
         const fontWeight = fontInfo.fontWeight;
         const fontSizePx = `${fontSize}px`;
         const lineHeightPx = `${lineHeight}px`;
@@ -79,7 +79,7 @@ export let SuggestDetailsWidget = class SuggestDetailsWidget {
         this._close.style.width = lineHeightPx;
     }
     getLayoutInfo() {
-        const lineHeight = this._editor.getOption(117 /* EditorOption.suggestLineHeight */) || this._editor.getOption(48 /* EditorOption.fontInfo */).lineHeight;
+        const lineHeight = this._editor.getOption(118 /* EditorOption.suggestLineHeight */) || this._editor.getOption(49 /* EditorOption.fontInfo */).lineHeight;
         const borderWidth = this._borderWidth;
         const borderHeight = borderWidth * 2;
         return {
@@ -207,6 +207,7 @@ export let SuggestDetailsWidget = class SuggestDetailsWidget {
 SuggestDetailsWidget = __decorate([
     __param(1, IInstantiationService)
 ], SuggestDetailsWidget);
+export { SuggestDetailsWidget };
 export class SuggestDetailsOverlay {
     constructor(widget, _editor) {
         this.widget = widget;

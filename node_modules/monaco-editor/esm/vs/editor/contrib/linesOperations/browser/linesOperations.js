@@ -147,7 +147,7 @@ class AbstractMoveLinesAction extends EditorAction {
         const languageConfigurationService = accessor.get(ILanguageConfigurationService);
         const commands = [];
         const selections = editor.getSelections() || [];
-        const autoIndent = editor.getOption(10 /* EditorOption.autoIndent */);
+        const autoIndent = editor.getOption(11 /* EditorOption.autoIndent */);
         for (const selection of selections) {
             commands.push(new MoveLinesCommand(selection, this.down, autoIndent, languageConfigurationService));
         }
@@ -850,7 +850,7 @@ export class AbstractCaseAction extends EditorAction {
         if (model === null) {
             return;
         }
-        const wordSeparators = editor.getOption(127 /* EditorOption.wordSeparators */);
+        const wordSeparators = editor.getOption(128 /* EditorOption.wordSeparators */);
         const textEdits = [];
         for (const selection of selections) {
             if (selection.isEmpty()) {

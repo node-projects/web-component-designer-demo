@@ -50,7 +50,7 @@ class InlayHintsHoverAnchor extends HoverForeignElementAnchor {
         this.part = part;
     }
 }
-export let InlayHintsHover = class InlayHintsHover extends MarkdownHoverParticipant {
+let InlayHintsHover = class InlayHintsHover extends MarkdownHoverParticipant {
     constructor(editor, languageService, openerService, configurationService, _resolverService, languageFeaturesService) {
         super(editor, languageService, openerService, configurationService, languageFeaturesService);
         this._resolverService = _resolverService;
@@ -114,7 +114,7 @@ export let InlayHintsHover = class InlayHintsHover extends MarkdownHoverParticip
             // (2.2) Inlay Label Part Help Hover
             if (part.part.location || part.part.command) {
                 let linkHint;
-                const useMetaKey = this._editor.getOption(75 /* EditorOption.multiCursorModifier */) === 'altKey';
+                const useMetaKey = this._editor.getOption(76 /* EditorOption.multiCursorModifier */) === 'altKey';
                 const kb = useMetaKey
                     ? platform.isMacintosh
                         ? localize('links.navigate.kb.meta.mac', "cmd + click")
@@ -183,3 +183,4 @@ InlayHintsHover = __decorate([
     __param(4, ITextModelService),
     __param(5, ILanguageFeaturesService)
 ], InlayHintsHover);
+export { InlayHintsHover };

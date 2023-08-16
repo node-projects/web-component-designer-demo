@@ -25,7 +25,7 @@ import { ComputeOptionsMemory, ConfigurationChangedEvent, editorOptionsRegistry 
 import { EditorZoom } from '../../common/config/editorZoom.js';
 import { BareFontInfo } from '../../common/config/fontInfo.js';
 import { IAccessibilityService } from '../../../platform/accessibility/common/accessibility.js';
-export let EditorConfiguration = class EditorConfiguration extends Disposable {
+let EditorConfiguration = class EditorConfiguration extends Disposable {
     constructor(isSimpleWidget, options, container, _accessibilityService) {
         super();
         this._accessibilityService = _accessibilityService;
@@ -44,7 +44,7 @@ export let EditorConfiguration = class EditorConfiguration extends Disposable {
         this._rawOptions = deepCloneAndMigrateOptions(options);
         this._validatedOptions = EditorOptionsUtil.validateOptions(this._rawOptions);
         this.options = this._computeOptions();
-        if (this.options.get(11 /* EditorOption.automaticLayout */)) {
+        if (this.options.get(12 /* EditorOption.automaticLayout */)) {
             this._containerObserver.startObserving();
         }
         this._register(EditorZoom.onDidChangeZoomLevel(() => this._recomputeOptions()));
@@ -156,6 +156,7 @@ export let EditorConfiguration = class EditorConfiguration extends Disposable {
 EditorConfiguration = __decorate([
     __param(3, IAccessibilityService)
 ], EditorConfiguration);
+export { EditorConfiguration };
 function digitCount(n) {
     let r = 0;
     while (n) {

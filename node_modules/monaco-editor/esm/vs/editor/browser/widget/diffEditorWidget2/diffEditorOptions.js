@@ -39,6 +39,7 @@ export class DiffEditorOptions {
         this.accessibilityVerbose = derived('accessibilityVerbose', reader => this._options.read(reader).accessibilityVerbose);
         this.diffAlgorithm = derived('diffAlgorithm', reader => this._options.read(reader).diffAlgorithm);
         this.showEmptyDecorations = derived('showEmptyDecorations', reader => this._options.read(reader).experimental.showEmptyDecorations);
+        this.onlyShowAccessibleDiffViewer = derived('onlyShowAccessibleDiffViewer', reader => this._options.read(reader).onlyShowAccessibleDiffViewer);
         const optionsCopy = Object.assign(Object.assign({}, options), validateDiffEditorOptions(options, diffEditorDefaultOptions));
         this._options = observableValue('options', optionsCopy);
     }
@@ -69,6 +70,7 @@ const diffEditorDefaultOptions = {
         showEmptyDecorations: true,
     },
     isInEmbeddedEditor: false,
+    onlyShowAccessibleDiffViewer: false,
 };
 function validateDiffEditorOptions(options, defaults) {
     var _a, _b, _c;
@@ -93,5 +95,6 @@ function validateDiffEditorOptions(options, defaults) {
             showEmptyDecorations: validateBooleanOption((_c = options.experimental) === null || _c === void 0 ? void 0 : _c.showEmptyDecorations, defaults.experimental.showEmptyDecorations),
         },
         isInEmbeddedEditor: validateBooleanOption(options.isInEmbeddedEditor, defaults.isInEmbeddedEditor),
+        onlyShowAccessibleDiffViewer: validateBooleanOption(options.onlyShowAccessibleDiffViewer, defaults.onlyShowAccessibleDiffViewer),
     };
 }

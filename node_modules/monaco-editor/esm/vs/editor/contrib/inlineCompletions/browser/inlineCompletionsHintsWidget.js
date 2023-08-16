@@ -38,13 +38,13 @@ import { IInstantiationService } from '../../../../platform/instantiation/common
 import { IKeybindingService } from '../../../../platform/keybinding/common/keybinding.js';
 import { ITelemetryService } from '../../../../platform/telemetry/common/telemetry.js';
 import { registerIcon } from '../../../../platform/theme/common/iconRegistry.js';
-export let InlineCompletionsHintsWidget = class InlineCompletionsHintsWidget extends Disposable {
+let InlineCompletionsHintsWidget = class InlineCompletionsHintsWidget extends Disposable {
     constructor(editor, model, instantiationService) {
         super();
         this.editor = editor;
         this.model = model;
         this.instantiationService = instantiationService;
-        this.alwaysShowToolbar = observableFromEvent(this.editor.onDidChangeConfiguration, () => this.editor.getOption(60 /* EditorOption.inlineSuggest */).showToolbar === 'always');
+        this.alwaysShowToolbar = observableFromEvent(this.editor.onDidChangeConfiguration, () => this.editor.getOption(61 /* EditorOption.inlineSuggest */).showToolbar === 'always');
         this.sessionPosition = undefined;
         this.position = derived('position', reader => {
             var _a, _b, _c;
@@ -84,9 +84,10 @@ export let InlineCompletionsHintsWidget = class InlineCompletionsHintsWidget ext
 InlineCompletionsHintsWidget = __decorate([
     __param(2, IInstantiationService)
 ], InlineCompletionsHintsWidget);
+export { InlineCompletionsHintsWidget };
 const inlineSuggestionHintsNextIcon = registerIcon('inline-suggestion-hints-next', Codicon.chevronRight, localize('parameterHintsNextIcon', 'Icon for show next parameter hint.'));
 const inlineSuggestionHintsPreviousIcon = registerIcon('inline-suggestion-hints-previous', Codicon.chevronLeft, localize('parameterHintsPreviousIcon', 'Icon for show previous parameter hint.'));
-export let InlineSuggestionHintsContentWidget = class InlineSuggestionHintsContentWidget extends Disposable {
+let InlineSuggestionHintsContentWidget = class InlineSuggestionHintsContentWidget extends Disposable {
     static get dropDownVisible() { return this._dropDownVisible; }
     createCommandAction(commandId, label, iconClassName) {
         const action = new Action(commandId, label, iconClassName, true, () => this._commandService.executeCommand(commandId));
@@ -219,6 +220,7 @@ InlineSuggestionHintsContentWidget = __decorate([
     __param(9, IContextKeyService),
     __param(10, IMenuService)
 ], InlineSuggestionHintsContentWidget);
+export { InlineSuggestionHintsContentWidget };
 class StatusBarViewItem extends MenuEntryActionViewItem {
     updateLabel() {
         const kb = this._keybindingService.lookupKeybinding(this._action.id, this._contextKeyService);
@@ -235,7 +237,7 @@ class StatusBarViewItem extends MenuEntryActionViewItem {
         }
     }
 }
-export let CustomizedMenuWorkbenchToolBar = class CustomizedMenuWorkbenchToolBar extends WorkbenchToolBar {
+let CustomizedMenuWorkbenchToolBar = class CustomizedMenuWorkbenchToolBar extends WorkbenchToolBar {
     constructor(container, menuId, options2, menuService, contextKeyService, contextMenuService, keybindingService, telemetryService) {
         super(container, Object.assign({ resetMenu: menuId }, options2), menuService, contextKeyService, contextMenuService, keybindingService, telemetryService);
         this.menuId = menuId;
@@ -271,3 +273,4 @@ CustomizedMenuWorkbenchToolBar = __decorate([
     __param(6, IKeybindingService),
     __param(7, ITelemetryService)
 ], CustomizedMenuWorkbenchToolBar);
+export { CustomizedMenuWorkbenchToolBar };

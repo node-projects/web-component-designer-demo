@@ -45,7 +45,7 @@ import { IQuickInputService } from '../../../../platform/quickinput/common/quick
 import { registerIcon } from '../../../../platform/theme/common/iconRegistry.js';
 import { IWorkspaceTrustManagementService } from '../../../../platform/workspace/common/workspaceTrust.js';
 export const warningIcon = registerIcon('extensions-warning-message', Codicon.warning, nls.localize('warningIcon', 'Icon shown with a warning message in the extensions editor.'));
-export let UnicodeHighlighter = class UnicodeHighlighter extends Disposable {
+let UnicodeHighlighter = class UnicodeHighlighter extends Disposable {
     constructor(_editor, _editorWorkerService, _workspaceTrustService, instantiationService) {
         super();
         this._editor = _editor;
@@ -106,13 +106,13 @@ export let UnicodeHighlighter = class UnicodeHighlighter extends Disposable {
             this._bannerClosed = false;
             this._updateHighlighter();
         }));
-        this._options = _editor.getOption(122 /* EditorOption.unicodeHighlighting */);
+        this._options = _editor.getOption(123 /* EditorOption.unicodeHighlighting */);
         this._register(_workspaceTrustService.onDidChangeTrust(e => {
             this._updateHighlighter();
         }));
         this._register(_editor.onDidChangeConfiguration(e => {
-            if (e.hasChanged(122 /* EditorOption.unicodeHighlighting */)) {
-                this._options = _editor.getOption(122 /* EditorOption.unicodeHighlighting */);
+            if (e.hasChanged(123 /* EditorOption.unicodeHighlighting */)) {
+                this._options = _editor.getOption(123 /* EditorOption.unicodeHighlighting */);
                 this._updateHighlighter();
             }
         }));
@@ -181,6 +181,7 @@ UnicodeHighlighter = __decorate([
     __param(2, IWorkspaceTrustManagementService),
     __param(3, IInstantiationService)
 ], UnicodeHighlighter);
+export { UnicodeHighlighter };
 function resolveOptions(trusted, options) {
     return {
         nonBasicASCII: options.nonBasicASCII === inUntrustedWorkspace ? !trusted : options.nonBasicASCII,
@@ -344,7 +345,7 @@ class ViewportUnicodeHighlighter extends Disposable {
         };
     }
 }
-export let UnicodeHighlighterHoverParticipant = class UnicodeHighlighterHoverParticipant {
+let UnicodeHighlighterHoverParticipant = class UnicodeHighlighterHoverParticipant {
     constructor(_editor, _languageService, _openerService) {
         this._editor = _editor;
         this._languageService = _languageService;
@@ -361,6 +362,7 @@ export let UnicodeHighlighterHoverParticipant = class UnicodeHighlighterHoverPar
             return [];
         }
         const result = [];
+        const existedReason = new Set();
         let index = 300;
         for (const d of lineDecorations) {
             const highlightInfo = unicodeHighlighter.getDecorationInfo(d);
@@ -389,6 +391,10 @@ export let UnicodeHighlighterHoverParticipant = class UnicodeHighlighterHoverPar
                     reason = nls.localize('unicodeHighlight.characterIsNonBasicAscii', 'The character {0} is not a basic ASCII character.', codePointStr);
                     break;
             }
+            if (existedReason.has(reason)) {
+                continue;
+            }
+            existedReason.add(reason);
             const adjustSettingsArgs = {
                 codePoint: codePoint,
                 reason: highlightInfo.reason,
@@ -413,6 +419,7 @@ UnicodeHighlighterHoverParticipant = __decorate([
     __param(1, ILanguageService),
     __param(2, IOpenerService)
 ], UnicodeHighlighterHoverParticipant);
+export { UnicodeHighlighterHoverParticipant };
 function codePointToHex(codePoint) {
     return `U+${codePoint.toString(16).padStart(4, '0')}`;
 }

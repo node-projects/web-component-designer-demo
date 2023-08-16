@@ -53,7 +53,7 @@ EditorScopedQuickInputService = __decorate([
     __param(3, IThemeService),
     __param(4, ICodeEditorService)
 ], EditorScopedQuickInputService);
-export let StandaloneQuickInputService = class StandaloneQuickInputService {
+let StandaloneQuickInputService = class StandaloneQuickInputService {
     get activeService() {
         const editor = this.codeEditorService.getFocusedCodeEditor();
         if (!editor) {
@@ -92,6 +92,7 @@ StandaloneQuickInputService = __decorate([
     __param(0, IInstantiationService),
     __param(1, ICodeEditorService)
 ], StandaloneQuickInputService);
+export { StandaloneQuickInputService };
 export class QuickInputEditorContribution {
     static get(editor) {
         return editor.getContribution(QuickInputEditorContribution.ID);

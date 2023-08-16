@@ -45,7 +45,7 @@ class MarkerDecorations extends Disposable {
         return this._markersData.get(decoration.id);
     }
 }
-export let MarkerDecorationsService = class MarkerDecorationsService extends Disposable {
+let MarkerDecorationsService = class MarkerDecorationsService extends Disposable {
     constructor(modelService, _markerService) {
         super();
         this._markerService = _markerService;
@@ -212,3 +212,4 @@ MarkerDecorationsService = __decorate([
     __param(0, IModelService),
     __param(1, IMarkerService)
 ], MarkerDecorationsService);
+export { MarkerDecorationsService };

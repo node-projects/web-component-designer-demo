@@ -197,7 +197,7 @@ class CollapsedCodeOverlayWidget extends ViewZoneOverlayWidget {
                 const currentTop = e.clientY;
                 const delta = currentTop - startTop;
                 didMove = didMove || Math.abs(delta) > 2;
-                const lineDelta = Math.round(delta / editor.getOption(64 /* EditorOption.lineHeight */));
+                const lineDelta = Math.round(delta / editor.getOption(65 /* EditorOption.lineHeight */));
                 const newVal = Math.max(0, Math.min(cur + lineDelta, this._unchangedRegion.getMaxVisibleLineCountTop()));
                 this._unchangedRegion.visibleLineCountTop.set(newVal, undefined);
             });
@@ -227,7 +227,7 @@ class CollapsedCodeOverlayWidget extends ViewZoneOverlayWidget {
                 const currentTop = e.clientY;
                 const delta = currentTop - startTop;
                 didMove = didMove || Math.abs(delta) > 2;
-                const lineDelta = Math.round(delta / editor.getOption(64 /* EditorOption.lineHeight */));
+                const lineDelta = Math.round(delta / editor.getOption(65 /* EditorOption.lineHeight */));
                 const newVal = Math.max(0, Math.min(cur - lineDelta, this._unchangedRegion.getMaxVisibleLineCountBottom()));
                 const top = editor.getTopForLineNumber(this._unchangedRegion.originalRange.endLineNumberExclusive);
                 this._unchangedRegion.visibleLineCountBottom.set(newVal, undefined);

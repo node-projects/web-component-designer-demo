@@ -28,7 +28,7 @@ const defaultOptions = {
 /**
  * Create a new diff navigator for the provided diff editor.
  */
-export let DiffNavigator = class DiffNavigator extends Disposable {
+let DiffNavigator = class DiffNavigator extends Disposable {
     constructor(editor, options = {}, _audioCueService, _codeEditorService, _accessibilityService) {
         super();
         this._audioCueService = _audioCueService;
@@ -222,3 +222,4 @@ DiffNavigator = __decorate([
     __param(3, ICodeEditorService),
     __param(4, IAccessibilityService)
 ], DiffNavigator);
+export { DiffNavigator };

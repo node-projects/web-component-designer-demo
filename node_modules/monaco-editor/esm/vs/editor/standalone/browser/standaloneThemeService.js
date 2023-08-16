@@ -319,7 +319,7 @@ export class StandaloneThemeService extends Disposable {
                 colorVariables.push(`${asCssVariableName(item.id)}: ${color.toString()};`);
             }
         }
-        ruleCollector.addRule(`.monaco-editor { ${colorVariables.join('\n')} }`);
+        ruleCollector.addRule(`.monaco-editor, .monaco-diff-editor { ${colorVariables.join('\n')} }`);
         const colorMap = this._colorMapOverride || this._theme.tokenTheme.getColorMap();
         ruleCollector.addRule(generateTokensCSSForColorMap(colorMap));
         this._themeCSS = cssRules.join('\n');

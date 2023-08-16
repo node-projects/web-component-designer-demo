@@ -170,6 +170,7 @@ class ObservableSignal extends BaseObservable {
         // NO OP
     }
 }
+// TODO@hediet: Have `keepCacheAlive` and `recomputeOnChange` instead of forceRecompute
 /**
  * This ensures the observable is being observed.
  * Observed observables (such as {@link derived}s) can maintain a cache, as they receive invalidation events.

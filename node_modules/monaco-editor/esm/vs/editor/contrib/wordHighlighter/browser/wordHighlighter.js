@@ -143,7 +143,7 @@ class WordHighlighter {
         this.linkedHighlighters = linkedHighlighters;
         this._hasWordHighlights = ctxHasWordHighlights.bindTo(contextKeyService);
         this._ignorePositionChangeEvent = false;
-        this.occurrencesHighlight = this.editor.getOption(78 /* EditorOption.occurrencesHighlight */);
+        this.occurrencesHighlight = this.editor.getOption(79 /* EditorOption.occurrencesHighlight */);
         this.model = this.editor.getModel();
         this.toUnhook.add(editor.onDidChangeCursorPosition((e) => {
             if (this._ignorePositionChangeEvent) {
@@ -161,7 +161,7 @@ class WordHighlighter {
             this._stopAll();
         }));
         this.toUnhook.add(editor.onDidChangeConfiguration((e) => {
-            const newValue = this.editor.getOption(78 /* EditorOption.occurrencesHighlight */);
+            const newValue = this.editor.getOption(79 /* EditorOption.occurrencesHighlight */);
             if (this.occurrencesHighlight !== newValue) {
                 this.occurrencesHighlight = newValue;
                 this._stopAll();
@@ -316,7 +316,7 @@ class WordHighlighter {
             this._stopAll();
             const myRequestId = ++this.workerRequestTokenId;
             this.workerRequestCompleted = false;
-            this.workerRequest = computeOccurencesAtPosition(this.providers, this.model, this.editor.getSelection(), this.editor.getOption(127 /* EditorOption.wordSeparators */));
+            this.workerRequest = computeOccurencesAtPosition(this.providers, this.model, this.editor.getSelection(), this.editor.getOption(128 /* EditorOption.wordSeparators */));
             this.workerRequest.result.then(data => {
                 if (myRequestId === this.workerRequestTokenId) {
                     this.workerRequestCompleted = true;
@@ -368,7 +368,7 @@ class WordHighlighter {
         this.toUnhook.dispose();
     }
 }
-export let WordHighlighterContribution = class WordHighlighterContribution extends Disposable {
+let WordHighlighterContribution = class WordHighlighterContribution extends Disposable {
     static get(editor) {
         return editor.getContribution(WordHighlighterContribution.ID);
     }
@@ -422,6 +422,7 @@ WordHighlighterContribution = __decorate([
     __param(1, IContextKeyService),
     __param(2, ILanguageFeaturesService)
 ], WordHighlighterContribution);
+export { WordHighlighterContribution };
 class WordHighlightNavigationAction extends EditorAction {
     constructor(next, opts) {
         super(opts);

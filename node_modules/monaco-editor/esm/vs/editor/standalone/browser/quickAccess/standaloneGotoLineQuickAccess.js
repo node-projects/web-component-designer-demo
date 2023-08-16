@@ -21,7 +21,7 @@ import { Event } from '../../../../base/common/event.js';
 import { EditorAction, registerEditorAction } from '../../../browser/editorExtensions.js';
 import { EditorContextKeys } from '../../../common/editorContextKeys.js';
 import { IQuickInputService } from '../../../../platform/quickinput/common/quickInput.js';
-export let StandaloneGotoLineQuickAccessProvider = class StandaloneGotoLineQuickAccessProvider extends AbstractGotoLineQuickAccessProvider {
+let StandaloneGotoLineQuickAccessProvider = class StandaloneGotoLineQuickAccessProvider extends AbstractGotoLineQuickAccessProvider {
     constructor(editorService) {
         super();
         this.editorService = editorService;
@@ -34,6 +34,7 @@ export let StandaloneGotoLineQuickAccessProvider = class StandaloneGotoLineQuick
 StandaloneGotoLineQuickAccessProvider = __decorate([
     __param(0, ICodeEditorService)
 ], StandaloneGotoLineQuickAccessProvider);
+export { StandaloneGotoLineQuickAccessProvider };
 export class GotoLineAction extends EditorAction {
     constructor() {
         super({

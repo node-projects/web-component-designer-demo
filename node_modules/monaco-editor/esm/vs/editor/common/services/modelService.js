@@ -64,7 +64,7 @@ class DisposedModelInfo {
         this.alternativeVersionId = alternativeVersionId;
     }
 }
-export let ModelService = class ModelService extends Disposable {
+let ModelService = class ModelService extends Disposable {
     constructor(_configurationService, _resourcePropertiesService, _undoRedoService, _languageService, _languageConfigurationService) {
         super();
         this._configurationService = _configurationService;
@@ -404,3 +404,4 @@ ModelService = __decorate([
     __param(3, ILanguageService),
     __param(4, ILanguageConfigurationService)
 ], ModelService);
+export { ModelService };

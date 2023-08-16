@@ -388,7 +388,7 @@ export class AutoIndentOnPasteCommand {
         return helper.getTrackedSelection(this._selectionId);
     }
 }
-export let AutoIndentOnPaste = class AutoIndentOnPaste {
+let AutoIndentOnPaste = class AutoIndentOnPaste {
     constructor(editor, _languageConfigurationService) {
         this.editor = editor;
         this._languageConfigurationService = _languageConfigurationService;
@@ -402,7 +402,7 @@ export let AutoIndentOnPaste = class AutoIndentOnPaste {
         // clean up
         this.callOnModel.clear();
         // we are disabled
-        if (this.editor.getOption(10 /* EditorOption.autoIndent */) < 4 /* EditorAutoIndentStrategy.Full */ || this.editor.getOption(53 /* EditorOption.formatOnPaste */)) {
+        if (this.editor.getOption(11 /* EditorOption.autoIndent */) < 4 /* EditorAutoIndentStrategy.Full */ || this.editor.getOption(54 /* EditorOption.formatOnPaste */)) {
             return;
         }
         // no model
@@ -425,7 +425,7 @@ export let AutoIndentOnPaste = class AutoIndentOnPaste {
         if (!model.tokenization.isCheapToTokenize(range.getStartPosition().lineNumber)) {
             return;
         }
-        const autoIndent = this.editor.getOption(10 /* EditorOption.autoIndent */);
+        const autoIndent = this.editor.getOption(11 /* EditorOption.autoIndent */);
         const { tabSize, indentSize, insertSpaces } = model.getOptions();
         const textEdits = [];
         const indentConverter = {
@@ -558,6 +558,7 @@ AutoIndentOnPaste.ID = 'editor.contrib.autoIndentOnPaste';
 AutoIndentOnPaste = __decorate([
     __param(1, ILanguageConfigurationService)
 ], AutoIndentOnPaste);
+export { AutoIndentOnPaste };
 function getIndentationEditOperations(model, builder, tabSize, tabsToSpaces) {
     if (model.getLineCount() === 1 && model.getLineMaxColumn(1) === 1) {
         // Model is empty

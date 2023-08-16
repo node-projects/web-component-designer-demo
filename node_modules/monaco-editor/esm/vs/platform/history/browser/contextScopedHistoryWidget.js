@@ -60,7 +60,7 @@ export function registerAndCreateHistoryNavigationContext(scopedContextKeyServic
         }
     };
 }
-export let ContextScopedFindInput = class ContextScopedFindInput extends FindInput {
+let ContextScopedFindInput = class ContextScopedFindInput extends FindInput {
     constructor(container, contextViewProvider, options, contextKeyService) {
         super(container, contextViewProvider, options);
         const scopedContextKeyService = this._register(contextKeyService.createScoped(this.inputBox.element));
@@ -70,7 +70,8 @@ export let ContextScopedFindInput = class ContextScopedFindInput extends FindInp
 ContextScopedFindInput = __decorate([
     __param(3, IContextKeyService)
 ], ContextScopedFindInput);
-export let ContextScopedReplaceInput = class ContextScopedReplaceInput extends ReplaceInput {
+export { ContextScopedFindInput };
+let ContextScopedReplaceInput = class ContextScopedReplaceInput extends ReplaceInput {
     constructor(container, contextViewProvider, options, contextKeyService, showReplaceOptions = false) {
         super(container, contextViewProvider, showReplaceOptions, options);
         const scopedContextKeyService = this._register(contextKeyService.createScoped(this.inputBox.element));
@@ -80,6 +81,7 @@ export let ContextScopedReplaceInput = class ContextScopedReplaceInput extends R
 ContextScopedReplaceInput = __decorate([
     __param(3, IContextKeyService)
 ], ContextScopedReplaceInput);
+export { ContextScopedReplaceInput };
 KeybindingsRegistry.registerCommandAndKeybindingRule({
     id: 'history.showPrevious',
     weight: 200 /* KeybindingWeight.WorkbenchContrib */,

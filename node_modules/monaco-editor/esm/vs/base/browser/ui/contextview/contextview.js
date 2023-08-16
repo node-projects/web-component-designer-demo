@@ -8,6 +8,10 @@ import { Disposable, DisposableStore, toDisposable } from '../../../common/lifec
 import * as platform from '../../../common/platform.js';
 import { Range } from '../../../common/range.js';
 import './contextview.css';
+export function isAnchor(obj) {
+    const anchor = obj;
+    return !!anchor && typeof anchor.x === 'number' && typeof anchor.y === 'number';
+}
 export var LayoutAnchorMode;
 (function (LayoutAnchorMode) {
     LayoutAnchorMode[LayoutAnchorMode["AVOID"] = 0] = "AVOID";
@@ -163,12 +167,24 @@ export class ContextView extends Disposable {
                 height: elementPosition.height * zoom
             };
         }
-        else {
+        else if (isAnchor(anchor)) {
             around = {
                 top: anchor.y,
                 left: anchor.x,
                 width: anchor.width || 1,
                 height: anchor.height || 2
+            };
+        }
+        else {
+            around = {
+                top: anchor.posy,
+                left: anchor.posx,
+                // We are about to position the context view where the mouse
+                // cursor is. To prevent the view being exactly under the mouse
+                // when showing and thus potentially triggering an action within,
+                // we treat the mouse location like a small sized block element.
+                width: 2,
+                height: 2
             };
         }
         const viewSizeWidth = DOM.getTotalWidth(this.view);

@@ -12,7 +12,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 import { IContextKeyService, RawContextKey } from '../../../../platform/contextkey/common/contextkey.js';
-export let SuggestAlternatives = class SuggestAlternatives {
+let SuggestAlternatives = class SuggestAlternatives {
     constructor(_editor, contextKeyService) {
         this._editor = _editor;
         this._index = 0;
@@ -89,3 +89,4 @@ SuggestAlternatives.OtherSuggestions = new RawContextKey('hasOtherSuggestions', 
 SuggestAlternatives = __decorate([
     __param(1, IContextKeyService)
 ], SuggestAlternatives);
+export { SuggestAlternatives };

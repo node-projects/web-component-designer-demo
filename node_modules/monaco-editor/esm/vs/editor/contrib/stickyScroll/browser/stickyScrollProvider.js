@@ -37,7 +37,7 @@ export class StickyLineCandidate {
         this.nestingDepth = nestingDepth;
     }
 }
-export let StickyLineCandidateProvider = class StickyLineCandidateProvider extends Disposable {
+let StickyLineCandidateProvider = class StickyLineCandidateProvider extends Disposable {
     constructor(editor, _languageFeaturesService, _languageConfigurationService) {
         super();
         this._languageFeaturesService = _languageFeaturesService;
@@ -52,7 +52,7 @@ export let StickyLineCandidateProvider = class StickyLineCandidateProvider exten
         this._sessionStore = new DisposableStore();
         this._updateSoon = this._register(new RunOnceScheduler(() => this.update(), 50));
         this._register(this._editor.onDidChangeConfiguration(e => {
-            if (e.hasChanged(112 /* EditorOption.stickyScroll */)) {
+            if (e.hasChanged(113 /* EditorOption.stickyScroll */)) {
                 this.readConfiguration();
             }
         }));
@@ -63,7 +63,7 @@ export let StickyLineCandidateProvider = class StickyLineCandidateProvider exten
         this._sessionStore.dispose();
     }
     readConfiguration() {
-        this._options = this._editor.getOption(112 /* EditorOption.stickyScroll */);
+        this._options = this._editor.getOption(113 /* EditorOption.stickyScroll */);
         if (!this._options.enabled) {
             this._sessionStore.clear();
             return;
@@ -169,3 +169,4 @@ StickyLineCandidateProvider = __decorate([
     __param(1, ILanguageFeaturesService),
     __param(2, ILanguageConfigurationService)
 ], StickyLineCandidateProvider);
+export { StickyLineCandidateProvider };

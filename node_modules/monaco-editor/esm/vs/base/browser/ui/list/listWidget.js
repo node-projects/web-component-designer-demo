@@ -36,6 +36,7 @@ import { isNumber } from '../../../common/types.js';
 import './list.css';
 import { ListError } from './list.js';
 import { ListView } from './listView.js';
+import { StandardMouseEvent } from '../../mouseEvent.js';
 class TraitRenderer {
     constructor(trait) {
         this.trait = trait;
@@ -1003,6 +1004,7 @@ export class List {
         return Event.map(this.eventBufferer.wrapEvent(this.selection.onChange), e => this.toListEvent(e), this.disposables);
     }
     get domId() { return this.view.domId; }
+    get onDidScroll() { return this.view.onDidScroll; }
     get onMouseClick() { return this.view.onMouseClick; }
     get onMouseDblClick() { return this.view.onMouseDblClick; }
     get onMouseMiddleClick() { return this.view.onMouseMiddleClick; }
@@ -1042,7 +1044,7 @@ export class List {
             .event;
         const fromMouse = this.disposables.add(Event.chain(this.view.onContextMenu))
             .filter(_ => !didJustPressContextMenuKey)
-            .map(({ element, index, browserEvent }) => ({ element, index, anchor: { x: browserEvent.pageX + 1, y: browserEvent.pageY }, browserEvent }))
+            .map(({ element, index, browserEvent }) => ({ element, index, anchor: new StandardMouseEvent(browserEvent), browserEvent }))
             .event;
         return Event.any(fromKeyDown, fromKeyUp, fromMouse);
     }
@@ -1167,6 +1169,9 @@ export class List {
     }
     get scrollHeight() {
         return this.view.scrollHeight;
+    }
+    get renderHeight() {
+        return this.view.renderHeight;
     }
     get firstVisibleIndex() {
         return this.view.firstVisibleIndex;

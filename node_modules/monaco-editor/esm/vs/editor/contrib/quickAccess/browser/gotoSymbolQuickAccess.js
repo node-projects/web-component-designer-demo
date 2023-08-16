@@ -28,13 +28,13 @@ import { pieceToQuery, prepareQuery, scoreFuzzy2 } from '../../../../base/common
 import { Disposable, DisposableStore, toDisposable } from '../../../../base/common/lifecycle.js';
 import { format, trim } from '../../../../base/common/strings.js';
 import { Range } from '../../../common/core/range.js';
-import { SymbolKinds } from '../../../common/languages.js';
+import { SymbolKinds, getAriaLabelForSymbol } from '../../../common/languages.js';
 import { IOutlineModelService } from '../../documentSymbols/browser/outlineModel.js';
 import { AbstractEditorNavigationQuickAccessProvider } from './editorNavigationQuickAccess.js';
 import { localize } from '../../../../nls.js';
 import { ILanguageFeaturesService } from '../../../common/services/languageFeatures.js';
 import { findLast } from '../../../../base/common/arrays.js';
-export let AbstractGotoSymbolQuickAccessProvider = class AbstractGotoSymbolQuickAccessProvider extends AbstractEditorNavigationQuickAccessProvider {
+let AbstractGotoSymbolQuickAccessProvider = class AbstractGotoSymbolQuickAccessProvider extends AbstractEditorNavigationQuickAccessProvider {
     constructor(_languageFeaturesService, _outlineModelService, options = Object.create(null)) {
         super(options);
         this._languageFeaturesService = _languageFeaturesService;
@@ -264,7 +264,7 @@ export let AbstractGotoSymbolQuickAccessProvider = class AbstractGotoSymbolQuick
                     kind: symbol.kind,
                     score: symbolScore,
                     label: symbolLabelWithIcon,
-                    ariaLabel: symbolLabel,
+                    ariaLabel: getAriaLabelForSymbol(symbol.name, symbol.kind),
                     description: containerLabel,
                     highlights: deprecated ? undefined : {
                         label: symbolMatches,
@@ -372,6 +372,7 @@ AbstractGotoSymbolQuickAccessProvider = __decorate([
     __param(0, ILanguageFeaturesService),
     __param(1, IOutlineModelService)
 ], AbstractGotoSymbolQuickAccessProvider);
+export { AbstractGotoSymbolQuickAccessProvider };
 // #region NLS Helpers
 const FALLBACK_NLS_SYMBOL_KIND = localize('property', "properties ({0})");
 const NLS_SYMBOL_KIND_CACHE = {

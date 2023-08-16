@@ -131,11 +131,11 @@ class Widget {
         this.allowEditorOverflow = this._actual.allowEditorOverflow || false;
         this.suppressMouseDown = this._actual.suppressMouseDown || false;
         const options = this._context.configuration.options;
-        const layoutInfo = options.get(141 /* EditorOption.layoutInfo */);
-        this._fixedOverflowWidgets = options.get(40 /* EditorOption.fixedOverflowWidgets */);
+        const layoutInfo = options.get(142 /* EditorOption.layoutInfo */);
+        this._fixedOverflowWidgets = options.get(41 /* EditorOption.fixedOverflowWidgets */);
         this._contentWidth = layoutInfo.contentWidth;
         this._contentLeft = layoutInfo.contentLeft;
-        this._lineHeight = options.get(64 /* EditorOption.lineHeight */);
+        this._lineHeight = options.get(65 /* EditorOption.lineHeight */);
         this._affinity = null;
         this._preference = [];
         this._cachedDomNodeOffsetWidth = -1;
@@ -151,9 +151,9 @@ class Widget {
     }
     onConfigurationChanged(e) {
         const options = this._context.configuration.options;
-        this._lineHeight = options.get(64 /* EditorOption.lineHeight */);
-        if (e.hasChanged(141 /* EditorOption.layoutInfo */)) {
-            const layoutInfo = options.get(141 /* EditorOption.layoutInfo */);
+        this._lineHeight = options.get(65 /* EditorOption.lineHeight */);
+        if (e.hasChanged(142 /* EditorOption.layoutInfo */)) {
+            const layoutInfo = options.get(142 /* EditorOption.layoutInfo */);
             this._contentLeft = layoutInfo.contentLeft;
             this._contentWidth = layoutInfo.contentWidth;
             this._maxWidth = this._getMaxWidth();
@@ -298,7 +298,7 @@ class Widget {
         if (!secondary) {
             return primary;
         }
-        const fontInfo = this._context.configuration.options.get(48 /* EditorOption.fontInfo */);
+        const fontInfo = this._context.configuration.options.get(49 /* EditorOption.fontInfo */);
         let left = secondary.left;
         if (left < primary.left) {
             left = Math.max(left, primary.left - width + fontInfo.typicalFullwidthCharacterWidth);

@@ -46,7 +46,7 @@ const markerCodeActionTrigger = {
     filter: { include: CodeActionKind.QuickFix },
     triggerAction: CodeActionTriggerSource.QuickFixHover
 };
-export let MarkerHoverParticipant = class MarkerHoverParticipant {
+let MarkerHoverParticipant = class MarkerHoverParticipant {
     constructor(_editor, _markerDecorationsService, _openerService, _languageFeaturesService) {
         this._editor = _editor;
         this._markerDecorationsService = _markerDecorationsService;
@@ -158,7 +158,7 @@ export let MarkerHoverParticipant = class MarkerHoverParticipant {
                 }
             });
         }
-        if (!this._editor.getOption(88 /* EditorOption.readOnly */)) {
+        if (!this._editor.getOption(89 /* EditorOption.readOnly */)) {
             const quickfixPlaceholderElement = context.statusBar.append($('div'));
             if (this.recentMarkerCodeActionsInfo) {
                 if (IMarkerData.makeKey(this.recentMarkerCodeActionsInfo.marker) === IMarkerData.makeKey(markerHover.marker)) {
@@ -224,3 +224,4 @@ MarkerHoverParticipant = __decorate([
     __param(2, IOpenerService),
     __param(3, ILanguageFeaturesService)
 ], MarkerHoverParticipant);
+export { MarkerHoverParticipant };

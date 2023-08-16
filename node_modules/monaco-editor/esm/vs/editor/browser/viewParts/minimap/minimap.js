@@ -30,22 +30,22 @@ const GUTTER_DECORATION_WIDTH = 2;
 class MinimapOptions {
     constructor(configuration, theme, tokensColorTracker) {
         const options = configuration.options;
-        const pixelRatio = options.get(139 /* EditorOption.pixelRatio */);
-        const layoutInfo = options.get(141 /* EditorOption.layoutInfo */);
+        const pixelRatio = options.get(140 /* EditorOption.pixelRatio */);
+        const layoutInfo = options.get(142 /* EditorOption.layoutInfo */);
         const minimapLayout = layoutInfo.minimap;
-        const fontInfo = options.get(48 /* EditorOption.fontInfo */);
-        const minimapOpts = options.get(70 /* EditorOption.minimap */);
+        const fontInfo = options.get(49 /* EditorOption.fontInfo */);
+        const minimapOpts = options.get(71 /* EditorOption.minimap */);
         this.renderMinimap = minimapLayout.renderMinimap;
         this.size = minimapOpts.size;
         this.minimapHeightIsEditorHeight = minimapLayout.minimapHeightIsEditorHeight;
-        this.scrollBeyondLastLine = options.get(102 /* EditorOption.scrollBeyondLastLine */);
-        this.paddingTop = options.get(81 /* EditorOption.padding */).top;
-        this.paddingBottom = options.get(81 /* EditorOption.padding */).bottom;
+        this.scrollBeyondLastLine = options.get(103 /* EditorOption.scrollBeyondLastLine */);
+        this.paddingTop = options.get(82 /* EditorOption.padding */).top;
+        this.paddingBottom = options.get(82 /* EditorOption.padding */).bottom;
         this.showSlider = minimapOpts.showSlider;
         this.autohide = minimapOpts.autohide;
         this.pixelRatio = pixelRatio;
         this.typicalHalfwidthCharacterWidth = fontInfo.typicalHalfwidthCharacterWidth;
-        this.lineHeight = options.get(64 /* EditorOption.lineHeight */);
+        this.lineHeight = options.get(65 /* EditorOption.lineHeight */);
         this.minimapLeft = minimapLayout.minimapLeft;
         this.minimapWidth = minimapLayout.minimapWidth;
         this.minimapHeight = layoutInfo.height;
@@ -278,7 +278,7 @@ class MinimapLayout {
             const endLineNumber = Math.min(lineCount, startLineNumber - topPaddingLineCount + minimapLinesFitting - 1);
             const partialLine = (scrollTop - viewportStartLineNumberVerticalOffset) / lineHeight;
             let sliderTopAligned;
-            if (scrollTop > options.paddingTop) {
+            if (scrollTop >= options.paddingTop) {
                 sliderTopAligned = (viewportStartLineNumber - startLineNumber + topPaddingLineCount + partialLine) * minimapLineHeight / pixelRatio;
             }
             else {

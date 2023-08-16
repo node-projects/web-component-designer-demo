@@ -20,7 +20,7 @@ import { ILanguageConfigurationService } from '../../../common/languages/languag
 import * as indentUtils from '../../indentation/browser/indentUtils.js';
 import { getGoodIndentForLine, getIndentMetadata } from '../../../common/languages/autoIndent.js';
 import { getEnterAction } from '../../../common/languages/enterAction.js';
-export let MoveLinesCommand = class MoveLinesCommand {
+let MoveLinesCommand = class MoveLinesCommand {
     constructor(selection, isMovingDown, autoIndent, _languageConfigurationService) {
         this._languageConfigurationService = _languageConfigurationService;
         this._selection = selection;
@@ -351,3 +351,4 @@ export let MoveLinesCommand = class MoveLinesCommand {
 MoveLinesCommand = __decorate([
     __param(3, ILanguageConfigurationService)
 ], MoveLinesCommand);
+export { MoveLinesCommand };

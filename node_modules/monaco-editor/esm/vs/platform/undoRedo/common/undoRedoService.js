@@ -358,7 +358,7 @@ class EditStackSnapshot {
 }
 const missingEditStack = new ResourceEditStack('', '');
 missingEditStack.locked = true;
-export let UndoRedoService = class UndoRedoService {
+let UndoRedoService = class UndoRedoService {
     constructor(_dialogService, _notificationService) {
         this._dialogService = _dialogService;
         this._notificationService = _notificationService;
@@ -1101,6 +1101,7 @@ UndoRedoService = __decorate([
     __param(0, IDialogService),
     __param(1, INotificationService)
 ], UndoRedoService);
+export { UndoRedoService };
 class WorkspaceVerificationError {
     constructor(returnValue) {
         this.returnValue = returnValue;

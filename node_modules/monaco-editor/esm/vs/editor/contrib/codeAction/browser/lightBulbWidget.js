@@ -37,7 +37,7 @@ var LightBulbState;
     }
     LightBulbState.Showing = Showing;
 })(LightBulbState || (LightBulbState = {}));
-export let LightBulbWidget = class LightBulbWidget extends Disposable {
+let LightBulbWidget = class LightBulbWidget extends Disposable {
     constructor(_editor, keybindingService) {
         super();
         this._editor = _editor;
@@ -64,7 +64,7 @@ export let LightBulbWidget = class LightBulbWidget extends Disposable {
             // a bit of extra work to make sure the menu
             // doesn't cover the line-text
             const { top, height } = dom.getDomNodePagePosition(this._domNode);
-            const lineHeight = this._editor.getOption(64 /* EditorOption.lineHeight */);
+            const lineHeight = this._editor.getOption(65 /* EditorOption.lineHeight */);
             let pad = Math.floor(lineHeight / 3);
             if (this.state.widgetPosition.position !== null && this.state.widgetPosition.position.lineNumber < this.state.editorPosition.lineNumber) {
                 pad += lineHeight;
@@ -86,7 +86,7 @@ export let LightBulbWidget = class LightBulbWidget extends Disposable {
         }));
         this._register(this._editor.onDidChangeConfiguration(e => {
             // hide when told to do so
-            if (e.hasChanged(62 /* EditorOption.lightbulb */) && !this._editor.getOption(62 /* EditorOption.lightbulb */).enabled) {
+            if (e.hasChanged(63 /* EditorOption.lightbulb */) && !this._editor.getOption(63 /* EditorOption.lightbulb */).enabled) {
                 this.hide();
             }
         }));
@@ -115,7 +115,7 @@ export let LightBulbWidget = class LightBulbWidget extends Disposable {
             return this.hide();
         }
         const options = this._editor.getOptions();
-        if (!options.get(62 /* EditorOption.lightbulb */).enabled) {
+        if (!options.get(63 /* EditorOption.lightbulb */).enabled) {
             return this.hide();
         }
         const model = this._editor.getModel();
@@ -124,7 +124,7 @@ export let LightBulbWidget = class LightBulbWidget extends Disposable {
         }
         const { lineNumber, column } = model.validatePosition(atPosition);
         const tabSize = model.getOptions().tabSize;
-        const fontInfo = options.get(48 /* EditorOption.fontInfo */);
+        const fontInfo = options.get(49 /* EditorOption.fontInfo */);
         const lineContent = model.getLineContent(lineNumber);
         const indent = computeIndentLevel(lineContent, tabSize);
         const lineHasSpace = fontInfo.spaceWidth * indent > 22;
@@ -192,3 +192,4 @@ LightBulbWidget._posPref = [0 /* ContentWidgetPositionPreference.EXACT */];
 LightBulbWidget = __decorate([
     __param(1, IKeybindingService)
 ], LightBulbWidget);
+export { LightBulbWidget };

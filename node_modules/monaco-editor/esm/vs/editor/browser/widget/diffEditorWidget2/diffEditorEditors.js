@@ -17,17 +17,17 @@ import { autorunHandleChanges } from '../../../../base/common/observableImpl/aut
 import { OverviewRulerPart } from './overviewRulerPart.js';
 import { EditorOptions } from '../../../common/config/editorOptions.js';
 import { localize } from '../../../../nls.js';
-import { IContextKeyService } from '../../../../platform/contextkey/common/contextkey.js';
 import { IInstantiationService } from '../../../../platform/instantiation/common/instantiation.js';
-export let DiffEditorEditors = class DiffEditorEditors extends Disposable {
-    constructor(originalEditorElement, modifiedEditorElement, _options, codeEditorWidgetOptions, _createInnerEditor, _contextKeyService, _instantiationService) {
+import { IKeybindingService } from '../../../../platform/keybinding/common/keybinding.js';
+let DiffEditorEditors = class DiffEditorEditors extends Disposable {
+    constructor(originalEditorElement, modifiedEditorElement, _options, codeEditorWidgetOptions, _createInnerEditor, _instantiationService, _keybindingService) {
         super();
         this.originalEditorElement = originalEditorElement;
         this.modifiedEditorElement = modifiedEditorElement;
         this._options = _options;
         this._createInnerEditor = _createInnerEditor;
-        this._contextKeyService = _contextKeyService;
         this._instantiationService = _instantiationService;
+        this._keybindingService = _keybindingService;
         this._onDidContentSizeChange = this._register(new Emitter());
         this.original = this._createLeftHandSideEditor(_options.editorOptions.get(), codeEditorWidgetOptions.originalEditor || {});
         this.modified = this._createRightHandSideEditor(_options.editorOptions.get(), codeEditorWidgetOptions.modifiedEditor || {});
@@ -41,22 +41,20 @@ export let DiffEditorEditors = class DiffEditorEditors extends Disposable {
             }
         }, (reader, changeSummary) => {
             _options.editorOptions.read(reader);
-            this.modified.updateOptions(this._adjustOptionsForRightHandSide(changeSummary));
-            this.original.updateOptions(this._adjustOptionsForLeftHandSide(changeSummary));
+            this.modified.updateOptions(this._adjustOptionsForRightHandSide(reader, changeSummary));
+            this.original.updateOptions(this._adjustOptionsForLeftHandSide(reader, changeSummary));
         }));
     }
     _createLeftHandSideEditor(options, codeEditorWidgetOptions) {
-        const editor = this._constructInnerEditor(this._instantiationService, this.originalEditorElement, this._adjustOptionsForLeftHandSide(options), codeEditorWidgetOptions);
-        const isInDiffLeftEditorKey = this._contextKeyService.createKey('isInDiffLeftEditor', editor.hasWidgetFocus());
-        this._register(editor.onDidFocusEditorWidget(() => isInDiffLeftEditorKey.set(true)));
-        this._register(editor.onDidBlurEditorWidget(() => isInDiffLeftEditorKey.set(false)));
+        const leftHandSideOptions = this._adjustOptionsForLeftHandSide(undefined, options);
+        const editor = this._constructInnerEditor(this._instantiationService, this.originalEditorElement, leftHandSideOptions, codeEditorWidgetOptions);
+        editor.setContextValue('isInDiffLeftEditor', true);
         return editor;
     }
     _createRightHandSideEditor(options, codeEditorWidgetOptions) {
-        const editor = this._constructInnerEditor(this._instantiationService, this.modifiedEditorElement, this._adjustOptionsForRightHandSide(options), codeEditorWidgetOptions);
-        const isInDiffRightEditorKey = this._contextKeyService.createKey('isInDiffRightEditor', editor.hasWidgetFocus());
-        this._register(editor.onDidFocusEditorWidget(() => isInDiffRightEditorKey.set(true)));
-        this._register(editor.onDidBlurEditorWidget(() => isInDiffRightEditorKey.set(false)));
+        const rightHandSideOptions = this._adjustOptionsForRightHandSide(undefined, options);
+        const editor = this._constructInnerEditor(this._instantiationService, this.modifiedEditorElement, rightHandSideOptions, codeEditorWidgetOptions);
+        editor.setContextValue('isInDiffRightEditor', true);
         return editor;
     }
     _constructInnerEditor(instantiationService, container, options, editorWidgetOptions) {
@@ -73,7 +71,7 @@ export let DiffEditorEditors = class DiffEditorEditors extends Disposable {
         }));
         return editor;
     }
-    _adjustOptionsForLeftHandSide(changedOptions) {
+    _adjustOptionsForLeftHandSide(_reader, changedOptions) {
         const result = this._adjustOptionsForSubEditor(changedOptions);
         if (!this._options.renderSideBySide.get()) {
             // never wrap hidden editor
@@ -93,7 +91,7 @@ export let DiffEditorEditors = class DiffEditorEditors extends Disposable {
         result.extraEditorClassName = 'original-in-monaco-diff-editor';
         return result;
     }
-    _adjustOptionsForRightHandSide(changedOptions) {
+    _adjustOptionsForRightHandSide(reader, changedOptions) {
         const result = this._adjustOptionsForSubEditor(changedOptions);
         if (changedOptions.modifiedAriaLabel) {
             result.ariaLabel = changedOptions.modifiedAriaLabel;
@@ -118,7 +116,6 @@ export let DiffEditorEditors = class DiffEditorEditors extends Disposable {
         clonedOptions.folding = false;
         clonedOptions.codeLens = this._options.diffCodeLens.get();
         clonedOptions.fixedOverflowWidgets = true;
-        // clonedOptions.lineDecorationsWidth = '2ch';
         // Clone minimap options before changing them
         clonedOptions.minimap = Object.assign({}, (clonedOptions.minimap || {}));
         clonedOptions.minimap.enabled = false;
@@ -131,17 +128,22 @@ export let DiffEditorEditors = class DiffEditorEditors extends Disposable {
         return clonedOptions;
     }
     _updateAriaLabel(ariaLabel) {
-        const ariaNavigationTip = localize('diff-aria-navigation-tip', ' use Shift + F7 to navigate changes');
+        var _a;
+        if (!ariaLabel) {
+            ariaLabel = '';
+        }
+        const ariaNavigationTip = localize('diff-aria-navigation-tip', ' use {0} to open the accessibility help.', (_a = this._keybindingService.lookupKeybinding('editor.action.accessibilityHelp')) === null || _a === void 0 ? void 0 : _a.getAriaLabel());
         if (this._options.accessibilityVerbose.get()) {
             return ariaLabel + ariaNavigationTip;
         }
         else if (ariaLabel) {
             return ariaLabel.replaceAll(ariaNavigationTip, '');
         }
-        return undefined;
+        return '';
     }
 };
 DiffEditorEditors = __decorate([
-    __param(5, IContextKeyService),
-    __param(6, IInstantiationService)
+    __param(5, IInstantiationService),
+    __param(6, IKeybindingService)
 ], DiffEditorEditors);
+export { DiffEditorEditors };

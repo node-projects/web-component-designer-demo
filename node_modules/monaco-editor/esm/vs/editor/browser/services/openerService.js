@@ -106,7 +106,7 @@ let EditorOpener = class EditorOpener {
 EditorOpener = __decorate([
     __param(0, ICodeEditorService)
 ], EditorOpener);
-export let OpenerService = class OpenerService {
+let OpenerService = class OpenerService {
     constructor(editorService, commandService) {
         this._openers = new LinkedList();
         this._validators = new LinkedList();
@@ -231,3 +231,4 @@ OpenerService = __decorate([
     __param(0, ICodeEditorService),
     __param(1, ICommandService)
 ], OpenerService);
+export { OpenerService };

@@ -93,7 +93,7 @@ class FeatureDebounceInformation {
         return clamp(value, this._min, this._max);
     }
 }
-export let LanguageFeatureDebounceService = class LanguageFeatureDebounceService {
+let LanguageFeatureDebounceService = class LanguageFeatureDebounceService {
     constructor(_logService, envService) {
         this._logService = _logService;
         this._data = new Map();
@@ -132,4 +132,5 @@ LanguageFeatureDebounceService = __decorate([
     __param(0, ILogService),
     __param(1, IEnvironmentService)
 ], LanguageFeatureDebounceService);
+export { LanguageFeatureDebounceService };
 registerSingleton(ILanguageFeatureDebounceService, LanguageFeatureDebounceService, 1 /* InstantiationType.Delayed */);

@@ -56,7 +56,7 @@ const _completionItemColor = new (_a = class ColorExtractor {
     _a._regexRelaxed = /(#([\da-fA-F]{3}){1,2}|(rgb|hsl)a\(\s*(\d{1,3}%?\s*,\s*){3}(1|0?\.\d+)\)|(rgb|hsl)\(\s*\d{1,3}%?(\s*,\s*\d{1,3}%?){2}\s*\))/,
     _a._regexStrict = new RegExp(`^${_a._regexRelaxed.source}$`, 'i'),
     _a);
-export let ItemRenderer = class ItemRenderer {
+let ItemRenderer = class ItemRenderer {
     constructor(_editor, _modelService, _languageService, _themeService) {
         this._editor = _editor;
         this._modelService = _modelService;
@@ -89,11 +89,11 @@ export let ItemRenderer = class ItemRenderer {
         readMore.title = nls.localize('readMore', "Read More");
         const configureFont = () => {
             const options = this._editor.getOptions();
-            const fontInfo = options.get(48 /* EditorOption.fontInfo */);
+            const fontInfo = options.get(49 /* EditorOption.fontInfo */);
             const fontFamily = fontInfo.getMassagedFontFamily();
             const fontFeatureSettings = fontInfo.fontFeatureSettings;
-            const fontSize = options.get(116 /* EditorOption.suggestFontSize */) || fontInfo.fontSize;
-            const lineHeight = options.get(117 /* EditorOption.suggestLineHeight */) || fontInfo.lineHeight;
+            const fontSize = options.get(117 /* EditorOption.suggestFontSize */) || fontInfo.fontSize;
+            const lineHeight = options.get(118 /* EditorOption.suggestLineHeight */) || fontInfo.lineHeight;
             const fontWeight = fontInfo.fontWeight;
             const letterSpacing = fontInfo.letterSpacing;
             const fontSizePx = `${fontSize}px`;
@@ -112,7 +112,7 @@ export let ItemRenderer = class ItemRenderer {
         };
         configureFont();
         disposables.add(this._editor.onDidChangeConfiguration(e => {
-            if (e.hasChanged(48 /* EditorOption.fontInfo */) || e.hasChanged(116 /* EditorOption.suggestFontSize */) || e.hasChanged(117 /* EditorOption.suggestLineHeight */)) {
+            if (e.hasChanged(49 /* EditorOption.fontInfo */) || e.hasChanged(117 /* EditorOption.suggestFontSize */) || e.hasChanged(118 /* EditorOption.suggestLineHeight */)) {
                 configureFont();
             }
         }));
@@ -171,7 +171,7 @@ export let ItemRenderer = class ItemRenderer {
             data.detailsLabel.textContent = stripNewLines(completion.label.description || '');
             data.root.classList.remove('string-label');
         }
-        if (this._editor.getOption(115 /* EditorOption.suggest */).showInlineDetails) {
+        if (this._editor.getOption(116 /* EditorOption.suggest */).showInlineDetails) {
             show(data.detailsLabel);
         }
         else {
@@ -206,6 +206,7 @@ ItemRenderer = __decorate([
     __param(2, ILanguageService),
     __param(3, IThemeService)
 ], ItemRenderer);
+export { ItemRenderer };
 function stripNewLines(str) {
     return str.replace(/\r\n|\r|\n/g, '');
 }

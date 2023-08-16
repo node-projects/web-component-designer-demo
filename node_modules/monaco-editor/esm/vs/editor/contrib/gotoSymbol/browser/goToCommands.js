@@ -102,7 +102,7 @@ export class SymbolNavigationAction extends EditorAction2 {
         const anchor = SymbolNavigationAnchor.is(arg) ? arg : new SymbolNavigationAnchor(model, position);
         const cts = new EditorStateCancellationTokenSource(editor, 1 /* CodeEditorStateFlag.Value */ | 4 /* CodeEditorStateFlag.Position */);
         const promise = raceCancellation(this._getLocationModel(languageFeaturesService, anchor.model, anchor.position, cts.token), cts.token).then((references) => __awaiter(this, void 0, void 0, function* () {
-            var _a;
+            var _j;
             if (!references || cts.token.isCancellationRequested) {
                 return;
             }
@@ -119,7 +119,7 @@ export class SymbolNavigationAction extends EditorAction2 {
                 // no result -> show message
                 if (!this.configuration.muteMessage) {
                     const info = model.getWordAtPosition(position);
-                    (_a = MessageController.get(editor)) === null || _a === void 0 ? void 0 : _a.showMessage(this._getNoResultFoundMessage(info), position);
+                    (_j = MessageController.get(editor)) === null || _j === void 0 ? void 0 : _j.showMessage(this._getNoResultFoundMessage(info), position);
                 }
             }
             else if (referenceCount === 1 && altAction) {
@@ -228,10 +228,10 @@ export class DefinitionAction extends SymbolNavigationAction {
             : nls.localize('generic.noResults', "No definition found");
     }
     _getAlternativeCommand(editor) {
-        return editor.getOption(56 /* EditorOption.gotoLocation */).alternativeDefinitionCommand;
+        return editor.getOption(57 /* EditorOption.gotoLocation */).alternativeDefinitionCommand;
     }
     _getGoToPreference(editor) {
-        return editor.getOption(56 /* EditorOption.gotoLocation */).multipleDefinitions;
+        return editor.getOption(57 /* EditorOption.gotoLocation */).multipleDefinitions;
     }
 }
 registerAction2((_a = class GoToDefinitionAction extends DefinitionAction {
@@ -345,10 +345,10 @@ class DeclarationAction extends SymbolNavigationAction {
             : nls.localize('decl.generic.noResults', "No declaration found");
     }
     _getAlternativeCommand(editor) {
-        return editor.getOption(56 /* EditorOption.gotoLocation */).alternativeDeclarationCommand;
+        return editor.getOption(57 /* EditorOption.gotoLocation */).alternativeDeclarationCommand;
     }
     _getGoToPreference(editor) {
-        return editor.getOption(56 /* EditorOption.gotoLocation */).multipleDeclarations;
+        return editor.getOption(57 /* EditorOption.gotoLocation */).multipleDeclarations;
     }
 }
 registerAction2((_d = class GoToDeclarationAction extends DeclarationAction {
@@ -420,10 +420,10 @@ class TypeDefinitionAction extends SymbolNavigationAction {
             : nls.localize('goToTypeDefinition.generic.noResults', "No type definition found");
     }
     _getAlternativeCommand(editor) {
-        return editor.getOption(56 /* EditorOption.gotoLocation */).alternativeTypeDefinitionCommand;
+        return editor.getOption(57 /* EditorOption.gotoLocation */).alternativeTypeDefinitionCommand;
     }
     _getGoToPreference(editor) {
-        return editor.getOption(56 /* EditorOption.gotoLocation */).multipleTypeDefinitions;
+        return editor.getOption(57 /* EditorOption.gotoLocation */).multipleTypeDefinitions;
     }
 }
 registerAction2((_e = class GoToTypeDefinitionAction extends TypeDefinitionAction {
@@ -497,10 +497,10 @@ class ImplementationAction extends SymbolNavigationAction {
             : nls.localize('goToImplementation.generic.noResults', "No implementation found");
     }
     _getAlternativeCommand(editor) {
-        return editor.getOption(56 /* EditorOption.gotoLocation */).alternativeImplementationCommand;
+        return editor.getOption(57 /* EditorOption.gotoLocation */).alternativeImplementationCommand;
     }
     _getGoToPreference(editor) {
-        return editor.getOption(56 /* EditorOption.gotoLocation */).multipleImplementations;
+        return editor.getOption(57 /* EditorOption.gotoLocation */).multipleImplementations;
     }
 }
 registerAction2((_g = class GoToImplementationAction extends ImplementationAction {
@@ -574,10 +574,10 @@ class ReferencesAction extends SymbolNavigationAction {
             : nls.localize('references.noGeneric', "No references found");
     }
     _getAlternativeCommand(editor) {
-        return editor.getOption(56 /* EditorOption.gotoLocation */).alternativeReferenceCommand;
+        return editor.getOption(57 /* EditorOption.gotoLocation */).alternativeReferenceCommand;
     }
     _getGoToPreference(editor) {
-        return editor.getOption(56 /* EditorOption.gotoLocation */).multipleReferences;
+        return editor.getOption(57 /* EditorOption.gotoLocation */).multipleReferences;
     }
 }
 registerAction2(class GoToReferencesAction extends ReferencesAction {
@@ -667,8 +667,8 @@ class GenericGoToLocationAction extends SymbolNavigationAction {
         return info && nls.localize('generic.noResult', "No results for '{0}'", info.word) || '';
     }
     _getGoToPreference(editor) {
-        var _a;
-        return (_a = this._gotoMultipleBehaviour) !== null && _a !== void 0 ? _a : editor.getOption(56 /* EditorOption.gotoLocation */).multipleReferences;
+        var _j;
+        return (_j = this._gotoMultipleBehaviour) !== null && _j !== void 0 ? _j : editor.getOption(57 /* EditorOption.gotoLocation */).multipleReferences;
     }
     _getAlternativeCommand() { return ''; }
 }

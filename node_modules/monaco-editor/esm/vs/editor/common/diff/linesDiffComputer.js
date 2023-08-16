@@ -73,16 +73,17 @@ export class RangeMapping {
         return new RangeMapping(this.modifiedRange, this.originalRange);
     }
 }
+// TODO@hediet: Make LineRangeMapping extend from this!
 export class SimpleLineRangeMapping {
-    constructor(originalRange, modifiedRange) {
-        this.originalRange = originalRange;
-        this.modifiedRange = modifiedRange;
+    constructor(original, modified) {
+        this.original = original;
+        this.modified = modified;
     }
     toString() {
-        return `{${this.originalRange.toString()}->${this.modifiedRange.toString()}}`;
+        return `{${this.original.toString()}->${this.modified.toString()}}`;
     }
     flip() {
-        return new SimpleLineRangeMapping(this.modifiedRange, this.originalRange);
+        return new SimpleLineRangeMapping(this.modified, this.original);
     }
 }
 export class MovedText {

@@ -61,13 +61,13 @@ class InlineProgressWidget extends Disposable {
         this.domNode.append(iconElement);
         iconElement.classList.add(...ThemeIcon.asClassNameArray(Codicon.loading), 'codicon-modifier-spin');
         const updateSize = () => {
-            const lineHeight = this.editor.getOption(64 /* EditorOption.lineHeight */);
+            const lineHeight = this.editor.getOption(65 /* EditorOption.lineHeight */);
             this.domNode.style.height = `${lineHeight}px`;
             this.domNode.style.width = `${Math.ceil(0.8 * lineHeight)}px`;
         };
         updateSize();
         this._register(this.editor.onDidChangeConfiguration(c => {
-            if (c.hasChanged(50 /* EditorOption.fontSize */) || c.hasChanged(64 /* EditorOption.lineHeight */)) {
+            if (c.hasChanged(51 /* EditorOption.fontSize */) || c.hasChanged(65 /* EditorOption.lineHeight */)) {
                 updateSize();
             }
         }));
@@ -93,7 +93,7 @@ class InlineProgressWidget extends Disposable {
     }
 }
 InlineProgressWidget.baseId = 'editor.widget.inlineProgressWidget';
-export let InlineProgressManager = class InlineProgressManager extends Disposable {
+let InlineProgressManager = class InlineProgressManager extends Disposable {
     constructor(id, _editor, _instantiationService) {
         super();
         this.id = id;
@@ -141,3 +141,4 @@ export let InlineProgressManager = class InlineProgressManager extends Disposabl
 InlineProgressManager = __decorate([
     __param(2, IInstantiationService)
 ], InlineProgressManager);
+export { InlineProgressManager };

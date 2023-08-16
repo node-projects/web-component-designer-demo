@@ -108,7 +108,7 @@ class AcceptSelectedEvent extends UIEvent {
 class PreviewSelectedEvent extends UIEvent {
     constructor() { super('previewSelectedAction'); }
 }
-export let ActionList = class ActionList extends Disposable {
+let ActionList = class ActionList extends Disposable {
     constructor(user, preview, items, _delegate, _contextViewService, _keybindingService) {
         super();
         this._delegate = _delegate;
@@ -231,6 +231,7 @@ ActionList = __decorate([
     __param(4, IContextViewService),
     __param(5, IKeybindingService)
 ], ActionList);
+export { ActionList };
 function stripNewlines(str) {
     return str.replace(/\r\n|\r|\n/g, ' ');
 }

@@ -29,7 +29,7 @@ export class MarkdownString {
         this.value += escapeMarkdownSyntaxTokens(this.supportThemeIcons ? escapeIcons(value) : value)
             .replace(/([ \t]+)/g, (_match, g1) => '&nbsp;'.repeat(g1.length))
             .replace(/\>/gm, '\\>')
-            .replace(/\n/g, newlineStyle === 1 /* MarkdownStringTextNewlineStyle.Break */ ? '\\\n' : '\n\n');
+            .replace(/\n/g, newlineStyle === 1 /* MarkdownStringTextNewlineStyle.Break */ ? '\\\n' : '\n\n'); // CodeQL [SM02383] The Markdown is fully sanitized after being rendered.
         return this;
     }
     appendMarkdown(value) {

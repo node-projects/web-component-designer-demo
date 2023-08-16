@@ -45,7 +45,7 @@ import { StopWatch } from '../../../../base/common/stopwatch.js';
 import './linkedEditing.css';
 export const CONTEXT_ONTYPE_RENAME_INPUT_VISIBLE = new RawContextKey('LinkedEditingInputVisible', false);
 const DECORATION_CLASS_NAME = 'linked-editing-decoration';
-export let LinkedEditingContribution = class LinkedEditingContribution extends Disposable {
+let LinkedEditingContribution = class LinkedEditingContribution extends Disposable {
     static get(editor) {
         return editor.getContribution(LinkedEditingContribution.ID);
     }
@@ -71,7 +71,7 @@ export let LinkedEditingContribution = class LinkedEditingContribution extends D
         this._currentRequestModelVersion = null;
         this._register(this._editor.onDidChangeModel(() => this.reinitialize(true)));
         this._register(this._editor.onDidChangeConfiguration(e => {
-            if (e.hasChanged(67 /* EditorOption.linkedEditing */) || e.hasChanged(90 /* EditorOption.renameOnType */)) {
+            if (e.hasChanged(68 /* EditorOption.linkedEditing */) || e.hasChanged(91 /* EditorOption.renameOnType */)) {
                 this.reinitialize(false);
             }
         }));
@@ -81,7 +81,7 @@ export let LinkedEditingContribution = class LinkedEditingContribution extends D
     }
     reinitialize(forceRefresh) {
         const model = this._editor.getModel();
-        const isEnabled = model !== null && (this._editor.getOption(67 /* EditorOption.linkedEditing */) || this._editor.getOption(90 /* EditorOption.renameOnType */)) && this._providers.has(model);
+        const isEnabled = model !== null && (this._editor.getOption(68 /* EditorOption.linkedEditing */) || this._editor.getOption(91 /* EditorOption.renameOnType */)) && this._providers.has(model);
         if (isEnabled === this._enabled && !forceRefresh) {
             return;
         }
@@ -300,6 +300,7 @@ LinkedEditingContribution = __decorate([
     __param(3, ILanguageConfigurationService),
     __param(4, ILanguageFeatureDebounceService)
 ], LinkedEditingContribution);
+export { LinkedEditingContribution };
 export class LinkedEditingAction extends EditorAction {
     constructor() {
         super({

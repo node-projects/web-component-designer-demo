@@ -30,6 +30,7 @@ import { ColorDetector } from './colorDetector.js';
 import { ColorPickerModel } from './colorPickerModel.js';
 import { ColorPickerWidget } from './colorPickerWidget.js';
 import { IThemeService } from '../../../../platform/theme/common/themeService.js';
+import { Dimension } from '../../../../base/browser/dom.js';
 export class ColorHover {
     constructor(owner, range, model, provider) {
         this.owner = owner;
@@ -48,7 +49,7 @@ export class ColorHover {
             && this.range.endColumn >= anchor.range.endColumn);
     }
 }
-export let ColorHoverParticipant = class ColorHoverParticipant {
+let ColorHoverParticipant = class ColorHoverParticipant {
     constructor(_editor, _themeService) {
         this._editor = _editor;
         this._themeService = _themeService;
@@ -89,6 +90,7 @@ export let ColorHoverParticipant = class ColorHoverParticipant {
 ColorHoverParticipant = __decorate([
     __param(1, IThemeService)
 ], ColorHoverParticipant);
+export { ColorHoverParticipant };
 export class StandaloneColorPickerHover {
     constructor(owner, range, model, provider) {
         this.owner = owner;
@@ -97,7 +99,7 @@ export class StandaloneColorPickerHover {
         this.provider = provider;
     }
 }
-export let StandaloneColorPickerParticipant = class StandaloneColorPickerParticipant {
+let StandaloneColorPickerParticipant = class StandaloneColorPickerParticipant {
     constructor(_editor, _themeService) {
         this._editor = _editor;
         this._themeService = _themeService;
@@ -154,6 +156,7 @@ export let StandaloneColorPickerParticipant = class StandaloneColorPickerPartici
 StandaloneColorPickerParticipant = __decorate([
     __param(1, IThemeService)
 ], StandaloneColorPickerParticipant);
+export { StandaloneColorPickerParticipant };
 function _createColorHover(participant, editorModel, colorInfo, provider) {
     return __awaiter(this, void 0, void 0, function* () {
         const originalText = editorModel.getValueInRange(colorInfo.range);
@@ -176,11 +179,15 @@ function renderHoverParts(participant, editor, themeService, hoverParts, context
     if (hoverParts.length === 0 || !editor.hasModel()) {
         return Disposable.None;
     }
+    if (context.setMinimumDimensions) {
+        const minimumHeight = editor.getOption(65 /* EditorOption.lineHeight */) + 8;
+        context.setMinimumDimensions(new Dimension(302, minimumHeight));
+    }
     const disposables = new DisposableStore();
     const colorHover = hoverParts[0];
     const editorModel = editor.getModel();
     const model = colorHover.model;
-    const widget = disposables.add(new ColorPickerWidget(context.fragment, model, editor.getOption(139 /* EditorOption.pixelRatio */), themeService, participant instanceof StandaloneColorPickerParticipant));
+    const widget = disposables.add(new ColorPickerWidget(context.fragment, model, editor.getOption(140 /* EditorOption.pixelRatio */), themeService, participant instanceof StandaloneColorPickerParticipant));
     context.setColorPicker(widget);
     let editorUpdatedByColorPicker = false;
     let range = new Range(colorHover.range.startLineNumber, colorHover.range.startColumn, colorHover.range.endLineNumber, colorHover.range.endColumn);

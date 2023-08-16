@@ -24,7 +24,7 @@ import * as nls from '../../../../nls.js';
 import { IContextKeyService, RawContextKey } from '../../../../platform/contextkey/common/contextkey.js';
 import { IOpenerService } from '../../../../platform/opener/common/opener.js';
 import * as dom from '../../../../base/browser/dom.js';
-export let MessageController = class MessageController {
+let MessageController = class MessageController {
     static get(editor) {
         return editor.getContribution(MessageController.ID);
     }
@@ -101,6 +101,7 @@ MessageController = __decorate([
     __param(1, IContextKeyService),
     __param(2, IOpenerService)
 ], MessageController);
+export { MessageController };
 const MessageCommand = EditorCommand.bindToContribution(MessageController.get);
 registerEditorCommand(new MessageCommand({
     id: 'leaveEditorMessage',

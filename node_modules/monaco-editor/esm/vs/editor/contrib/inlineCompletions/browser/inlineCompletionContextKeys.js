@@ -19,12 +19,11 @@ export class InlineCompletionContextKeys extends Disposable {
         this.suppressSuggestions = InlineCompletionContextKeys.suppressSuggestions.bindTo(this.contextKeyService);
         this._register(autorun('update context key: inlineCompletionVisible, suppressSuggestions', (reader) => {
             const model = this.model.read(reader);
-            const suggestion = model === null || model === void 0 ? void 0 : model.selectedInlineCompletion.read(reader);
-            const ghostText = model === null || model === void 0 ? void 0 : model.ghostText.read(reader);
-            const selectedSuggestItem = model === null || model === void 0 ? void 0 : model.selectedSuggestItem.read(reader);
-            this.inlineCompletionVisible.set(selectedSuggestItem === undefined && ghostText !== undefined && !ghostText.isEmpty());
-            if (ghostText && suggestion) {
-                this.suppressSuggestions.set(suggestion.inlineCompletion.source.inlineCompletions.suppressSuggestions);
+            const state = model === null || model === void 0 ? void 0 : model.state.read(reader);
+            const isInlineCompletionVisible = !!(state === null || state === void 0 ? void 0 : state.inlineCompletion) && (state === null || state === void 0 ? void 0 : state.ghostText) !== undefined && !(state === null || state === void 0 ? void 0 : state.ghostText.isEmpty());
+            this.inlineCompletionVisible.set(isInlineCompletionVisible);
+            if ((state === null || state === void 0 ? void 0 : state.ghostText) && (state === null || state === void 0 ? void 0 : state.inlineCompletion)) {
+                this.suppressSuggestions.set(state.inlineCompletion.inlineCompletion.source.inlineCompletions.suppressSuggestions);
             }
         }));
         this._register(autorun('update context key: inlineCompletionSuggestsIndentation, inlineCompletionSuggestsIndentationLessThanTabSize', (reader) => {

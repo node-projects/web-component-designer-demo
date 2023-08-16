@@ -26,7 +26,7 @@ import { LineRange } from '../../common/core/lineRange.js';
 import { LineRangeMapping, RangeMapping } from '../../common/diff/linesDiffComputer.js';
 import { IEditorWorkerService } from '../../common/services/editorWorker.js';
 import { ITelemetryService } from '../../../platform/telemetry/common/telemetry.js';
-export let WorkerBasedDocumentDiffProvider = class WorkerBasedDocumentDiffProvider {
+let WorkerBasedDocumentDiffProvider = class WorkerBasedDocumentDiffProvider {
     constructor(options, editorWorkerService, telemetryService) {
         this.editorWorkerService = editorWorkerService;
         this.telemetryService = telemetryService;
@@ -107,3 +107,4 @@ WorkerBasedDocumentDiffProvider = __decorate([
     __param(1, IEditorWorkerService),
     __param(2, ITelemetryService)
 ], WorkerBasedDocumentDiffProvider);
+export { WorkerBasedDocumentDiffProvider };

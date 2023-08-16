@@ -11,7 +11,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Disposable, DisposableStore } from '../../../../base/common/lifecycle.js';
+import { DisposableStore } from '../../../../base/common/lifecycle.js';
 import { assertType } from '../../../../base/common/types.js';
 import { EditorCommand, registerEditorCommand, registerEditorContribution } from '../../../browser/editorExtensions.js';
 import { Position } from '../../../common/core/position.js';
@@ -32,7 +32,7 @@ const _defaultOptions = {
     clipboardText: undefined,
     overtypingCapturer: undefined
 };
-export let SnippetController2 = class SnippetController2 {
+let SnippetController2 = class SnippetController2 {
     static get(editor) {
         return editor.getContribution(SnippetController2.ID);
     }
@@ -128,10 +128,10 @@ export let SnippetController2 = class SnippetController2 {
                 }
             };
             const model = this._editor.getModel();
-            let registration = Disposable.None;
+            let registration;
             let isRegistered = false;
             const disable = () => {
-                registration.dispose();
+                registration === null || registration === void 0 ? void 0 : registration.dispose();
                 isRegistered = false;
             };
             const enable = () => {
@@ -142,10 +142,10 @@ export let SnippetController2 = class SnippetController2 {
                         scheme: model.uri.scheme,
                         exclusive: true
                     }, provider);
+                    this._snippetListener.add(registration);
                     isRegistered = true;
                 }
             };
-            this._snippetListener.add(registration);
             this._choiceCompletions = { provider, enable, disable };
         }
         this._updateState();
@@ -244,6 +244,7 @@ SnippetController2 = __decorate([
     __param(3, IContextKeyService),
     __param(4, ILanguageConfigurationService)
 ], SnippetController2);
+export { SnippetController2 };
 registerEditorContribution(SnippetController2.ID, SnippetController2, 4 /* EditorContributionInstantiation.Lazy */);
 const CommandCtor = EditorCommand.bindToContribution(SnippetController2.get);
 registerEditorCommand(new CommandCtor({

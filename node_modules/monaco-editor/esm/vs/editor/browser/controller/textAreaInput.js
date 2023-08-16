@@ -453,8 +453,8 @@ export class TextAreaInput extends Disposable {
         }
     }
 }
-class ClipboardEventUtils {
-    static getTextData(clipboardData) {
+export const ClipboardEventUtils = {
+    getTextData(clipboardData) {
         const text = clipboardData.getData(Mimes.text);
         let metadata = null;
         const rawmetadata = clipboardData.getData('vscode-editor-data');
@@ -475,15 +475,15 @@ class ClipboardEventUtils {
             return [files.map(file => file.name).join('\n'), null];
         }
         return [text, metadata];
-    }
-    static setTextData(clipboardData, text, html, metadata) {
+    },
+    setTextData(clipboardData, text, html, metadata) {
         clipboardData.setData(Mimes.text, text);
         if (typeof html === 'string') {
             clipboardData.setData('text/html', html);
         }
         clipboardData.setData('vscode-editor-data', JSON.stringify(metadata));
     }
-}
+};
 export class TextAreaWrapper extends Disposable {
     constructor(_actual) {
         super();

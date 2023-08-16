@@ -1028,6 +1028,7 @@ class TreeNodeList extends List {
     }
 }
 export class AbstractTree {
+    get onDidScroll() { return this.view.onDidScroll; }
     get onDidChangeFocus() { return this.eventBufferer.wrapEvent(this.focus.onDidChange); }
     get onDidChangeSelection() { return this.eventBufferer.wrapEvent(this.selection.onDidChange); }
     get onMouseDblClick() { return Event.filter(Event.map(this.view.onMouseDblClick, asTreeMouseEvent), e => e.target !== TreeMouseEventTarget.Filter); }
@@ -1148,6 +1149,12 @@ export class AbstractTree {
     }
     set scrollTop(scrollTop) {
         this.view.scrollTop = scrollTop;
+    }
+    get scrollHeight() {
+        return this.view.scrollHeight;
+    }
+    get renderHeight() {
+        return this.view.renderHeight;
     }
     domFocus() {
         this.view.domFocus();

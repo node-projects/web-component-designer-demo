@@ -767,7 +767,7 @@ class QuickPick extends QuickInput {
             inputBox: !this._hideInput,
             progressBar: !this._hideInput || hasDescription,
             visibleCount: true,
-            count: this.canSelectMany,
+            count: this.canSelectMany && !this._hideCountBadge,
             ok: this.ok === 'default' ? this.canSelectMany : this.ok,
             list: true,
             message: !!this.validationMessage,
@@ -927,7 +927,9 @@ class InputBox extends QuickInput {
         const visibilities = {
             title: !!this.title || !!this.step || !!this.buttons.length,
             description: !!this.description || !!this.step,
-            inputBox: true, message: true
+            inputBox: true,
+            message: true,
+            progressBar: true
         };
         this.ui.setVisibilities(visibilities);
         super.update();
@@ -988,7 +990,6 @@ export class QuickInputController extends Disposable {
         const title = dom.append(titleBar, $('.quick-input-title'));
         const rightActionBar = this._register(new ActionBar(titleBar));
         rightActionBar.domNode.classList.add('quick-input-right-action-bar');
-        const description1 = dom.append(container, $('.quick-input-description'));
         const headerContainer = dom.append(container, $('.quick-input-header'));
         const checkAll = dom.append(headerContainer, $('input.quick-input-check-all'));
         checkAll.type = 'checkbox';
@@ -1003,8 +1004,8 @@ export class QuickInputController extends Disposable {
             }
         }));
         const description2 = dom.append(headerContainer, $('.quick-input-description'));
-        const extraContainer = dom.append(headerContainer, $('.quick-input-and-message'));
-        const filterContainer = dom.append(extraContainer, $('.quick-input-filter'));
+        const inputContainer = dom.append(headerContainer, $('.quick-input-and-message'));
+        const filterContainer = dom.append(inputContainer, $('.quick-input-filter'));
         const inputBox = this._register(new QuickInputBox(filterContainer, this.styles.inputBox, this.styles.toggle));
         inputBox.setAttribute('aria-describedby', `${this.idPrefix}message`);
         const visibleCountContainer = dom.append(filterContainer, $('.quick-input-visible-count'));
@@ -1026,11 +1027,12 @@ export class QuickInputController extends Disposable {
         this._register(customButton.onDidClick(e => {
             this.onDidCustomEmitter.fire();
         }));
-        const message = dom.append(extraContainer, $(`#${this.idPrefix}message.quick-input-message`));
+        const message = dom.append(inputContainer, $(`#${this.idPrefix}message.quick-input-message`));
         const progressBar = new ProgressBar(container, this.styles.progressBar);
         progressBar.getContainer().classList.add('quick-input-progress');
         const widget = dom.append(container, $('.quick-input-html-widget'));
         widget.tabIndex = -1;
+        const description1 = dom.append(container, $('.quick-input-description'));
         const listId = this.idPrefix + 'list';
         const list = this._register(new QuickInputList(container, listId, this.options));
         inputBox.setAttribute('aria-controls', listId);
@@ -1143,6 +1145,7 @@ export class QuickInputController extends Disposable {
             widget,
             rightActionBar,
             checkAll,
+            inputContainer,
             filterContainer,
             inputBox,
             visibleCountContainer,
@@ -1324,6 +1327,7 @@ export class QuickInputController extends Disposable {
         ui.description1.style.display = visibilities.description && (visibilities.inputBox || visibilities.checkAll) ? '' : 'none';
         ui.description2.style.display = visibilities.description && !(visibilities.inputBox || visibilities.checkAll) ? '' : 'none';
         ui.checkAll.style.display = visibilities.checkAll ? '' : 'none';
+        ui.inputContainer.style.display = visibilities.inputBox ? '' : 'none';
         ui.filterContainer.style.display = visibilities.inputBox ? '' : 'none';
         ui.visibleCountContainer.style.display = visibilities.visibleCount ? '' : 'none';
         ui.countContainer.style.display = visibilities.count ? '' : 'none';

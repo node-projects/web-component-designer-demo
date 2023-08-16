@@ -79,6 +79,9 @@ export class ListService {
         this.disposables.dispose();
     }
 }
+export const RawWorkbenchListScrollAtBoundaryContextKey = new RawContextKey('listScrollAtBoundary', 'none');
+export const WorkbenchListScrollAtTopContextKey = ContextKeyExpr.or(RawWorkbenchListScrollAtBoundaryContextKey.isEqualTo('top'), RawWorkbenchListScrollAtBoundaryContextKey.isEqualTo('both'));
+export const WorkbenchListScrollAtBottomContextKey = ContextKeyExpr.or(RawWorkbenchListScrollAtBoundaryContextKey.isEqualTo('bottom'), RawWorkbenchListScrollAtBoundaryContextKey.isEqualTo('both'));
 export const RawWorkbenchListFocusContextKey = new RawContextKey('listFocus', true);
 export const WorkbenchListSupportsMultiSelectContextKey = new RawContextKey('listSupportsMultiselect', true);
 export const WorkbenchListFocusContextKey = ContextKeyExpr.and(RawWorkbenchListFocusContextKey, ContextKeyExpr.not(InputFocusedContextKey));
@@ -101,6 +104,29 @@ function createScopedContextKeyService(contextKeyService, widget) {
     const result = contextKeyService.createScoped(widget.getHTMLElement());
     RawWorkbenchListFocusContextKey.bindTo(result);
     return result;
+}
+function createScrollObserver(contextKeyService, widget) {
+    const listScrollAt = RawWorkbenchListScrollAtBoundaryContextKey.bindTo(contextKeyService);
+    const update = () => {
+        const atTop = widget.scrollTop === 0;
+        // We need a threshold `1` since scrollHeight is rounded.
+        // https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollHeight#determine_if_an_element_has_been_totally_scrolled
+        const atBottom = widget.scrollHeight - widget.renderHeight - widget.scrollTop < 1;
+        if (atTop && atBottom) {
+            listScrollAt.set('both');
+        }
+        else if (atTop) {
+            listScrollAt.set('top');
+        }
+        else if (atBottom) {
+            listScrollAt.set('bottom');
+        }
+        else {
+            listScrollAt.set('none');
+        }
+    };
+    update();
+    return widget.onDidScroll(update);
 }
 const multiSelectModifierSettingKey = 'workbench.list.multiSelectModifier';
 const openModeSettingKey = 'workbench.list.openMode';
@@ -152,13 +178,14 @@ function toWorkbenchListOptions(accessor, options) {
     const result = Object.assign(Object.assign({}, options), { keyboardNavigationDelegate: { mightProducePrintableCharacter(e) { return keybindingService.mightProducePrintableCharacter(e); } }, smoothScrolling: Boolean(configurationService.getValue(listSmoothScrolling)), mouseWheelScrollSensitivity: configurationService.getValue(mouseWheelScrollSensitivityKey), fastScrollSensitivity: configurationService.getValue(fastScrollSensitivityKey), multipleSelectionController: (_a = options.multipleSelectionController) !== null && _a !== void 0 ? _a : disposables.add(new MultipleSelectionController(configurationService)), keyboardNavigationEventFilter: createKeyboardNavigationEventFilter(keybindingService), scrollByPage: Boolean(configurationService.getValue(scrollByPageKey)) });
     return [result, disposables];
 }
-export let WorkbenchList = class WorkbenchList extends List {
+let WorkbenchList = class WorkbenchList extends List {
     constructor(user, container, delegate, renderers, options, contextKeyService, listService, configurationService, instantiationService) {
         const horizontalScrolling = typeof options.horizontalScrolling !== 'undefined' ? options.horizontalScrolling : Boolean(configurationService.getValue(horizontalScrollingKey));
         const [workbenchListOptions, workbenchListOptionsDisposable] = instantiationService.invokeFunction(toWorkbenchListOptions, options);
         super(user, container, delegate, renderers, Object.assign(Object.assign({ keyboardSupport: false }, workbenchListOptions), { horizontalScrolling }));
         this.disposables.add(workbenchListOptionsDisposable);
         this.contextKeyService = createScopedContextKeyService(contextKeyService, this);
+        this.disposables.add(createScrollObserver(this.contextKeyService, this));
         this.listSupportsMultiSelect = WorkbenchListSupportsMultiSelectContextKey.bindTo(this.contextKeyService);
         this.listSupportsMultiSelect.set(options.multipleSelectionSupport !== false);
         const listSelectionNavigation = WorkbenchListSelectionNavigation.bindTo(this.contextKeyService);
@@ -236,7 +263,8 @@ WorkbenchList = __decorate([
     __param(7, IConfigurationService),
     __param(8, IInstantiationService)
 ], WorkbenchList);
-export let WorkbenchPagedList = class WorkbenchPagedList extends PagedList {
+export { WorkbenchList };
+let WorkbenchPagedList = class WorkbenchPagedList extends PagedList {
     constructor(user, container, delegate, renderers, options, contextKeyService, listService, configurationService, instantiationService) {
         const horizontalScrolling = typeof options.horizontalScrolling !== 'undefined' ? options.horizontalScrolling : Boolean(configurationService.getValue(horizontalScrollingKey));
         const [workbenchListOptions, workbenchListOptionsDisposable] = instantiationService.invokeFunction(toWorkbenchListOptions, options);
@@ -244,6 +272,7 @@ export let WorkbenchPagedList = class WorkbenchPagedList extends PagedList {
         this.disposables = new DisposableStore();
         this.disposables.add(workbenchListOptionsDisposable);
         this.contextKeyService = createScopedContextKeyService(contextKeyService, this);
+        this.disposables.add(createScrollObserver(this.contextKeyService, this.widget));
         this.horizontalScrolling = options.horizontalScrolling;
         this.listSupportsMultiSelect = WorkbenchListSupportsMultiSelectContextKey.bindTo(this.contextKeyService);
         this.listSupportsMultiSelect.set(options.multipleSelectionSupport !== false);
@@ -308,13 +337,15 @@ WorkbenchPagedList = __decorate([
     __param(7, IConfigurationService),
     __param(8, IInstantiationService)
 ], WorkbenchPagedList);
-export let WorkbenchTable = class WorkbenchTable extends Table {
+export { WorkbenchPagedList };
+let WorkbenchTable = class WorkbenchTable extends Table {
     constructor(user, container, delegate, columns, renderers, options, contextKeyService, listService, configurationService, instantiationService) {
         const horizontalScrolling = typeof options.horizontalScrolling !== 'undefined' ? options.horizontalScrolling : Boolean(configurationService.getValue(horizontalScrollingKey));
         const [workbenchListOptions, workbenchListOptionsDisposable] = instantiationService.invokeFunction(toWorkbenchListOptions, options);
         super(user, container, delegate, columns, renderers, Object.assign(Object.assign({ keyboardSupport: false }, workbenchListOptions), { horizontalScrolling }));
         this.disposables.add(workbenchListOptionsDisposable);
         this.contextKeyService = createScopedContextKeyService(contextKeyService, this);
+        this.disposables.add(createScrollObserver(this.contextKeyService, this));
         this.listSupportsMultiSelect = WorkbenchListSupportsMultiSelectContextKey.bindTo(this.contextKeyService);
         this.listSupportsMultiSelect.set(options.multipleSelectionSupport !== false);
         const listSelectionNavigation = WorkbenchListSelectionNavigation.bindTo(this.contextKeyService);
@@ -396,6 +427,7 @@ WorkbenchTable = __decorate([
     __param(8, IConfigurationService),
     __param(9, IInstantiationService)
 ], WorkbenchTable);
+export { WorkbenchTable };
 class ResourceNavigator extends Disposable {
     constructor(widget, options) {
         var _a;
@@ -519,7 +551,7 @@ function createKeyboardNavigationEventFilter(keybindingService) {
         return result.kind === 0 /* ResultKind.NoMatchingKb */;
     };
 }
-export let WorkbenchObjectTree = class WorkbenchObjectTree extends ObjectTree {
+let WorkbenchObjectTree = class WorkbenchObjectTree extends ObjectTree {
     constructor(user, container, delegate, renderers, options, instantiationService, contextKeyService, listService, configurationService) {
         const { options: treeOptions, getTypeNavigationMode, disposable } = instantiationService.invokeFunction(workbenchTreeDataPreamble, options);
         super(user, container, delegate, renderers, treeOptions);
@@ -538,7 +570,8 @@ WorkbenchObjectTree = __decorate([
     __param(7, IListService),
     __param(8, IConfigurationService)
 ], WorkbenchObjectTree);
-export let WorkbenchCompressibleObjectTree = class WorkbenchCompressibleObjectTree extends CompressibleObjectTree {
+export { WorkbenchObjectTree };
+let WorkbenchCompressibleObjectTree = class WorkbenchCompressibleObjectTree extends CompressibleObjectTree {
     constructor(user, container, delegate, renderers, options, instantiationService, contextKeyService, listService, configurationService) {
         const { options: treeOptions, getTypeNavigationMode, disposable } = instantiationService.invokeFunction(workbenchTreeDataPreamble, options);
         super(user, container, delegate, renderers, treeOptions);
@@ -560,7 +593,8 @@ WorkbenchCompressibleObjectTree = __decorate([
     __param(7, IListService),
     __param(8, IConfigurationService)
 ], WorkbenchCompressibleObjectTree);
-export let WorkbenchDataTree = class WorkbenchDataTree extends DataTree {
+export { WorkbenchCompressibleObjectTree };
+let WorkbenchDataTree = class WorkbenchDataTree extends DataTree {
     constructor(user, container, delegate, renderers, dataSource, options, instantiationService, contextKeyService, listService, configurationService) {
         const { options: treeOptions, getTypeNavigationMode, disposable } = instantiationService.invokeFunction(workbenchTreeDataPreamble, options);
         super(user, container, delegate, renderers, dataSource, treeOptions);
@@ -582,7 +616,8 @@ WorkbenchDataTree = __decorate([
     __param(8, IListService),
     __param(9, IConfigurationService)
 ], WorkbenchDataTree);
-export let WorkbenchAsyncDataTree = class WorkbenchAsyncDataTree extends AsyncDataTree {
+export { WorkbenchDataTree };
+let WorkbenchAsyncDataTree = class WorkbenchAsyncDataTree extends AsyncDataTree {
     get onDidOpen() { return this.internals.onDidOpen; }
     constructor(user, container, delegate, renderers, dataSource, options, instantiationService, contextKeyService, listService, configurationService) {
         const { options: treeOptions, getTypeNavigationMode, disposable } = instantiationService.invokeFunction(workbenchTreeDataPreamble, options);
@@ -605,7 +640,8 @@ WorkbenchAsyncDataTree = __decorate([
     __param(8, IListService),
     __param(9, IConfigurationService)
 ], WorkbenchAsyncDataTree);
-export let WorkbenchCompressibleAsyncDataTree = class WorkbenchCompressibleAsyncDataTree extends CompressibleAsyncDataTree {
+export { WorkbenchAsyncDataTree };
+let WorkbenchCompressibleAsyncDataTree = class WorkbenchCompressibleAsyncDataTree extends CompressibleAsyncDataTree {
     constructor(user, container, virtualDelegate, compressionDelegate, renderers, dataSource, options, instantiationService, contextKeyService, listService, configurationService) {
         const { options: treeOptions, getTypeNavigationMode, disposable } = instantiationService.invokeFunction(workbenchTreeDataPreamble, options);
         super(user, container, virtualDelegate, compressionDelegate, renderers, dataSource, treeOptions);
@@ -624,6 +660,7 @@ WorkbenchCompressibleAsyncDataTree = __decorate([
     __param(9, IListService),
     __param(10, IConfigurationService)
 ], WorkbenchCompressibleAsyncDataTree);
+export { WorkbenchCompressibleAsyncDataTree };
 function getDefaultTreeFindMode(configurationService) {
     const value = configurationService.getValue(defaultFindModeSettingKey);
     if (value === 'highlight') {
@@ -700,6 +737,7 @@ let WorkbenchTreeInternals = class WorkbenchTreeInternals {
         this.tree = tree;
         this.disposables = [];
         this.contextKeyService = createScopedContextKeyService(contextKeyService, tree);
+        this.disposables.push(createScrollObserver(this.contextKeyService, tree));
         this.listSupportsMultiSelect = WorkbenchListSupportsMultiSelectContextKey.bindTo(this.contextKeyService);
         this.listSupportsMultiSelect.set(options.multipleSelectionSupport !== false);
         const listSelectionNavigation = WorkbenchListSelectionNavigation.bindTo(this.contextKeyService);

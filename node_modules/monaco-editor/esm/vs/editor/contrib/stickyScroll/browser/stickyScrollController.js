@@ -39,7 +39,8 @@ import { ILanguageConfigurationService } from '../../../common/languages/languag
 import { ILanguageFeatureDebounceService } from '../../../common/services/languageFeatureDebounce.js';
 import * as dom from '../../../../base/browser/dom.js';
 import { StickyRange } from './stickyScrollElement.js';
-export let StickyScrollController = class StickyScrollController extends Disposable {
+import { StandardMouseEvent } from '../../../../base/browser/mouseEvent.js';
+let StickyScrollController = class StickyScrollController extends Disposable {
     constructor(_editor, _contextMenuService, _languageFeaturesService, _instaService, _languageConfigurationService, _languageFeatureDebounceService, _contextKeyService) {
         super();
         this._editor = _editor;
@@ -62,7 +63,7 @@ export let StickyScrollController = class StickyScrollController extends Disposa
         this._widgetState = new StickyScrollWidgetState([], 0);
         this._readConfiguration();
         this._register(this._editor.onDidChangeConfiguration(e => {
-            if (e.hasChanged(112 /* EditorOption.stickyScroll */)) {
+            if (e.hasChanged(113 /* EditorOption.stickyScroll */)) {
                 this._readConfiguration();
             }
         }));
@@ -243,14 +244,15 @@ export let StickyScrollController = class StickyScrollController extends Disposa
         })));
         return linkGestureStore;
     }
-    _onContextMenu(event) {
+    _onContextMenu(e) {
+        const event = new StandardMouseEvent(e);
         this._contextMenuService.showContextMenu({
             menuId: MenuId.StickyScrollContext,
             getAnchor: () => event,
         });
     }
     _readConfiguration() {
-        const options = this._editor.getOption(112 /* EditorOption.stickyScroll */);
+        const options = this._editor.getOption(113 /* EditorOption.stickyScroll */);
         if (options.enabled === false) {
             this._editor.removeOverlayWidget(this._stickyScrollWidget);
             this._sessionStore.clear();
@@ -266,7 +268,7 @@ export let StickyScrollController = class StickyScrollController extends Disposa
             this._sessionStore.add(this._stickyLineCandidateProvider.onDidChangeStickyScroll(() => this._renderStickyScroll()));
             this._enabled = true;
         }
-        const lineNumberOption = this._editor.getOption(65 /* EditorOption.lineNumbers */);
+        const lineNumberOption = this._editor.getOption(66 /* EditorOption.lineNumbers */);
         if (lineNumberOption.renderType === 2 /* RenderLineNumbersType.Relative */) {
             this._sessionStore.add(this._editor.onDidChangeCursorPosition(() => this._renderStickyScroll()));
         }
@@ -292,7 +294,7 @@ export let StickyScrollController = class StickyScrollController extends Disposa
         const width = layoutInfo.width - layoutInfo.minimap.minimapCanvasOuterWidth - layoutInfo.verticalScrollbarWidth;
         this._stickyScrollWidget.getDomNode().style.width = `${width}px`;
         // Make sure sticky scroll doesn't take up more than 25% of the editor
-        const theoreticalLines = layoutInfo.height / this._editor.getOption(64 /* EditorOption.lineHeight */);
+        const theoreticalLines = layoutInfo.height / this._editor.getOption(65 /* EditorOption.lineHeight */);
         this._maxStickyLines = Math.round(theoreticalLines * .25);
     }
     _renderStickyScroll() {
@@ -338,8 +340,8 @@ export let StickyScrollController = class StickyScrollController extends Disposa
         }
     }
     findScrollWidgetState() {
-        const lineHeight = this._editor.getOption(64 /* EditorOption.lineHeight */);
-        const maxNumberStickyLines = Math.min(this._maxStickyLines, this._editor.getOption(112 /* EditorOption.stickyScroll */).maxLineCount);
+        const lineHeight = this._editor.getOption(65 /* EditorOption.lineHeight */);
+        const maxNumberStickyLines = Math.min(this._maxStickyLines, this._editor.getOption(113 /* EditorOption.stickyScroll */).maxLineCount);
         const scrollTop = this._editor.getScrollTop();
         let lastLineRelativePosition = 0;
         const lineNumbers = [];
@@ -387,3 +389,4 @@ StickyScrollController = __decorate([
     __param(5, ILanguageFeatureDebounceService),
     __param(6, IContextKeyService)
 ], StickyScrollController);
+export { StickyScrollController };

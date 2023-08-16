@@ -9,7 +9,7 @@ import { Position } from '../core/position.js';
 import { Range } from '../core/range.js';
 import { DateTimeout, InfiniteTimeout, SequenceDiff } from './algorithms/diffAlgorithm.js';
 import { DynamicProgrammingDiffing } from './algorithms/dynamicProgrammingDiffing.js';
-import { optimizeSequenceDiffs, smoothenSequenceDiffs } from './algorithms/joinSequenceDiffs.js';
+import { optimizeSequenceDiffs, removeRandomMatches, smoothenSequenceDiffs } from './algorithms/joinSequenceDiffs.js';
 import { MyersDiffAlgorithm } from './algorithms/myersDiffAlgorithm.js';
 import { LineRangeMapping, LinesDiff, MovedText, RangeMapping, SimpleLineRangeMapping } from './linesDiffComputer.js';
 export class StandardLinesDiffComputer {
@@ -18,6 +18,17 @@ export class StandardLinesDiffComputer {
         this.myersDiffingAlgorithm = new MyersDiffAlgorithm();
     }
     computeDiff(originalLines, modifiedLines, options) {
+        if (originalLines.length === 1 && originalLines[0].length === 0 || modifiedLines.length === 1 && modifiedLines[0].length === 0) {
+            return {
+                changes: [
+                    new LineRangeMapping(new LineRange(1, originalLines.length + 1), new LineRange(1, modifiedLines.length + 1), [
+                        new RangeMapping(new Range(1, 1, originalLines.length, originalLines[0].length + 1), new Range(1, 1, modifiedLines.length, modifiedLines[0].length + 1))
+                    ])
+                ],
+                hitTimeout: false,
+                moves: [],
+            };
+        }
         const timeout = options.maxComputationTimeMs === 0 ? InfiniteTimeout.instance : new DateTimeout(options.maxComputationTimeMs);
         const considerWhitespaceChanges = !options.ignoreTrimWhitespace;
         const perfectHashes = new Map();
@@ -111,11 +122,49 @@ export class StandardLinesDiffComputer {
                 }
             }
         }
+        // Make sure all ranges are valid
+        assertFn(() => {
+            function validatePosition(pos, lines) {
+                if (pos.lineNumber < 1 || pos.lineNumber > lines.length) {
+                    return false;
+                }
+                const line = lines[pos.lineNumber - 1];
+                if (pos.column < 1 || pos.column > line.length + 1) {
+                    return false;
+                }
+                return true;
+            }
+            function validateRange(range, lines) {
+                if (range.startLineNumber < 1 || range.startLineNumber > lines.length + 1) {
+                    return false;
+                }
+                if (range.endLineNumberExclusive < 1 || range.endLineNumberExclusive > lines.length + 1) {
+                    return false;
+                }
+                return true;
+            }
+            for (const c of changes) {
+                if (!c.innerChanges) {
+                    return false;
+                }
+                for (const ic of c.innerChanges) {
+                    const valid = validatePosition(ic.modifiedRange.getStartPosition(), modifiedLines) && validatePosition(ic.modifiedRange.getEndPosition(), modifiedLines) &&
+                        validatePosition(ic.originalRange.getStartPosition(), originalLines) && validatePosition(ic.originalRange.getEndPosition(), originalLines);
+                    if (!valid) {
+                        return false;
+                    }
+                }
+                if (!validateRange(c.modifiedRange, modifiedLines) || !validateRange(c.originalRange, originalLines)) {
+                    return false;
+                }
+            }
+            return true;
+        });
         return new LinesDiff(changes, moves, hitTimeout);
     }
     refineDiff(originalLines, modifiedLines, diff, timeout, considerWhitespaceChanges) {
-        const slice1 = new Slice(originalLines, diff.seq1Range, considerWhitespaceChanges);
-        const slice2 = new Slice(modifiedLines, diff.seq2Range, considerWhitespaceChanges);
+        const slice1 = new LinesSliceCharSequence(originalLines, diff.seq1Range, considerWhitespaceChanges);
+        const slice2 = new LinesSliceCharSequence(modifiedLines, diff.seq2Range, considerWhitespaceChanges);
         const diffResult = slice1.length + slice2.length < 500
             ? this.dynamicProgrammingDiffing.compute(slice1, slice2, timeout)
             : this.myersDiffingAlgorithm.compute(slice1, slice2, timeout);
@@ -123,6 +172,7 @@ export class StandardLinesDiffComputer {
         diffs = optimizeSequenceDiffs(slice1, slice2, diffs);
         diffs = coverFullWords(slice1, slice2, diffs);
         diffs = smoothenSequenceDiffs(slice1, slice2, diffs);
+        diffs = removeRandomMatches(slice1, slice2, diffs);
         const result = diffs.map((d) => new RangeMapping(slice1.translateRange(d.seq1Range), slice2.translateRange(d.seq2Range)));
         // Assert: result applied on original should be the same as diff applied to original
         return {
@@ -301,7 +351,7 @@ function getIndentation(str) {
     }
     return i;
 }
-class Slice {
+export class LinesSliceCharSequence {
     constructor(lines, lineRange, considerWhitespaceChanges) {
         // This slice has to have lineRange.length many \n! (otherwise diffing against an empty slice will be problematic)
         // (Unless it covers the entire document, in that case the other slice also has to cover the entire document ands it's okay)
@@ -348,7 +398,10 @@ class Slice {
         return `Slice: "${this.text}"`;
     }
     get text() {
-        return [...this.elements].map(e => String.fromCharCode(e)).join('');
+        return this.getText(new OffsetRange(0, this.length));
+    }
+    getText(range) {
+        return this.elements.slice(range.start, range.endExclusive).map(e => String.fromCharCode(e)).join('');
     }
     getElement(offset) {
         return this.elements[offset];
@@ -419,6 +472,9 @@ class Slice {
             end++;
         }
         return new OffsetRange(start, end);
+    }
+    countLinesIn(range) {
+        return this.translateOffset(range.endExclusive).lineNumber - this.translateOffset(range.start).lineNumber;
     }
 }
 function isWordChar(charCode) {

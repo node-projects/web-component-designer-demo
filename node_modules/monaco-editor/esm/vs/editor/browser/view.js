@@ -2,6 +2,15 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 import * as dom from '../../base/browser/dom.js';
 import { Selection } from '../common/core/selection.js';
 import { Range } from '../common/core/range.js';
@@ -44,9 +53,11 @@ import { inputLatency } from '../../base/browser/performance.js';
 import { WhitespaceOverlay } from './viewParts/whitespace/whitespace.js';
 import { GlyphMarginWidgets } from './viewParts/glyphMargin/glyphMargin.js';
 import { GlyphMarginLane } from '../common/model.js';
-export class View extends ViewEventHandler {
-    constructor(commandDelegate, configuration, colorTheme, model, userInputEvents, overflowWidgetsDomNode) {
+import { IInstantiationService } from '../../platform/instantiation/common/instantiation.js';
+let View = class View extends ViewEventHandler {
+    constructor(commandDelegate, configuration, colorTheme, model, userInputEvents, overflowWidgetsDomNode, _instantiationService) {
         super();
+        this._instantiationService = _instantiationService;
         // Actual mutable state
         this._shouldRecomputeGlyphMarginLanes = false;
         this._selections = [new Selection(1, 1, 1, 1)];
@@ -58,7 +69,7 @@ export class View extends ViewEventHandler {
         this._context.addEventHandler(this);
         this._viewParts = [];
         // Keyboard handler
-        this._textAreaHandler = new TextAreaHandler(this._context, viewController, this._createTextAreaHandlerHelper());
+        this._textAreaHandler = this._instantiationService.createInstance(TextAreaHandler, this._context, viewController, this._createTextAreaHandlerHelper());
         this._viewParts.push(this._textAreaHandler);
         // These two dom nodes must be constructed up front, since references are needed in the layout provider (scrolling & co.)
         this._linesContent = createFastDomNode(document.createElement('div'));
@@ -249,7 +260,7 @@ export class View extends ViewEventHandler {
     }
     _applyLayout() {
         const options = this._context.configuration.options;
-        const layoutInfo = options.get(141 /* EditorOption.layoutInfo */);
+        const layoutInfo = options.get(142 /* EditorOption.layoutInfo */);
         this.domNode.setWidth(layoutInfo.width);
         this.domNode.setHeight(layoutInfo.height);
         this._overflowGuardContainer.setWidth(layoutInfo.width);
@@ -259,7 +270,7 @@ export class View extends ViewEventHandler {
     }
     _getEditorClassName() {
         const focused = this._textAreaHandler.isFocused() ? ' focused' : '';
-        return this._context.configuration.options.get(138 /* EditorOption.editorClassName */) + ' ' + getThemeTypeSelector(this._context.theme.type) + focused;
+        return this._context.configuration.options.get(139 /* EditorOption.editorClassName */) + ' ' + getThemeTypeSelector(this._context.theme.type) + focused;
     }
     // --- begin event handlers
     handleEvents(events) {
@@ -475,7 +486,11 @@ export class View extends ViewEventHandler {
         this._shouldRecomputeGlyphMarginLanes = true;
         this._scheduleRender();
     }
-}
+};
+View = __decorate([
+    __param(6, IInstantiationService)
+], View);
+export { View };
 function safeInvokeNoArg(func) {
     try {
         return func();

@@ -104,7 +104,7 @@ class TextModelSnapshot {
     }
 }
 const invalidFunc = () => { throw new Error(`Invalid change accessor`); };
-export let TextModel = class TextModel extends Disposable {
+let TextModel = class TextModel extends Disposable {
     static resolveOptions(textBuffer, options) {
         if (options.detectIndentation) {
             const guessedIndentation = guessIndentation(textBuffer, options.tabSize, options.insertSpaces);
@@ -1478,6 +1478,7 @@ TextModel = __decorate([
     __param(5, ILanguageService),
     __param(6, ILanguageConfigurationService)
 ], TextModel);
+export { TextModel };
 function indentOfLine(line) {
     let indent = 0;
     for (const c of line) {

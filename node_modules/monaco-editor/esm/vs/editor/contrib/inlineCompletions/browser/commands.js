@@ -17,6 +17,7 @@ import { EditorContextKeys } from '../../../common/editorContextKeys.js';
 import { showNextInlineSuggestionActionId, showPreviousInlineSuggestionActionId, inlineSuggestCommitId } from './commandIds.js';
 import { InlineCompletionContextKeys } from './inlineCompletionContextKeys.js';
 import { InlineCompletionsController } from './inlineCompletionsController.js';
+import { Context as SuggestContext } from '../../suggest/browser/suggest.js';
 import * as nls from '../../../../nls.js';
 import { MenuId, Action2 } from '../../../../platform/actions/common/actions.js';
 import { IConfigurationService } from '../../../../platform/configuration/common/configuration.js';
@@ -92,6 +93,7 @@ export class AcceptNextWordOfInlineCompletion extends EditorAction {
             kbOpts: {
                 weight: 100 /* KeybindingWeight.EditorContrib */ + 1,
                 primary: 2048 /* KeyMod.CtrlCmd */ | 17 /* KeyCode.RightArrow */,
+                kbExpr: ContextKeyExpr.and(EditorContextKeys.writable, InlineCompletionContextKeys.inlineSuggestionVisible),
             },
             menuOpts: [{
                     menuId: MenuId.InlineSuggestionToolbar,
@@ -105,7 +107,7 @@ export class AcceptNextWordOfInlineCompletion extends EditorAction {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
             const controller = InlineCompletionsController.get(editor);
-            (_a = controller === null || controller === void 0 ? void 0 : controller.model.get()) === null || _a === void 0 ? void 0 : _a.acceptNextWord(controller.editor);
+            yield ((_a = controller === null || controller === void 0 ? void 0 : controller.model.get()) === null || _a === void 0 ? void 0 : _a.acceptNextWord(controller.editor));
         });
     }
 }
@@ -131,7 +133,7 @@ export class AcceptNextLineOfInlineCompletion extends EditorAction {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
             const controller = InlineCompletionsController.get(editor);
-            (_a = controller === null || controller === void 0 ? void 0 : controller.model.get()) === null || _a === void 0 ? void 0 : _a.acceptNextLine(controller.editor);
+            yield ((_a = controller === null || controller === void 0 ? void 0 : controller.model.get()) === null || _a === void 0 ? void 0 : _a.acceptNextLine(controller.editor));
         });
     }
 }
@@ -151,7 +153,7 @@ export class AcceptInlineCompletion extends EditorAction {
             kbOpts: {
                 primary: 2 /* KeyCode.Tab */,
                 weight: 200,
-                kbExpr: ContextKeyExpr.and(InlineCompletionContextKeys.inlineSuggestionVisible, EditorContextKeys.tabMovesFocus.toNegated(), InlineCompletionContextKeys.inlineSuggestionHasIndentationLessThanTabSize),
+                kbExpr: ContextKeyExpr.and(InlineCompletionContextKeys.inlineSuggestionVisible, EditorContextKeys.tabMovesFocus.toNegated(), InlineCompletionContextKeys.inlineSuggestionHasIndentationLessThanTabSize, SuggestContext.Visible.toNegated()),
             }
         });
     }

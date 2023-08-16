@@ -38,7 +38,7 @@ import { IInstantiationService } from '../../../../platform/instantiation/common
 import { PostEditWidgetManager } from './postEditWidget.js';
 export const changeDropTypeCommandId = 'editor.changeDropType';
 export const dropWidgetVisibleCtx = new RawContextKey('dropWidgetVisible', false, localize('dropWidgetVisible', "Whether the drop widget is showing"));
-export let DropIntoEditorController = class DropIntoEditorController extends Disposable {
+let DropIntoEditorController = class DropIntoEditorController extends Disposable {
     static get(editor) {
         return editor.getContribution(DropIntoEditorController.ID);
     }
@@ -88,7 +88,7 @@ export let DropIntoEditorController = class DropIntoEditorController extends Dis
                         return;
                     }
                     if (edits.length) {
-                        const canShowWidget = editor.getOption(34 /* EditorOption.dropIntoEditor */).showDropSelector === 'afterDrop';
+                        const canShowWidget = editor.getOption(35 /* EditorOption.dropIntoEditor */).showDropSelector === 'afterDrop';
                         // Pass in the parent token here as it tracks cancelling the entire drop operation
                         yield this._postDropWidgetManager.applyEditAndShowIfNeeded([Range.fromPositions(position)], { activeEditIndex: 0, allEdits: edits }, canShowWidget, token);
                     }
@@ -143,3 +143,4 @@ DropIntoEditorController = __decorate([
     __param(2, ILanguageFeaturesService),
     __param(3, ITreeViewsDnDService)
 ], DropIntoEditorController);
+export { DropIntoEditorController };

@@ -177,7 +177,7 @@ function extractUriList(dataTransfer) {
         return entries;
     });
 }
-export let DefaultDropProvidersFeature = class DefaultDropProvidersFeature extends Disposable {
+let DefaultDropProvidersFeature = class DefaultDropProvidersFeature extends Disposable {
     constructor(languageFeaturesService, workspaceContextService) {
         super();
         this._register(languageFeaturesService.documentOnDropEditProvider.register('*', new DefaultTextProvider()));
@@ -189,7 +189,8 @@ DefaultDropProvidersFeature = __decorate([
     __param(0, ILanguageFeaturesService),
     __param(1, IWorkspaceContextService)
 ], DefaultDropProvidersFeature);
-export let DefaultPasteProvidersFeature = class DefaultPasteProvidersFeature extends Disposable {
+export { DefaultDropProvidersFeature };
+let DefaultPasteProvidersFeature = class DefaultPasteProvidersFeature extends Disposable {
     constructor(languageFeaturesService, workspaceContextService) {
         super();
         this._register(languageFeaturesService.documentPasteEditProvider.register('*', new DefaultTextProvider()));
@@ -201,3 +202,4 @@ DefaultPasteProvidersFeature = __decorate([
     __param(0, ILanguageFeaturesService),
     __param(1, IWorkspaceContextService)
 ], DefaultPasteProvidersFeature);
+export { DefaultPasteProvidersFeature };

@@ -83,7 +83,7 @@ class PersistedWidgetSize {
         this._service.remove(this._key, 0 /* StorageScope.PROFILE */);
     }
 }
-export let SuggestWidget = class SuggestWidget {
+let SuggestWidget = class SuggestWidget {
     constructor(editor, _storageService, _contextKeyService, _themeService, instantiationService) {
         this.editor = editor;
         this._storageService = _storageService;
@@ -156,7 +156,7 @@ export let SuggestWidget = class SuggestWidget {
         const details = instantiationService.createInstance(SuggestDetailsWidget, this.editor);
         details.onDidClose(this.toggleDetails, this, this._disposables);
         this._details = new SuggestDetailsOverlay(details, this.editor);
-        const applyIconStyle = () => this.element.domNode.classList.toggle('no-icons', !this.editor.getOption(115 /* EditorOption.suggest */).showIcons);
+        const applyIconStyle = () => this.element.domNode.classList.toggle('no-icons', !this.editor.getOption(116 /* EditorOption.suggest */).showIcons);
         applyIconStyle();
         const renderer = instantiationService.createInstance(ItemRenderer, this.editor);
         this._disposables.add(renderer);
@@ -178,10 +178,10 @@ export let SuggestWidget = class SuggestWidget {
                     if (typeof item.completion.label !== 'string') {
                         const { detail, description } = item.completion.label;
                         if (detail && description) {
-                            label = nls.localize('label.full', '{0}{1}, {2}', label, detail, description);
+                            label = nls.localize('label.full', '{0} {1}, {2}', label, detail, description);
                         }
                         else if (detail) {
-                            label = nls.localize('label.detail', '{0}{1}', label, detail);
+                            label = nls.localize('label.detail', '{0} {1}', label, detail);
                         }
                         else if (description) {
                             label = nls.localize('label.desc', '{0}, {1}', label, description);
@@ -201,7 +201,7 @@ export let SuggestWidget = class SuggestWidget {
             listInactiveFocusOutline: activeContrastBorder
         }));
         this._status = instantiationService.createInstance(SuggestWidgetStatus, this.element.domNode, suggestWidgetStatusbarMenu);
-        const applyStatusBarStyle = () => this.element.domNode.classList.toggle('with-status-bar', this.editor.getOption(115 /* EditorOption.suggest */).showStatusBar);
+        const applyStatusBarStyle = () => this.element.domNode.classList.toggle('with-status-bar', this.editor.getOption(116 /* EditorOption.suggest */).showStatusBar);
         applyStatusBarStyle();
         this._disposables.add(_themeService.onDidColorThemeChange(t => this._onThemeChange(t)));
         this._onThemeChange(_themeService.getColorTheme());
@@ -211,7 +211,7 @@ export let SuggestWidget = class SuggestWidget {
         this._disposables.add(this._list.onDidChangeFocus(e => this._onListFocus(e)));
         this._disposables.add(this.editor.onDidChangeCursorSelection(() => this._onCursorSelectionChanged()));
         this._disposables.add(this.editor.onDidChangeConfiguration(e => {
-            if (e.hasChanged(115 /* EditorOption.suggest */)) {
+            if (e.hasChanged(116 /* EditorOption.suggest */)) {
                 applyStatusBarStyle();
                 applyIconStyle();
             }
@@ -746,9 +746,9 @@ export let SuggestWidget = class SuggestWidget {
         }
     }
     getLayoutInfo() {
-        const fontInfo = this.editor.getOption(48 /* EditorOption.fontInfo */);
-        const itemHeight = clamp(this.editor.getOption(117 /* EditorOption.suggestLineHeight */) || fontInfo.lineHeight, 8, 1000);
-        const statusBarHeight = !this.editor.getOption(115 /* EditorOption.suggest */).showStatusBar || this._state === 2 /* State.Empty */ || this._state === 1 /* State.Loading */ ? 0 : itemHeight;
+        const fontInfo = this.editor.getOption(49 /* EditorOption.fontInfo */);
+        const itemHeight = clamp(this.editor.getOption(118 /* EditorOption.suggestLineHeight */) || fontInfo.lineHeight, 8, 1000);
+        const statusBarHeight = !this.editor.getOption(116 /* EditorOption.suggest */).showStatusBar || this._state === 2 /* State.Empty */ || this._state === 1 /* State.Loading */ ? 0 : itemHeight;
         const borderWidth = this._details.widget.borderWidth;
         const borderHeight = 2 * borderWidth;
         return {
@@ -786,6 +786,7 @@ SuggestWidget = __decorate([
     __param(3, IThemeService),
     __param(4, IInstantiationService)
 ], SuggestWidget);
+export { SuggestWidget };
 export class SuggestContentWidget {
     constructor(_widget, _editor) {
         this._widget = _widget;

@@ -1,6 +1,6 @@
 /*!-----------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
- * Version: 0.40.0(83b3cf23ca80c94cccca7c5b3e48351b220f8e35)
+ * Version: 0.41.0(38e1e3d097f84e336c311d071a9ffb5191d4ffd1)
  * Released under the MIT license
  * https://github.com/microsoft/monaco-editor/blob/main/LICENSE.txt
  *-----------------------------------------------------------------------------*/
@@ -251,15 +251,15 @@ var language = {
     ],
     sigils: [
       [/~[a-z]@sigilStartDelimiter/, { token: "@rematch", next: "@sigil.interpol" }],
-      [/~[A-Z]@sigilStartDelimiter/, { token: "@rematch", next: "@sigil.noInterpol" }]
+      [/~([A-Z]+)@sigilStartDelimiter/, { token: "@rematch", next: "@sigil.noInterpol" }]
     ],
     sigil: [
-      [/~([a-zA-Z])\{/, { token: "@rematch", switchTo: "@sigilStart.$S2.$1.{.}" }],
-      [/~([a-zA-Z])\[/, { token: "@rematch", switchTo: "@sigilStart.$S2.$1.[.]" }],
-      [/~([a-zA-Z])\(/, { token: "@rematch", switchTo: "@sigilStart.$S2.$1.(.)" }],
-      [/~([a-zA-Z])\</, { token: "@rematch", switchTo: "@sigilStart.$S2.$1.<.>" }],
+      [/~([a-z]|[A-Z]+)\{/, { token: "@rematch", switchTo: "@sigilStart.$S2.$1.{.}" }],
+      [/~([a-z]|[A-Z]+)\[/, { token: "@rematch", switchTo: "@sigilStart.$S2.$1.[.]" }],
+      [/~([a-z]|[A-Z]+)\(/, { token: "@rematch", switchTo: "@sigilStart.$S2.$1.(.)" }],
+      [/~([a-z]|[A-Z]+)\</, { token: "@rematch", switchTo: "@sigilStart.$S2.$1.<.>" }],
       [
-        /~([a-zA-Z])(@sigilSymmetricDelimiter)/,
+        /~([a-z]|[A-Z]+)(@sigilSymmetricDelimiter)/,
         { token: "@rematch", switchTo: "@sigilStart.$S2.$1.$2.$2" }
       ]
     ],
@@ -351,7 +351,7 @@ var language = {
     ],
     "sigilStart.interpol": [
       [
-        /~([a-zA-Z])@sigilStartDelimiter/,
+        /~([a-z]|[A-Z]+)@sigilStartDelimiter/,
         {
           token: "sigil.delimiter",
           switchTo: "@sigilContinue.$S2.$S3.$S4.$S5"
@@ -372,7 +372,7 @@ var language = {
     ],
     "sigilStart.noInterpol": [
       [
-        /~([a-zA-Z])@sigilStartDelimiter/,
+        /~([a-z]|[A-Z]+)@sigilStartDelimiter/,
         {
           token: "sigil.delimiter",
           switchTo: "@sigilContinue.$S2.$S3.$S4.$S5"

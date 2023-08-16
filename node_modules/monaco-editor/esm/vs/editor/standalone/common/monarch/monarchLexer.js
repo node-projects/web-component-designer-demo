@@ -294,7 +294,7 @@ class MonarchModernTokensCollector {
         return new languages.EncodedTokenizationResult(MonarchModernTokensCollector._merge(this._prependTokens, this._tokens, null), endState);
     }
 }
-export let MonarchTokenizer = class MonarchTokenizer {
+let MonarchTokenizer = class MonarchTokenizer {
     constructor(languageService, standaloneThemeService, languageId, lexer, _configurationService) {
         this._configurationService = _configurationService;
         this._languageService = languageService;
@@ -740,6 +740,7 @@ export let MonarchTokenizer = class MonarchTokenizer {
 MonarchTokenizer = __decorate([
     __param(4, IConfigurationService)
 ], MonarchTokenizer);
+export { MonarchTokenizer };
 /**
  * Searches for a bracket in the 'brackets' attribute that matches the input.
  */

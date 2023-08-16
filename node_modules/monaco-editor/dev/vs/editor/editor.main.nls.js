@@ -1,6 +1,6 @@
 /*!-----------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
- * Version: 0.40.0(83b3cf23ca80c94cccca7c5b3e48351b220f8e35)
+ * Version: 0.41.0(38e1e3d097f84e336c311d071a9ffb5191d4ffd1)
  * Released under the MIT license
  * https://github.com/microsoft/vscode/blob/main/LICENSE.txt
  *-----------------------------------------------------------*/
@@ -90,7 +90,10 @@ define("vs/editor/editor.main.nls", {
 	],
 	"vs/editor/browser/controller/textAreaHandler": [
 		"editor",
-		"The editor is not accessible at this time. Press {0} for options."
+		"The editor is not accessible at this time.",
+		"{0} To enable screen reader optimized mode, use {1}",
+		"{0} To enable screen reader optimized mode, open the quick pick with {1} and run the command Toggle Screen Reader Accessibility Mode, which is currently not triggerable via keyboard.",
+		"{0} Please assign a keybinding for the command Toggle Screen Reader Accessibility Mode by accessing the keybindings editor with {1} and run it."
 	],
 	"vs/editor/browser/coreCommands": [
 		"Stick to the end even when going to longer lines",
@@ -110,7 +113,9 @@ define("vs/editor/editor.main.nls", {
 		"Increase Multi Cursor Limit"
 	],
 	"vs/editor/browser/widget/diffEditor.contribution": [
+		"Accessible Diff Viewer",
 		"Go to Next Difference",
+		"Open Accessible Diff Viewer",
 		"Go to Previous Difference"
 	],
 	"vs/editor/browser/widget/diffEditorWidget": [
@@ -120,19 +125,12 @@ define("vs/editor/editor.main.nls", {
 		"Cannot compare files because one file is too large.",
 		"Click to revert change"
 	],
-	"vs/editor/browser/widget/diffEditorWidget2/decorations": [
-		"Line decoration for inserts in the diff editor.",
-		"Line decoration for removals in the diff editor.",
-		"Click to revert change"
-	],
-	"vs/editor/browser/widget/diffEditorWidget2/diffEditorEditors": [
-		" use Shift + F7 to navigate changes"
-	],
-	"vs/editor/browser/widget/diffEditorWidget2/diffReview": [
-		"Icon for 'Insert' in diff review.",
-		"Icon for 'Remove' in diff review.",
-		"Icon for 'Close' in diff review.",
+	"vs/editor/browser/widget/diffEditorWidget2/accessibleDiffViewer": [
+		"Icon for 'Insert' in accessible diff viewer.",
+		"Icon for 'Remove' in accessible diff viewer.",
+		"Icon for 'Close' in accessible diff viewer.",
 		"Close",
+		"Accessible Diff Viewer. Use arrow up and down to navigate.",
 		"no lines changed",
 		"1 line changed",
 		"{0} lines changed",
@@ -142,6 +140,17 @@ define("vs/editor/editor.main.nls", {
 		"{0} original line {1} modified line {2}",
 		"+ {0} modified line {1}",
 		"- {0} original line {1}"
+	],
+	"vs/editor/browser/widget/diffEditorWidget2/colors": [
+		"The border color for text that got moved in the diff editor."
+	],
+	"vs/editor/browser/widget/diffEditorWidget2/decorations": [
+		"Line decoration for inserts in the diff editor.",
+		"Line decoration for removals in the diff editor.",
+		"Click to revert change"
+	],
+	"vs/editor/browser/widget/diffEditorWidget2/diffEditorEditors": [
+		" use {0} to open the accessibility help."
 	],
 	"vs/editor/browser/widget/diffEditorWidget2/inlineDiffDeletedCodeMargin": [
 		"Copy deleted lines",
@@ -578,9 +587,23 @@ define("vs/editor/editor.main.nls", {
 		"Color of the editor cursor.",
 		"The background color of the editor cursor. Allows customizing the color of a character overlapped by a block cursor.",
 		"Color of whitespace characters in the editor.",
-		"Color of the editor indentation guides.",
-		"Color of the active editor indentation guides.",
 		"Color of editor line numbers.",
+		"Color of the editor indentation guides.",
+		"'editorIndentGuide.background' is deprecated. Use 'editorIndentGuide.background1' instead.",
+		"Color of the active editor indentation guides.",
+		"'editorIndentGuide.activeBackground' is deprecated. Use 'editorIndentGuide.activeBackground1' instead.",
+		"Color of the editor indentation guides (1).",
+		"Color of the editor indentation guides (2).",
+		"Color of the editor indentation guides (3).",
+		"Color of the editor indentation guides (4).",
+		"Color of the editor indentation guides (5).",
+		"Color of the editor indentation guides (6).",
+		"Color of the active editor indentation guides (1).",
+		"Color of the active editor indentation guides (2).",
+		"Color of the active editor indentation guides (3).",
+		"Color of the active editor indentation guides (4).",
+		"Color of the active editor indentation guides (5).",
+		"Color of the active editor indentation guides (6).",
 		"Color of editor active line number",
 		"Id is deprecated. Use 'editorLineNumber.activeForeground' instead.",
 		"Color of editor active line number",
@@ -630,6 +653,7 @@ define("vs/editor/editor.main.nls", {
 		"Whether the editor is read-only",
 		"Whether the context is a diff editor",
 		"Whether the context is an embedded diff editor",
+		"Whether the accessible diff viewer is visible",
 		"Whether `editor.columnSelection` is enabled",
 		"Whether the editor has text selected",
 		"Whether the editor has multiple selections",
@@ -660,6 +684,35 @@ define("vs/editor/editor.main.nls", {
 		"Whether the editor has a document selection formatting provider",
 		"Whether the editor has multiple document formatting providers",
 		"Whether the editor has multiple document selection formatting providers"
+	],
+	"vs/editor/common/languages": [
+		"array",
+		"boolean",
+		"class",
+		"constant",
+		"constructor",
+		"enumeration",
+		"enumeration member",
+		"event",
+		"field",
+		"file",
+		"function",
+		"interface",
+		"key",
+		"method",
+		"module",
+		"namespace",
+		"null",
+		"number",
+		"object",
+		"operator",
+		"package",
+		"property",
+		"string",
+		"struct",
+		"type parameter",
+		"variable",
+		"{0} ({1})"
 	],
 	"vs/editor/common/languages/modesRegistry": [
 		"Plain Text"
@@ -1042,6 +1095,8 @@ define("vs/editor/editor.main.nls", {
 	],
 	"vs/editor/contrib/hover/browser/hover": [
 		"Show or Focus Hover",
+		"Inspect this in the accessible view with {0}",
+		"Inspect this in the accessible view via the command Open Accessible View which is currently not triggerable via keybinding",
 		"Show Definition Preview Hover",
 		"Scroll Up Hover",
 		"Scroll Down Hover",
@@ -1050,8 +1105,7 @@ define("vs/editor/editor.main.nls", {
 		"Page Up Hover",
 		"Page Down Hover",
 		"Go To Top Hover",
-		"Go To Bottom Hover",
-		"Escape Focus Hover"
+		"Go To Bottom Hover"
 	],
 	"vs/editor/contrib/hover/browser/markdownHoverParticipant": [
 		"Loading...",
@@ -1389,8 +1443,8 @@ define("vs/editor/editor.main.nls", {
 		"Loading...",
 		"No suggestions.",
 		"Suggest",
-		"{0}{1}, {2}",
-		"{0}{1}",
+		"{0} {1}, {2}",
+		"{0} {1}",
 		"{0}, {1}",
 		"{0}, docs: {1}"
 	],

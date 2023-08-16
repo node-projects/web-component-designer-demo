@@ -74,7 +74,6 @@ class ViewItem {
     }
     dispose() {
         this.disposable.dispose();
-        return this.view;
     }
 }
 class VerticalViewItem extends ViewItem {

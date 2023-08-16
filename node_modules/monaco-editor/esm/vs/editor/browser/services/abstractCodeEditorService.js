@@ -20,7 +20,7 @@ import { Emitter } from '../../../base/common/event.js';
 import { Disposable, toDisposable } from '../../../base/common/lifecycle.js';
 import { LinkedList } from '../../../base/common/linkedList.js';
 import { IThemeService } from '../../../platform/theme/common/themeService.js';
-export let AbstractCodeEditorService = class AbstractCodeEditorService extends Disposable {
+let AbstractCodeEditorService = class AbstractCodeEditorService extends Disposable {
     constructor(_themeService) {
         super();
         this._themeService = _themeService;
@@ -135,6 +135,7 @@ export let AbstractCodeEditorService = class AbstractCodeEditorService extends D
 AbstractCodeEditorService = __decorate([
     __param(0, IThemeService)
 ], AbstractCodeEditorService);
+export { AbstractCodeEditorService };
 export class GlobalStyleSheet {
     constructor(styleSheet) {
         this._styleSheet = styleSheet;

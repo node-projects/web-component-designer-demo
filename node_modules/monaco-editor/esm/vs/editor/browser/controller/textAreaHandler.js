@@ -2,6 +2,15 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 import './textAreaHandler.css';
 import * as nls from '../../../nls.js';
 import * as browser from '../../../base/browser/browser.js';
@@ -23,6 +32,7 @@ import { MOUSE_CURSOR_TEXT_CSS_CLASS_NAME } from '../../../base/browser/ui/mouse
 import { TokenizationRegistry } from '../../common/languages.js';
 import { Color } from '../../../base/common/color.js';
 import { IME } from '../../../base/common/ime.js';
+import { IKeybindingService } from '../../../platform/keybinding/common/keybinding.js';
 class VisibleTextAreaData {
     constructor(_context, modelLineNumber, distanceToModelLineStart, widthOfHiddenLineTextBefore, distanceToModelLineEnd) {
         this._context = _context;
@@ -78,9 +88,10 @@ class VisibleTextAreaData {
     }
 }
 const canUseZeroSizeTextarea = (browser.isFirefox);
-export class TextAreaHandler extends ViewPart {
-    constructor(context, viewController, visibleRangeProvider) {
+let TextAreaHandler = class TextAreaHandler extends ViewPart {
+    constructor(context, viewController, visibleRangeProvider, _keybindingService) {
         super(context);
+        this._keybindingService = _keybindingService;
         this._primaryCursorPosition = new Position(1, 1);
         this._primaryCursorVisibleRange = null;
         this._viewController = viewController;
@@ -88,15 +99,15 @@ export class TextAreaHandler extends ViewPart {
         this._scrollLeft = 0;
         this._scrollTop = 0;
         const options = this._context.configuration.options;
-        const layoutInfo = options.get(141 /* EditorOption.layoutInfo */);
+        const layoutInfo = options.get(142 /* EditorOption.layoutInfo */);
         this._setAccessibilityOptions(options);
         this._contentLeft = layoutInfo.contentLeft;
         this._contentWidth = layoutInfo.contentWidth;
         this._contentHeight = layoutInfo.height;
-        this._fontInfo = options.get(48 /* EditorOption.fontInfo */);
-        this._lineHeight = options.get(64 /* EditorOption.lineHeight */);
-        this._emptySelectionClipboard = options.get(35 /* EditorOption.emptySelectionClipboard */);
-        this._copyWithSyntaxHighlighting = options.get(23 /* EditorOption.copyWithSyntaxHighlighting */);
+        this._fontInfo = options.get(49 /* EditorOption.fontInfo */);
+        this._lineHeight = options.get(65 /* EditorOption.lineHeight */);
+        this._emptySelectionClipboard = options.get(36 /* EditorOption.emptySelectionClipboard */);
+        this._copyWithSyntaxHighlighting = options.get(24 /* EditorOption.copyWithSyntaxHighlighting */);
         this._visibleTextArea = null;
         this._selections = [new Selection(1, 1, 1, 1)];
         this._modelSelections = [new Selection(1, 1, 1, 1)];
@@ -113,7 +124,8 @@ export class TextAreaHandler extends ViewPart {
         this.textArea.setAttribute('autocomplete', 'off');
         this.textArea.setAttribute('spellcheck', 'false');
         this.textArea.setAttribute('aria-label', this._getAriaLabel(options));
-        this.textArea.setAttribute('tabindex', String(options.get(121 /* EditorOption.tabIndex */)));
+        this.textArea.setAttribute('aria-required', options.get(5 /* EditorOption.ariaRequired */) ? 'true' : 'false');
+        this.textArea.setAttribute('tabindex', String(options.get(122 /* EditorOption.tabIndex */)));
         this.textArea.setAttribute('role', 'textbox');
         this.textArea.setAttribute('aria-roledescription', nls.localize('editor', "editor"));
         this.textArea.setAttribute('aria-multiline', 'true');
@@ -398,7 +410,7 @@ export class TextAreaHandler extends ViewPart {
     }
     _getWordBeforePosition(position) {
         const lineContent = this._context.viewModel.getLineContent(position.lineNumber);
-        const wordSeparators = getMapForWordSeparators(this._context.configuration.options.get(127 /* EditorOption.wordSeparators */));
+        const wordSeparators = getMapForWordSeparators(this._context.configuration.options.get(128 /* EditorOption.wordSeparators */));
         let column = position.column;
         let distance = 0;
         while (column > 1) {
@@ -423,9 +435,26 @@ export class TextAreaHandler extends ViewPart {
         return '';
     }
     _getAriaLabel(options) {
+        var _a, _b, _c;
         const accessibilitySupport = options.get(2 /* EditorOption.accessibilitySupport */);
         if (accessibilitySupport === 1 /* AccessibilitySupport.Disabled */) {
-            return nls.localize('accessibilityOffAriaLabel', "The editor is not accessible at this time. Press {0} for options.", platform.isLinux ? 'Shift+Alt+F1' : 'Alt+F1');
+            const toggleKeybindingLabel = (_a = this._keybindingService.lookupKeybinding('editor.action.toggleScreenReaderAccessibilityMode')) === null || _a === void 0 ? void 0 : _a.getAriaLabel();
+            const runCommandKeybindingLabel = (_b = this._keybindingService.lookupKeybinding('workbench.action.showCommands')) === null || _b === void 0 ? void 0 : _b.getAriaLabel();
+            const keybindingEditorKeybindingLabel = (_c = this._keybindingService.lookupKeybinding('workbench.action.openGlobalKeybindings')) === null || _c === void 0 ? void 0 : _c.getAriaLabel();
+            const editorNotAccessibleMessage = nls.localize('accessibilityModeOff', "The editor is not accessible at this time.");
+            if (toggleKeybindingLabel) {
+                return nls.localize('accessibilityOffAriaLabel', "{0} To enable screen reader optimized mode, use {1}", editorNotAccessibleMessage, toggleKeybindingLabel);
+            }
+            else if (runCommandKeybindingLabel) {
+                return nls.localize('accessibilityOffAriaLabelNoKb', "{0} To enable screen reader optimized mode, open the quick pick with {1} and run the command Toggle Screen Reader Accessibility Mode, which is currently not triggerable via keyboard.", editorNotAccessibleMessage, runCommandKeybindingLabel);
+            }
+            else if (keybindingEditorKeybindingLabel) {
+                return nls.localize('accessibilityOffAriaLabelNoKbs', "{0} Please assign a keybinding for the command Toggle Screen Reader Accessibility Mode by accessing the keybindings editor with {1} and run it.", editorNotAccessibleMessage, keybindingEditorKeybindingLabel);
+            }
+            else {
+                // SOS
+                return editorNotAccessibleMessage;
+            }
         }
         return options.get(4 /* EditorOption.ariaLabel */);
     }
@@ -443,10 +472,10 @@ export class TextAreaHandler extends ViewPart {
         // we will size the textarea to match the width used for wrapping points computation (see `domLineBreaksComputer.ts`).
         // This is because screen readers will read the text in the textarea and we'd like that the
         // wrapping points in the textarea match the wrapping points in the editor.
-        const layoutInfo = options.get(141 /* EditorOption.layoutInfo */);
+        const layoutInfo = options.get(142 /* EditorOption.layoutInfo */);
         const wrappingColumn = layoutInfo.wrappingColumn;
         if (wrappingColumn !== -1 && this._accessibilitySupport !== 1 /* AccessibilitySupport.Disabled */) {
-            const fontInfo = options.get(48 /* EditorOption.fontInfo */);
+            const fontInfo = options.get(49 /* EditorOption.fontInfo */);
             this._textAreaWrapping = true;
             this._textAreaWidth = Math.round(wrappingColumn * fontInfo.typicalHalfwidthCharacterWidth);
         }
@@ -458,21 +487,22 @@ export class TextAreaHandler extends ViewPart {
     // --- begin event handlers
     onConfigurationChanged(e) {
         const options = this._context.configuration.options;
-        const layoutInfo = options.get(141 /* EditorOption.layoutInfo */);
+        const layoutInfo = options.get(142 /* EditorOption.layoutInfo */);
         this._setAccessibilityOptions(options);
         this._contentLeft = layoutInfo.contentLeft;
         this._contentWidth = layoutInfo.contentWidth;
         this._contentHeight = layoutInfo.height;
-        this._fontInfo = options.get(48 /* EditorOption.fontInfo */);
-        this._lineHeight = options.get(64 /* EditorOption.lineHeight */);
-        this._emptySelectionClipboard = options.get(35 /* EditorOption.emptySelectionClipboard */);
-        this._copyWithSyntaxHighlighting = options.get(23 /* EditorOption.copyWithSyntaxHighlighting */);
+        this._fontInfo = options.get(49 /* EditorOption.fontInfo */);
+        this._lineHeight = options.get(65 /* EditorOption.lineHeight */);
+        this._emptySelectionClipboard = options.get(36 /* EditorOption.emptySelectionClipboard */);
+        this._copyWithSyntaxHighlighting = options.get(24 /* EditorOption.copyWithSyntaxHighlighting */);
         this.textArea.setAttribute('wrap', this._textAreaWrapping && !this._visibleTextArea ? 'on' : 'off');
         const { tabSize } = this._context.viewModel.model.getOptions();
         this.textArea.domNode.style.tabSize = `${tabSize * this._fontInfo.spaceWidth}px`;
         this.textArea.setAttribute('aria-label', this._getAriaLabel(options));
-        this.textArea.setAttribute('tabindex', String(options.get(121 /* EditorOption.tabIndex */)));
-        if (e.hasChanged(32 /* EditorOption.domReadOnly */) || e.hasChanged(88 /* EditorOption.readOnly */)) {
+        this.textArea.setAttribute('aria-required', options.get(5 /* EditorOption.ariaRequired */) ? 'true' : 'false');
+        this.textArea.setAttribute('tabindex', String(options.get(122 /* EditorOption.tabIndex */)));
+        if (e.hasChanged(33 /* EditorOption.domReadOnly */) || e.hasChanged(89 /* EditorOption.readOnly */)) {
             this._ensureReadOnlyAttribute();
         }
         if (e.hasChanged(2 /* EditorOption.accessibilitySupport */)) {
@@ -543,7 +573,7 @@ export class TextAreaHandler extends ViewPart {
         const options = this._context.configuration.options;
         // When someone requests to disable IME, we set the "readonly" attribute on the <textarea>.
         // This will prevent composition.
-        const useReadOnly = !IME.enabled || (options.get(32 /* EditorOption.domReadOnly */) && options.get(88 /* EditorOption.readOnly */));
+        const useReadOnly = !IME.enabled || (options.get(33 /* EditorOption.domReadOnly */) && options.get(89 /* EditorOption.readOnly */));
         if (useReadOnly) {
             this.textArea.setAttribute('readonly', 'true');
         }
@@ -710,11 +740,11 @@ export class TextAreaHandler extends ViewPart {
         tac.setWidth(renderData.useCover ? renderData.width : 0);
         tac.setHeight(renderData.useCover ? renderData.height : 0);
         const options = this._context.configuration.options;
-        if (options.get(55 /* EditorOption.glyphMargin */)) {
+        if (options.get(56 /* EditorOption.glyphMargin */)) {
             tac.setClassName('monaco-editor-background textAreaCover ' + Margin.OUTER_CLASS_NAME);
         }
         else {
-            if (options.get(65 /* EditorOption.lineNumbers */).renderType !== 0 /* RenderLineNumbersType.Off */) {
+            if (options.get(66 /* EditorOption.lineNumbers */).renderType !== 0 /* RenderLineNumbersType.Off */) {
                 tac.setClassName('monaco-editor-background textAreaCover ' + LineNumbersOverlay.CLASS_NAME);
             }
             else {
@@ -722,7 +752,11 @@ export class TextAreaHandler extends ViewPart {
             }
         }
     }
-}
+};
+TextAreaHandler = __decorate([
+    __param(3, IKeybindingService)
+], TextAreaHandler);
+export { TextAreaHandler };
 function measureText(text, fontInfo, tabSize) {
     if (text.length === 0) {
         return 0;

@@ -34,7 +34,7 @@ import { IContextKeyService, RawContextKey } from '../../../../platform/contextk
 import { IInstantiationService } from '../../../../platform/instantiation/common/instantiation.js';
 import { registerIcon } from '../../../../platform/theme/common/iconRegistry.js';
 import { MarkerNavigationWidget } from './gotoErrorWidget.js';
-export let MarkerController = class MarkerController {
+let MarkerController = class MarkerController {
     static get(editor) {
         return editor.getContribution(MarkerController.ID);
     }
@@ -158,6 +158,7 @@ MarkerController = __decorate([
     __param(3, ICodeEditorService),
     __param(4, IInstantiationService)
 ], MarkerController);
+export { MarkerController };
 class MarkerNavigationAction extends EditorAction {
     constructor(_next, _multiFile, opts) {
         super(opts);

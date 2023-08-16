@@ -112,7 +112,7 @@ PostEditWidget = __decorate([
     __param(8, IContextKeyService),
     __param(9, IKeybindingService)
 ], PostEditWidget);
-export let PostEditWidgetManager = class PostEditWidgetManager extends Disposable {
+let PostEditWidgetManager = class PostEditWidgetManager extends Disposable {
     constructor(_id, _editor, _visibleContext, _showCommand, _instantiationService, _bulkEditService) {
         super();
         this._id = _id;
@@ -196,3 +196,4 @@ PostEditWidgetManager = __decorate([
     __param(4, IInstantiationService),
     __param(5, IBulkEditService)
 ], PostEditWidgetManager);
+export { PostEditWidgetManager };

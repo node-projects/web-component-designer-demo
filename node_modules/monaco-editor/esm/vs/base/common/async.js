@@ -270,6 +270,7 @@ export class ThrottledDelayer {
     }
     dispose() {
         this.delayer.dispose();
+        this.throttler.dispose();
     }
 }
 export function timeout(millis, token) {

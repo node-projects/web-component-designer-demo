@@ -1,6 +1,6 @@
 /*!-----------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
- * Version: 0.40.0(83b3cf23ca80c94cccca7c5b3e48351b220f8e35)
+ * Version: 0.41.0(38e1e3d097f84e336c311d071a9ffb5191d4ffd1)
  * Released under the MIT license
  * https://github.com/microsoft/vscode/blob/main/LICENSE.txt
  *-----------------------------------------------------------*/
@@ -87,7 +87,10 @@ define("vs/editor/editor.main.nls.it", {
 	],
 	"vs/editor/browser/controller/textAreaHandler": [
 		"editor",
-		"L\'editor non è accessibile in questo momento. Premere {0} per le opzioni.",
+		"L\'editor non è accessibile in questo momento.",
+		"{0} Per abilitare la modalità ottimizzata per l\'utilità per la lettura dello schermo usare {1}",
+		"{0} Per abilitare la modalità ottimizzata per l\'utilità per la lettura dello schermo, aprire la selezione rapida con {1} ed eseguire il comando Attiva/Disattiva modalità di accessibilità dell\'utilità per la lettura dello schermo, attualmente non attivabile tramite tastiera.",
+		"{0} Assegnare un tasto di scelta rapida per il comando Attiva/Disattiva modalità di accessibilità dell\'utilità per la lettura dello schermo accedendo all\'editor dei tasti di scelta rapida con {1} ed eseguirlo.",
 	],
 	"vs/editor/browser/coreCommands": [
 		"Si attiene alla fine anche quando si passa a righe più lunghe",
@@ -107,7 +110,9 @@ define("vs/editor/editor.main.nls.it", {
 		"Aumentare limite multi-cursore",
 	],
 	"vs/editor/browser/widget/diffEditor.contribution": [
+		"Visualizzatore differenze accessibile",
 		"Vai alla differenza successiva",
+		"Apri Visualizzatore differenze accessibile",
 		"Vai alla differenza precedente",
 	],
 	"vs/editor/browser/widget/diffEditorWidget": [
@@ -117,19 +122,12 @@ define("vs/editor/editor.main.nls.it", {
 		"Non è possibile confrontare i file perché uno è troppo grande.",
 		"Fare clic per annullare la modifica",
 	],
-	"vs/editor/browser/widget/diffEditorWidget2/decorations": [
-		"Effetto di riga per gli inserimenti nell\'editor diff.",
-		"Effetto di riga per le rimozioni nell\'editor diff.",
-		"Fare clic per annullare la modifica",
-	],
-	"vs/editor/browser/widget/diffEditorWidget2/diffEditorEditors": [
-		" usa MAIUSC +F7 per esplorare le modifiche",
-	],
-	"vs/editor/browser/widget/diffEditorWidget2/diffReview": [
-		"Icona per \'Inserisci\' nella revisione diff.",
-		"Icona per \'Rimuovi\' nella revisione diff.",
-		"Icona per \'Chiudi\' nella revisione diff.",
+	"vs/editor/browser/widget/diffEditorWidget2/accessibleDiffViewer": [
+		"Icona per \"Inserisci\" nel visualizzatore differenze accessibile.",
+		"Icona per \"Rimuovi\" nel visualizzatore differenze accessibile.",
+		"Icona per \"Chiudi\" nel visualizzatore differenze accessibile.",
 		"Chiudi",
+		"Visualizzatore differenze accessibile. Usare le frecce SU e GIÙ per spostarsi.",
 		"nessuna riga modificata",
 		"1 riga modificata",
 		"{0} righe modificate",
@@ -139,6 +137,17 @@ define("vs/editor/editor.main.nls.it", {
 		"{0} riga originale {1} riga modificata {2}",
 		"+ {0} riga modificata {1}",
 		"- {0} riga originale {1}",
+	],
+	"vs/editor/browser/widget/diffEditorWidget2/colors": [
+		"Colore del bordo per il testo spostato nell\'editor diff.",
+	],
+	"vs/editor/browser/widget/diffEditorWidget2/decorations": [
+		"Effetto di riga per gli inserimenti nell\'editor diff.",
+		"Effetto di riga per le rimozioni nell\'editor diff.",
+		"Fare clic per annullare la modifica",
+	],
+	"vs/editor/browser/widget/diffEditorWidget2/diffEditorEditors": [
+		" utilizzare {0} per aprire la Guida all\'accessibilità.",
 	],
 	"vs/editor/browser/widget/diffEditorWidget2/inlineDiffDeletedCodeMargin": [
 		"Copia le righe eliminate",
@@ -575,9 +584,23 @@ define("vs/editor/editor.main.nls.it", {
 		"Colore del cursore dell\'editor.",
 		"Colore di sfondo del cursore editor. Permette di personalizzare il colore di un carattere quando sovrapposto da un blocco cursore.",
 		"Colore dei caratteri di spazio vuoto nell\'editor.",
-		"Colore delle guide per i rientri dell\'editor.",
-		"Colore delle guide di indentazione dell\'editor attivo",
 		"Colore dei numeri di riga dell\'editor.",
+		"Colore delle guide per i rientri dell\'editor.",
+		"\'editorIndentGuide.background\' è deprecato. Usare \'editorIndentGuide.background1\'.",
+		"Colore delle guide di indentazione dell\'editor attivo",
+		"\'editorIndentGuide.activeBackground\' è deprecato. Usare \'editorIndentGuide.activeBackground1\'.",
+		"Colore delle guide per i rientri dell\'editor (1).",
+		"Colore delle guide per i rientri dell\'editor (2).",
+		"Colore delle guide per i rientri dell\'editor (3).",
+		"Colore delle guide per i rientri dell\'editor (4).",
+		"Colore delle guide per i rientri dell\'editor (5).",
+		"Colore delle guide per i rientri dell\'editor (6).",
+		"Colore delle guide di indentazione dell\'editor attivo (1).",
+		"Colore delle guide di indentazione dell\'editor attivo (2).",
+		"Colore delle guide di indentazione dell\'editor attivo (3).",
+		"Colore delle guide di indentazione dell\'editor attivo (4).",
+		"Colore delle guide di indentazione dell\'editor attivo (5).",
+		"Colore delle guide di indentazione dell\'editor attivo (6).",
 		"Colore del numero di riga attivo dell\'editor",
 		"Id è deprecato. In alternativa usare \'editorLineNumber.activeForeground\'.",
 		"Colore del numero di riga attivo dell\'editor",
@@ -627,6 +650,7 @@ define("vs/editor/editor.main.nls.it", {
 		"Indica se l\'editor è di sola lettura",
 		"Indica se il contesto è un editor diff",
 		"Indica se il contesto è un editor diff incorporato",
+		"Indica se il visualizzatore differenze accessibile è visibile",
 		"Indica se `editor.columnSelection` è abilitato",
 		"Indica se per l\'editor esiste testo selezionato",
 		"Indica se per l\'editor esistono più selezioni",
@@ -657,6 +681,35 @@ define("vs/editor/editor.main.nls.it", {
 		"Indica se per l\'editor esiste un provider di formattazione di selezioni documento",
 		"Indica se per l\'editor esistono più provider di formattazione documenti",
 		"Indica se per l\'editor esistono più provider di formattazione di selezioni documento",
+	],
+	"vs/editor/common/languages": [
+		"matrice",
+		"valore booleano",
+		"classe",
+		"costante",
+		"costruttore",
+		"enumerazione",
+		"membro di enumerazione",
+		"evento",
+		"campo",
+		"file",
+		"funzione",
+		"interfaccia",
+		"chiave",
+		"metodo",
+		"modulo",
+		"spazio dei nomi",
+		"Null",
+		"numero",
+		"oggetto",
+		"operatore",
+		"pacchetto",
+		"proprietà",
+		"stringa",
+		"struct",
+		"parametro di tipo",
+		"variabile",
+		"{0} ({1})",
 	],
 	"vs/editor/common/languages/modesRegistry": [
 		"Testo normale",
@@ -1039,6 +1092,8 @@ define("vs/editor/editor.main.nls.it", {
 	],
 	"vs/editor/contrib/hover/browser/hover": [
 		"Mostra o sposta lo stato attivo al passaggio del mouse",
+		"Ispezionarlo nella visualizzazione accessibile con {0}",
+		"Ispezionarlo nella visualizzazione accessibile tramite il comando Apri visualizzazione accessibile che attualmente non è attivabile tramite il tasto di scelta rapida",
 		"Mostra anteprima definizione al passaggio del mouse",
 		"Scorri verso l\'alto al passaggio del mouse",
 		"Scorri verso il basso al passaggio del mouse",
@@ -1048,7 +1103,6 @@ define("vs/editor/editor.main.nls.it", {
 		"Vai alla pagina successiva al passaggio del mouse",
 		"Vai in alto al passaggio del mouse",
 		"Vai in basso al passaggio del mouse",
-		"Esci dallo stato attivo al passaggio del mouse",
 	],
 	"vs/editor/contrib/hover/browser/markdownHoverParticipant": [
 		"Caricamento...",
@@ -1386,7 +1440,7 @@ define("vs/editor/editor.main.nls.it", {
 		"Caricamento...",
 		"Non ci sono suggerimenti.",
 		"Suggerisci",
-		"({0},{1}) {2}",
+		"{0} {1}, {2}",
 		"{0} {1}",
 		"{0}, {1}",
 		"{0}, documenti: {1}",

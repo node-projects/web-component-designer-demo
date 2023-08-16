@@ -19,7 +19,7 @@ import { IInstantiationService } from '../../instantiation/common/instantiation.
 import { DefaultQuickAccessFilterValue, Extensions } from '../common/quickAccess.js';
 import { IQuickInputService, ItemActivation } from '../common/quickInput.js';
 import { Registry } from '../../registry/common/platform.js';
-export let QuickAccessController = class QuickAccessController extends Disposable {
+let QuickAccessController = class QuickAccessController extends Disposable {
     constructor(quickInputService, instantiationService) {
         super();
         this.quickInputService = quickInputService;
@@ -190,3 +190,4 @@ QuickAccessController = __decorate([
     __param(0, IQuickInputService),
     __param(1, IInstantiationService)
 ], QuickAccessController);
+export { QuickAccessController };

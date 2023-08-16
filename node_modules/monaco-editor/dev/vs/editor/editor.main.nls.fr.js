@@ -1,6 +1,6 @@
 /*!-----------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
- * Version: 0.40.0(83b3cf23ca80c94cccca7c5b3e48351b220f8e35)
+ * Version: 0.41.0(38e1e3d097f84e336c311d071a9ffb5191d4ffd1)
  * Released under the MIT license
  * https://github.com/microsoft/vscode/blob/main/LICENSE.txt
  *-----------------------------------------------------------*/
@@ -87,7 +87,10 @@ define("vs/editor/editor.main.nls.fr", {
 	],
 	"vs/editor/browser/controller/textAreaHandler": [
 		"éditeur",
-		"L\'éditeur n\'est pas accessible pour le moment. Appuyez sur {0} pour voir les options.",
+		"L’éditeur n’est pas accessible pour le moment.",
+		"{0} Pour activer le mode optimisé du lecteur d’écran, utilisez {1}",
+		"{0} Pour activer le mode optimisé du lecteur d’écran, ouvrez la sélection rapide avec {1} et exécutez la commande Activer/Désactiver le mode d’accessibilité du lecteur d’écran, qui n’est pas déclenchable via le clavier pour le moment.",
+		"{0} Attribuez une combinaison de touches à la commande Activer/Désactiver le mode d’accessibilité du lecteur d’écran en accédant à l’éditeur de combinaisons de touches avec {1} et exécutez-la.",
 	],
 	"vs/editor/browser/coreCommands": [
 		"Aligner par rapport à la fin même en cas de passage à des lignes plus longues",
@@ -107,7 +110,9 @@ define("vs/editor/editor.main.nls.fr", {
 		"Augmenter la limite de curseurs multiples",
 	],
 	"vs/editor/browser/widget/diffEditor.contribution": [
+		"Visionneuse Diff accessible",
 		"Accéder à la différence suivante",
+		"Ouvrir la visionneuse diff accessible",
 		"Accéder la différence précédente",
 	],
 	"vs/editor/browser/widget/diffEditorWidget": [
@@ -117,19 +122,12 @@ define("vs/editor/editor.main.nls.fr", {
 		"Impossible de comparer les fichiers car l\'un d\'eux est trop volumineux.",
 		"Cliquez pour rétablir la modification",
 	],
-	"vs/editor/browser/widget/diffEditorWidget2/decorations": [
-		"Élément décoratif de ligne pour les insertions dans l\'éditeur de différences.",
-		"Élément décoratif de ligne pour les suppressions dans l\'éditeur de différences.",
-		"Cliquez pour rétablir la modification",
-	],
-	"vs/editor/browser/widget/diffEditorWidget2/diffEditorEditors": [
-		" utiliser Maj + F7 pour parcourir les modifications",
-	],
-	"vs/editor/browser/widget/diffEditorWidget2/diffReview": [
-		"Icône de l\'option Insérer dans la revue des différences.",
-		"Icône de l\'option Supprimer dans la revue des différences.",
-		"Icône de l\'option Fermer dans la revue des différences.",
+	"vs/editor/browser/widget/diffEditorWidget2/accessibleDiffViewer": [
+		"Icône « Insérer » dans la visionneuse diff accessible.",
+		"Icône « Supprimer » dans la visionneuse diff accessible.",
+		"Icône de « Fermer » dans la visionneuse diff accessible.",
 		"Fermer",
+		"Visionneuse diff accessible. Utilisez les flèches haut et bas pour naviguer.",
 		"aucune ligne changée",
 		"1 ligne changée",
 		"{0} lignes changées",
@@ -139,6 +137,17 @@ define("vs/editor/editor.main.nls.fr", {
 		"{0} ligne d\'origine {1} ligne modifiée {2}",
 		"+ {0} ligne modifiée {1}",
 		"- {0} ligne d\'origine {1}",
+	],
+	"vs/editor/browser/widget/diffEditorWidget2/colors": [
+		"Couleur de bordure du texte déplacé dans l’éditeur de diff.",
+	],
+	"vs/editor/browser/widget/diffEditorWidget2/decorations": [
+		"Élément décoratif de ligne pour les insertions dans l\'éditeur de différences.",
+		"Élément décoratif de ligne pour les suppressions dans l\'éditeur de différences.",
+		"Cliquez pour rétablir la modification",
+	],
+	"vs/editor/browser/widget/diffEditorWidget2/diffEditorEditors": [
+		" utilisez {0} pour ouvrir l’aide sur l’accessibilité.",
 	],
 	"vs/editor/browser/widget/diffEditorWidget2/inlineDiffDeletedCodeMargin": [
 		"Copier les lignes supprimées",
@@ -575,9 +584,23 @@ define("vs/editor/editor.main.nls.fr", {
 		"Couleur du curseur de l\'éditeur.",
 		"La couleur de fond du curseur de l\'éditeur. Permet de personnaliser la couleur d\'un caractère survolé par un curseur de bloc.",
 		"Couleur des espaces blancs dans l\'éditeur.",
-		"Couleur des repères de retrait de l\'éditeur.",
-		"Couleur des guides d\'indentation de l\'éditeur actif",
 		"Couleur des numéros de ligne de l\'éditeur.",
+		"Couleur des repères de retrait de l\'éditeur.",
+		"\'editorIndentGuide.background\' est déconseillé. Utilisez \'editorIndentGuide.background1\' à la place.",
+		"Couleur des guides d\'indentation de l\'éditeur actif",
+		"\'editorIndentGuide.activeBackground\' est déconseillé. Utilisez \'editorIndentGuide.activeBackground1\' à la place.",
+		"Couleur des repères de retrait de l\'éditeur (1).",
+		"Couleur des repères de retrait de l\'éditeur (2).",
+		"Couleur des repères de retrait de l\'éditeur (3).",
+		"Couleur des repères de retrait de l\'éditeur (4).",
+		"Couleur des repères de retrait de l\'éditeur (5).",
+		"Couleur des repères de retrait de l\'éditeur (6).",
+		"Couleur des repaires de retrait de l\'éditeur actifs (1).",
+		"Couleur des repaires de retrait de l\'éditeur actifs (2).",
+		"Couleur des repaires de retrait de l\'éditeur actifs (3).",
+		"Couleur des repaires de retrait de l\'éditeur actifs (4).",
+		"Couleur des repaires de retrait de l\'éditeur actifs (5).",
+		"Couleur des repaires de retrait de l\'éditeur actifs (6).",
 		"Couleur des numéros de lignes actives de l\'éditeur",
 		"L’ID est déprécié. Utilisez à la place \'editorLineNumber.activeForeground\'.",
 		"Couleur des numéros de lignes actives de l\'éditeur",
@@ -627,6 +650,7 @@ define("vs/editor/editor.main.nls.fr", {
 		"Indique si l’éditeur est en lecture seule",
 		"Indique si le contexte est celui d\'un éditeur de différences",
 		"Indique si le contexte est celui d’un éditeur de différences intégré",
+		"Indique si la visionneuse diff accessible est visible",
 		"Indique si \'editor.columnSelection\' est activé",
 		"Indique si du texte est sélectionné dans l\'éditeur",
 		"Indique si l\'éditeur a plusieurs sélections",
@@ -657,6 +681,35 @@ define("vs/editor/editor.main.nls.fr", {
 		"Indique si l\'éditeur a un fournisseur de mise en forme de sélection pour les documents",
 		"Indique si l\'éditeur a plusieurs fournisseurs de mise en forme pour les documents",
 		"Indique si l\'éditeur a plusieurs fournisseurs de mise en forme de sélection pour les documents",
+	],
+	"vs/editor/common/languages": [
+		"tableau",
+		"booléen",
+		"classe",
+		"constante",
+		"constructeur",
+		"énumération",
+		"membre d\'énumération",
+		"événement",
+		"champ",
+		"fichier",
+		"fonction",
+		"interface",
+		"clé",
+		"méthode",
+		"module",
+		"espace de noms",
+		"NULL",
+		"nombre",
+		"objet",
+		"opérateur",
+		"package",
+		"propriété",
+		"chaîne",
+		"struct",
+		"paramètre de type",
+		"variable",
+		"{0} ({1})",
 	],
 	"vs/editor/common/languages/modesRegistry": [
 		"Texte brut",
@@ -1039,6 +1092,8 @@ define("vs/editor/editor.main.nls.fr", {
 	],
 	"vs/editor/contrib/hover/browser/hover": [
 		"Afficher ou focus sur pointer",
+		"Inspecter ceci dans l’affichage accessible avec {0}",
+		"Inspecter ceci dans l’affichage accessible à l’aide de la commande Ouvrir l’affichage accessible qui n’est pas déclenchable via la combinaison de touches pour le moment",
 		"Afficher le pointeur de l\'aperçu de définition",
 		"Faire défiler le pointage vers le haut",
 		"Faire défiler le pointage vers le bas",
@@ -1048,7 +1103,6 @@ define("vs/editor/editor.main.nls.fr", {
 		"Pointer vers le bas de la page",
 		"Atteindre le pointage supérieur",
 		"Pointer vers le bas",
-		"Pointage du focus d’échappement",
 	],
 	"vs/editor/contrib/hover/browser/markdownHoverParticipant": [
 		"Chargement en cours...",
@@ -1386,8 +1440,8 @@ define("vs/editor/editor.main.nls.fr", {
 		"Chargement en cours...",
 		"Pas de suggestions.",
 		"Suggérer",
-		"({0}, {1}) {2}",
-		"{0}{1}",
+		"{0} {1}, {2}",
+		"{0} {1}",
 		"{0}, {1}",
 		"{0}, documents : {1}",
 	],

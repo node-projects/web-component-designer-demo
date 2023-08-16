@@ -26,7 +26,7 @@ class CacheItem {
         this.data = data;
     }
 }
-export let CodeLensCache = class CodeLensCache {
+let CodeLensCache = class CodeLensCache {
     constructor(storageService) {
         this._fakeProvider = new class {
             provideCodeLenses() {
@@ -107,4 +107,5 @@ export let CodeLensCache = class CodeLensCache {
 CodeLensCache = __decorate([
     __param(0, IStorageService)
 ], CodeLensCache);
+export { CodeLensCache };
 registerSingleton(ICodeLensCache, CodeLensCache, 1 /* InstantiationType.Delayed */);

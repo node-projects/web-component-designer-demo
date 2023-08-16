@@ -1,6 +1,6 @@
 /*!-----------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
- * Version: 0.40.0(83b3cf23ca80c94cccca7c5b3e48351b220f8e35)
+ * Version: 0.41.0(38e1e3d097f84e336c311d071a9ffb5191d4ffd1)
  * Released under the MIT license
  * https://github.com/microsoft/vscode/blob/main/LICENSE.txt
  *-----------------------------------------------------------*/
@@ -87,7 +87,10 @@ define("vs/editor/editor.main.nls.ko", {
 	],
 	"vs/editor/browser/controller/textAreaHandler": [
 		"편집기",
-		"현재 편집기에 액세스할 수 없습니다. 옵션을 보려면 {0}을(를) 누릅니다.",
+		"현재 편집기에 액세스할 수 없습니다.",
+		"{0} 화면 읽기 프로그램 최적화 모드를 사용하도록 설정하려면 {1}",
+		"{0} 화면 읽기 프로그램 최적화 모드를 사용하도록 설정하려면 {1}을(를) 사용하여 빠른 선택을 열고 화면 읽기 프로그램 접근성 모드 토글 명령을 실행합니다(이 명령은 현재 키보드를 통해 트리거할 수 없음).",
+		"{0} {1}을(를) 사용하여 키 바인딩 편집기에 액세스하여 화면 읽기 프로그램 접근성 모드 토글 명령에 대한 키 바인딩을 할당하고 실행하세요.",
 	],
 	"vs/editor/browser/coreCommands": [
 		"더 긴 줄로 이동하는 경우에도 끝에 고정",
@@ -107,7 +110,9 @@ define("vs/editor/editor.main.nls.ko", {
 		"다중 커서 제한 늘리기",
 	],
 	"vs/editor/browser/widget/diffEditor.contribution": [
+		"액세스 가능한 Diff 뷰어",
 		"다음 다른 항목으로 이동",
+		"액세스 가능한 Diff 뷰어 열기",
 		"다음 다른 항목으로 이동",
 	],
 	"vs/editor/browser/widget/diffEditorWidget": [
@@ -117,19 +122,12 @@ define("vs/editor/editor.main.nls.ko", {
 		"파일 1개가 너무 커서 파일을 비교할 수 없습니다.",
 		"변경 내용을 되돌리려면 클릭",
 	],
-	"vs/editor/browser/widget/diffEditorWidget2/decorations": [
-		"diff 편집기의 삽입에 대한 줄 데코레이션입니다.",
-		"diff 편집기의 제거에 대한 줄 데코레이션입니다.",
-		"변경 내용을 되돌리려면 클릭",
-	],
-	"vs/editor/browser/widget/diffEditorWidget2/diffEditorEditors": [
-		" Shift + F7을 사용하여 변경 내용 탐색",
-	],
-	"vs/editor/browser/widget/diffEditorWidget2/diffReview": [
-		"Diff 검토에서 \'삽입\'의 아이콘입니다.",
-		"Diff 검토에서 \'제거\'의 아이콘입니다.",
-		"Diff 검토에서 \'닫기\'의 아이콘입니다.",
+	"vs/editor/browser/widget/diffEditorWidget2/accessibleDiffViewer": [
+		"액세스 가능한 Diff 뷰어의 \'삽입\' 아이콘.",
+		"액세스 가능한 Diff 뷰어의 \'제거\' 아이콘.",
+		"접근 가능한 Diff 뷰어의 \'닫기\' 아이콘.",
 		"닫기",
+		"액세스 가능한 Diff 뷰어입니다. 탐색하려면 위쪽 및 아래쪽 화살표를 사용합니다.",
 		"변경된 줄 없음",
 		"선 1개 변경됨",
 		"줄 {0}개 변경됨",
@@ -139,6 +137,17 @@ define("vs/editor/editor.main.nls.ko", {
 		"{0} 원래 줄 {1} 수정된 줄 {2}",
 		"+ {0} 수정된 줄 {1}",
 		"- {0} 원래 줄 {1}",
+	],
+	"vs/editor/browser/widget/diffEditorWidget2/colors": [
+		"diff 편집기에서 이동된 텍스트의 테두리 색입니다.",
+	],
+	"vs/editor/browser/widget/diffEditorWidget2/decorations": [
+		"diff 편집기의 삽입에 대한 줄 데코레이션입니다.",
+		"diff 편집기의 제거에 대한 줄 데코레이션입니다.",
+		"변경 내용을 되돌리려면 클릭",
+	],
+	"vs/editor/browser/widget/diffEditorWidget2/diffEditorEditors": [
+		" {0}을(를) 사용하여 접근성 도움말을 엽니다.",
 	],
 	"vs/editor/browser/widget/diffEditorWidget2/inlineDiffDeletedCodeMargin": [
 		"삭제된 줄 복사",
@@ -575,9 +584,23 @@ define("vs/editor/editor.main.nls.ko", {
 		"편집기 커서 색입니다.",
 		"편집기 커서의 배경색입니다. 블록 커서와 겹치는 글자의 색상을 사용자 정의할 수 있습니다.",
 		"편집기의 공백 문자 색입니다.",
-		"편집기 들여쓰기 안내선 색입니다.",
-		"활성 편집기 들여쓰기 안내선 색입니다.",
 		"편집기 줄 번호 색입니다.",
+		"편집기 들여쓰기 안내선 색입니다.",
+		"\'editorIndentGuide.background\'는 더 이상 사용되지 않습니다. 대신 \'editorIndentGuide.background1\'을 사용하세요.",
+		"활성 편집기 들여쓰기 안내선 색입니다.",
+		"\'editorIndentGuide.activeBackground\'는 더 이상 사용되지 않습니다. 대신 \'editorIndentGuide.activeBackground1\'을 사용하세요.",
+		"편집기 들여쓰기 안내선 색(1).",
+		"편집기 들여쓰기 안내선 색(2).",
+		"편집기 들여쓰기 안내선 색(3).",
+		"편집기 들여쓰기 안내선 색(4).",
+		"편집기 들여쓰기 안내선 색(5).",
+		"편집기 들여쓰기 안내선 색(6).",
+		"활성 편집기 들여쓰기 안내선 색(1).",
+		"활성 편집기 들여쓰기 안내선 색(2).",
+		"활성 편집기 들여쓰기 안내선 색(3).",
+		"활성 편집기 들여쓰기 안내선 색(4).",
+		"활성 편집기 들여쓰기 안내선 색(5).",
+		"활성 편집기 들여쓰기 안내선 색(6).",
 		"편집기 활성 영역 줄번호 색상",
 		"ID는 사용되지 않습니다. 대신 \'editorLineNumber.activeForeground\'를 사용하세요.",
 		"편집기 활성 영역 줄번호 색상",
@@ -627,6 +650,7 @@ define("vs/editor/editor.main.nls.ko", {
 		"편집기가 읽기 전용인지 여부",
 		"컨텍스트가 diff 편집기인지 여부",
 		"컨텍스트가 포함된 diff 편집기인지 여부",
+		"액세스 가능한 Diff 뷰어 표시 여부",
 		"\'editor.columnSelection\'을 사용하도록 설정되어 있는지 여부",
 		"편집기에 선택된 텍스트가 있는지 여부",
 		"편집기에 여러 개의 선택 항목이 있는지 여부",
@@ -657,6 +681,35 @@ define("vs/editor/editor.main.nls.ko", {
 		"편집기에 문서 선택 서식 공급자가 있는지 여부",
 		"편집기에 여러 개의 문서 서식 공급자가 있는지 여부",
 		"편집기에 여러 개의 문서 선택 서식 공급자가 있는지 여부",
+	],
+	"vs/editor/common/languages": [
+		"배열",
+		"부울",
+		"클래스",
+		"상수",
+		"생성자",
+		"열거형",
+		"열거형 멤버",
+		"이벤트",
+		"필드",
+		"파일",
+		"함수",
+		"인터페이스",
+		"키",
+		"메서드",
+		"모듈",
+		"네임스페이스",
+		"Null",
+		"숫자",
+		"개체",
+		"연산자",
+		"패키지",
+		"속성",
+		"문자열",
+		"구조체",
+		"형식 매개 변수",
+		"변수",
+		"{0}({1})",
 	],
 	"vs/editor/common/languages/modesRegistry": [
 		"일반 텍스트",
@@ -1039,6 +1092,8 @@ define("vs/editor/editor.main.nls.ko", {
 	],
 	"vs/editor/contrib/hover/browser/hover": [
 		"가리키기 또는 포커스 표시",
+		"{0}을(를) 사용하여 접근성 보기에서 이를 검사",
+		"현재 키 바인딩을 통해 트리거할 수 없는 접근성 보기 열기 명령을 통해 접근성 보기에서 이를 검사합니다.",
 		"정의 미리 보기 가리킨 항목 표시",
 		"위로 스크롤 가리키기",
 		"아래로 스크롤 가리키기",
@@ -1048,7 +1103,6 @@ define("vs/editor/editor.main.nls.ko", {
 		"페이지 아래쪽 가리키기",
 		"위쪽 가리키기로 이동",
 		"아래쪽 가리키기로 이동",
-		"포커스 가리키기 이스케이프",
 	],
 	"vs/editor/contrib/hover/browser/markdownHoverParticipant": [
 		"로드 중...",
@@ -1386,8 +1440,8 @@ define("vs/editor/editor.main.nls.ko", {
 		"로드 중...",
 		"제안 항목이 없습니다.",
 		"제안",
-		"({0},{1}) {2}",
-		"{0}{1}",
+		"{0} {1}, {2}",
+		"{0} {1}",
 		"{0}, {1}",
 		"{0}, 문서: {1}",
 	],

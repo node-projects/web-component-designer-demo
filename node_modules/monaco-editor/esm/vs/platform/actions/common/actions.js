@@ -150,6 +150,7 @@ MenuId.InteractiveCellDelete = new MenuId('InteractiveCellDelete');
 MenuId.InteractiveCellExecute = new MenuId('InteractiveCellExecute');
 MenuId.InteractiveInputExecute = new MenuId('InteractiveInputExecute');
 MenuId.NotebookToolbar = new MenuId('NotebookToolbar');
+MenuId.NotebookStickyScrollContext = new MenuId('NotebookStickyScrollContext');
 MenuId.NotebookCellTitle = new MenuId('NotebookCellTitle');
 MenuId.NotebookCellDelete = new MenuId('NotebookCellDelete');
 MenuId.NotebookCellInsert = new MenuId('NotebookCellInsert');
@@ -299,7 +300,7 @@ export class SubmenuItemAction extends SubmenuAction {
 }
 // implements IAction, does NOT extend Action, so that no one
 // subscribes to events of Action or modified properties
-export let MenuItemAction = class MenuItemAction {
+let MenuItemAction = class MenuItemAction {
     static label(action, options) {
         return (options === null || options === void 0 ? void 0 : options.renderShortTitle) && action.shortTitle
             ? (typeof action.shortTitle === 'string' ? action.shortTitle : action.shortTitle.value)
@@ -352,6 +353,7 @@ MenuItemAction = __decorate([
     __param(4, IContextKeyService),
     __param(5, ICommandService)
 ], MenuItemAction);
+export { MenuItemAction };
 export class Action2 {
     constructor(desc) {
         this.desc = desc;

@@ -96,9 +96,14 @@ class ColumnHeader {
 export class Table {
     get onDidChangeFocus() { return this.list.onDidChangeFocus; }
     get onDidChangeSelection() { return this.list.onDidChangeSelection; }
+    get onDidScroll() { return this.list.onDidScroll; }
     get onMouseDblClick() { return this.list.onMouseDblClick; }
     get onPointer() { return this.list.onPointer; }
     get onDidFocus() { return this.list.onDidFocus; }
+    get scrollTop() { return this.list.scrollTop; }
+    set scrollTop(scrollTop) { this.list.scrollTop = scrollTop; }
+    get scrollHeight() { return this.list.scrollHeight; }
+    get renderHeight() { return this.list.renderHeight; }
     get onDidDispose() { return this.list.onDidDispose; }
     constructor(user, container, virtualDelegate, columns, renderers, _options) {
         this.virtualDelegate = virtualDelegate;

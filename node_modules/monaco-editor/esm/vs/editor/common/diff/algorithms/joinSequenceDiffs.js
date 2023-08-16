@@ -27,6 +27,63 @@ export function smoothenSequenceDiffs(sequence1, sequence2, sequenceDiffs) {
     }
     return result;
 }
+export function removeRandomMatches(sequence1, sequence2, sequenceDiffs) {
+    let diffs = sequenceDiffs;
+    if (diffs.length === 0) {
+        return diffs;
+    }
+    let counter = 0;
+    let shouldRepeat;
+    do {
+        shouldRepeat = false;
+        const result = [
+            diffs[0]
+        ];
+        for (let i = 1; i < diffs.length; i++) {
+            const cur = diffs[i];
+            const lastResult = result[result.length - 1];
+            function shouldJoinDiffs(before, after) {
+                const unchangedRange = new OffsetRange(lastResult.seq1Range.endExclusive, cur.seq1Range.start);
+                const unchangedLineCount = sequence1.countLinesIn(unchangedRange);
+                if (unchangedLineCount > 5 || unchangedRange.length > 500) {
+                    return false;
+                }
+                const unchangedText = sequence1.getText(unchangedRange).trim();
+                if (unchangedText.length > 20 || unchangedText.split(/\r\n|\r|\n/).length > 1) {
+                    return false;
+                }
+                const beforeLineCount1 = sequence1.countLinesIn(before.seq1Range);
+                const beforeSeq1Length = before.seq1Range.length;
+                const beforeLineCount2 = sequence2.countLinesIn(before.seq2Range);
+                const beforeSeq2Length = before.seq2Range.length;
+                const afterLineCount1 = sequence1.countLinesIn(after.seq1Range);
+                const afterSeq1Length = after.seq1Range.length;
+                const afterLineCount2 = sequence2.countLinesIn(after.seq2Range);
+                const afterSeq2Length = after.seq2Range.length;
+                // TODO: Maybe a neural net can be used to derive the result from these numbers
+                const max = 2 * 40 + 50;
+                function cap(v) {
+                    return Math.min(v, max);
+                }
+                if (Math.pow(Math.pow(cap(beforeLineCount1 * 40 + beforeSeq1Length), 1.5) + Math.pow(cap(beforeLineCount2 * 40 + beforeSeq2Length), 1.5), 1.5)
+                    + Math.pow(Math.pow(cap(afterLineCount1 * 40 + afterSeq1Length), 1.5) + Math.pow(cap(afterLineCount2 * 40 + afterSeq2Length), 1.5), 1.5) > (Math.pow((Math.pow(max, 1.5)), 1.5)) * 1.3) {
+                    return true;
+                }
+                return false;
+            }
+            const shouldJoin = shouldJoinDiffs(lastResult, cur);
+            if (shouldJoin) {
+                shouldRepeat = true;
+                result[result.length - 1] = result[result.length - 1].join(cur);
+            }
+            else {
+                result.push(cur);
+            }
+        }
+        diffs = result;
+    } while (counter++ < 10 && shouldRepeat);
+    return diffs;
+}
 /**
  * This function fixes issues like this:
  * ```
@@ -40,13 +97,14 @@ export function smoothenSequenceDiffs(sequence1, sequence2, sequenceDiffs) {
  * Improved diff: [{Add ", Foo" after Bar}]
  */
 export function joinSequenceDiffs(sequence1, sequence2, sequenceDiffs) {
-    const result = [];
-    if (sequenceDiffs.length > 0) {
-        result.push(sequenceDiffs[0]);
+    if (sequenceDiffs.length === 0) {
+        return sequenceDiffs;
     }
+    const result = [];
+    result.push(sequenceDiffs[0]);
     // First move them all to the left as much as possible and join them if possible
     for (let i = 1; i < sequenceDiffs.length; i++) {
-        const prevResult = sequenceDiffs[i - 1];
+        const prevResult = result[result.length - 1];
         let cur = sequenceDiffs[i];
         if (cur.seq1Range.isEmpty || cur.seq2Range.isEmpty) {
             const length = cur.seq1Range.start - prevResult.seq1Range.endExclusive;

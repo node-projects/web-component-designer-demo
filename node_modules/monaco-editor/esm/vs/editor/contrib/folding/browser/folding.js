@@ -51,7 +51,7 @@ import { URI } from '../../../../base/common/uri.js';
 import { IModelService } from '../../../common/services/model.js';
 import { IConfigurationService } from '../../../../platform/configuration/common/configuration.js';
 const CONTEXT_FOLDING_ENABLED = new RawContextKey('foldingEnabled', false);
-export let FoldingController = class FoldingController extends Disposable {
+let FoldingController = class FoldingController extends Disposable {
     static get(editor) {
         return editor.getContribution(FoldingController.ID);
     }
@@ -69,12 +69,12 @@ export let FoldingController = class FoldingController extends Disposable {
         this.editor = editor;
         this._foldingLimitReporter = new RangesLimitReporter(editor);
         const options = this.editor.getOptions();
-        this._isEnabled = options.get(41 /* EditorOption.folding */);
-        this._useFoldingProviders = options.get(42 /* EditorOption.foldingStrategy */) !== 'indentation';
-        this._unfoldOnClickAfterEndOfLine = options.get(46 /* EditorOption.unfoldOnClickAfterEndOfLine */);
+        this._isEnabled = options.get(42 /* EditorOption.folding */);
+        this._useFoldingProviders = options.get(43 /* EditorOption.foldingStrategy */) !== 'indentation';
+        this._unfoldOnClickAfterEndOfLine = options.get(47 /* EditorOption.unfoldOnClickAfterEndOfLine */);
         this._restoringViewState = false;
         this._currentModelHasFoldedImports = false;
-        this._foldingImportsByDefault = options.get(44 /* EditorOption.foldingImportsByDefault */);
+        this._foldingImportsByDefault = options.get(45 /* EditorOption.foldingImportsByDefault */);
         this.updateDebounceInfo = languageFeatureDebounceService.for(languageFeaturesService.foldingRangeProvider, 'Folding', { min: 200 });
         this.foldingModel = null;
         this.hiddenRangeModel = null;
@@ -85,35 +85,35 @@ export let FoldingController = class FoldingController extends Disposable {
         this.cursorChangedScheduler = null;
         this.mouseDownInfo = null;
         this.foldingDecorationProvider = new FoldingDecorationProvider(editor);
-        this.foldingDecorationProvider.showFoldingControls = options.get(107 /* EditorOption.showFoldingControls */);
-        this.foldingDecorationProvider.showFoldingHighlights = options.get(43 /* EditorOption.foldingHighlight */);
+        this.foldingDecorationProvider.showFoldingControls = options.get(108 /* EditorOption.showFoldingControls */);
+        this.foldingDecorationProvider.showFoldingHighlights = options.get(44 /* EditorOption.foldingHighlight */);
         this.foldingEnabled = CONTEXT_FOLDING_ENABLED.bindTo(this.contextKeyService);
         this.foldingEnabled.set(this._isEnabled);
         this._register(this.editor.onDidChangeModel(() => this.onModelChanged()));
         this._register(this.editor.onDidChangeConfiguration((e) => {
-            if (e.hasChanged(41 /* EditorOption.folding */)) {
-                this._isEnabled = this.editor.getOptions().get(41 /* EditorOption.folding */);
+            if (e.hasChanged(42 /* EditorOption.folding */)) {
+                this._isEnabled = this.editor.getOptions().get(42 /* EditorOption.folding */);
                 this.foldingEnabled.set(this._isEnabled);
                 this.onModelChanged();
             }
-            if (e.hasChanged(45 /* EditorOption.foldingMaximumRegions */)) {
+            if (e.hasChanged(46 /* EditorOption.foldingMaximumRegions */)) {
                 this.onModelChanged();
             }
-            if (e.hasChanged(107 /* EditorOption.showFoldingControls */) || e.hasChanged(43 /* EditorOption.foldingHighlight */)) {
+            if (e.hasChanged(108 /* EditorOption.showFoldingControls */) || e.hasChanged(44 /* EditorOption.foldingHighlight */)) {
                 const options = this.editor.getOptions();
-                this.foldingDecorationProvider.showFoldingControls = options.get(107 /* EditorOption.showFoldingControls */);
-                this.foldingDecorationProvider.showFoldingHighlights = options.get(43 /* EditorOption.foldingHighlight */);
+                this.foldingDecorationProvider.showFoldingControls = options.get(108 /* EditorOption.showFoldingControls */);
+                this.foldingDecorationProvider.showFoldingHighlights = options.get(44 /* EditorOption.foldingHighlight */);
                 this.triggerFoldingModelChanged();
             }
-            if (e.hasChanged(42 /* EditorOption.foldingStrategy */)) {
-                this._useFoldingProviders = this.editor.getOptions().get(42 /* EditorOption.foldingStrategy */) !== 'indentation';
+            if (e.hasChanged(43 /* EditorOption.foldingStrategy */)) {
+                this._useFoldingProviders = this.editor.getOptions().get(43 /* EditorOption.foldingStrategy */) !== 'indentation';
                 this.onFoldingStrategyChanged();
             }
-            if (e.hasChanged(46 /* EditorOption.unfoldOnClickAfterEndOfLine */)) {
-                this._unfoldOnClickAfterEndOfLine = this.editor.getOptions().get(46 /* EditorOption.unfoldOnClickAfterEndOfLine */);
+            if (e.hasChanged(47 /* EditorOption.unfoldOnClickAfterEndOfLine */)) {
+                this._unfoldOnClickAfterEndOfLine = this.editor.getOptions().get(47 /* EditorOption.unfoldOnClickAfterEndOfLine */);
             }
-            if (e.hasChanged(44 /* EditorOption.foldingImportsByDefault */)) {
-                this._foldingImportsByDefault = this.editor.getOptions().get(44 /* EditorOption.foldingImportsByDefault */);
+            if (e.hasChanged(45 /* EditorOption.foldingImportsByDefault */)) {
+                this._foldingImportsByDefault = this.editor.getOptions().get(45 /* EditorOption.foldingImportsByDefault */);
             }
         }));
         this.onModelChanged();
@@ -425,6 +425,7 @@ FoldingController = __decorate([
     __param(4, ILanguageFeatureDebounceService),
     __param(5, ILanguageFeaturesService)
 ], FoldingController);
+export { FoldingController };
 export class RangesLimitReporter {
     constructor(editor) {
         this.editor = editor;
@@ -433,7 +434,7 @@ export class RangesLimitReporter {
         this._limited = false;
     }
     get limit() {
-        return this.editor.getOptions().get(45 /* EditorOption.foldingMaximumRegions */);
+        return this.editor.getOptions().get(46 /* EditorOption.foldingMaximumRegions */);
     }
     update(computed, limited) {
         if (computed !== this._computed || limited !== this._limited) {

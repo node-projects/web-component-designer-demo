@@ -31,7 +31,7 @@ import { ILanguageConfigurationService } from '../../../common/languages/languag
 import { ILanguageFeaturesService } from '../../../common/services/languageFeatures.js';
 import { SingleTextEdit } from './singleTextEdit.js';
 import { provideInlineCompletions } from './provideInlineCompletions.js';
-export let InlineCompletionsSource = class InlineCompletionsSource extends Disposable {
+let InlineCompletionsSource = class InlineCompletionsSource extends Disposable {
     constructor(textModel, versionId, _debounceValue, languageFeaturesService, languageConfigurationService) {
         super();
         this.textModel = textModel;
@@ -112,6 +112,7 @@ InlineCompletionsSource = __decorate([
     __param(3, ILanguageFeaturesService),
     __param(4, ILanguageConfigurationService)
 ], InlineCompletionsSource);
+export { InlineCompletionsSource };
 function wait(ms, cancellationToken) {
     return new Promise(resolve => {
         let d = undefined;
@@ -198,7 +199,13 @@ export class UpToDateInlineCompletions {
     dispose() {
         this._refCount--;
         if (this._refCount === 0) {
-            this.textModel.deltaDecorations(this._inlineCompletions.map(i => i.decorationId), []);
+            setTimeout(() => {
+                // To fix https://github.com/microsoft/vscode/issues/188348
+                if (!this.textModel.isDisposed()) {
+                    // This is just cleanup. It's ok if it happens with a delay.
+                    this.textModel.deltaDecorations(this._inlineCompletions.map(i => i.decorationId), []);
+                }
+            }, 0);
             this.inlineCompletionProviderResult.dispose();
             for (const i of this._prependedInlineCompletionItems) {
                 i.source.removeRef();

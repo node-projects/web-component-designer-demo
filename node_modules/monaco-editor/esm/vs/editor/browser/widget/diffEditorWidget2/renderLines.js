@@ -31,17 +31,6 @@ export function renderLines(source, options, decorations, domNode) {
                 lastBreakOffset = breakOffset;
             }
             viewLineCounts.push(lineBreakData.breakOffsets.length);
-            /*
-            const marginDomNode2 = document.createElement('div');
-            marginDomNode2.className = 'gutter-delete';
-            result.original.push({
-                afterLineNumber: lineNumber,
-                afterColumn: 0,
-                heightInLines: lineBreakData.breakOffsets.length - 1,
-                domNode: createFakeLinesDiv(),
-                marginDomNode: marginDomNode2
-            });
-            */
         }
         else {
             viewLineCounts.push(1);
@@ -72,9 +61,9 @@ export class RenderOptions {
     static fromEditor(editor) {
         var _a;
         const modifiedEditorOptions = editor.getOptions();
-        const fontInfo = modifiedEditorOptions.get(48 /* EditorOption.fontInfo */);
-        const layoutInfo = modifiedEditorOptions.get(141 /* EditorOption.layoutInfo */);
-        return new RenderOptions(((_a = editor.getModel()) === null || _a === void 0 ? void 0 : _a.getOptions().tabSize) || 0, fontInfo, modifiedEditorOptions.get(31 /* EditorOption.disableMonospaceOptimizations */), fontInfo.typicalHalfwidthCharacterWidth, modifiedEditorOptions.get(101 /* EditorOption.scrollBeyondLastColumn */), modifiedEditorOptions.get(64 /* EditorOption.lineHeight */), layoutInfo.decorationsWidth, modifiedEditorOptions.get(114 /* EditorOption.stopRenderingLineAfter */), modifiedEditorOptions.get(96 /* EditorOption.renderWhitespace */), modifiedEditorOptions.get(91 /* EditorOption.renderControlCharacters */), modifiedEditorOptions.get(49 /* EditorOption.fontLigatures */));
+        const fontInfo = modifiedEditorOptions.get(49 /* EditorOption.fontInfo */);
+        const layoutInfo = modifiedEditorOptions.get(142 /* EditorOption.layoutInfo */);
+        return new RenderOptions(((_a = editor.getModel()) === null || _a === void 0 ? void 0 : _a.getOptions().tabSize) || 0, fontInfo, modifiedEditorOptions.get(32 /* EditorOption.disableMonospaceOptimizations */), fontInfo.typicalHalfwidthCharacterWidth, modifiedEditorOptions.get(102 /* EditorOption.scrollBeyondLastColumn */), modifiedEditorOptions.get(65 /* EditorOption.lineHeight */), layoutInfo.decorationsWidth, modifiedEditorOptions.get(115 /* EditorOption.stopRenderingLineAfter */), modifiedEditorOptions.get(97 /* EditorOption.renderWhitespace */), modifiedEditorOptions.get(92 /* EditorOption.renderControlCharacters */), modifiedEditorOptions.get(50 /* EditorOption.fontLigatures */));
     }
     constructor(tabSize, fontInfo, disableMonospaceOptimizations, typicalHalfwidthCharacterWidth, scrollBeyondLastColumn, lineHeight, lineDecorationsWidth, stopRenderingLineAfter, renderWhitespace, renderControlCharacters, fontLigatures) {
         this.tabSize = tabSize;
