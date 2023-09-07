@@ -117,15 +117,17 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
               <div style="display: flex; height: 100%;">
                 <input list="npmInputList" id="npmInput" title="NPM Package Name" placeholder="npm-package" type="text" style="height: 100%; border: solid black 1px; box-sizing: border-box; width: 100%">
                 <datalist id="npmInputList">
+                  <option value="@material/web"></option>
+                  <option value="@microsoft/fast-components"></option>
+                  <option value="@shoelace-style/shoelace"></option>
                   <option value="@patternfly/elements"></option>
                   <option value="@christianliebel/paint"></option>
-                  <option value="wired-elements"></option>
+                  <option value="@node-projects/wired-elements"></option>
                   <option value="@spectrum-web-components/button"></option>
                   <option value="@node-projects/tab.webcomponent"></option>
                   <option value="@node-projects/gauge.webcomponent"></option>
                   <option value="@zooplus/zoo-web-components"></option>
                   <option value="@wokwi/elements"></option>
-                  <option value="@shoelace-style/shoelace"></option>
                   <option value="@generic-components/components"></option>
                   <option value="@visa/charts"></option>
                   <option value="@carbon/web-components"></option>
@@ -181,14 +183,22 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     this._getNpm = this._getDomElement<HTMLButtonElement>('getNpm');
 
     let loadAllImports = window.location.search.includes("loadAllImports");
-    this._npmInput.onkeydown = (e) => {
+    this._npmInput.onkeydown = async (e) => {
       if (e.key == 'Enter') {
-        this._npmPackageLoader.loadNpmPackage(this._npmInput.value, serviceContainer, this._paletteTree, loadAllImports, state => this._npmStatus.innerText = state);
+        let res = await this._npmPackageLoader.loadNpmPackage(this._npmInput.value, serviceContainer, this._paletteTree, loadAllImports, state => this._npmStatus.innerText = state);
+        if (res.html) {
+          let element = <DocumentContainer>this._dock.getElementInSlot((<HTMLSlotElement><any>this._dockManager.activeDocument.elementContent));
+          element.content = res.html + element.content;
+        }
         this._npmInput.value = '';
       }
     }
-    this._getNpm.onclick = (e) => {
-      this._npmPackageLoader.loadNpmPackage(this._npmInput.value, serviceContainer, this._paletteTree, loadAllImports, state => this._npmStatus.innerText = state);
+    this._getNpm.onclick = async (e) => {
+      let res = await this._npmPackageLoader.loadNpmPackage(this._npmInput.value, serviceContainer, this._paletteTree, loadAllImports, state => this._npmStatus.innerText = state);
+      if (res.html) {
+        let element = <DocumentContainer>this._dock.getElementInSlot((<HTMLSlotElement><any>this._dockManager.activeDocument.elementContent));
+        element.content = res.html + element.content;
+      }
       this._npmInput.value = '';
     }
 
@@ -246,7 +256,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
 
     await this._setupServiceContainer();
     this._bindableObjectsBrowser.initialize(serviceContainer);
-   
+
     await StyleEditor.initMonacoEditor();
 
     this.newDocument(false, code, style);
