@@ -28,7 +28,7 @@
     "@node-projects/base-custom-webcomponent": "0.17.2",
     "@node-projects/lean-he-esm": "^3.3.0",
     "@node-projects/node-html-parser-esm": "^6.1.5",
-    "@node-projects/web-component-designer": "^0.0.283",
+    "@node-projects/web-component-designer": "^0.0.290",
     "@papyrs/stylo": "^0.0.45",
     "@vanillawc/wc-marquee": "^1.0.31",
     "ace-builds": "^1.24.1",
