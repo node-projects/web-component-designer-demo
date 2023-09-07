@@ -10,6 +10,7 @@ if (window.location.hostname == 'localhost' || window.location.hostname == '127.
 let nodeParserService = new NodeHtmlParserService(rootDir + '/node_modules/@node-projects/node-html-parser-esm/dist/index.js');
 serviceContainer.register("htmlParserService", nodeParserService);
 serviceContainer.register("copyPasteService", new CopyPasteAsJsonService());
+serviceContainer.register("bindableObjectsService", new CustomBindableObjectsService());
 //serviceContainer.register("htmlParserService", new BaseCustomWebcomponentParserService(nodeParserService));
 //serviceContainer.config.codeViewWidget = CodeViewCodeMirror6;
 serviceContainer.config.codeViewWidget = CodeViewMonaco;
@@ -110,7 +111,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
       <div class="app-body">
         <dock-spawn-ts id="dock" style="width: 100%; height: 100%; position: relative;">
           <div id="treeUpper" title="Palette" dock-spawn-dock-type="left" dock-spawn-dock-ratio="0.2"
-            style="overflow: hidden; width: 100%; height: 100%; display: flex; flex-direction: column;">
+            style="z-index: 1; position: relative; overflow: hidden; width: 100%; height: 100%; display: flex; flex-direction: column;">
             <node-projects-palette-tree-view name="paletteTree" id="paletteTree" style="height: calc(100% - 44px);"></node-projects-palette-tree-view>
             <div style="height: 28px;">
               <div style="display: flex; height: 100%;">
@@ -135,12 +136,10 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
             <div style="height: 16px; font-size: 10px; white-space: nowrap;" id="npmStatus">none</div>
           </div>
       
-          <!--
           <div id="upper3" title="Bind" dock-spawn-dock-to="treeUpper"
             style="overflow: hidden; width: 100%;">
             <node-projects-bindable-objects-browser id="bindableObjectsBrowser"></node-projects-bindable-objects-browser>
           </div>
-          -->
 
           <div title="TreeExtended" dock-spawn-dock-type="down" dock-spawn-dock-to="treeUpper" dock-spawn-dock-ratio="0.5"
             style="overflow: hidden; width: 100%;">
@@ -171,7 +170,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
   async ready() {
     this._dock = this._getDomElement('dock');
     this._paletteTree = this._getDomElement<PaletteTreeView>('paletteTree');
-    //this._bindableObjectsBrowser = this._getDomElement<BindableObjectsBrowser>('bindableObjectsBrowser');
+    this._bindableObjectsBrowser = this._getDomElement<BindableObjectsBrowser>('bindableObjectsBrowser');
     this._treeViewExtended = this._getDomElement<TreeViewExtended>('treeViewExtended');
     this._propertyGrid = this._getDomElement<PropertyGrid>('propertyGrid');
     this._debugView = this._getDomElement<DebugView>('debugView');
@@ -246,10 +245,13 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     });
 
     await this._setupServiceContainer();
-
+    this._bindableObjectsBrowser.initialize(serviceContainer);
+   
     await StyleEditor.initMonacoEditor();
 
     this.newDocument(false, code, style);
+
+    this.activateDockById('treeUpper');
   }
 
   private async _setupServiceContainer() {
@@ -330,6 +332,15 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     if (code) {
       sampleDocument.content = code;
     }
+  }
+
+  activateDockById(name: string) {
+    this.activateDock(this._getDomElement(name));
+  }
+
+  activateDock(element: Element) {
+    const nd = this._dockManager.getNodeByElement(element);
+    nd.parent.container.setActiveChild(nd.container);
   }
 }
 
