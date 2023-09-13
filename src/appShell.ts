@@ -2,7 +2,7 @@ import { NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElemen
 import createDefaultServiceContainer from '@node-projects/web-component-designer/dist/elements/services/DefaultServiceBootstrap.js';
 
 import { NodeHtmlParserService } from '@node-projects/web-component-designer-htmlparserservice-nodehtmlparser';
-//import { CodeViewMonaco } from '@node-projects/web-component-designer-codeview-monaco';
+import { CodeViewMonaco } from '@node-projects/web-component-designer-codeview-monaco';
 import { EditTextWithStyloExtensionProvider } from '@node-projects/web-component-designer-texteditextension-stylo';
 import { CssToolsStylesheetService } from '@node-projects/web-component-designer-stylesheetservice-css-tools';
 import { PaletteTreeView, BindableObjectsBrowser, TreeViewExtended } from '@node-projects/web-component-designer-widgets-fancytree/';
@@ -18,7 +18,7 @@ serviceContainer.register("copyPasteService", new CopyPasteAsJsonService());
 serviceContainer.register("bindableObjectsService", new CustomBindableObjectsService());
 serviceContainer.register("propertyService", new UnkownElementsPropertiesService());
 
-//serviceContainer.config.codeViewWidget = CodeViewMonaco;
+serviceContainer.config.codeViewWidget = CodeViewMonaco;
 serviceContainer.designerExtensions.set(ExtensionType.Doubleclick, [new EditTextWithStyloExtensionProvider()]);
 
 //Instance Service Container Factories
