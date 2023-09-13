@@ -1,4 +1,4 @@
-import { NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, TreeViewExtended, PropertyGrid, DocumentContainer, NodeHtmlParserService, ListPropertiesService, PaletteTreeView, CodeViewMonaco, BindableObjectsBrowser, ExtensionType, EditTextWithStyloExtensionProvider, CssToolsStylesheetService, CopyPasteAsJsonService, DebugView } from '@node-projects/web-component-designer';
+import { NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, TreeViewExtended, PropertyGrid, DocumentContainer, NodeHtmlParserService, ListPropertiesService, PaletteTreeView, CodeViewMonaco, BindableObjectsBrowser, ExtensionType, EditTextWithStyloExtensionProvider, CssToolsStylesheetService, CopyPasteAsJsonService, DebugView, UnkownElementsPropertiesService } from '@node-projects/web-component-designer';
 import createDefaultServiceContainer from '@node-projects/web-component-designer/dist/elements/services/DefaultServiceBootstrap.js';
 //import { BaseCustomWebcomponentParserService } from '@node-projects/web-component-designer/dist/elements/services/htmlParserService/BaseCustomWebcomponentParserService.js';
 
@@ -11,6 +11,8 @@ let nodeParserService = new NodeHtmlParserService(rootDir + '/node_modules/@node
 serviceContainer.register("htmlParserService", nodeParserService);
 serviceContainer.register("copyPasteService", new CopyPasteAsJsonService());
 serviceContainer.register("bindableObjectsService", new CustomBindableObjectsService());
+serviceContainer.register("propertyService", new UnkownElementsPropertiesService());
+
 //serviceContainer.register("htmlParserService", new BaseCustomWebcomponentParserService(nodeParserService));
 //serviceContainer.config.codeViewWidget = CodeViewCodeMirror6;
 serviceContainer.config.codeViewWidget = CodeViewMonaco;
@@ -19,7 +21,7 @@ serviceContainer.designerExtensions.set(ExtensionType.Doubleclick, [new EditText
 //Instance Service Container Factories
 serviceContainer.register("stylesheetService", designerCanvas => new CssToolsStylesheetService(designerCanvas));
 
-LazyLoader.LoadText('./dist/custom-element-properties.json').then(data => serviceContainer.register("propertyService", new ListPropertiesService(JSON.parse(data))));
+//LazyLoader.LoadText('./dist/custom-element-properties.json').then(data => serviceContainer.register("propertyService", new ListPropertiesService(JSON.parse(data))));
 
 import { DockSpawnTsWebcomponent } from 'dock-spawn-ts/lib/js/webcomponent/DockSpawnTsWebcomponent.js';
 import { DockManager } from 'dock-spawn-ts/lib/js/DockManager.js';
@@ -117,6 +119,9 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
               <div style="display: flex; height: 100%;">
                 <input list="npmInputList" id="npmInput" title="NPM Package Name" placeholder="npm-package" type="text" style="height: 100%; border: solid black 1px; box-sizing: border-box; width: 100%">
                 <datalist id="npmInputList">
+                  <option value="@vanillawc/wc-marquee"></option>
+                  <option value="@vanillawc/wc-blink"></option>
+                  <option value="vanilla-colorful"></option>
                   <option value="@material/web"></option>
                   <option value="@microsoft/fast-components"></option>
                   <option value="@shoelace-style/shoelace"></option>
