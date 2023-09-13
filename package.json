@@ -29,7 +29,7 @@
     "@node-projects/lean-he-esm": "^3.3.0",
     "@node-projects/node-html-parser-esm": "^6.1.5",
     "@node-projects/web-component-designer": "^0.1.1",
-    "@node-projects/web-component-designer-codeview-monaco": "^0.1.1",
+    "@node-projects/web-component-designer-codeview-monaco": "^0.1.4",
     "@node-projects/web-component-designer-htmlparserservice-nodehtmlparser": "^0.1.1",
     "@node-projects/web-component-designer-stylesheetservice-css-tools": "^0.1.1",
     "@node-projects/web-component-designer-texteditextension-stylo": "^0.1.1",
