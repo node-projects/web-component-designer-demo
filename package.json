@@ -30,7 +30,6 @@
     "@node-projects/node-html-parser-esm": "^6.1.5",
     "@node-projects/web-component-designer": "^0.0.290",
     "@papyrs/stylo": "^0.0.45",
-    "@vanillawc/wc-marquee": "^1.0.31",
     "ace-builds": "^1.24.1",
     "codejar": "^4.2.0",
     "codemirror": "^6.0.1",
