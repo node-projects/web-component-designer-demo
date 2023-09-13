@@ -1,31 +1,33 @@
-import { NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, TreeViewExtended, PropertyGrid, DocumentContainer, NodeHtmlParserService, ListPropertiesService, PaletteTreeView, CodeViewMonaco, BindableObjectsBrowser, ExtensionType, EditTextWithStyloExtensionProvider, CssToolsStylesheetService, CopyPasteAsJsonService, DebugView, UnkownElementsPropertiesService } from '@node-projects/web-component-designer';
+import { NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, PropertyGrid, DocumentContainer, ExtensionType, CopyPasteAsJsonService, DebugView, UnkownElementsPropertiesService } from '@node-projects/web-component-designer';
 import createDefaultServiceContainer from '@node-projects/web-component-designer/dist/elements/services/DefaultServiceBootstrap.js';
-//import { BaseCustomWebcomponentParserService } from '@node-projects/web-component-designer/dist/elements/services/htmlParserService/BaseCustomWebcomponentParserService.js';
+
+import { NodeHtmlParserService } from '@node-projects/web-component-designer-htmlparserservice-nodehtmlparser';
+//import { CodeViewMonaco } from '@node-projects/web-component-designer-codeview-monaco';
+import { EditTextWithStyloExtensionProvider } from '@node-projects/web-component-designer-texteditextension-stylo';
+import { CssToolsStylesheetService } from '@node-projects/web-component-designer-stylesheetservice-css-tools';
+import { PaletteTreeView, BindableObjectsBrowser, TreeViewExtended } from '@node-projects/web-component-designer-widgets-fancytree/';
+import '@node-projects/web-component-designer-widgets-fancytree';
 
 let serviceContainer = createDefaultServiceContainer();
 serviceContainer.register("bindingService", new BaseCustomWebcomponentBindingsService());
 let rootDir = "/web-component-designer-demo";
 if (window.location.hostname == 'localhost' || window.location.hostname == '127.0.0.1')
   rootDir = '';
-let nodeParserService = new NodeHtmlParserService(rootDir + '/node_modules/@node-projects/node-html-parser-esm/dist/index.js');
-serviceContainer.register("htmlParserService", nodeParserService);
+serviceContainer.register("htmlParserService", new NodeHtmlParserService());
 serviceContainer.register("copyPasteService", new CopyPasteAsJsonService());
 serviceContainer.register("bindableObjectsService", new CustomBindableObjectsService());
 serviceContainer.register("propertyService", new UnkownElementsPropertiesService());
 
-//serviceContainer.register("htmlParserService", new BaseCustomWebcomponentParserService(nodeParserService));
-//serviceContainer.config.codeViewWidget = CodeViewCodeMirror6;
-serviceContainer.config.codeViewWidget = CodeViewMonaco;
+//serviceContainer.config.codeViewWidget = CodeViewMonaco;
 serviceContainer.designerExtensions.set(ExtensionType.Doubleclick, [new EditTextWithStyloExtensionProvider()]);
 
 //Instance Service Container Factories
 serviceContainer.register("stylesheetService", designerCanvas => new CssToolsStylesheetService(designerCanvas));
 
-//LazyLoader.LoadText('./dist/custom-element-properties.json').then(data => serviceContainer.register("propertyService", new ListPropertiesService(JSON.parse(data))));
 
 import { DockSpawnTsWebcomponent } from 'dock-spawn-ts/lib/js/webcomponent/DockSpawnTsWebcomponent.js';
 import { DockManager } from 'dock-spawn-ts/lib/js/DockManager.js';
-import { BaseCustomWebComponentConstructorAppend, css, Disposable, html, LazyLoader } from '@node-projects/base-custom-webcomponent';
+import { BaseCustomWebComponentConstructorAppend, css, Disposable, html } from '@node-projects/base-custom-webcomponent';
 import { CommandHandling } from './CommandHandling.js'
 import { StyleEditor } from './styleEditor.js';
 import './styleEditor.js';
