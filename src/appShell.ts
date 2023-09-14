@@ -1,12 +1,14 @@
-import { NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, PropertyGrid, DocumentContainer, ExtensionType, CopyPasteAsJsonService, DebugView, UnkownElementsPropertiesService } from '@node-projects/web-component-designer';
+import './FancyTreeLoader.js';
+
+import { NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, PropertyGrid, DocumentContainer, ExtensionType, CopyPasteAsJsonService, DebugView, UnkownElementsPropertiesService, sleep } from '@node-projects/web-component-designer';
 import createDefaultServiceContainer from '@node-projects/web-component-designer/dist/elements/services/DefaultServiceBootstrap.js';
 
 import { NodeHtmlParserService } from '@node-projects/web-component-designer-htmlparserservice-nodehtmlparser';
 import { CodeViewMonaco } from '@node-projects/web-component-designer-codeview-monaco';
 import { EditTextWithStyloExtensionProvider } from '@node-projects/web-component-designer-texteditextension-stylo';
 import { CssToolsStylesheetService } from '@node-projects/web-component-designer-stylesheetservice-css-tools';
-import { PaletteTreeView, BindableObjectsBrowser, TreeViewExtended } from '@node-projects/web-component-designer-widgets-fancytree/';
 import '@node-projects/web-component-designer-widgets-fancytree';
+import { PaletteTreeView, BindableObjectsBrowser, TreeViewExtended } from '@node-projects/web-component-designer-widgets-fancytree/';
 
 let serviceContainer = createDefaultServiceContainer();
 serviceContainer.register("bindingService", new BaseCustomWebcomponentBindingsService());
@@ -264,10 +266,9 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     await this._setupServiceContainer();
     this._bindableObjectsBrowser.initialize(serviceContainer);
 
-    await StyleEditor.initMonacoEditor();
-
     this.newDocument(false, code, style);
 
+    await sleep(200)
     this.activateDockById('treeUpper');
   }
 
