@@ -34,7 +34,7 @@
     "@node-projects/web-component-designer-htmlparserservice-nodehtmlparser": "^0.1.1",
     "@node-projects/web-component-designer-stylesheetservice-css-tools": "^0.1.1",
     "@node-projects/web-component-designer-texteditextension-stylo": "^0.1.1",
-    "@node-projects/web-component-designer-widgets-wunderbaum": "^0.1.0",
+    "@node-projects/web-component-designer-widgets-wunderbaum": "^0.1.1",
     "@papyrs/stylo": "^0.0.45",
     "ace-builds": "^1.24.2",
     "codejar": "^4.2.0",
