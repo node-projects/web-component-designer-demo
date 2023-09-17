@@ -34,7 +34,7 @@
     "@node-projects/web-component-designer-htmlparserservice-nodehtmlparser": "^0.1.1",
     "@node-projects/web-component-designer-stylesheetservice-css-tools": "^0.1.1",
     "@node-projects/web-component-designer-texteditextension-stylo": "^0.1.1",
-    "@node-projects/web-component-designer-widgets-fancytree": "^0.1.9",
+    "@node-projects/web-component-designer-widgets-wunderbaum": "^0.1.0",
     "@papyrs/stylo": "^0.0.45",
     "ace-builds": "^1.24.2",
     "codejar": "^4.2.0",
@@ -42,13 +42,12 @@
     "dock-spawn-ts": "^2.521.0",
     "es-module-shims": "^1.8.0",
     "esprima-next": "^5.8.4",
-    "jquery": "^3.7.1",
-    "jquery.fancytree": "^2.38.3",
     "lit": "^2.8.0",
     "mdn-data": "^2.1.0",
     "metro4-dist": "^4.5.0",
     "mobile-drag-drop": "^3.0.0-rc.0",
     "monaco-editor": "^0.43.0",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "wunderbaum": "^0.5.1"
   }
 }
