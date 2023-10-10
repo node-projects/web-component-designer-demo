@@ -1,10 +1,10 @@
-import { NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, DocumentContainer, ExtensionType, CopyPasteAsJsonService, UnkownElementsPropertiesService } from '@node-projects/web-component-designer';
+import { NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, DocumentContainer, ExtensionType, CopyPasteAsJsonService, UnkownElementsPropertiesService, sleep } from '@node-projects/web-component-designer';
 import createDefaultServiceContainer from '@node-projects/web-component-designer/dist/elements/services/DefaultServiceBootstrap.js';
 import { NodeHtmlParserService } from '@node-projects/web-component-designer-htmlparserservice-nodehtmlparser';
-//import { CodeViewMonaco } from '@node-projects/web-component-designer-codeview-monaco';
+import { CodeViewMonaco } from '@node-projects/web-component-designer-codeview-monaco';
 import { EditTextWithStyloExtensionProvider } from '@node-projects/web-component-designer-texteditextension-stylo';
 import { CssToolsStylesheetService } from '@node-projects/web-component-designer-stylesheetservice-css-tools';
-import '@node-projects/web-component-designer-widgets-fancytree';
+import '@node-projects/web-component-designer-widgets-wunderbaum';
 let serviceContainer = createDefaultServiceContainer();
 serviceContainer.register("bindingService", new BaseCustomWebcomponentBindingsService());
 let rootDir = "/web-component-designer-demo";
@@ -14,14 +14,13 @@ serviceContainer.register("htmlParserService", new NodeHtmlParserService());
 serviceContainer.register("copyPasteService", new CopyPasteAsJsonService());
 serviceContainer.register("bindableObjectsService", new CustomBindableObjectsService());
 serviceContainer.register("propertyService", new UnkownElementsPropertiesService());
-//serviceContainer.config.codeViewWidget = CodeViewMonaco;
+serviceContainer.config.codeViewWidget = CodeViewMonaco;
 serviceContainer.designerExtensions.set(ExtensionType.Doubleclick, [new EditTextWithStyloExtensionProvider()]);
 //Instance Service Container Factories
 serviceContainer.register("stylesheetService", designerCanvas => new CssToolsStylesheetService(designerCanvas));
 import { DockSpawnTsWebcomponent } from 'dock-spawn-ts/lib/js/webcomponent/DockSpawnTsWebcomponent.js';
 import { BaseCustomWebComponentConstructorAppend, css, html } from '@node-projects/base-custom-webcomponent';
 import { CommandHandling } from './CommandHandling.js';
-import { StyleEditor } from './styleEditor.js';
 import './styleEditor.js';
 import { CustomBindableObjectsService } from './services/CustomBindableObjectsService.js';
 import { CustomBindableObjectDragDropService } from './services/CustomBindableObjectDragDropService.js';
@@ -240,8 +239,8 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         });
         await this._setupServiceContainer();
         this._bindableObjectsBrowser.initialize(serviceContainer);
-        await StyleEditor.initMonacoEditor();
         this.newDocument(false, code, style);
+        await sleep(200);
         this.activateDockById('treeUpper');
     }
     async _setupServiceContainer() {
