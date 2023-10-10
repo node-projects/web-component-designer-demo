@@ -19,35 +19,35 @@
   },
   "homepage": "https://github.com/node-projects/web-component-designer-demo#readme",
   "devDependencies": {
-    "@web/dev-server": "^0.3.1"
+    "@web/dev-server": "^0.3.2"
   },
   "dependencies": {
     "@adobe/css-tools": "4.3.1",
     "@doubletrade/lit-datepicker": "^1.0.0",
     "@fortawesome/fontawesome-free": "^6.4.2",
-    "@node-projects/base-custom-webcomponent": "0.17.2",
+    "@node-projects/base-custom-webcomponent": "0.19.0",
     "@node-projects/lean-he-esm": "^3.3.0",
     "@node-projects/node-html-parser-esm": "^6.1.5",
-    "@node-projects/web-component-designer": "^0.1.1",
-    "@node-projects/web-component-designer-codeview-monaco": "^0.1.4",
+    "@node-projects/web-component-designer": "^0.1.9",
+    "@node-projects/web-component-designer-codeview-ace": "^0.1.2",
+    "@node-projects/web-component-designer-codeview-monaco": "^0.1.6",
     "@node-projects/web-component-designer-htmlparserservice-nodehtmlparser": "^0.1.1",
     "@node-projects/web-component-designer-stylesheetservice-css-tools": "^0.1.1",
     "@node-projects/web-component-designer-texteditextension-stylo": "^0.1.1",
-    "@node-projects/web-component-designer-widgets-fancytree": "^0.1.2",
+    "@node-projects/web-component-designer-widgets-wunderbaum": "^0.1.2",
     "@papyrs/stylo": "^0.0.45",
-    "ace-builds": "^1.24.1",
+    "ace-builds": "^1.29.0",
     "codejar": "^4.2.0",
     "codemirror": "^6.0.1",
     "dock-spawn-ts": "^2.521.0",
     "es-module-shims": "^1.8.0",
     "esprima-next": "^5.8.4",
-    "jquery": "^3.7.1",
-    "jquery.fancytree": "^2.38.3",
-    "lit": "^2.8.0",
+    "lit": "^3.0.0",
     "mdn-data": "^2.1.0",
     "metro4-dist": "^4.5.0",
     "mobile-drag-drop": "^3.0.0-rc.0",
-    "monaco-editor": "^0.41.0",
-    "typescript": "^5.2.2"
+    "monaco-editor": "^0.44.0",
+    "typescript": "^5.2.2",
+    "wunderbaum": "^0.5.2"
   }
 }
