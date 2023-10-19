@@ -29,7 +29,7 @@ export class DemoElement extends BaseCustomWebComponentConstructorAppend {
   </div>`
 
   private _cnt: HTMLDivElement;
-  private _interval: NodeJS.Timer;
+  private _interval: ReturnType<typeof setTimeout>;
 
   @property(Boolean)
   inDesigner: boolean;
