@@ -17,7 +17,7 @@ if (window.location.hostname == 'localhost' || window.location.hostname == '127.
 serviceContainer.register("htmlParserService", new NodeHtmlParserService());
 serviceContainer.register("copyPasteService", new CopyPasteAsJsonService());
 serviceContainer.register("bindableObjectsService", new CustomBindableObjectsService());
-serviceContainer.register("propertyService", new UnkownElementsPropertiesService());
+serviceContainer.registerLast("propertyService", new UnkownElementsPropertiesService());
 
 serviceContainer.config.codeViewWidget = CodeViewMonaco;
 serviceContainer.designerExtensions.set(ExtensionType.Doubleclick, [new EditTextWithStyloExtensionProvider()]);
