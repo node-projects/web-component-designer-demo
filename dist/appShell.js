@@ -200,9 +200,9 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
             if (p.startsWith('npm='))
                 this._npmPackageLoader.loadNpmPackage(p.substring(4), serviceContainer, this._paletteTree, loadAllImports, state => this._npmStatus.innerText = state);
             if (p.startsWith('html='))
-                code = decodeURI(p.substring(5));
+                code = decodeURIComponent(p.substring(5));
             if (p.startsWith('style='))
-                style = decodeURI(p.substring(6));
+                style = decodeURIComponent(p.substring(6));
         }
         const linkElement = document.createElement("link");
         linkElement.rel = "stylesheet";
