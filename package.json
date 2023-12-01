@@ -22,7 +22,7 @@
     "@web/dev-server": "^0.4.0"
   },
   "dependencies": {
-    "@adobe/css-tools": "4.3.1",
+    "@adobe/css-tools": "4.3.2",
     "@doubletrade/lit-datepicker": "^1.0.0",
     "@fortawesome/fontawesome-free": "^6.4.2",
     "@node-projects/base-custom-webcomponent": "0.21.0",
