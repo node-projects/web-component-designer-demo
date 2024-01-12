@@ -1,4 +1,4 @@
-import { NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, PropertyGrid, DocumentContainer, ExtensionType, CopyPasteAsJsonService, DebugView, UnkownElementsPropertiesService, sleep } from '@node-projects/web-component-designer';
+import { NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, PropertyGrid, DocumentContainer, ExtensionType, CopyPasteAsJsonService, DebugView, UnkownElementsPropertiesService, sleep, RefactorView, BindingsRefactorService, TextRefactorService } from '@node-projects/web-component-designer';
 import createDefaultServiceContainer from '@node-projects/web-component-designer/dist/elements/services/DefaultServiceBootstrap.js';
 
 import { NodeHtmlParserService } from '@node-projects/web-component-designer-htmlparserservice-nodehtmlparser';
@@ -18,6 +18,8 @@ serviceContainer.register("htmlParserService", new NodeHtmlParserService());
 serviceContainer.register("copyPasteService", new CopyPasteAsJsonService());
 serviceContainer.register("bindableObjectsService", new CustomBindableObjectsService());
 serviceContainer.registerLast("propertyService", new UnkownElementsPropertiesService());
+serviceContainer.register("refactorService", new BindingsRefactorService());
+serviceContainer.register("refactorService", new TextRefactorService());
 
 serviceContainer.config.codeViewWidget = CodeViewMonaco;
 serviceContainer.designerExtensions.set(ExtensionType.Doubleclick, [new EditTextWithStyloExtensionProvider()]);
@@ -163,6 +165,10 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
             <node-projects-debug-view id="debugView"></node-projects-debug-view>
           </div>
 
+          <div id="refactorDock" title="Refactor" dock-spawn-dock-type="down" dock-spawn-dock-to="attributeDock" dock-spawn-dock-ratio="0.2">
+            <node-projects-refactor-view id="refactorView"></node-projects-refactor-view>
+          </div>
+
           <div id="lower" title="stylesheet.css" dock-spawn-dock-type="down" dock-spawn-dock-ratio="0.25" style="overflow: hidden; width: 100%;">
             <node-projects-style-editor id="styleEditor"></node-projects-style-editor>
           </div>
@@ -173,6 +179,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
   private _npmInput: HTMLInputElement;
   private _npmStatus: HTMLDivElement;
   private _getNpm: HTMLButtonElement;
+  private _refactorView: RefactorView;
 
   private _npmPackageLoader = new NpmPackageLoader();
 
@@ -181,6 +188,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     this._paletteTree = this._getDomElement<PaletteTreeView>('paletteTree');
     this._bindableObjectsBrowser = this._getDomElement<BindableObjectsBrowser>('bindableObjectsBrowser');
     this._treeViewExtended = this._getDomElement<TreeViewExtended>('treeViewExtended');
+    this._refactorView = this._getDomElement<RefactorView>('refactorView');
     this._propertyGrid = this._getDomElement<PropertyGrid>('propertyGrid');
     this._debugView = this._getDomElement<DebugView>('debugView');
     this._styleEditor = this._getDomElement<StyleEditor>('styleEditor');
@@ -242,6 +250,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
             this._styleEditor.model = sampleDocument.additionalData.model;
             this._propertyGrid.instanceServiceContainer = sampleDocument.instanceServiceContainer;
             this._treeViewExtended.instanceServiceContainer = sampleDocument.instanceServiceContainer;
+            this._refactorView.instanceServiceContainer = sampleDocument.instanceServiceContainer;
             sampleDocument.instanceServiceContainer.selectionService.onSelectionChanged.on(e => {
               this._debugView.update(e.selectedElements[0]);
             });

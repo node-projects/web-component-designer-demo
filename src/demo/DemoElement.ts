@@ -1,4 +1,4 @@
-import { BaseCustomWebComponentConstructorAppend, customElement, html, property } from "@node-projects/base-custom-webcomponent";
+import { BaseCustomWebComponentConstructorAppend, css, customElement, html, property } from "@node-projects/base-custom-webcomponent";
 import { DemoEnum } from './DemoEnum.js';
 import { DemoStringEnum } from "./DemoStringEnum.js";
 import { inDesigner } from "@node-projects/web-component-designer";
@@ -17,6 +17,11 @@ export class DemoElement extends BaseCustomWebComponentConstructorAppend {
 
   @property(DemoStringEnum)
   public enumStringProperty: DemoStringEnum = DemoStringEnum.value1;
+
+  static readonly style = css`
+  :host {
+      --aa: bb;
+  }`
 
   static readonly template = html`
   <div>
