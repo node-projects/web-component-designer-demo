@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { IdleValue } from '../../../base/common/async.js';
+import { GlobalIdleValue } from '../../../base/common/async.js';
 import { illegalState } from '../../../base/common/errors.js';
 import { toDisposable } from '../../../base/common/lifecycle.js';
 import { SyncDescriptor } from './descriptors.js';
@@ -217,7 +217,7 @@ export class InstantiationService {
             // needed but not when injected into a consumer
             // return "empty events" when the service isn't instantiated yet
             const earlyListeners = new Map();
-            const idle = new IdleValue(() => {
+            const idle = new GlobalIdleValue(() => {
                 const result = child._createInstance(ctor, args, _trace);
                 // early listeners that we kept are now being subscribed to
                 // the real service

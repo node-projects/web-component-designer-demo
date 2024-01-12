@@ -9,7 +9,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { DataTransfers } from '../../dnd.js';
-import { $, addDisposableListener, animate, getContentHeight, getContentWidth, getTopLeftOffset, scheduleAtNextAnimationFrame } from '../../dom.js';
+import { $, addDisposableListener, animate, getContentHeight, getContentWidth, getTopLeftOffset, getWindow, scheduleAtNextAnimationFrame } from '../../dom.js';
 import { DomEmitter } from '../../event.js';
 import { EventType as TouchEventType, Gesture } from '../../touch.js';
 import { SmoothScrollableElement } from '../scrollbar/scrollableElement.js';
@@ -135,6 +135,7 @@ class ListViewAccessibilityProvider {
 export class ListView {
     get contentHeight() { return this.rangeMap.size; }
     get onDidScroll() { return this.scrollableElement.onScroll; }
+    get scrollableElementDomNode() { return this.scrollableElement.getDomNode(); }
     get horizontalScrolling() { return this._horizontalScrolling; }
     set horizontalScrolling(value) {
         if (value === this._horizontalScrolling) {
@@ -177,6 +178,7 @@ export class ListView {
         this.disposables = new DisposableStore();
         this._onDidChangeContentHeight = new Emitter();
         this._onDidChangeContentWidth = new Emitter();
+        this.onDidChangeContentHeight = Event.latch(this._onDidChangeContentHeight.event, undefined, this.disposables);
         this._horizontalScrolling = false;
         if (options.horizontalScrolling && options.supportDynamicHeights) {
             throw new Error('Horizontal scrolling and dynamic heights not supported simultaneously');
@@ -211,7 +213,7 @@ export class ListView {
         this.scrollable = this.disposables.add(new Scrollable({
             forceIntegerValues: true,
             smoothScrollDuration: ((_d = options.smoothScrolling) !== null && _d !== void 0 ? _d : false) ? 125 : 0,
-            scheduleAtNextAnimationFrame: cb => scheduleAtNextAnimationFrame(cb)
+            scheduleAtNextAnimationFrame: cb => scheduleAtNextAnimationFrame(getWindow(this.domNode), cb)
         }));
         this.scrollableElement = this.disposables.add(new SmoothScrollableElement(this.rowsContainer, {
             alwaysConsumeMouseWheel: (_e = options.alwaysConsumeMouseWheel) !== null && _e !== void 0 ? _e : DefaultOptions.alwaysConsumeMouseWheel,
@@ -252,13 +254,13 @@ export class ListView {
         }
         let scrollableOptions;
         if (options.scrollByPage !== undefined) {
-            scrollableOptions = Object.assign(Object.assign({}, (scrollableOptions !== null && scrollableOptions !== void 0 ? scrollableOptions : {})), { scrollByPage: options.scrollByPage });
+            scrollableOptions = { ...(scrollableOptions !== null && scrollableOptions !== void 0 ? scrollableOptions : {}), scrollByPage: options.scrollByPage };
         }
         if (options.mouseWheelScrollSensitivity !== undefined) {
-            scrollableOptions = Object.assign(Object.assign({}, (scrollableOptions !== null && scrollableOptions !== void 0 ? scrollableOptions : {})), { mouseWheelScrollSensitivity: options.mouseWheelScrollSensitivity });
+            scrollableOptions = { ...(scrollableOptions !== null && scrollableOptions !== void 0 ? scrollableOptions : {}), mouseWheelScrollSensitivity: options.mouseWheelScrollSensitivity };
         }
         if (options.fastScrollSensitivity !== undefined) {
-            scrollableOptions = Object.assign(Object.assign({}, (scrollableOptions !== null && scrollableOptions !== void 0 ? scrollableOptions : {})), { fastScrollSensitivity: options.fastScrollSensitivity });
+            scrollableOptions = { ...(scrollableOptions !== null && scrollableOptions !== void 0 ? scrollableOptions : {}), fastScrollSensitivity: options.fastScrollSensitivity };
         }
         if (scrollableOptions) {
             this.scrollableElement.updateOptions(scrollableOptions);
@@ -382,7 +384,7 @@ export class ListView {
         this._scrollHeight = this.contentHeight;
         this.rowsContainer.style.height = `${this._scrollHeight}px`;
         if (!this.scrollableElementUpdateDisposable) {
-            this.scrollableElementUpdateDisposable = scheduleAtNextAnimationFrame(() => {
+            this.scrollableElementUpdateDisposable = scheduleAtNextAnimationFrame(getWindow(this.domNode), () => {
                 this.scrollableElement.setScrollDimensions({ scrollHeight: this.scrollHeight });
                 this.updateScrollWidth();
                 this.scrollableElementUpdateDisposable = null;
@@ -428,18 +430,13 @@ export class ListView {
     }
     get firstVisibleIndex() {
         const range = this.getRenderRange(this.lastRenderTop, this.lastRenderHeight);
-        const firstElTop = this.rangeMap.positionAt(range.start);
-        const nextElTop = this.rangeMap.positionAt(range.start + 1);
-        if (nextElTop !== -1) {
-            const firstElMidpoint = (nextElTop - firstElTop) / 2 + firstElTop;
-            if (firstElMidpoint < this.scrollTop) {
-                return range.start + 1;
-            }
-        }
         return range.start;
     }
     element(index) {
         return this.items[index].element;
+    }
+    indexOf(element) {
+        return this.items.findIndex(item => item.element === element);
     }
     domElement(index) {
         const row = this.items[index].row;
@@ -569,7 +566,7 @@ export class ListView {
         }
         item.row.domNode.style.width = 'fit-content';
         item.width = getContentWidth(item.row.domNode);
-        const style = window.getComputedStyle(item.row.domNode);
+        const style = getWindow(item.row.domNode).getComputedStyle(item.row.domNode);
         if (style.paddingLeft) {
             item.width += parseFloat(style.paddingLeft);
         }
@@ -706,7 +703,7 @@ export class ListView {
                 while (e && !e.classList.contains('monaco-workbench')) {
                     e = e.parentElement;
                 }
-                return e || document.body;
+                return e || this.domNode.ownerDocument;
             };
             const container = getDragImageContainer(this.domNode);
             container.appendChild(dragImage);
@@ -840,7 +837,7 @@ export class ListView {
     setupDragAndDropScrollTopAnimation(event) {
         if (!this.dragOverAnimationDisposable) {
             const viewTop = getTopLeftOffset(this.domNode).top;
-            this.dragOverAnimationDisposable = animate(this.animateDragAndDropScrollTop.bind(this, viewTop));
+            this.dragOverAnimationDisposable = animate(getWindow(this.domNode), this.animateDragAndDropScrollTop.bind(this, viewTop));
         }
         this.dragOverAnimationStopDisposable.dispose();
         this.dragOverAnimationStopDisposable = disposableTimeout(() => {

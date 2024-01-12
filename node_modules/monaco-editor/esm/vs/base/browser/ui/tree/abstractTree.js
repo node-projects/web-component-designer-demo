@@ -2,23 +2,14 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-import { $, append, clearNode, createStyleSheet, h, hasParentWithClass } from '../../dom.js';
+import { $, append, clearNode, createStyleSheet, getWindow, h, hasParentWithClass } from '../../dom.js';
 import { DomEmitter } from '../../event.js';
 import { StandardKeyboardEvent } from '../../keyboardEvent.js';
 import { ActionBar } from '../actionbar/actionbar.js';
 import { FindInput } from '../findinput/findInput.js';
 import { unthemedInboxStyles } from '../inputbox/inputBox.js';
 import { ElementsDragAndDropData } from '../list/listView.js';
-import { isButton, isInputElement, isMonacoEditor, List, MouseController } from '../list/listWidget.js';
+import { isActionItem, isButton, isInputElement, isMonacoCustomToggle, isMonacoEditor, isStickyScrollElement, List, MouseController } from '../list/listWidget.js';
 import { Toggle, unthemedToggleStyles } from '../toggle/toggle.js';
 import { getVisibleState, isFilterResult } from './indexTreeModel.js';
 import { TreeMouseEventTarget } from './tree.js';
@@ -107,7 +98,7 @@ class TreeNodeListDragAndDrop {
         const ref = model.getNodeLocation(targetNode);
         const start = model.getListIndex(ref);
         const length = model.getListRenderCount(ref);
-        return Object.assign(Object.assign({}, result), { feedback: range(start, start + length) });
+        return { ...result, feedback: range(start, start + length) };
     }
     drop(data, targetNode, targetIndex, originalEvent) {
         this.autoExpandDisposable.dispose();
@@ -124,18 +115,25 @@ class TreeNodeListDragAndDrop {
     }
 }
 function asListOptions(modelProvider, options) {
-    return options && Object.assign(Object.assign({}, options), { identityProvider: options.identityProvider && {
+    return options && {
+        ...options,
+        identityProvider: options.identityProvider && {
             getId(el) {
                 return options.identityProvider.getId(el.element);
             }
-        }, dnd: options.dnd && new TreeNodeListDragAndDrop(modelProvider, options.dnd), multipleSelectionController: options.multipleSelectionController && {
+        },
+        dnd: options.dnd && new TreeNodeListDragAndDrop(modelProvider, options.dnd),
+        multipleSelectionController: options.multipleSelectionController && {
             isSelectionSingleChangeEvent(e) {
-                return options.multipleSelectionController.isSelectionSingleChangeEvent(Object.assign(Object.assign({}, e), { element: e.element }));
+                return options.multipleSelectionController.isSelectionSingleChangeEvent({ ...e, element: e.element });
             },
             isSelectionRangeChangeEvent(e) {
-                return options.multipleSelectionController.isSelectionRangeChangeEvent(Object.assign(Object.assign({}, e), { element: e.element }));
+                return options.multipleSelectionController.isSelectionRangeChangeEvent({ ...e, element: e.element });
             }
-        }, accessibilityProvider: options.accessibilityProvider && Object.assign(Object.assign({}, options.accessibilityProvider), { getSetSize(node) {
+        },
+        accessibilityProvider: options.accessibilityProvider && {
+            ...options.accessibilityProvider,
+            getSetSize(node) {
                 const model = modelProvider();
                 const ref = model.getNodeLocation(node);
                 const parentRef = model.getParentNodeLocation(ref);
@@ -144,22 +142,34 @@ function asListOptions(modelProvider, options) {
             },
             getPosInSet(node) {
                 return node.visibleChildIndex + 1;
-            }, isChecked: options.accessibilityProvider && options.accessibilityProvider.isChecked ? (node) => {
+            },
+            isChecked: options.accessibilityProvider && options.accessibilityProvider.isChecked ? (node) => {
                 return options.accessibilityProvider.isChecked(node.element);
-            } : undefined, getRole: options.accessibilityProvider && options.accessibilityProvider.getRole ? (node) => {
+            } : undefined,
+            getRole: options.accessibilityProvider && options.accessibilityProvider.getRole ? (node) => {
                 return options.accessibilityProvider.getRole(node.element);
-            } : () => 'treeitem', getAriaLabel(e) {
+            } : () => 'treeitem',
+            getAriaLabel(e) {
                 return options.accessibilityProvider.getAriaLabel(e.element);
             },
             getWidgetAriaLabel() {
                 return options.accessibilityProvider.getWidgetAriaLabel();
-            }, getWidgetRole: options.accessibilityProvider && options.accessibilityProvider.getWidgetRole ? () => options.accessibilityProvider.getWidgetRole() : () => 'tree', getAriaLevel: options.accessibilityProvider && options.accessibilityProvider.getAriaLevel ? (node) => options.accessibilityProvider.getAriaLevel(node.element) : (node) => {
+            },
+            getWidgetRole: options.accessibilityProvider && options.accessibilityProvider.getWidgetRole ? () => options.accessibilityProvider.getWidgetRole() : () => 'tree',
+            getAriaLevel: options.accessibilityProvider && options.accessibilityProvider.getAriaLevel ? (node) => options.accessibilityProvider.getAriaLevel(node.element) : (node) => {
                 return node.depth;
-            }, getActiveDescendantId: options.accessibilityProvider.getActiveDescendantId && (node => {
+            },
+            getActiveDescendantId: options.accessibilityProvider.getActiveDescendantId && (node => {
                 return options.accessibilityProvider.getActiveDescendantId(node.element);
-            }) }), keyboardNavigationLabelProvider: options.keyboardNavigationLabelProvider && Object.assign(Object.assign({}, options.keyboardNavigationLabelProvider), { getKeyboardNavigationLabel(node) {
+            })
+        },
+        keyboardNavigationLabelProvider: options.keyboardNavigationLabelProvider && {
+            ...options.keyboardNavigationLabelProvider,
+            getKeyboardNavigationLabel(node) {
                 return options.keyboardNavigationLabelProvider.getKeyboardNavigationLabel(node.element);
-            } }) });
+            }
+        }
+    };
 }
 export class ComposedTreeDelegate {
     constructor(delegate) {
@@ -198,7 +208,7 @@ class EventCollection {
         this.disposables.dispose();
     }
 }
-class TreeRenderer {
+export class TreeRenderer {
     constructor(renderer, modelProvider, onDidChangeCollapseState, activeNodes, renderedIndentGuides, options = {}) {
         var _a;
         this.renderer = renderer;
@@ -548,8 +558,8 @@ class FindWidget extends Disposable {
         if (styles.listFilterWidgetShadow) {
             this.elements.root.style.boxShadow = `0 0 8px 2px ${styles.listFilterWidgetShadow}`;
         }
-        this.modeToggle = this._register(new ModeToggle(Object.assign(Object.assign({}, styles.toggleStyles), { isChecked: mode === TreeFindMode.Filter })));
-        this.matchTypeToggle = this._register(new FuzzyToggle(Object.assign(Object.assign({}, styles.toggleStyles), { isChecked: matchType === TreeFindMatchType.Fuzzy })));
+        this.modeToggle = this._register(new ModeToggle({ ...styles.toggleStyles, isChecked: mode === TreeFindMode.Filter }));
+        this.matchTypeToggle = this._register(new FuzzyToggle({ ...styles.toggleStyles, isChecked: matchType === TreeFindMatchType.Fuzzy }));
         this.onDidChangeMode = Event.map(this.modeToggle.onChange, () => this.modeToggle.checked ? TreeFindMode.Filter : TreeFindMode.Highlight, this._store);
         this.onDidChangeMatchType = Event.map(this.matchTypeToggle.onChange, () => this.matchTypeToggle.checked ? TreeFindMatchType.Fuzzy : TreeFindMatchType.Contiguous, this._store);
         this.findInput = this._register(new FindInput(this.elements.findInput, contextViewProvider, {
@@ -601,8 +611,8 @@ class FindWidget extends Disposable {
         const onGrabMouseDown = this._register(new DomEmitter(this.elements.grab, 'mousedown'));
         this._register(onGrabMouseDown.event(e => {
             const disposables = new DisposableStore();
-            const onWindowMouseMove = disposables.add(new DomEmitter(window, 'mousemove'));
-            const onWindowMouseUp = disposables.add(new DomEmitter(window, 'mouseup'));
+            const onWindowMouseMove = disposables.add(new DomEmitter(getWindow(e), 'mousemove'));
+            const onWindowMouseUp = disposables.add(new DomEmitter(getWindow(e), 'mouseup'));
             const startRight = this.right;
             const startX = e.pageX;
             const startTop = this.top;
@@ -677,16 +687,11 @@ class FindWidget extends Disposable {
     clearMessage() {
         this.findInput.clearMessage();
     }
-    dispose() {
-        const _super = Object.create(null, {
-            dispose: { get: () => super.dispose }
-        });
-        return __awaiter(this, void 0, void 0, function* () {
-            this._onDidDisable.fire();
-            this.elements.root.classList.add('disabled');
-            yield timeout(300);
-            _super.dispose.call(this);
-        });
+    async dispose() {
+        this._onDidDisable.fire();
+        this.elements.root.classList.add('disabled');
+        await timeout(300);
+        super.dispose();
     }
 }
 class FindController {
@@ -788,6 +793,288 @@ class FindController {
         this._onDidChangePattern.dispose();
         this.enabledDisposables.dispose();
         this.disposables.dispose();
+    }
+}
+function stickyScrollNodeEquals(node1, node2) {
+    return node1.position === node2.position &&
+        node1.node.element === node2.node.element &&
+        node1.startIndex === node2.startIndex &&
+        node1.height === node2.height &&
+        node1.endIndex === node2.endIndex;
+}
+class StickyScrollState extends Disposable {
+    constructor(stickyNodes = []) {
+        super();
+        this.stickyNodes = stickyNodes;
+    }
+    get count() { return this.stickyNodes.length; }
+    equal(state) {
+        return equals(this.stickyNodes, state.stickyNodes, stickyScrollNodeEquals);
+    }
+    addDisposable(disposable) {
+        this._register(disposable);
+    }
+}
+class StickyScrollController extends Disposable {
+    get firstVisibleNode() {
+        const index = this.view.firstVisibleIndex;
+        if (index < 0 || index >= this.view.length) {
+            return undefined;
+        }
+        return this.view.element(index);
+    }
+    constructor(tree, model, view, renderers, treeDelegate, options = {}) {
+        super();
+        this.tree = tree;
+        this.model = model;
+        this.view = view;
+        this.treeDelegate = treeDelegate;
+        this.maxWidgetViewRatio = 0.4;
+        const stickyScrollOptions = this.validateStickySettings(options);
+        this.stickyScrollMaxItemCount = stickyScrollOptions.stickyScrollMaxItemCount;
+        this._widget = this._register(new StickyScrollWidget(view.getScrollableElement(), view, model, renderers, treeDelegate));
+        this._register(view.onDidScroll(() => this.update()));
+        this._register(view.onDidChangeContentHeight(() => this.update()));
+        this._register(tree.onDidChangeCollapseState(() => this.update()));
+        this.update();
+    }
+    update() {
+        const firstVisibleNode = this.firstVisibleNode;
+        // Don't render anything if there are no elements
+        if (!firstVisibleNode || this.tree.scrollTop === 0) {
+            this._widget.setState(undefined);
+            return;
+        }
+        const stickyState = this.findStickyState(firstVisibleNode);
+        this._widget.setState(stickyState);
+    }
+    findStickyState(firstVisibleNode) {
+        const stickyNodes = [];
+        const maximumStickyWidgetHeight = this.view.renderHeight * this.maxWidgetViewRatio;
+        let firstVisibleNodeUnderWidget = firstVisibleNode;
+        let stickyNodesHeight = 0;
+        let nextStickyNode = this.getNextStickyNode(firstVisibleNodeUnderWidget, undefined, stickyNodesHeight);
+        while (nextStickyNode && stickyNodesHeight + nextStickyNode.height < maximumStickyWidgetHeight) {
+            stickyNodes.push(nextStickyNode);
+            stickyNodesHeight += nextStickyNode.height;
+            if (stickyNodes.length >= this.stickyScrollMaxItemCount) {
+                break;
+            }
+            firstVisibleNodeUnderWidget = this.getNextVisibleNode(firstVisibleNodeUnderWidget);
+            if (!firstVisibleNodeUnderWidget) {
+                break;
+            }
+            nextStickyNode = this.getNextStickyNode(firstVisibleNodeUnderWidget, nextStickyNode.node, stickyNodesHeight);
+        }
+        return stickyNodes.length ? new StickyScrollState(stickyNodes) : undefined;
+    }
+    getNextVisibleNode(node) {
+        const nodeIndex = this.getNodeIndex(node);
+        if (nodeIndex === -1 || nodeIndex === this.view.length - 1) {
+            return undefined;
+        }
+        const nextNode = this.view.element(nodeIndex + 1);
+        return nextNode;
+    }
+    getNextStickyNode(firstVisibleNodeUnderWidget, previousStickyNode, stickyNodesHeight) {
+        const nextStickyNode = this.getAncestorUnderPrevious(firstVisibleNodeUnderWidget, previousStickyNode);
+        if (!nextStickyNode) {
+            return undefined;
+        }
+        if (nextStickyNode === firstVisibleNodeUnderWidget) {
+            if (!this.nodeIsUncollapsedParent(firstVisibleNodeUnderWidget)) {
+                return undefined;
+            }
+            if (this.nodeTopAlignsWithStickyNodesBottom(firstVisibleNodeUnderWidget, stickyNodesHeight)) {
+                return undefined;
+            }
+        }
+        return this.createStickyScrollNode(nextStickyNode, stickyNodesHeight);
+    }
+    nodeTopAlignsWithStickyNodesBottom(node, stickyNodesHeight) {
+        const nodeIndex = this.getNodeIndex(node);
+        const elementTop = this.view.getElementTop(nodeIndex);
+        const stickyPosition = stickyNodesHeight;
+        return this.view.scrollTop === elementTop - stickyPosition;
+    }
+    createStickyScrollNode(node, currentStickyNodesHeight) {
+        const height = this.treeDelegate.getHeight(node);
+        const { startIndex, endIndex } = this.getNodeRange(node);
+        const position = this.calculateStickyNodePosition(endIndex, currentStickyNodesHeight);
+        return { node, position, height, startIndex, endIndex };
+    }
+    getAncestorUnderPrevious(node, previousAncestor = undefined) {
+        let currentAncestor = node;
+        let parentOfcurrentAncestor = this.getParentNode(currentAncestor);
+        while (parentOfcurrentAncestor) {
+            if (parentOfcurrentAncestor === previousAncestor) {
+                return currentAncestor;
+            }
+            currentAncestor = parentOfcurrentAncestor;
+            parentOfcurrentAncestor = this.getParentNode(currentAncestor);
+        }
+        if (previousAncestor === undefined) {
+            return currentAncestor;
+        }
+        return undefined;
+    }
+    calculateStickyNodePosition(lastDescendantIndex, stickyRowPositionTop) {
+        let lastChildRelativeTop = this.view.getRelativeTop(lastDescendantIndex);
+        // If the last descendant is only partially visible at the top of the view, getRelativeTop() returns null
+        // In that case, utilize the next node's relative top to calculate the sticky node's position
+        if (lastChildRelativeTop === null && this.view.firstVisibleIndex === lastDescendantIndex && lastDescendantIndex + 1 < this.view.length) {
+            const nodeHeight = this.treeDelegate.getHeight(this.view.element(lastDescendantIndex));
+            const nextNodeRelativeTop = this.view.getRelativeTop(lastDescendantIndex + 1);
+            lastChildRelativeTop = nextNodeRelativeTop ? nextNodeRelativeTop - nodeHeight / this.view.renderHeight : null;
+        }
+        if (lastChildRelativeTop === null) {
+            return stickyRowPositionTop;
+        }
+        const lastChildNode = this.view.element(lastDescendantIndex);
+        const lastChildHeight = this.treeDelegate.getHeight(lastChildNode);
+        const topOfLastChild = lastChildRelativeTop * this.view.renderHeight;
+        const bottomOfLastChild = topOfLastChild + lastChildHeight;
+        if (stickyRowPositionTop > topOfLastChild && stickyRowPositionTop <= bottomOfLastChild) {
+            return topOfLastChild;
+        }
+        return stickyRowPositionTop;
+    }
+    getParentNode(node) {
+        const nodeLocation = this.model.getNodeLocation(node);
+        const parentLocation = this.model.getParentNodeLocation(nodeLocation);
+        return parentLocation ? this.model.getNode(parentLocation) : undefined;
+    }
+    nodeIsUncollapsedParent(node) {
+        const nodeLocation = this.model.getNodeLocation(node);
+        return this.model.getListRenderCount(nodeLocation) > 1;
+    }
+    getNodeIndex(node, nodeLocation) {
+        if (nodeLocation === undefined) {
+            nodeLocation = this.model.getNodeLocation(node);
+        }
+        const nodeIndex = this.model.getListIndex(nodeLocation);
+        return nodeIndex;
+    }
+    getNodeRange(node) {
+        const nodeLocation = this.model.getNodeLocation(node);
+        const startIndex = this.model.getListIndex(nodeLocation);
+        if (startIndex < 0) {
+            throw new Error('Node not found in tree');
+        }
+        const renderCount = this.model.getListRenderCount(nodeLocation);
+        const endIndex = startIndex + renderCount - 1;
+        return { startIndex, endIndex };
+    }
+    nodePositionTopBelowWidget(node) {
+        const ancestors = [];
+        let currentAncestor = this.getParentNode(node);
+        while (currentAncestor) {
+            ancestors.push(currentAncestor);
+            currentAncestor = this.getParentNode(currentAncestor);
+        }
+        let widgetHeight = 0;
+        for (let i = 0; i < ancestors.length && i < this.stickyScrollMaxItemCount; i++) {
+            widgetHeight += this.treeDelegate.getHeight(ancestors[i]);
+        }
+        return widgetHeight;
+    }
+    updateOptions(optionsUpdate = {}) {
+        const validatedOptions = this.validateStickySettings(optionsUpdate);
+        if (this.stickyScrollMaxItemCount !== validatedOptions.stickyScrollMaxItemCount) {
+            this.stickyScrollMaxItemCount = validatedOptions.stickyScrollMaxItemCount;
+            this.update();
+        }
+    }
+    validateStickySettings(options) {
+        let stickyScrollMaxItemCount = 5;
+        if (typeof options.stickyScrollMaxItemCount === 'number') {
+            stickyScrollMaxItemCount = Math.max(options.stickyScrollMaxItemCount, 1);
+        }
+        return { stickyScrollMaxItemCount };
+    }
+}
+class StickyScrollWidget {
+    constructor(container, view, model, treeRenderers, treeDelegate) {
+        this.view = view;
+        this.model = model;
+        this.treeRenderers = treeRenderers;
+        this.treeDelegate = treeDelegate;
+        this._rootDomNode = document.createElement('div');
+        this._rootDomNode.classList.add('monaco-tree-sticky-container');
+        container.appendChild(this._rootDomNode);
+    }
+    setState(state) {
+        var _a;
+        const wasVisible = !!this._previousState && this._previousState.count > 0;
+        const isVisible = !!state && state.count > 0;
+        // If state has not changed, do nothing
+        if ((!wasVisible && !isVisible) || (wasVisible && isVisible && this._previousState.equal(state))) {
+            return;
+        }
+        // Update visibility of the widget if changed
+        if (wasVisible !== isVisible) {
+            this.setVisible(isVisible);
+        }
+        // Remove previous state
+        (_a = this._previousState) === null || _a === void 0 ? void 0 : _a.dispose();
+        this._previousState = state;
+        if (!isVisible) {
+            return;
+        }
+        for (let stickyIndex = state.count - 1; stickyIndex >= 0; stickyIndex--) {
+            const stickyNode = state.stickyNodes[stickyIndex];
+            const previousStickyNode = stickyIndex ? state.stickyNodes[stickyIndex - 1] : undefined;
+            const currentWidgetHieght = previousStickyNode ? previousStickyNode.position + previousStickyNode.height : 0;
+            const { element, disposable } = this.createElement(stickyNode, currentWidgetHieght);
+            this._rootDomNode.appendChild(element);
+            state.addDisposable(disposable);
+        }
+        // Add shadow element to the end of the widget
+        const shadow = $('.monaco-tree-sticky-container-shadow');
+        this._rootDomNode.appendChild(shadow);
+        state.addDisposable(toDisposable(() => shadow.remove()));
+        // Set the height of the widget to the bottom of the last sticky node
+        const lastStickyNode = state.stickyNodes[state.count - 1];
+        this._rootDomNode.style.height = `${lastStickyNode.position + lastStickyNode.height}px`;
+    }
+    createElement(stickyNode, currentWidgetHeight) {
+        const nodeLocation = this.model.getNodeLocation(stickyNode.node);
+        const nodeIndex = this.model.getListIndex(nodeLocation);
+        // Sticky element container
+        const stickyElement = document.createElement('div');
+        stickyElement.style.top = `${stickyNode.position}px`;
+        stickyElement.style.height = `${stickyNode.height}px`;
+        stickyElement.style.lineHeight = `${stickyNode.height}px`;
+        stickyElement.classList.add('monaco-tree-sticky-row');
+        stickyElement.classList.add('monaco-list-row');
+        stickyElement.setAttribute('data-index', `${nodeIndex}`);
+        stickyElement.setAttribute('data-parity', nodeIndex % 2 === 0 ? 'even' : 'odd');
+        stickyElement.setAttribute('id', this.view.getElementID(nodeIndex));
+        // Get the renderer for the node
+        const nodeTemplateId = this.treeDelegate.getTemplateId(stickyNode.node);
+        const renderer = this.treeRenderers.find((renderer) => renderer.templateId === nodeTemplateId);
+        if (!renderer) {
+            throw new Error(`No renderer found for template id ${nodeTemplateId}`);
+        }
+        const nodeCopy = new Proxy(stickyNode.node, {});
+        // Render the element
+        const templateData = renderer.renderTemplate(stickyElement);
+        renderer.renderElement(nodeCopy, stickyNode.startIndex, templateData, stickyNode.height);
+        // Remove the element from the DOM when state is disposed
+        const disposable = toDisposable(() => {
+            renderer.disposeElement(nodeCopy, stickyNode.startIndex, templateData, stickyNode.height);
+            renderer.disposeTemplate(templateData);
+            stickyElement.remove();
+        });
+        return { element: stickyElement, disposable };
+    }
+    setVisible(visible) {
+        this._rootDomNode.style.display = visible ? 'block' : 'none';
+    }
+    dispose() {
+        var _a;
+        (_a = this._previousState) === null || _a === void 0 ? void 0 : _a.dispose();
+        this._rootDomNode.remove();
     }
 }
 function asTreeMouseEvent(event) {
@@ -901,9 +1188,10 @@ class Trait {
     }
 }
 class TreeNodeListMouseController extends MouseController {
-    constructor(list, tree) {
+    constructor(list, tree, stickyScrollProvider) {
         super(list);
         this.tree = tree;
+        this.stickyScrollProvider = stickyScrollProvider;
     }
     onViewPointer(e) {
         if (isButton(e.browserEvent.target) ||
@@ -924,20 +1212,29 @@ class TreeNodeListMouseController extends MouseController {
         const target = e.browserEvent.target;
         const onTwistie = target.classList.contains('monaco-tl-twistie')
             || (target.classList.contains('monaco-icon-label') && target.classList.contains('folder-icon') && e.browserEvent.offsetX < 16);
+        const isStickyElement = isStickyScrollElement(e.browserEvent.target);
         let expandOnlyOnTwistieClick = false;
-        if (typeof this.tree.expandOnlyOnTwistieClick === 'function') {
+        if (isStickyElement) {
+            expandOnlyOnTwistieClick = true;
+        }
+        else if (typeof this.tree.expandOnlyOnTwistieClick === 'function') {
             expandOnlyOnTwistieClick = this.tree.expandOnlyOnTwistieClick(node.element);
         }
         else {
             expandOnlyOnTwistieClick = !!this.tree.expandOnlyOnTwistieClick;
         }
-        if (expandOnlyOnTwistieClick && !onTwistie && e.browserEvent.detail !== 2) {
-            return super.onViewPointer(e);
+        if (!isStickyElement) {
+            if (expandOnlyOnTwistieClick && !onTwistie && e.browserEvent.detail !== 2) {
+                return super.onViewPointer(e);
+            }
+            if (!this.tree.expandOnDoubleClick && e.browserEvent.detail === 2) {
+                return super.onViewPointer(e);
+            }
         }
-        if (!this.tree.expandOnDoubleClick && e.browserEvent.detail === 2) {
-            return super.onViewPointer(e);
+        else {
+            this.handleStickyScrollMouseEvent(e, node);
         }
-        if (node.collapsible) {
+        if (node.collapsible && (!isStickyElement || onTwistie)) {
             const location = this.tree.getNodeLocation(node);
             const recursive = e.browserEvent.altKey;
             this.tree.setFocus([location]);
@@ -948,7 +1245,24 @@ class TreeNodeListMouseController extends MouseController {
                 return;
             }
         }
-        super.onViewPointer(e);
+        if (!isStickyElement) {
+            super.onViewPointer(e);
+        }
+    }
+    handleStickyScrollMouseEvent(e, node) {
+        if (isMonacoCustomToggle(e.browserEvent.target) || isActionItem(e.browserEvent.target)) {
+            return;
+        }
+        const stickyScrollController = this.stickyScrollProvider();
+        if (!stickyScrollController) {
+            throw new Error('Sticky scroll controller not found');
+        }
+        const nodeIndex = this.list.indexOf(node);
+        const elementScrollTop = this.list.getElementTop(nodeIndex);
+        const elementTargetViewTop = stickyScrollController.nodePositionTopBelowWidget(node);
+        this.tree.scrollTop = elementScrollTop - elementTargetViewTop;
+        this.list.setFocus([nodeIndex]);
+        this.list.setSelection([nodeIndex]);
     }
     onDoubleClick(e) {
         const onTwistie = e.browserEvent.target.classList.contains('monaco-tl-twistie');
@@ -973,7 +1287,7 @@ class TreeNodeList extends List {
         this.anchorTrait = anchorTrait;
     }
     createMouseController(options) {
-        return new TreeNodeListMouseController(this, options.tree);
+        return new TreeNodeListMouseController(this, options.tree, options.stickyScrollProvider);
     }
     splice(start, deleteCount, elements = []) {
         super.splice(start, deleteCount, elements);
@@ -1058,7 +1372,7 @@ export class AbstractTree {
         this._onWillRefilter = new Emitter();
         this.onWillRefilter = this._onWillRefilter.event;
         this._onDidUpdateOptions = new Emitter();
-        const treeDelegate = new ComposedTreeDelegate(delegate);
+        this.treeDelegate = new ComposedTreeDelegate(delegate);
         const onDidChangeCollapseStateRelay = new Relay();
         const onDidChangeActiveNodes = new Relay();
         const activeNodes = this.disposables.add(new EventCollection(onDidChangeActiveNodes.event));
@@ -1070,13 +1384,13 @@ export class AbstractTree {
         let filter;
         if (_options.keyboardNavigationLabelProvider) {
             filter = new FindFilter(this, _options.keyboardNavigationLabelProvider, _options.filter);
-            _options = Object.assign(Object.assign({}, _options), { filter: filter }); // TODO need typescript help here
+            _options = { ..._options, filter: filter }; // TODO need typescript help here
             this.disposables.add(filter);
         }
         this.focus = new Trait(() => this.view.getFocusedElements()[0], _options.identityProvider);
         this.selection = new Trait(() => this.view.getSelectedElements()[0], _options.identityProvider);
         this.anchor = new Trait(() => this.view.getAnchorElement(), _options.identityProvider);
-        this.view = new TreeNodeList(_user, container, treeDelegate, this.renderers, this.focus, this.selection, this.anchor, Object.assign(Object.assign({}, asListOptions(() => this.model, _options)), { tree: this }));
+        this.view = new TreeNodeList(_user, container, this.treeDelegate, this.renderers, this.focus, this.selection, this.anchor, { ...asListOptions(() => this.model, _options), tree: this, stickyScrollProvider: () => this.stickyScrollController });
         this.model = this.createModel(_user, this.view, _options);
         onDidChangeCollapseStateRelay.input = this.model.onDidChangeCollapseState;
         const onDidModelSplice = Event.forEach(this.model.onDidSplice, e => {
@@ -1126,22 +1440,37 @@ export class AbstractTree {
             this.onDidChangeFindMode = Event.None;
             this.onDidChangeFindMatchType = Event.None;
         }
+        if (_options.enableStickyScroll) {
+            this.stickyScrollController = new StickyScrollController(this, this.model, this.view, this.renderers, this.treeDelegate, _options);
+        }
         this.styleElement = createStyleSheet(this.view.getHTMLElement());
         this.getHTMLElement().classList.toggle('always', this._options.renderIndentGuides === RenderIndentGuides.Always);
     }
     updateOptions(optionsUpdate = {}) {
         var _a;
-        this._options = Object.assign(Object.assign({}, this._options), optionsUpdate);
+        this._options = { ...this._options, ...optionsUpdate };
         for (const renderer of this.renderers) {
             renderer.updateOptions(optionsUpdate);
         }
         this.view.updateOptions(this._options);
         (_a = this.findController) === null || _a === void 0 ? void 0 : _a.updateOptions(optionsUpdate);
+        this.updateStickyScroll(optionsUpdate);
         this._onDidUpdateOptions.fire(this._options);
         this.getHTMLElement().classList.toggle('always', this._options.renderIndentGuides === RenderIndentGuides.Always);
     }
     get options() {
         return this._options;
+    }
+    updateStickyScroll(optionsUpdate) {
+        var _a;
+        if (!this.stickyScrollController && this._options.enableStickyScroll) {
+            this.stickyScrollController = new StickyScrollController(this, this.model, this.view, this.renderers, this.treeDelegate, this._options);
+        }
+        else if (this.stickyScrollController && !this._options.enableStickyScroll) {
+            this.stickyScrollController.dispose();
+            this.stickyScrollController = undefined;
+        }
+        (_a = this.stickyScrollController) === null || _a === void 0 ? void 0 : _a.updateOptions(optionsUpdate);
     }
     // Widget
     getHTMLElement() {
@@ -1175,6 +1504,10 @@ export class AbstractTree {
         if (styles.treeIndentGuidesStroke) {
             content.push(`.monaco-list${suffix}:hover .monaco-tl-indent > .indent-guide, .monaco-list${suffix}.always .monaco-tl-indent > .indent-guide  { border-color: ${styles.treeInactiveIndentGuidesStroke}; }`);
             content.push(`.monaco-list${suffix} .monaco-tl-indent > .indent-guide.active { border-color: ${styles.treeIndentGuidesStroke}; }`);
+        }
+        if (styles.listBackground) {
+            content.push(`.monaco-list${suffix} .monaco-scrollable-element .monaco-tree-sticky-container { background-color: ${styles.listBackground}; }`);
+            content.push(`.monaco-list${suffix} .monaco-scrollable-element .monaco-tree-sticky-container .monaco-tree-sticky-row { background-color: ${styles.listBackground}; }`);
         }
         this.styleElement.textContent = content.join('\n');
         this.view.style(styles);
@@ -1241,7 +1574,13 @@ export class AbstractTree {
         if (index === -1) {
             return;
         }
-        this.view.reveal(index, relativeTop);
+        if (!this.stickyScrollController) {
+            this.view.reveal(index, relativeTop);
+        }
+        else {
+            const paddingTop = this.stickyScrollController.nodePositionTopBelowWidget(this.getNode(location));
+            this.view.reveal(index, relativeTop, paddingTop);
+        }
     }
     // List
     onLeftArrow(e) {
@@ -1297,7 +1636,9 @@ export class AbstractTree {
         this.model.setCollapsed(location, undefined, recursive);
     }
     dispose() {
+        var _a;
         dispose(this.disposables);
+        (_a = this.stickyScrollController) === null || _a === void 0 ? void 0 : _a.dispose();
         this.view.dispose();
     }
 }

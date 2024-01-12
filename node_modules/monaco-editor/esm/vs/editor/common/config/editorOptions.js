@@ -306,9 +306,9 @@ class EditorAccessibilitySupport extends BaseEditorOption {
             type: 'string',
             enum: ['auto', 'on', 'off'],
             enumDescriptions: [
-                nls.localize('accessibilitySupport.auto', "Use platform APIs to detect when a Screen Reader is attached"),
-                nls.localize('accessibilitySupport.on', "Optimize for usage with a Screen Reader"),
-                nls.localize('accessibilitySupport.off', "Assume a screen reader is not attached"),
+                nls.localize('accessibilitySupport.auto', "Use platform APIs to detect when a Screen Reader is attached."),
+                nls.localize('accessibilitySupport.on', "Optimize for usage with a Screen Reader."),
+                nls.localize('accessibilitySupport.off', "Assume a screen reader is not attached."),
             ],
             default: 'auto',
             tags: ['accessibility'],
@@ -718,11 +718,26 @@ class EditorGoToLocation extends BaseEditorOption {
             'editor.gotoLocation.multiple': {
                 deprecationMessage: nls.localize('editor.gotoLocation.multiple.deprecated', "This setting is deprecated, please use separate settings like 'editor.editor.gotoLocation.multipleDefinitions' or 'editor.editor.gotoLocation.multipleImplementations' instead."),
             },
-            'editor.gotoLocation.multipleDefinitions': Object.assign({ description: nls.localize('editor.editor.gotoLocation.multipleDefinitions', "Controls the behavior the 'Go to Definition'-command when multiple target locations exist.") }, jsonSubset),
-            'editor.gotoLocation.multipleTypeDefinitions': Object.assign({ description: nls.localize('editor.editor.gotoLocation.multipleTypeDefinitions', "Controls the behavior the 'Go to Type Definition'-command when multiple target locations exist.") }, jsonSubset),
-            'editor.gotoLocation.multipleDeclarations': Object.assign({ description: nls.localize('editor.editor.gotoLocation.multipleDeclarations', "Controls the behavior the 'Go to Declaration'-command when multiple target locations exist.") }, jsonSubset),
-            'editor.gotoLocation.multipleImplementations': Object.assign({ description: nls.localize('editor.editor.gotoLocation.multipleImplemenattions', "Controls the behavior the 'Go to Implementations'-command when multiple target locations exist.") }, jsonSubset),
-            'editor.gotoLocation.multipleReferences': Object.assign({ description: nls.localize('editor.editor.gotoLocation.multipleReferences', "Controls the behavior the 'Go to References'-command when multiple target locations exist.") }, jsonSubset),
+            'editor.gotoLocation.multipleDefinitions': {
+                description: nls.localize('editor.editor.gotoLocation.multipleDefinitions', "Controls the behavior the 'Go to Definition'-command when multiple target locations exist."),
+                ...jsonSubset,
+            },
+            'editor.gotoLocation.multipleTypeDefinitions': {
+                description: nls.localize('editor.editor.gotoLocation.multipleTypeDefinitions', "Controls the behavior the 'Go to Type Definition'-command when multiple target locations exist."),
+                ...jsonSubset,
+            },
+            'editor.gotoLocation.multipleDeclarations': {
+                description: nls.localize('editor.editor.gotoLocation.multipleDeclarations', "Controls the behavior the 'Go to Declaration'-command when multiple target locations exist."),
+                ...jsonSubset,
+            },
+            'editor.gotoLocation.multipleImplementations': {
+                description: nls.localize('editor.editor.gotoLocation.multipleImplemenattions', "Controls the behavior the 'Go to Implementations'-command when multiple target locations exist."),
+                ...jsonSubset,
+            },
+            'editor.gotoLocation.multipleReferences': {
+                description: nls.localize('editor.editor.gotoLocation.multipleReferences', "Controls the behavior the 'Go to References'-command when multiple target locations exist."),
+                ...jsonSubset,
+            },
             'editor.gotoLocation.alternativeDefinitionCommand': {
                 type: 'string',
                 default: defaults.alternativeDefinitionCommand,
@@ -807,7 +822,7 @@ class EditorHover extends BaseEditorOption {
                 type: 'integer',
                 minimum: 0,
                 default: defaults.hidingDelay,
-                description: nls.localize('hover.hidingDelay', "Controls the delay in milliseconds after thich the hover is hidden. Requires `editor.hover.sticky` to be enabled.")
+                description: nls.localize('hover.hidingDelay', "Controls the delay in milliseconds after which the hover is hidden. Requires `editor.hover.sticky` to be enabled.")
             },
             'editor.hover.above': {
                 type: 'boolean',
@@ -1175,24 +1190,47 @@ class WrappingStrategy extends BaseEditorOption {
         return value;
     }
 }
+//#endregion
+//#region lightbulb
+export var ShowAiIconMode;
+(function (ShowAiIconMode) {
+    ShowAiIconMode["Off"] = "off";
+    ShowAiIconMode["OnCode"] = "onCode";
+    ShowAiIconMode["On"] = "on";
+})(ShowAiIconMode || (ShowAiIconMode = {}));
 class EditorLightbulb extends BaseEditorOption {
     constructor() {
-        const defaults = { enabled: true };
+        const defaults = { enabled: true, experimental: { showAiIcon: ShowAiIconMode.Off } };
         super(64 /* EditorOption.lightbulb */, 'lightbulb', defaults, {
             'editor.lightbulb.enabled': {
                 type: 'boolean',
                 default: defaults.enabled,
                 description: nls.localize('codeActions', "Enables the Code Action lightbulb in the editor.")
             },
+            'editor.lightbulb.experimental.showAiIcon': {
+                type: 'string',
+                enum: [ShowAiIconMode.Off, ShowAiIconMode.OnCode, ShowAiIconMode.On],
+                default: defaults.experimental.showAiIcon,
+                enumDescriptions: [
+                    nls.localize('editor.lightbulb.showAiIcon.off', 'Don not show the AI icon.'),
+                    nls.localize('editor.lightbulb.showAiIcon.onCode', 'Show an AI icon when the code action menu contains an AI action, but only on code.'),
+                    nls.localize('editor.lightbulb.showAiIcon.on', 'Show an AI icon when the code action menu contains an AI action, on code and empty lines.'),
+                ],
+                description: nls.localize('showAiIcons', "Show an AI icon along with the lightbulb when the code action menu contains an AI action.")
+            },
         });
     }
     validate(_input) {
+        var _a, _b;
         if (!_input || typeof _input !== 'object') {
             return this.defaultValue;
         }
         const input = _input;
         return {
-            enabled: boolean(input.enabled, this.defaultValue.enabled)
+            enabled: boolean(input.enabled, this.defaultValue.enabled),
+            experimental: {
+                showAiIcon: stringSet((_a = input.experimental) === null || _a === void 0 ? void 0 : _a.showAiIcon, (_b = this.defaultValue.experimental) === null || _b === void 0 ? void 0 : _b.showAiIcon, [ShowAiIconMode.Off, ShowAiIconMode.OnCode, ShowAiIconMode.On])
+            }
         };
     }
 }
@@ -1221,7 +1259,7 @@ class EditorStickyScroll extends BaseEditorOption {
             'editor.stickyScroll.scrollWithEditor': {
                 type: 'boolean',
                 default: defaults.scrollWithEditor,
-                description: nls.localize('editor.stickyScroll.scrollWithEditor', "Enable scrolling of the sticky scroll widget with the editor's horizontal scrollbar.")
+                description: nls.localize('editor.stickyScroll.scrollWithEditor', "Enable scrolling of Sticky Scroll with the editor's horizontal scrollbar.")
             },
         });
     }
@@ -1714,7 +1752,8 @@ class EditorScrollbar extends BaseEditorOption {
             verticalSliderSize: 14,
             handleMouseWheel: true,
             alwaysConsumeMouseWheel: true,
-            scrollByPage: false
+            scrollByPage: false,
+            ignoreHorizontalScrollbarInContentHeight: false,
         };
         super(102 /* EditorOption.scrollbar */, 'scrollbar', defaults, {
             'editor.scrollbar.vertical': {
@@ -1753,6 +1792,11 @@ class EditorScrollbar extends BaseEditorOption {
                 type: 'boolean',
                 default: defaults.scrollByPage,
                 description: nls.localize('scrollbar.scrollByPage', "Controls whether clicks scroll by page or jump to click position.")
+            },
+            'editor.scrollbar.ignoreHorizontalScrollbarInContentHeight': {
+                type: 'boolean',
+                default: defaults.ignoreHorizontalScrollbarInContentHeight,
+                description: nls.localize('scrollbar.ignoreHorizontalScrollbarInContentHeight', "When set, the horizontal scrollbar will not increase the size of the editor's content.")
             }
         });
     }
@@ -1777,6 +1821,7 @@ class EditorScrollbar extends BaseEditorOption {
             verticalScrollbarSize: verticalScrollbarSize,
             verticalSliderSize: EditorIntOption.clampedInt(input.verticalSliderSize, verticalScrollbarSize, 0, 1000),
             scrollByPage: boolean(input.scrollByPage, this.defaultValue.scrollByPage),
+            ignoreHorizontalScrollbarInContentHeight: boolean(input.ignoreHorizontalScrollbarInContentHeight, this.defaultValue.ignoreHorizontalScrollbarInContentHeight),
         };
     }
 }
@@ -1866,14 +1911,14 @@ class UnicodeHighlight extends BaseEditorOption {
         if (update.allowedCharacters && value) {
             // Treat allowedCharacters atomically
             if (!objects.equals(value.allowedCharacters, update.allowedCharacters)) {
-                value = Object.assign(Object.assign({}, value), { allowedCharacters: update.allowedCharacters });
+                value = { ...value, allowedCharacters: update.allowedCharacters };
                 didChange = true;
             }
         }
         if (update.allowedLocales && value) {
             // Treat allowedLocales atomically
             if (!objects.equals(value.allowedLocales, update.allowedLocales)) {
-                value = Object.assign(Object.assign({}, value), { allowedLocales: update.allowedLocales });
+                value = { ...value, allowedLocales: update.allowedLocales };
                 didChange = true;
             }
         }
@@ -1932,10 +1977,11 @@ class InlineEditorSuggest extends BaseEditorOption {
             'editor.inlineSuggest.showToolbar': {
                 type: 'string',
                 default: defaults.showToolbar,
-                enum: ['always', 'onHover'],
+                enum: ['always', 'onHover', 'never'],
                 enumDescriptions: [
                     nls.localize('inlineSuggest.showToolbar.always', "Show the inline suggestion toolbar whenever an inline suggestion is shown."),
                     nls.localize('inlineSuggest.showToolbar.onHover', "Show the inline suggestion toolbar when hovering over an inline suggestion."),
+                    nls.localize('inlineSuggest.showToolbar.never', "Never show the inline suggestion toolbar."),
                 ],
                 description: nls.localize('inlineSuggest.showToolbar', "Controls when to show the inline suggestion toolbar."),
             },
@@ -1954,7 +2000,7 @@ class InlineEditorSuggest extends BaseEditorOption {
         return {
             enabled: boolean(input.enabled, this.defaultValue.enabled),
             mode: stringSet(input.mode, this.defaultValue.mode, ['prefix', 'subword', 'subwordSmart']),
-            showToolbar: stringSet(input.showToolbar, this.defaultValue.showToolbar, ['always', 'onHover']),
+            showToolbar: stringSet(input.showToolbar, this.defaultValue.showToolbar, ['always', 'onHover', 'never']),
             suppressSuggestions: boolean(input.suppressSuggestions, this.defaultValue.suppressSuggestions),
             keepOnBlur: boolean(input.keepOnBlur, this.defaultValue.keepOnBlur),
         };
@@ -2473,7 +2519,7 @@ class EditorDropIntoEditor extends BaseEditorOption {
             'editor.dropIntoEditor.enabled': {
                 type: 'boolean',
                 default: defaults.enabled,
-                markdownDescription: nls.localize('dropIntoEditor.enabled', "Controls whether you can drag and drop a file into a text editor by holding down `shift` (instead of opening the file in an editor)."),
+                markdownDescription: nls.localize('dropIntoEditor.enabled', "Controls whether you can drag and drop a file into a text editor by holding down `Shift`-key (instead of opening the file in an editor)."),
             },
             'editor.dropIntoEditor.showDropSelector': {
                 type: 'string',
@@ -2771,7 +2817,14 @@ export const EditorOptions = {
     multiCursorLimit: register(new EditorIntOption(79 /* EditorOption.multiCursorLimit */, 'multiCursorLimit', 10000, 1, 100000, {
         markdownDescription: nls.localize('multiCursorLimit', "Controls the max number of cursors that can be in an active editor at once.")
     })),
-    occurrencesHighlight: register(new EditorBooleanOption(80 /* EditorOption.occurrencesHighlight */, 'occurrencesHighlight', true, { description: nls.localize('occurrencesHighlight', "Controls whether the editor should highlight semantic symbol occurrences.") })),
+    occurrencesHighlight: register(new EditorStringEnumOption(80 /* EditorOption.occurrencesHighlight */, 'occurrencesHighlight', 'singleFile', ['off', 'singleFile', 'multiFile'], {
+        markdownEnumDescriptions: [
+            nls.localize('occurrencesHighlight.off', "Does not highlight occurrences."),
+            nls.localize('occurrencesHighlight.singleFile', "Highlights occurrences only in the current file."),
+            nls.localize('occurrencesHighlight.multiFile', "Experimental: Highlights occurrences across all valid open files.")
+        ],
+        markdownDescription: nls.localize('occurrencesHighlight', "Controls whether occurrences should be highlighted across open files.")
+    })),
     overviewRulerBorder: register(new EditorBooleanOption(81 /* EditorOption.overviewRulerBorder */, 'overviewRulerBorder', true, { description: nls.localize('overviewRulerBorder', "Controls whether a border should be drawn around the overview ruler.") })),
     overviewRulerLanes: register(new EditorIntOption(82 /* EditorOption.overviewRulerLanes */, 'overviewRulerLanes', 3, 0, 3)),
     padding: register(new EditorPadding()),

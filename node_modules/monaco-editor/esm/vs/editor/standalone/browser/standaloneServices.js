@@ -11,15 +11,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 import '../../common/languages/languageConfigurationRegistry.js';
 import './standaloneCodeEditorService.js';
 import './standaloneLayoutService.js';
@@ -83,7 +74,7 @@ import { StandaloneQuickInputService } from './quickInput/standaloneQuickInputSe
 import { StandaloneThemeService } from './standaloneThemeService.js';
 import { IStandaloneThemeService } from '../common/standaloneTheme.js';
 import { AccessibilityService } from '../../../platform/accessibility/browser/accessibilityService.js';
-import { IAccessibilityService } from '../../../platform/accessibility/common/accessibility.js';
+import { IAccessibilityService, IAccessibleNotificationService } from '../../../platform/accessibility/common/accessibility.js';
 import { IMenuService } from '../../../platform/actions/common/actions.js';
 import { MenuService } from '../../../platform/actions/common/menuService.js';
 import { BrowserClipboardService } from '../../../platform/clipboard/browser/clipboardService.js';
@@ -104,6 +95,7 @@ import { LogService } from '../../../platform/log/common/logService.js';
 import { getEditorFeatures } from '../../common/editorFeatures.js';
 import { onUnexpectedError } from '../../../base/common/errors.js';
 import { IEnvironmentService } from '../../../platform/environment/common/environment.js';
+import { mainWindow } from '../../../base/browser/window.js';
 class SimpleModel {
     constructor(model) {
         this.disposed = false;
@@ -137,10 +129,8 @@ class StandaloneEditorProgressService {
     show() {
         return StandaloneEditorProgressService.NULL_PROGRESS_RUNNER;
     }
-    showWhile(promise, delay) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield promise;
-        });
+    async showWhile(promise, delay) {
+        await promise;
     }
 }
 StandaloneEditorProgressService.NULL_PROGRESS_RUNNER = {
@@ -162,41 +152,35 @@ class StandaloneEnvironmentService {
     }
 }
 class StandaloneDialogService {
-    confirm(confirmation) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const confirmed = this.doConfirm(confirmation.message, confirmation.detail);
-            return {
-                confirmed,
-                checkboxChecked: false // unsupported
-            };
-        });
+    async confirm(confirmation) {
+        const confirmed = this.doConfirm(confirmation.message, confirmation.detail);
+        return {
+            confirmed,
+            checkboxChecked: false // unsupported
+        };
     }
     doConfirm(message, detail) {
         let messageText = message;
         if (detail) {
             messageText = messageText + '\n\n' + detail;
         }
-        return window.confirm(messageText);
+        return mainWindow.confirm(messageText);
     }
-    prompt(prompt) {
+    async prompt(prompt) {
         var _a, _b;
-        return __awaiter(this, void 0, void 0, function* () {
-            let result = undefined;
-            const confirmed = this.doConfirm(prompt.message, prompt.detail);
-            if (confirmed) {
-                const promptButtons = [...((_a = prompt.buttons) !== null && _a !== void 0 ? _a : [])];
-                if (prompt.cancelButton && typeof prompt.cancelButton !== 'string' && typeof prompt.cancelButton !== 'boolean') {
-                    promptButtons.push(prompt.cancelButton);
-                }
-                result = yield ((_b = promptButtons[0]) === null || _b === void 0 ? void 0 : _b.run({ checkboxChecked: false }));
+        let result = undefined;
+        const confirmed = this.doConfirm(prompt.message, prompt.detail);
+        if (confirmed) {
+            const promptButtons = [...((_a = prompt.buttons) !== null && _a !== void 0 ? _a : [])];
+            if (prompt.cancelButton && typeof prompt.cancelButton !== 'string' && typeof prompt.cancelButton !== 'boolean') {
+                promptButtons.push(prompt.cancelButton);
             }
-            return { result };
-        });
+            result = await ((_b = promptButtons[0]) === null || _b === void 0 ? void 0 : _b.run({ checkboxChecked: false }));
+        }
+        return { result };
     }
-    error(message, detail) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.prompt({ type: Severity.Error, message, detail });
-        });
+    async error(message, detail) {
+        await this.prompt({ type: Severity.Error, message, detail });
     }
 }
 export class StandaloneNotificationService {
@@ -367,7 +351,7 @@ let StandaloneKeybindingService = class StandaloneKeybindingService extends Abst
         return this._cachedResolver;
     }
     _documentHasFocus() {
-        return document.hasFocus();
+        return mainWindow.document.hasFocus();
     }
     _toNormalizedKeybindingItems(items, isDefault) {
         const result = [];
@@ -551,42 +535,40 @@ let StandaloneBulkEditService = class StandaloneBulkEditService {
     hasPreviewHandler() {
         return false;
     }
-    apply(editsIn, _options) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const edits = Array.isArray(editsIn) ? editsIn : ResourceEdit.convert(editsIn);
-            const textEdits = new Map();
-            for (const edit of edits) {
-                if (!(edit instanceof ResourceTextEdit)) {
-                    throw new Error('bad edit - only text edits are supported');
-                }
-                const model = this._modelService.getModel(edit.resource);
-                if (!model) {
-                    throw new Error('bad edit - model not found');
-                }
-                if (typeof edit.versionId === 'number' && model.getVersionId() !== edit.versionId) {
-                    throw new Error('bad state - model changed in the meantime');
-                }
-                let array = textEdits.get(model);
-                if (!array) {
-                    array = [];
-                    textEdits.set(model, array);
-                }
-                array.push(EditOperation.replaceMove(Range.lift(edit.textEdit.range), edit.textEdit.text));
+    async apply(editsIn, _options) {
+        const edits = Array.isArray(editsIn) ? editsIn : ResourceEdit.convert(editsIn);
+        const textEdits = new Map();
+        for (const edit of edits) {
+            if (!(edit instanceof ResourceTextEdit)) {
+                throw new Error('bad edit - only text edits are supported');
             }
-            let totalEdits = 0;
-            let totalFiles = 0;
-            for (const [model, edits] of textEdits) {
-                model.pushStackElement();
-                model.pushEditOperations([], edits, () => []);
-                model.pushStackElement();
-                totalFiles += 1;
-                totalEdits += edits.length;
+            const model = this._modelService.getModel(edit.resource);
+            if (!model) {
+                throw new Error('bad edit - model not found');
             }
-            return {
-                ariaSummary: strings.format(StandaloneServicesNLS.bulkEditServiceSummary, totalEdits, totalFiles),
-                isApplied: totalEdits > 0
-            };
-        });
+            if (typeof edit.versionId === 'number' && model.getVersionId() !== edit.versionId) {
+                throw new Error('bad state - model changed in the meantime');
+            }
+            let array = textEdits.get(model);
+            if (!array) {
+                array = [];
+                textEdits.set(model, array);
+            }
+            array.push(EditOperation.replaceMove(Range.lift(edit.textEdit.range), edit.textEdit.text));
+        }
+        let totalEdits = 0;
+        let totalFiles = 0;
+        for (const [model, edits] of textEdits) {
+            model.pushStackElement();
+            model.pushEditOperations([], edits, () => []);
+            model.pushStackElement();
+            totalFiles += 1;
+            totalEdits += edits.length;
+        }
+        return {
+            ariaSummary: strings.format(StandaloneServicesNLS.bulkEditServiceSummary, totalEdits, totalFiles),
+            isApplied: totalEdits > 0
+        };
     }
 };
 StandaloneBulkEditService = __decorate([
@@ -656,9 +638,12 @@ StandaloneContextMenuService = __decorate([
     __param(5, IContextKeyService)
 ], StandaloneContextMenuService);
 class StandaloneAudioService {
-    playAudioCue(cue, options) {
-        return __awaiter(this, void 0, void 0, function* () {
-        });
+    async playAudioCue(cue, options) {
+    }
+}
+class StandaloneAccessibleNotificationService {
+    notify(event, userGesture) {
+        // NOOP
     }
 }
 registerSingleton(IConfigurationService, StandaloneConfigurationService, 0 /* InstantiationType.Eager */);
@@ -695,6 +680,7 @@ registerSingleton(IClipboardService, BrowserClipboardService, 0 /* Instantiation
 registerSingleton(IContextMenuService, StandaloneContextMenuService, 0 /* InstantiationType.Eager */);
 registerSingleton(IMenuService, MenuService, 0 /* InstantiationType.Eager */);
 registerSingleton(IAudioCueService, StandaloneAudioService, 0 /* InstantiationType.Eager */);
+registerSingleton(IAccessibleNotificationService, StandaloneAccessibleNotificationService, 0 /* InstantiationType.Eager */);
 /**
  * We don't want to eagerly instantiate services because embedders get a one time chance
  * to override services when they create the first editor.

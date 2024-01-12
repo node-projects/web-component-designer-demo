@@ -2,6 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { $window } from './window.js';
 import { Emitter } from '../common/event.js';
 import { Disposable, markAsSingleton } from '../common/lifecycle.js';
 class WindowManager {
@@ -29,7 +30,7 @@ class DevicePixelRatioMonitor extends Disposable {
     _handleChange(fireEvent) {
         var _a;
         (_a = this._mediaQueryList) === null || _a === void 0 ? void 0 : _a.removeEventListener('change', this._listener);
-        this._mediaQueryList = window.matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`);
+        this._mediaQueryList = $window.matchMedia(`(resolution: ${$window.devicePixelRatio}dppx)`);
         this._mediaQueryList.addEventListener('change', this._listener);
         if (fireEvent) {
             this._onDidChange.fire();
@@ -53,7 +54,7 @@ class PixelRatioImpl extends Disposable {
     }
     _getPixelRatio() {
         const ctx = document.createElement('canvas').getContext('2d');
-        const dpr = window.devicePixelRatio || 1;
+        const dpr = $window.devicePixelRatio || 1;
         const bsr = ctx.webkitBackingStorePixelRatio ||
             ctx.mozBackingStorePixelRatio ||
             ctx.msBackingStorePixelRatio ||
@@ -87,7 +88,7 @@ class PixelRatioFacade {
 }
 export function addMatchMediaChangeListener(query, callback) {
     if (typeof query === 'string') {
-        query = window.matchMedia(query);
+        query = $window.matchMedia(query);
     }
     query.addEventListener('change', callback);
 }
@@ -112,9 +113,9 @@ export const isWebkitWebView = (!isChrome && !isSafari && isWebKit);
 export const isElectron = (userAgent.indexOf('Electron/') >= 0);
 export const isAndroid = (userAgent.indexOf('Android') >= 0);
 let standalone = false;
-if (window.matchMedia) {
-    const standaloneMatchMedia = window.matchMedia('(display-mode: standalone) or (display-mode: window-controls-overlay)');
-    const fullScreenMatchMedia = window.matchMedia('(display-mode: fullscreen)');
+if ($window.matchMedia) {
+    const standaloneMatchMedia = $window.matchMedia('(display-mode: standalone) or (display-mode: window-controls-overlay)');
+    const fullScreenMatchMedia = $window.matchMedia('(display-mode: fullscreen)');
     standalone = standaloneMatchMedia.matches;
     addMatchMediaChangeListener(standaloneMatchMedia, ({ matches }) => {
         // entering fullscreen would change standaloneMatchMedia.matches to false

@@ -86,7 +86,9 @@ __decorate([
     memoize
 ], CompressibleRenderer.prototype, "compressedTreeNodeProvider", null);
 function asObjectTreeOptions(compressedTreeNodeProvider, options) {
-    return options && Object.assign(Object.assign({}, options), { keyboardNavigationLabelProvider: options.keyboardNavigationLabelProvider && {
+    return options && {
+        ...options,
+        keyboardNavigationLabelProvider: options.keyboardNavigationLabelProvider && {
             getKeyboardNavigationLabel(e) {
                 let compressedTreeNode;
                 try {
@@ -102,7 +104,8 @@ function asObjectTreeOptions(compressedTreeNodeProvider, options) {
                     return options.keyboardNavigationLabelProvider.getCompressedNodeKeyboardNavigationLabel(compressedTreeNode.element.elements);
                 }
             }
-        } });
+        }
+    };
 }
 export class CompressibleObjectTree extends ObjectTree {
     constructor(user, container, delegate, renderers, options = {}) {

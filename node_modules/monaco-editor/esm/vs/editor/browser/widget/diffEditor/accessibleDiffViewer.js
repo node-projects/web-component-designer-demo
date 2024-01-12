@@ -11,15 +11,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 import { addDisposableListener, addStandardDisposableListener, reset } from '../../../../base/browser/dom.js';
 import { createTrustedTypesPolicy } from '../../../../base/browser/trustedTypes.js';
 import { ActionBar } from '../../../../base/browser/ui/actionbar/actionbar.js';
@@ -28,7 +19,7 @@ import { Action } from '../../../../base/common/actions.js';
 import { forEachAdjacent, groupAdjacentBy } from '../../../../base/common/arrays.js';
 import { Codicon } from '../../../../base/common/codicons.js';
 import { Disposable, toDisposable } from '../../../../base/common/lifecycle.js';
-import { autorun, autorunWithStore, derived, derivedWithStore, recomputeInitiallyAndOnChange, observableValue, subtransaction, transaction } from '../../../../base/common/observable.js';
+import { autorun, autorunWithStore, derived, derivedWithStore, observableValue, subtransaction, transaction } from '../../../../base/common/observable.js';
 import { ThemeIcon } from '../../../../base/common/themables.js';
 import { applyFontInfo } from '../../config/domFontInfo.js';
 import { applyStyle } from './utils.js';
@@ -62,7 +53,7 @@ let AccessibleDiffViewer = class AccessibleDiffViewer extends Disposable {
         this._diffs = _diffs;
         this._editors = _editors;
         this._instantiationService = _instantiationService;
-        this.model = derivedWithStore(this, (reader, store) => {
+        this._state = derivedWithStore(this, (reader, store) => {
             const visible = this._visible.read(reader);
             this._parentNode.style.visibility = visible ? 'visible' : 'hidden';
             if (!visible) {
@@ -70,26 +61,22 @@ let AccessibleDiffViewer = class AccessibleDiffViewer extends Disposable {
             }
             const model = store.add(this._instantiationService.createInstance(ViewModel, this._diffs, this._editors, this._setVisible, this._canClose));
             const view = store.add(this._instantiationService.createInstance(View, this._parentNode, model, this._width, this._height, this._editors));
-            return {
-                model,
-                view
-            };
-        });
-        this._register(recomputeInitiallyAndOnChange(this.model));
+            return { model, view, };
+        }).recomputeInitiallyAndOnChange(this._store);
     }
     next() {
         transaction(tx => {
             const isVisible = this._visible.get();
             this._setVisible(true, tx);
             if (isVisible) {
-                this.model.get().model.nextGroup(tx);
+                this._state.get().model.nextGroup(tx);
             }
         });
     }
     prev() {
         transaction(tx => {
             this._setVisible(true, tx);
-            this.model.get().model.previousGroup(tx);
+            this._state.get().model.previousGroup(tx);
         });
     }
     close() {
@@ -308,7 +295,7 @@ let View = class View extends Disposable {
             /** @description update actions */
             this._actionBar.clear();
             if (this._model.canClose.read(reader)) {
-                this._actionBar.push(new Action('diffreview.close', localize('label.close', "Close"), 'close-diff-review ' + ThemeIcon.asClassName(accessibleDiffViewerCloseIcon), true, () => __awaiter(this, void 0, void 0, function* () { return _model.close(); })), { label: false, icon: true });
+                this._actionBar.push(new Action('diffreview.close', localize('label.close', "Close"), 'close-diff-review ' + ThemeIcon.asClassName(accessibleDiffViewerCloseIcon), true, async () => _model.close()), { label: false, icon: true });
             }
         }));
         this._content = document.createElement('div');

@@ -1,6 +1,6 @@
 /*!-----------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
- * Version: 0.44.0(3e047efd345ff102c8c61b5398fb30845aaac166)
+ * Version: 0.45.0(5e5af013f8d295555a7210df0d5f2cea0bf5dd56)
  * Released under the MIT license
  * https://github.com/microsoft/vscode/blob/main/LICENSE.txt
  *-----------------------------------------------------------*/
@@ -238,6 +238,8 @@
 	border: 1px solid var(--vscode-button-border, transparent);
 	border-left-width: 0 !important;
 	border-radius: 0 2px 2px 0;
+	display: flex;
+	align-items: center;
 }
 
 .monaco-button-dropdown > .monaco-button.monaco-text-button {
@@ -764,6 +766,11 @@
 	opacity: 0.5;
 }
 
+.monaco-icon-label>.monaco-icon-label-container>.monaco-icon-suffix-container>.label-suffix {
+	opacity: .7;
+	white-space: pre;
+}
+
 .monaco-icon-label > .monaco-icon-label-container > .monaco-icon-description-container > .label-description {
 	opacity: .7;
 	margin-left: 0.5em;
@@ -1009,6 +1016,12 @@
 	touch-action: none;
 }
 
+/* Make sure the scrollbar renders above overlays (sticky scroll) */
+.monaco-list .monaco-scrollable-element > .scrollbar.vertical,
+.monaco-pane-view > .monaco-split-view2.vertical > .monaco-scrollable-element > .scrollbar.vertical {
+	z-index: 14;
+}
+
 /* for OS X ballistic scrolling */
 .monaco-list-row.scrolling {
 	display: none !important;
@@ -1067,13 +1080,13 @@
 
 .monaco-progress-container {
 	width: 100%;
-	height: 5px;
+	height: 2px;
 	overflow: hidden; /* keep progress bit in bounds */
 }
 
 .monaco-progress-container .progress-bit {
 	width: 2%;
-	height: 5px;
+	height: 2px;
 	position: absolute;
 	left: 0;
 	display: none;
@@ -1687,6 +1700,19 @@
 	background-size: 16px !important;
 }
 
+.monaco-action-bar .checkbox-action-item {
+	display: flex;
+	align-items: center;
+}
+
+.monaco-action-bar .checkbox-action-item > .monaco-custom-toggle.monaco-checkbox {
+	margin-right: 4px;
+}
+
+.monaco-action-bar .checkbox-action-item > .checkbox-label {
+	font-size: 12px;
+}
+
 /* hide check when unchecked */
 .monaco-custom-toggle.monaco-checkbox:not(.checked)::before {
 	visibility: hidden;
@@ -1835,6 +1861,42 @@
 
 .monaco-tree-type-filter-actionbar .monaco-action-bar .action-label {
 	padding: 2px;
+}
+
+.monaco-list .monaco-scrollable-element .monaco-tree-sticky-container{
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 0;
+	z-index: 13; /* Settings editor uses z-index: 12 */
+
+	/* TODO@benibenj temporary solution, all lists should provide their background */
+	background-color: var(--vscode-sideBar-background);
+}
+
+.monaco-list .monaco-scrollable-element .monaco-tree-sticky-container .monaco-tree-sticky-row.monaco-list-row{
+	position: absolute;
+	width: 100%;
+	opacity: 1 !important; /* Settings editor uses opacity < 1 */
+	overflow: hidden;
+
+	/* TODO@benibenj temporary solution, all lists should provide their background */
+	background-color: var(--vscode-sideBar-background);
+}
+
+.monaco-list .monaco-scrollable-element .monaco-tree-sticky-container .monaco-tree-sticky-row:hover{
+	background-color: var(--vscode-list-hoverBackground) !important;
+	cursor: pointer;
+}
+
+.monaco-list .monaco-scrollable-element .monaco-tree-sticky-container .monaco-tree-sticky-container-shadow{
+	position: absolute;
+	bottom: -3px;
+	left: 0px;
+	height: 3px;
+	width: 100%;
+	box-shadow: var(--vscode-scrollbar-shadow) 0 6px 6px -6px inset;
 }
 
 /*---------------------------------------------------------------------------------------------
@@ -2416,6 +2478,10 @@
 	margin: 2px 0;
 }
 
+.monaco-diff-editor .revertButton {
+	cursor: pointer;
+}
+
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -2447,7 +2513,25 @@
 	background-clip: padding-box;
 	border-bottom: 2px solid transparent;
 	border-top: 4px solid transparent;
-	cursor: ns-resize;
+	/*cursor: n-resize;*/
+}
+
+.monaco-editor.draggingUnchangedRegion.canMoveTop:not(.canMoveBottom) *,
+.monaco-editor .diff-hidden-lines .top.canMoveTop:not(.canMoveBottom),
+.monaco-editor .diff-hidden-lines .bottom.canMoveTop:not(.canMoveBottom) {
+	cursor: n-resize !important;
+}
+
+.monaco-editor.draggingUnchangedRegion:not(.canMoveTop).canMoveBottom *,
+.monaco-editor .diff-hidden-lines .top:not(.canMoveTop).canMoveBottom,
+.monaco-editor .diff-hidden-lines .bottom:not(.canMoveTop).canMoveBottom {
+	cursor: s-resize !important;
+}
+
+.monaco-editor.draggingUnchangedRegion.canMoveTop.canMoveBottom *,
+.monaco-editor .diff-hidden-lines .top.canMoveTop.canMoveBottom,
+.monaco-editor .diff-hidden-lines .bottom.canMoveTop.canMoveBottom {
+	cursor: ns-resize !important;
 }
 
 .monaco-editor .diff-hidden-lines .top {
@@ -2481,6 +2565,7 @@
 	white-space: nowrap;
 
 	height: 24px;
+	box-shadow: inset 0 -5px 5px -7px var(--vscode-diffEditor-unchangedRegionShadow), inset 0 5px 5px -7px var(--vscode-diffEditor-unchangedRegionShadow);
 }
 
 .monaco-editor .diff-hidden-lines .center span.codicon {
@@ -2827,6 +2912,68 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+.monaco-component .multiDiffEntry {
+	display: flex;
+	flex-direction: column;
+}
+
+.monaco-component .multiDiffEntry .editorParent {
+	border-left: 2px var(--vscode-tab-inactiveBackground) solid;
+}
+
+.monaco-component .multiDiffEntry.focused .editorParent {
+	border-left: 2px var(--vscode-notebook-focusedCellBorder) solid;
+}
+
+.monaco-component .multiDiffEntry .editorParent .editorContainer {
+	border-left: 17px var(--vscode-tab-inactiveBackground) solid;
+}
+
+.monaco-component .multiDiffEntry .collapse-button {
+	margin: 0 5px;
+	cursor: pointer;
+}
+
+.monaco-component .multiDiffEntry .collapse-button a {
+	display: block;
+}
+
+.monaco-component .multiDiffEntry .header {
+	display: flex;
+	align-items: center;
+	padding: 8px 5px;
+	color: var(--vscode-foreground);
+	background: var(--vscode-editor-background);
+	z-index: 1000;
+
+	border-bottom: 1px  var(--vscode-sideBarSectionHeader-border) solid;
+	border-top: 1px  var(--vscode-sideBarSectionHeader-border) solid;
+
+	border-left: 2px var(--vscode-editor-background) solid;
+}
+.monaco-component .multiDiffEntry.focused .header {
+	border-left: 2px var(--vscode-notebook-focusedCellBorder) solid;
+}
+
+.monaco-component .multiDiffEntry .header.shadow {
+	box-shadow: var(--vscode-scrollbar-shadow) 0px 6px 6px -6px;
+}
+
+.monaco-component .multiDiffEntry .header .title {
+	flex: 1;
+	font-size: 14px;
+	line-height: 22px;
+}
+
+.monaco-component .multiDiffEntry .header .actions {
+	padding: 0 8px;
+}
+
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
 .monaco-editor .selection-anchor {
 	background-color: #007ACC;
 	width: 2px !important;
@@ -2858,12 +3005,18 @@
 	cursor: pointer;
 }
 
-.monaco-editor .lightBulbWidget.codicon-light-bulb {
+.monaco-editor .lightBulbWidget.codicon-light-bulb,
+.monaco-editor .lightBulbWidget.codicon-lightbulb-sparkle {
 	color: var(--vscode-editorLightBulb-foreground);
 }
 
-.monaco-editor .lightBulbWidget.codicon-lightbulb-autofix {
+.monaco-editor .lightBulbWidget.codicon-lightbulb-autofix,
+.monaco-editor .lightBulbWidget.codicon-lightbulb-sparkle-autofix {
 	color: var(--vscode-editorLightBulbAutoFix-foreground, var(--vscode-editorLightBulb-foreground));
+}
+
+.monaco-editor .lightBulbWidget.codicon-sparkle-filled {
+	color: var(--vscode-editorLightBulbAi-foreground, var(--vscode-icon-foreground));
 }
 
 .monaco-editor .lightBulbWidget:before {
@@ -5581,11 +5734,6 @@
 
 .quick-input-progress.monaco-progress-container {
 	position: relative;
-}
-
-.quick-input-progress.monaco-progress-container,
-.quick-input-progress.monaco-progress-container .progress-bit {
-	height: 2px;
 }
 
 .quick-input-list {

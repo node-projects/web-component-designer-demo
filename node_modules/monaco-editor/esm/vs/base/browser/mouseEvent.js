@@ -6,7 +6,7 @@ import * as browser from './browser.js';
 import { IframeUtils } from './iframe.js';
 import * as platform from '../common/platform.js';
 export class StandardMouseEvent {
-    constructor(e) {
+    constructor(targetWindow, e) {
         this.timestamp = Date.now();
         this.browserEvent = e;
         this.leftButton = e.button === 0;
@@ -32,7 +32,7 @@ export class StandardMouseEvent {
             this.posy = e.clientY + this.target.ownerDocument.body.scrollTop + this.target.ownerDocument.documentElement.scrollTop;
         }
         // Find the position of the iframe this code is executing in relative to the iframe where the event was captured.
-        const iframeOffsets = IframeUtils.getPositionOfChildWindowRelativeToAncestorWindow(window, e.view);
+        const iframeOffsets = IframeUtils.getPositionOfChildWindowRelativeToAncestorWindow(targetWindow, e.view);
         this.posx -= iframeOffsets.left;
         this.posy -= iframeOffsets.top;
     }

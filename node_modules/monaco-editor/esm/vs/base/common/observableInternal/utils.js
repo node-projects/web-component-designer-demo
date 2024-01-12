@@ -4,7 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 import { toDisposable } from '../lifecycle.js';
 import { autorun } from './autorun.js';
-import { BaseObservable, ConvenientObservable, getDebugName, getFunctionName, transaction } from './base.js';
+import { BaseObservable, ConvenientObservable, _setRecomputeInitiallyAndOnChange, getDebugName, getFunctionName, subtransaction, transaction } from './base.js';
+import { derived } from './derived.js';
 import { getLogger } from './logging.js';
 /**
  * Represents an efficient observable whose value never changes.
@@ -37,17 +38,18 @@ export function waitForState(observable, predicate) {
     return new Promise(resolve => {
         let didRun = false;
         let shouldDispose = false;
+        const stateObs = observable.map(state => ({ isFinished: predicate(state), state }));
         const d = autorun(reader => {
             /** @description waitForState */
-            const currentState = observable.read(reader);
-            if (predicate(currentState)) {
+            const { isFinished, state } = stateObs.read(reader);
+            if (isFinished) {
                 if (!didRun) {
                     shouldDispose = true;
                 }
                 else {
                     d.dispose();
                 }
-                resolve(currentState);
+                resolve(state);
             }
         });
         didRun = true;
@@ -68,12 +70,16 @@ export class FromEventObservable extends BaseObservable {
         this.handleEvent = (args) => {
             var _a;
             const newValue = this._getValue(args);
-            const didChange = !this.hasValue || this.value !== newValue;
-            (_a = getLogger()) === null || _a === void 0 ? void 0 : _a.handleFromEventObservableTriggered(this, { oldValue: this.value, newValue, change: undefined, didChange, hadValue: this.hasValue });
+            const oldValue = this.value;
+            const didChange = !this.hasValue || oldValue !== newValue;
+            let didRunTransaction = false;
             if (didChange) {
                 this.value = newValue;
                 if (this.hasValue) {
-                    transaction((tx) => {
+                    didRunTransaction = true;
+                    subtransaction(FromEventObservable.globalTransaction, (tx) => {
+                        var _a;
+                        (_a = getLogger()) === null || _a === void 0 ? void 0 : _a.handleFromEventObservableTriggered(this, { oldValue, newValue, change: undefined, didChange, hadValue: this.hasValue });
                         for (const o of this.observers) {
                             tx.updateObserver(o, this);
                             o.handleChange(this, undefined);
@@ -84,6 +90,9 @@ export class FromEventObservable extends BaseObservable {
                     });
                 }
                 this.hasValue = true;
+            }
+            if (!didRunTransaction) {
+                (_a = getLogger()) === null || _a === void 0 ? void 0 : _a.handleFromEventObservableTriggered(this, { oldValue, newValue, change: undefined, didChange, hadValue: this.hasValue });
             }
         };
     }
@@ -118,6 +127,22 @@ export class FromEventObservable extends BaseObservable {
 }
 (function (observableFromEvent) {
     observableFromEvent.Observer = FromEventObservable;
+    function batchEventsGlobally(tx, fn) {
+        let didSet = false;
+        if (FromEventObservable.globalTransaction === undefined) {
+            FromEventObservable.globalTransaction = tx;
+            didSet = true;
+        }
+        try {
+            fn();
+        }
+        finally {
+            if (didSet) {
+                FromEventObservable.globalTransaction = undefined;
+            }
+        }
+    }
+    observableFromEvent.batchEventsGlobally = batchEventsGlobally;
 })(observableFromEvent || (observableFromEvent = {}));
 export function observableSignalFromEvent(debugName, event) {
     return new FromEventObservableSignal(debugName, event);
@@ -158,7 +183,7 @@ export function observableSignal(debugNameOrOwner) {
 class ObservableSignal extends BaseObservable {
     get debugName() {
         var _a;
-        return (_a = getDebugName(this._debugName, undefined, this._owner, this)) !== null && _a !== void 0 ? _a : 'Observable Signal';
+        return (_a = getDebugName(this, this._debugName, undefined, this._owner, this)) !== null && _a !== void 0 ? _a : 'Observable Signal';
     }
     constructor(_debugName, _owner) {
         super();
@@ -184,26 +209,38 @@ class ObservableSignal extends BaseObservable {
 /**
  * This converts the given observable into an autorun.
  */
-export function recomputeInitiallyAndOnChange(observable) {
-    const o = new KeepAliveObserver(true);
+export function recomputeInitiallyAndOnChange(observable, handleValue) {
+    const o = new KeepAliveObserver(true, handleValue);
     observable.addObserver(o);
-    observable.reportChanges();
+    if (handleValue) {
+        handleValue(observable.get());
+    }
+    else {
+        observable.reportChanges();
+    }
     return toDisposable(() => {
         observable.removeObserver(o);
     });
 }
+_setRecomputeInitiallyAndOnChange(recomputeInitiallyAndOnChange);
 class KeepAliveObserver {
-    constructor(forceRecompute) {
-        this.forceRecompute = forceRecompute;
-        this.counter = 0;
+    constructor(_forceRecompute, _handleValue) {
+        this._forceRecompute = _forceRecompute;
+        this._handleValue = _handleValue;
+        this._counter = 0;
     }
     beginUpdate(observable) {
-        this.counter++;
+        this._counter++;
     }
     endUpdate(observable) {
-        this.counter--;
-        if (this.counter === 0 && this.forceRecompute) {
-            observable.reportChanges();
+        this._counter--;
+        if (this._counter === 0 && this._forceRecompute) {
+            if (this._handleValue) {
+                this._handleValue(observable.get());
+            }
+            else {
+                observable.reportChanges();
+            }
         }
     }
     handlePossibleChange(observable) {
@@ -212,4 +249,12 @@ class KeepAliveObserver {
     handleChange(observable, change) {
         // NO OP
     }
+}
+export function derivedObservableWithCache(computeFn) {
+    let lastValue = undefined;
+    const observable = derived(reader => {
+        lastValue = computeFn(reader, lastValue);
+        return lastValue;
+    });
+    return observable;
 }

@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { Disposable } from '../../../base/common/lifecycle.js';
 import { Emitter } from '../../../base/common/event.js';
+import { getWindow, scheduleAtNextAnimationFrame } from '../../../base/browser/dom.js';
 export class ElementSizeObserver extends Disposable {
     constructor(referenceDomElement, dimension) {
         super();
@@ -50,7 +51,7 @@ export class ElementSizeObserver extends Disposable {
                         observeNow();
                     }
                     finally {
-                        requestAnimationFrame(() => {
+                        scheduleAtNextAnimationFrame(getWindow(this._referenceDomElement), () => {
                             alreadyObservedThisAnimationFrame = false;
                             update();
                         });

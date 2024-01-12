@@ -20,14 +20,11 @@ let _language = LANGUAGE_DEFAULT;
 let _platformLocale = LANGUAGE_DEFAULT;
 let _translationsConfigFile = undefined;
 let _userAgent = undefined;
-/**
- * @deprecated use `globalThis` instead
- */
-export const globals = (typeof self === 'object' ? self : typeof global === 'object' ? global : {});
+const $globalThis = globalThis;
 let nodeProcess = undefined;
-if (typeof globals.vscode !== 'undefined' && typeof globals.vscode.process !== 'undefined') {
+if (typeof $globalThis.vscode !== 'undefined' && typeof $globalThis.vscode.process !== 'undefined') {
     // Native environment (sandboxed)
-    nodeProcess = globals.vscode.process;
+    nodeProcess = $globalThis.vscode.process;
 }
 else if (typeof process !== 'undefined') {
     // Native environment (non-sandboxed)
@@ -99,7 +96,8 @@ export const isMacintosh = _isMacintosh;
 export const isLinux = _isLinux;
 export const isNative = _isNative;
 export const isWeb = _isWeb;
-export const isWebWorker = (_isWeb && typeof globals.importScripts === 'function');
+export const isWebWorker = (_isWeb && typeof $globalThis.importScripts === 'function');
+export const webWorkerOrigin = isWebWorker ? $globalThis.origin : undefined;
 export const isIOS = _isIOS;
 export const isMobile = _isMobile;
 export const userAgent = _userAgent;
@@ -109,7 +107,7 @@ export const userAgent = _userAgent;
  * Chinese)
  */
 export const language = _language;
-export const setTimeout0IsFaster = (typeof globals.postMessage === 'function' && !globals.importScripts);
+export const setTimeout0IsFaster = (typeof $globalThis.postMessage === 'function' && !$globalThis.importScripts);
 /**
  * See https://html.spec.whatwg.org/multipage/timers-and-user-prompts.html#:~:text=than%204%2C%20then-,set%20timeout%20to%204,-.
  *
@@ -119,7 +117,7 @@ export const setTimeout0IsFaster = (typeof globals.postMessage === 'function' &&
 export const setTimeout0 = (() => {
     if (setTimeout0IsFaster) {
         const pending = [];
-        globals.addEventListener('message', (e) => {
+        $globalThis.addEventListener('message', (e) => {
             if (e.data && e.data.vscodeScheduleAsyncWork) {
                 for (let i = 0, len = pending.length; i < len; i++) {
                     const candidate = pending[i];
@@ -138,7 +136,7 @@ export const setTimeout0 = (() => {
                 id: myId,
                 callback: callback
             });
-            globals.postMessage({ vscodeScheduleAsyncWork: myId }, '*');
+            $globalThis.postMessage({ vscodeScheduleAsyncWork: myId }, '*');
         };
     }
     return (callback) => setTimeout(callback);

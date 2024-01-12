@@ -28,7 +28,7 @@ export class MovedBlocksLinesPart extends Disposable {
         this.width = observableValue(this, 0);
         this._modifiedViewZonesChangedSignal = observableSignalFromEvent('modified.onDidChangeViewZones', this._editors.modified.onDidChangeViewZones);
         this._originalViewZonesChangedSignal = observableSignalFromEvent('original.onDidChangeViewZones', this._editors.original.onDidChangeViewZones);
-        this._state = derivedWithStore((reader, store) => {
+        this._state = derivedWithStore(this, (reader, store) => {
             /** @description state */
             var _a;
             this._element.replaceChildren();
@@ -139,8 +139,8 @@ export class MovedBlocksLinesPart extends Disposable {
                 modified: new PlaceholderViewZone(constObservable(move.lineRangeMapping.modified.startLineNumber - 1), 18),
             }));
         });
-        this._register(applyViewZones(this._editors.original, movedBlockViewZones.map(zones => zones.map(z => z.original))));
-        this._register(applyViewZones(this._editors.modified, movedBlockViewZones.map(zones => zones.map(z => z.modified))));
+        this._register(applyViewZones(this._editors.original, movedBlockViewZones.map(zones => /** @description movedBlockViewZones.original */ zones.map(z => z.original))));
+        this._register(applyViewZones(this._editors.modified, movedBlockViewZones.map(zones => /** @description movedBlockViewZones.modified */ zones.map(z => z.modified))));
         this._register(autorunWithStore((reader, store) => {
             const blocks = movedBlockViewZones.read(reader);
             for (const b of blocks) {
@@ -165,6 +165,7 @@ export class MovedBlocksLinesPart extends Disposable {
                 return true;
             }
         }, reader => {
+            /** @description MovedBlocksLines.setActiveMovedTextFromCursor */
             originalHasFocus.read(reader);
             modifiedHasFocus.read(reader);
             const m = this._diffModel.read(reader);

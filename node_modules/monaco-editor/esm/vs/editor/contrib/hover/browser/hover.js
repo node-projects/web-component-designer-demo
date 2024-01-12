@@ -60,13 +60,8 @@ let ModesHoverController = ModesHoverController_1 = class ModesHoverController e
                 this._hookEvents();
             }
         }));
-        this._register(this._editor.onMouseLeave(() => {
-            this._mouseMoveEvent = undefined;
-            this._reactToEditorMouseMoveRunner.cancel();
-        }));
     }
     _hookEvents() {
-        const hideWidgetsEventHandler = () => this._hideWidgets();
         const hoverOpts = this._editor.getOption(60 /* EditorOption.hover */);
         this._isHoverEnabled = hoverOpts.enabled;
         this._isHoverSticky = hoverOpts.sticky;
@@ -82,8 +77,16 @@ let ModesHoverController = ModesHoverController_1 = class ModesHoverController e
             this._toUnhook.add(this._editor.onKeyDown((e) => this._onKeyDown(e)));
         }
         this._toUnhook.add(this._editor.onMouseLeave((e) => this._onEditorMouseLeave(e)));
-        this._toUnhook.add(this._editor.onDidChangeModel(hideWidgetsEventHandler));
+        this._toUnhook.add(this._editor.onDidChangeModel(() => {
+            this._cancelScheduler();
+            this._hideWidgets();
+        }));
+        this._toUnhook.add(this._editor.onDidChangeModelContent(() => this._cancelScheduler()));
         this._toUnhook.add(this._editor.onDidScrollChange((e) => this._onEditorScrollChanged(e)));
+    }
+    _cancelScheduler() {
+        this._mouseMoveEvent = undefined;
+        this._reactToEditorMouseMoveRunner.cancel();
     }
     _unhookEvents() {
         this._toUnhook.clear();
@@ -118,6 +121,7 @@ let ModesHoverController = ModesHoverController_1 = class ModesHoverController e
     }
     _onEditorMouseLeave(mouseEvent) {
         var _a, _b;
+        this._cancelScheduler();
         const targetEm = (mouseEvent.event.browserEvent.relatedTarget);
         if (((_a = this._contentWidget) === null || _a === void 0 ? void 0 : _a.widget.isResizing) || ((_b = this._contentWidget) === null || _b === void 0 ? void 0 : _b.containsNode(targetEm))) {
             // When the content widget is resizing
@@ -319,6 +323,12 @@ ModesHoverController = ModesHoverController_1 = __decorate([
     __param(4, IKeybindingService)
 ], ModesHoverController);
 export { ModesHoverController };
+var HoverFocusBehavior;
+(function (HoverFocusBehavior) {
+    HoverFocusBehavior["NoAutoFocus"] = "noAutoFocus";
+    HoverFocusBehavior["FocusIfVisible"] = "focusIfVisible";
+    HoverFocusBehavior["AutoFocusImmediately"] = "autoFocusImmediately";
+})(HoverFocusBehavior || (HoverFocusBehavior = {}));
 class ShowOrFocusHoverAction extends EditorAction {
     constructor() {
         super({
@@ -328,11 +338,10 @@ class ShowOrFocusHoverAction extends EditorAction {
                 comment: [
                     'Label for action that will trigger the showing/focusing of a hover in the editor.',
                     'If the hover is not visible, it will show the hover.',
-                    'This allows for users to show the hover without using the mouse.',
-                    'If the hover is already visible, it will take focus.'
+                    'This allows for users to show the hover without using the mouse.'
                 ]
             }, "Show or Focus Hover"),
-            description: {
+            metadata: {
                 description: `Show or Focus Hover`,
                 args: [{
                         name: 'args',
@@ -340,9 +349,14 @@ class ShowOrFocusHoverAction extends EditorAction {
                             type: 'object',
                             properties: {
                                 'focus': {
-                                    description: 'Controls if when triggered with the keyboard, the hover should take focus immediately.',
-                                    type: 'boolean',
-                                    default: false
+                                    description: 'Controls if and when the hover should take focus upon being triggered by this action.',
+                                    enum: [HoverFocusBehavior.NoAutoFocus, HoverFocusBehavior.FocusIfVisible, HoverFocusBehavior.AutoFocusImmediately],
+                                    enumDescriptions: [
+                                        nls.localize('showOrFocusHover.focus.noAutoFocus', 'The hover will not automatically take focus.'),
+                                        nls.localize('showOrFocusHover.focus.focusIfVisible', 'The hover will take focus only if it is already visible.'),
+                                        nls.localize('showOrFocusHover.focus.autoFocusImmediately', 'The hover will automatically take focus when it appears.'),
+                                    ],
+                                    default: HoverFocusBehavior.FocusIfVisible,
                                 }
                             },
                         }
@@ -365,14 +379,30 @@ class ShowOrFocusHoverAction extends EditorAction {
         if (!controller) {
             return;
         }
-        const position = editor.getPosition();
-        const range = new Range(position.lineNumber, position.column, position.lineNumber, position.column);
-        const focus = editor.getOption(2 /* EditorOption.accessibilitySupport */) === 2 /* AccessibilitySupport.Enabled */ || !!(args === null || args === void 0 ? void 0 : args.focus);
+        const focusArgument = args === null || args === void 0 ? void 0 : args.focus;
+        let focusOption = HoverFocusBehavior.FocusIfVisible;
+        if (focusArgument in HoverFocusBehavior) {
+            focusOption = focusArgument;
+        }
+        else if (typeof focusArgument === 'boolean' && focusArgument) {
+            focusOption = HoverFocusBehavior.AutoFocusImmediately;
+        }
+        const showContentHover = (focus) => {
+            const position = editor.getPosition();
+            const range = new Range(position.lineNumber, position.column, position.lineNumber, position.column);
+            controller.showContentHover(range, 1 /* HoverStartMode.Immediate */, 1 /* HoverStartSource.Keyboard */, focus);
+        };
+        const accessibilitySupportEnabled = editor.getOption(2 /* EditorOption.accessibilitySupport */) === 2 /* AccessibilitySupport.Enabled */;
         if (controller.isHoverVisible) {
-            controller.focus();
+            if (focusOption !== HoverFocusBehavior.NoAutoFocus) {
+                controller.focus();
+            }
+            else {
+                showContentHover(accessibilitySupportEnabled);
+            }
         }
         else {
-            controller.showContentHover(range, 1 /* HoverStartMode.Immediate */, 1 /* HoverStartSource.Keyboard */, focus);
+            showContentHover(accessibilitySupportEnabled || focusOption === HoverFocusBehavior.AutoFocusImmediately);
         }
     }
 }

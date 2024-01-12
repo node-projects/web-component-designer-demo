@@ -79,9 +79,7 @@ export var Iterable;
     Iterable.map = map;
     function* concat(...iterables) {
         for (const iterable of iterables) {
-            for (const element of iterable) {
-                yield element;
-            }
+            yield* iterable;
         }
     }
     Iterable.concat = concat;

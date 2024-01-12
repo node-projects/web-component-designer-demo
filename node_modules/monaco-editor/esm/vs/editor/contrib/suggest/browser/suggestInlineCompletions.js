@@ -11,15 +11,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var EditorContribution_1;
 import { CancellationToken } from '../../../../base/common/cancellation.js';
 import { FuzzyScore } from '../../../../base/common/filters.js';
@@ -100,67 +91,65 @@ let SuggestInlineCompletions = class SuggestInlineCompletions {
         this._clipboardService = _clipboardService;
         this._suggestMemoryService = _suggestMemoryService;
     }
-    provideInlineCompletions(model, position, context, token) {
+    async provideInlineCompletions(model, position, context, token) {
         var _a;
-        return __awaiter(this, void 0, void 0, function* () {
-            if (context.selectedSuggestionInfo) {
-                return;
+        if (context.selectedSuggestionInfo) {
+            return;
+        }
+        const config = this._getEditorOption(88 /* EditorOption.quickSuggestions */, model);
+        if (QuickSuggestionsOptions.isAllOff(config)) {
+            // quick suggest is off (for this model/language)
+            return;
+        }
+        model.tokenization.tokenizeIfCheap(position.lineNumber);
+        const lineTokens = model.tokenization.getLineTokens(position.lineNumber);
+        const tokenType = lineTokens.getStandardTokenType(lineTokens.findTokenIndexAtOffset(Math.max(position.column - 1 - 1, 0)));
+        if (QuickSuggestionsOptions.valueFor(config, tokenType) !== 'inline') {
+            // quick suggest is off (for this token)
+            return undefined;
+        }
+        // We consider non-empty leading words and trigger characters. The latter only
+        // when no word is being typed (word characters superseed trigger characters)
+        let wordInfo = model.getWordAtPosition(position);
+        let triggerCharacterInfo;
+        if (!(wordInfo === null || wordInfo === void 0 ? void 0 : wordInfo.word)) {
+            triggerCharacterInfo = this._getTriggerCharacterInfo(model, position);
+        }
+        if (!(wordInfo === null || wordInfo === void 0 ? void 0 : wordInfo.word) && !triggerCharacterInfo) {
+            // not at word, not a trigger character
+            return;
+        }
+        // ensure that we have word information and that we are at the end of a word
+        // otherwise we stop because we don't want to do quick suggestions inside words
+        if (!wordInfo) {
+            wordInfo = model.getWordUntilPosition(position);
+        }
+        if (wordInfo.endColumn !== position.column) {
+            return;
+        }
+        let result;
+        const leadingLineContents = model.getValueInRange(new Range(position.lineNumber, 1, position.lineNumber, position.column));
+        if (!triggerCharacterInfo && ((_a = this._lastResult) === null || _a === void 0 ? void 0 : _a.canBeReused(model, position.lineNumber, wordInfo))) {
+            // reuse a previous result iff possible, only a refilter is needed
+            // TODO@jrieken this can be improved further and only incomplete results can be updated
+            // console.log(`REUSE with ${wordInfo.word}`);
+            const newLineContext = new LineContext(leadingLineContents, position.column - this._lastResult.word.endColumn);
+            this._lastResult.completionModel.lineContext = newLineContext;
+            this._lastResult.acquire();
+            result = this._lastResult;
+        }
+        else {
+            // refesh model is required
+            const completions = await provideSuggestionItems(this._languageFeatureService.completionProvider, model, position, new CompletionOptions(undefined, undefined, triggerCharacterInfo === null || triggerCharacterInfo === void 0 ? void 0 : triggerCharacterInfo.providers), triggerCharacterInfo && { triggerKind: 1 /* CompletionTriggerKind.TriggerCharacter */, triggerCharacter: triggerCharacterInfo.ch }, token);
+            let clipboardText;
+            if (completions.needsClipboard) {
+                clipboardText = await this._clipboardService.readText();
             }
-            const config = this._getEditorOption(88 /* EditorOption.quickSuggestions */, model);
-            if (QuickSuggestionsOptions.isAllOff(config)) {
-                // quick suggest is off (for this model/language)
-                return;
-            }
-            model.tokenization.tokenizeIfCheap(position.lineNumber);
-            const lineTokens = model.tokenization.getLineTokens(position.lineNumber);
-            const tokenType = lineTokens.getStandardTokenType(lineTokens.findTokenIndexAtOffset(Math.max(position.column - 1 - 1, 0)));
-            if (QuickSuggestionsOptions.valueFor(config, tokenType) !== 'inline') {
-                // quick suggest is off (for this token)
-                return undefined;
-            }
-            // We consider non-empty leading words and trigger characters. The latter only
-            // when no word is being typed (word characters superseed trigger characters)
-            let wordInfo = model.getWordAtPosition(position);
-            let triggerCharacterInfo;
-            if (!(wordInfo === null || wordInfo === void 0 ? void 0 : wordInfo.word)) {
-                triggerCharacterInfo = this._getTriggerCharacterInfo(model, position);
-            }
-            if (!(wordInfo === null || wordInfo === void 0 ? void 0 : wordInfo.word) && !triggerCharacterInfo) {
-                // not at word, not a trigger character
-                return;
-            }
-            // ensure that we have word information and that we are at the end of a word
-            // otherwise we stop because we don't want to do quick suggestions inside words
-            if (!wordInfo) {
-                wordInfo = model.getWordUntilPosition(position);
-            }
-            if (wordInfo.endColumn !== position.column) {
-                return;
-            }
-            let result;
-            const leadingLineContents = model.getValueInRange(new Range(position.lineNumber, 1, position.lineNumber, position.column));
-            if (!triggerCharacterInfo && ((_a = this._lastResult) === null || _a === void 0 ? void 0 : _a.canBeReused(model, position.lineNumber, wordInfo))) {
-                // reuse a previous result iff possible, only a refilter is needed
-                // TODO@jrieken this can be improved further and only incomplete results can be updated
-                // console.log(`REUSE with ${wordInfo.word}`);
-                const newLineContext = new LineContext(leadingLineContents, position.column - this._lastResult.word.endColumn);
-                this._lastResult.completionModel.lineContext = newLineContext;
-                this._lastResult.acquire();
-                result = this._lastResult;
-            }
-            else {
-                // refesh model is required
-                const completions = yield provideSuggestionItems(this._languageFeatureService.completionProvider, model, position, new CompletionOptions(undefined, undefined, triggerCharacterInfo === null || triggerCharacterInfo === void 0 ? void 0 : triggerCharacterInfo.providers), triggerCharacterInfo && { triggerKind: 1 /* CompletionTriggerKind.TriggerCharacter */, triggerCharacter: triggerCharacterInfo.ch }, token);
-                let clipboardText;
-                if (completions.needsClipboard) {
-                    clipboardText = yield this._clipboardService.readText();
-                }
-                const completionModel = new CompletionModel(completions.items, position.column, new LineContext(leadingLineContents, 0), WordDistance.None, this._getEditorOption(117 /* EditorOption.suggest */, model), this._getEditorOption(111 /* EditorOption.snippetSuggestions */, model), { boostFullMatch: false, firstMatchCanBeWeak: false }, clipboardText);
-                result = new InlineCompletionResults(model, position.lineNumber, wordInfo, completionModel, completions, this._suggestMemoryService);
-            }
-            this._lastResult = result;
-            return result;
-        });
+            const completionModel = new CompletionModel(completions.items, position.column, new LineContext(leadingLineContents, 0), WordDistance.None, this._getEditorOption(117 /* EditorOption.suggest */, model), this._getEditorOption(111 /* EditorOption.snippetSuggestions */, model), { boostFullMatch: false, firstMatchCanBeWeak: false }, clipboardText);
+            result = new InlineCompletionResults(model, position.lineNumber, wordInfo, completionModel, completions, this._suggestMemoryService);
+        }
+        this._lastResult = result;
+        return result;
     }
     handleItemDidShow(_completions, item) {
         item.completion.resolve(CancellationToken.None);

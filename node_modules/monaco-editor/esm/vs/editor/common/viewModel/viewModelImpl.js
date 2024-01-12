@@ -169,6 +169,10 @@ export class ViewModel extends Disposable {
             this._decorations.reset();
             eventsCollector.emitViewEvent(new viewEvents.ViewDecorationsChangedEvent(null));
         }
+        if (e.hasChanged(97 /* EditorOption.renderValidationDecorations */)) {
+            this._decorations.reset();
+            eventsCollector.emitViewEvent(new viewEvents.ViewDecorationsChangedEvent(null));
+        }
         eventsCollector.emitViewEvent(new viewEvents.ViewConfigurationChangedEvent(e));
         this.viewLayout.onConfigurationChanged(e);
         stableViewport.recoverViewportStart(this.coordinatesConverter, this.viewLayout);
@@ -357,6 +361,7 @@ export class ViewModel extends Disposable {
         }));
     }
     setHiddenAreas(ranges, source) {
+        var _a;
         this.hiddenAreasModel.setHiddenAreas(source, ranges);
         const mergedRanges = this.hiddenAreasModel.getMergedRanges();
         if (mergedRanges === this.previousHiddenAreas) {
@@ -377,7 +382,11 @@ export class ViewModel extends Disposable {
                 this.viewLayout.onFlushed(this.getLineCount());
                 this.viewLayout.onHeightMaybeChanged();
             }
-            stableViewport.recoverViewportStart(this.coordinatesConverter, this.viewLayout);
+            const firstModelLineInViewPort = (_a = stableViewport.viewportStartModelPosition) === null || _a === void 0 ? void 0 : _a.lineNumber;
+            const firstModelLineIsHidden = firstModelLineInViewPort && mergedRanges.some(range => range.startLineNumber <= firstModelLineInViewPort && firstModelLineInViewPort <= range.endLineNumber);
+            if (!firstModelLineIsHidden) {
+                stableViewport.recoverViewportStart(this.coordinatesConverter, this.viewLayout);
+            }
         }
         finally {
             this._eventDispatcher.endEmitViewEvents();

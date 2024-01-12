@@ -48,10 +48,11 @@ export function toMenuItems(inputCodeActions, showHeaders, keybindingResolver) {
         if (menuEntry.actions.length) {
             allMenuItems.push({ kind: "header" /* ActionListItemKind.Header */, group: menuEntry.group });
             for (const action of menuEntry.actions) {
+                const group = menuEntry.group;
                 allMenuItems.push({
                     kind: "action" /* ActionListItemKind.Action */,
                     item: action,
-                    group: menuEntry.group,
+                    group: action.action.isAI ? { title: group.title, kind: group.kind, icon: Codicon.sparkle } : group,
                     label: action.action.title,
                     disabled: !!action.action.disabled,
                     keybinding: keybindingResolver(action.action),

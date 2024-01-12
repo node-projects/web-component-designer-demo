@@ -61,7 +61,7 @@ const defaultMarkedRenderers = Object.freeze({
             .replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#39;');
-        return `<a href="${href}" title="${title || href}">${text}</a>`;
+        return `<a href="${href}" title="${title || href}" draggable="false">${text}</a>`;
     },
 });
 /**
@@ -174,7 +174,7 @@ export function renderMarkdown(markdown, options = {}, markedOptions = {}) {
         const onClick = options.actionHandler.disposables.add(new DomEmitter(element, 'click'));
         const onAuxClick = options.actionHandler.disposables.add(new DomEmitter(element, 'auxclick'));
         options.actionHandler.disposables.add(Event.any(onClick.event, onAuxClick.event)(e => {
-            const mouseEvent = new StandardMouseEvent(e);
+            const mouseEvent = new StandardMouseEvent(DOM.getWindow(element), e);
             if (!mouseEvent.leftButton && !mouseEvent.middleButton) {
                 return;
             }
@@ -215,7 +215,10 @@ export function renderMarkdown(markdown, options = {}, markedOptions = {}) {
     let renderedMarkdown;
     if (options.fillInIncompleteTokens) {
         // The defaults are applied by parse but not lexer()/parser(), and they need to be present
-        const opts = Object.assign(Object.assign({}, marked.defaults), markedOptions);
+        const opts = {
+            ...marked.defaults,
+            ...markedOptions
+        };
         const tokens = marked.lexer(value, opts);
         const newTokens = fillInIncompleteTokens(tokens);
         renderedMarkdown = marked.parser(newTokens, opts);
@@ -350,7 +353,7 @@ function sanitizeRenderedMarkdown(options, renderedMarkdown) {
     });
     const hook = DOM.hookDomPurifyHrefAndSrcSanitizer(allowedSchemes);
     try {
-        return dompurify.sanitize(renderedMarkdown, Object.assign(Object.assign({}, config), { RETURN_TRUSTED_TYPE: true }));
+        return dompurify.sanitize(renderedMarkdown, { ...config, RETURN_TRUSTED_TYPE: true });
     }
     finally {
         dompurify.removeHook('uponSanitizeAttribute');
@@ -365,6 +368,7 @@ export const allowedMarkdownAttr = [
     'controls',
     'data-code',
     'data-href',
+    'draggable',
     'height',
     'href',
     'loop',

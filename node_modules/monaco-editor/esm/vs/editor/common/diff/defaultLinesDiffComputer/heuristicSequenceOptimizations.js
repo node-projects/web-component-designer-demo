@@ -8,6 +8,9 @@ import { OffsetPair, SequenceDiff } from './algorithms/diffAlgorithm.js';
 export function optimizeSequenceDiffs(sequence1, sequence2, sequenceDiffs) {
     let result = sequenceDiffs;
     result = joinSequenceDiffsByShifting(sequence1, sequence2, result);
+    // Sometimes, calling this function twice improves the result.
+    // Uncomment the second invocation and run the tests to see the difference.
+    result = joinSequenceDiffsByShifting(sequence1, sequence2, result);
     result = shiftSequenceDiffs(sequence1, sequence2, result);
     return result;
 }
@@ -325,7 +328,7 @@ export function removeVeryShortMatchingTextBetweenLongDiffs(sequence1, sequence2
                     return Math.min(v, max);
                 }
                 if (Math.pow(Math.pow(cap(beforeLineCount1 * 40 + beforeSeq1Length), 1.5) + Math.pow(cap(beforeLineCount2 * 40 + beforeSeq2Length), 1.5), 1.5)
-                    + Math.pow(Math.pow(cap(afterLineCount1 * 40 + afterSeq1Length), 1.5) + Math.pow(cap(afterLineCount2 * 40 + afterSeq2Length), 1.5), 1.5) > (Math.pow((Math.pow(max, 1.5)), 1.5)) * 1.3) {
+                    + Math.pow(Math.pow(cap(afterLineCount1 * 40 + afterSeq1Length), 1.5) + Math.pow(cap(afterLineCount2 * 40 + afterSeq2Length), 1.5), 1.5) > ((max ** 1.5) ** 1.5) * 1.3) {
                     return true;
                 }
                 return false;

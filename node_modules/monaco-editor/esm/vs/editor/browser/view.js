@@ -15,7 +15,7 @@ import * as dom from '../../base/browser/dom.js';
 import { Selection } from '../common/core/selection.js';
 import { Range } from '../common/core/range.js';
 import { createFastDomNode } from '../../base/browser/fastDomNode.js';
-import { onUnexpectedError } from '../../base/common/errors.js';
+import { BugIndicatingError, onUnexpectedError } from '../../base/common/errors.js';
 import { PointerHandler } from './controller/pointerHandler.js';
 import { TextAreaHandler } from './controller/textAreaHandler.js';
 import { ViewController } from './view/viewController.js';
@@ -158,14 +158,6 @@ let View = class View extends ViewEventHandler {
         this._applyLayout();
         // Pointer handler
         this._pointerHandler = this._register(new PointerHandler(this._context, viewController, this._createPointerHandlerHelper()));
-    }
-    _flushAccumulatedAndRenderNow() {
-        if (this._shouldRecomputeGlyphMarginLanes) {
-            this._shouldRecomputeGlyphMarginLanes = false;
-            this._context.configuration.setGlyphMarginDecorationLaneCount(this._computeGlyphMarginLaneCount());
-        }
-        inputLatency.onRenderStart();
-        this._renderNow();
     }
     _computeGlyphMarginLaneCount() {
         const model = this._context.viewModel.model;
@@ -317,16 +309,54 @@ let View = class View extends ViewEventHandler {
         super.dispose();
     }
     _scheduleRender() {
+        if (this._store.isDisposed) {
+            throw new BugIndicatingError();
+        }
         if (this._renderAnimationFrame === null) {
-            this._renderAnimationFrame = dom.runAtThisOrScheduleAtNextAnimationFrame(this._onRenderScheduled.bind(this), 100);
+            const rendering = this._createCoordinatedRendering();
+            this._renderAnimationFrame = EditorRenderingCoordinator.INSTANCE.scheduleCoordinatedRendering({
+                window: dom.getWindow(this.domNode.domNode),
+                prepareRenderText: () => {
+                    if (this._store.isDisposed) {
+                        throw new BugIndicatingError();
+                    }
+                    try {
+                        return rendering.prepareRenderText();
+                    }
+                    finally {
+                        this._renderAnimationFrame = null;
+                    }
+                },
+                renderText: () => {
+                    if (this._store.isDisposed) {
+                        throw new BugIndicatingError();
+                    }
+                    return rendering.renderText();
+                },
+                prepareRender: (viewParts, ctx) => {
+                    if (this._store.isDisposed) {
+                        throw new BugIndicatingError();
+                    }
+                    return rendering.prepareRender(viewParts, ctx);
+                },
+                render: (viewParts, ctx) => {
+                    if (this._store.isDisposed) {
+                        throw new BugIndicatingError();
+                    }
+                    return rendering.render(viewParts, ctx);
+                }
+            });
         }
     }
-    _onRenderScheduled() {
-        this._renderAnimationFrame = null;
-        this._flushAccumulatedAndRenderNow();
-    }
-    _renderNow() {
-        safeInvokeNoArg(() => this._actualRender());
+    _flushAccumulatedAndRenderNow() {
+        const rendering = this._createCoordinatedRendering();
+        safeInvokeNoArg(() => rendering.prepareRenderText());
+        const data = safeInvokeNoArg(() => rendering.renderText());
+        if (data) {
+            const [viewParts, ctx] = data;
+            safeInvokeNoArg(() => rendering.prepareRender(viewParts, ctx));
+            safeInvokeNoArg(() => rendering.render(viewParts, ctx));
+        }
     }
     _getViewPartsToRender() {
         const result = [];
@@ -338,37 +368,51 @@ let View = class View extends ViewEventHandler {
         }
         return result;
     }
-    _actualRender() {
-        if (!dom.isInDOM(this.domNode.domNode)) {
-            return;
-        }
-        let viewPartsToRender = this._getViewPartsToRender();
-        if (!this._viewLines.shouldRender() && viewPartsToRender.length === 0) {
-            // Nothing to render
-            return;
-        }
-        const partialViewportData = this._context.viewLayout.getLinesViewportData();
-        this._context.viewModel.setViewport(partialViewportData.startLineNumber, partialViewportData.endLineNumber, partialViewportData.centeredLineNumber);
-        const viewportData = new ViewportData(this._selections, partialViewportData, this._context.viewLayout.getWhitespaceViewportData(), this._context.viewModel);
-        if (this._contentWidgets.shouldRender()) {
-            // Give the content widgets a chance to set their max width before a possible synchronous layout
-            this._contentWidgets.onBeforeRender(viewportData);
-        }
-        if (this._viewLines.shouldRender()) {
-            this._viewLines.renderText(viewportData);
-            this._viewLines.onDidRender();
-            // Rendering of viewLines might cause scroll events to occur, so collect view parts to render again
-            viewPartsToRender = this._getViewPartsToRender();
-        }
-        const renderingContext = new RenderingContext(this._context.viewLayout, viewportData, this._viewLines);
-        // Render the rest of the parts
-        for (const viewPart of viewPartsToRender) {
-            viewPart.prepareRender(renderingContext);
-        }
-        for (const viewPart of viewPartsToRender) {
-            viewPart.render(renderingContext);
-            viewPart.onDidRender();
-        }
+    _createCoordinatedRendering() {
+        return {
+            prepareRenderText: () => {
+                if (this._shouldRecomputeGlyphMarginLanes) {
+                    this._shouldRecomputeGlyphMarginLanes = false;
+                    this._context.configuration.setGlyphMarginDecorationLaneCount(this._computeGlyphMarginLaneCount());
+                }
+                inputLatency.onRenderStart();
+            },
+            renderText: () => {
+                if (!this.domNode.domNode.isConnected) {
+                    return null;
+                }
+                let viewPartsToRender = this._getViewPartsToRender();
+                if (!this._viewLines.shouldRender() && viewPartsToRender.length === 0) {
+                    // Nothing to render
+                    return null;
+                }
+                const partialViewportData = this._context.viewLayout.getLinesViewportData();
+                this._context.viewModel.setViewport(partialViewportData.startLineNumber, partialViewportData.endLineNumber, partialViewportData.centeredLineNumber);
+                const viewportData = new ViewportData(this._selections, partialViewportData, this._context.viewLayout.getWhitespaceViewportData(), this._context.viewModel);
+                if (this._contentWidgets.shouldRender()) {
+                    // Give the content widgets a chance to set their max width before a possible synchronous layout
+                    this._contentWidgets.onBeforeRender(viewportData);
+                }
+                if (this._viewLines.shouldRender()) {
+                    this._viewLines.renderText(viewportData);
+                    this._viewLines.onDidRender();
+                    // Rendering of viewLines might cause scroll events to occur, so collect view parts to render again
+                    viewPartsToRender = this._getViewPartsToRender();
+                }
+                return [viewPartsToRender, new RenderingContext(this._context.viewLayout, viewportData, this._viewLines)];
+            },
+            prepareRender: (viewPartsToRender, ctx) => {
+                for (const viewPart of viewPartsToRender) {
+                    viewPart.prepareRender(ctx);
+                }
+            },
+            render: (viewPartsToRender, ctx) => {
+                for (const viewPart of viewPartsToRender) {
+                    viewPart.render(ctx);
+                    viewPart.onDidRender();
+                }
+            }
+        };
     }
     // --- BEGIN CodeEditor helpers
     delegateVerticalScrollbarPointerDown(browserEvent) {
@@ -497,5 +541,72 @@ function safeInvokeNoArg(func) {
     }
     catch (e) {
         onUnexpectedError(e);
+        return null;
     }
 }
+class EditorRenderingCoordinator {
+    constructor() {
+        this._coordinatedRenderings = [];
+        this._animationFrameRunners = new Map();
+    }
+    scheduleCoordinatedRendering(rendering) {
+        this._coordinatedRenderings.push(rendering);
+        this._scheduleRender(rendering.window);
+        return {
+            dispose: () => {
+                const renderingIndex = this._coordinatedRenderings.indexOf(rendering);
+                if (renderingIndex === -1) {
+                    return;
+                }
+                this._coordinatedRenderings.splice(renderingIndex, 1);
+                if (this._coordinatedRenderings.length === 0) {
+                    // There are no more renderings to coordinate => cancel animation frames
+                    for (const [_, disposable] of this._animationFrameRunners) {
+                        disposable.dispose();
+                    }
+                    this._animationFrameRunners.clear();
+                }
+            }
+        };
+    }
+    _scheduleRender(window) {
+        if (!this._animationFrameRunners.has(window)) {
+            const runner = () => {
+                this._animationFrameRunners.delete(window);
+                this._onRenderScheduled();
+            };
+            this._animationFrameRunners.set(window, dom.runAtThisOrScheduleAtNextAnimationFrame(window, runner, 100));
+        }
+    }
+    _onRenderScheduled() {
+        const coordinatedRenderings = this._coordinatedRenderings.slice(0);
+        this._coordinatedRenderings = [];
+        for (const rendering of coordinatedRenderings) {
+            safeInvokeNoArg(() => rendering.prepareRenderText());
+        }
+        const datas = [];
+        for (let i = 0, len = coordinatedRenderings.length; i < len; i++) {
+            const rendering = coordinatedRenderings[i];
+            datas[i] = safeInvokeNoArg(() => rendering.renderText());
+        }
+        for (let i = 0, len = coordinatedRenderings.length; i < len; i++) {
+            const rendering = coordinatedRenderings[i];
+            const data = datas[i];
+            if (!data) {
+                continue;
+            }
+            const [viewParts, ctx] = data;
+            safeInvokeNoArg(() => rendering.prepareRender(viewParts, ctx));
+        }
+        for (let i = 0, len = coordinatedRenderings.length; i < len; i++) {
+            const rendering = coordinatedRenderings[i];
+            const data = datas[i];
+            if (!data) {
+                continue;
+            }
+            const [viewParts, ctx] = data;
+            safeInvokeNoArg(() => rendering.render(viewParts, ctx));
+        }
+    }
+}
+EditorRenderingCoordinator.INSTANCE = new EditorRenderingCoordinator();

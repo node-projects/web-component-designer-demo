@@ -13,6 +13,9 @@ export class LineRange {
     static fromRange(range) {
         return new LineRange(range.startLineNumber, range.endLineNumber);
     }
+    static fromRangeInclusive(range) {
+        return new LineRange(range.startLineNumber, range.endLineNumber + 1);
+    }
     /**
      * @param lineRanges An array of sorted line ranges.
      */
@@ -177,6 +180,10 @@ export class LineRangeSet {
     contains(lineNumber) {
         const rangeThatStartsBeforeEnd = findLastMonotonous(this._normalizedRanges, r => r.startLineNumber <= lineNumber);
         return !!rangeThatStartsBeforeEnd && rangeThatStartsBeforeEnd.endLineNumberExclusive > lineNumber;
+    }
+    intersects(range) {
+        const rangeThatStartsBeforeEnd = findLastMonotonous(this._normalizedRanges, r => r.startLineNumber < range.endLineNumberExclusive);
+        return !!rangeThatStartsBeforeEnd && rangeThatStartsBeforeEnd.endLineNumberExclusive > range.startLineNumber;
     }
     getUnion(other) {
         if (this._normalizedRanges.length === 0) {

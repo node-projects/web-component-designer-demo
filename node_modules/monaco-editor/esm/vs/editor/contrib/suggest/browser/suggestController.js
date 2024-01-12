@@ -14,7 +14,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 var SuggestController_1;
 import { alert } from '../../../../base/browser/ui/aria/aria.js';
 import { isNonEmptyArray } from '../../../../base/common/arrays.js';
-import { IdleValue } from '../../../../base/common/async.js';
 import { CancellationTokenSource } from '../../../../base/common/cancellation.js';
 import { onUnexpectedError, onUnexpectedExternalError } from '../../../../base/common/errors.js';
 import { Emitter, Event } from '../../../../base/common/event.js';
@@ -47,6 +46,7 @@ import { SuggestWidget } from './suggestWidget.js';
 import { ITelemetryService } from '../../../../platform/telemetry/common/telemetry.js';
 import { basename, extname } from '../../../../base/common/resources.js';
 import { hash } from '../../../../base/common/hash.js';
+import { WindowIdleValue, getWindow } from '../../../../base/browser/dom.js';
 // sticky suggest widget which doesn't disappear on focus out and such
 const _sticky = false;
 class LineSuffix {
@@ -115,7 +115,7 @@ let SuggestController = SuggestController_1 = class SuggestController {
         const ctxInsertMode = SuggestContext.InsertMode.bindTo(_contextKeyService);
         ctxInsertMode.set(editor.getOption(117 /* EditorOption.suggest */).insertMode);
         this._toDispose.add(this.model.onDidTrigger(() => ctxInsertMode.set(editor.getOption(117 /* EditorOption.suggest */).insertMode)));
-        this.widget = this._toDispose.add(new IdleValue(() => {
+        this.widget = this._toDispose.add(new WindowIdleValue(getWindow(editor.getDomNode()), () => {
             const widget = this._instantiationService.createInstance(SuggestWidget, this.editor);
             this._toDispose.add(widget);
             this._toDispose.add(widget.onDidSelect(item => this._insertSuggestion(item, 0 /* InsertFlags.None */), this));
@@ -170,10 +170,10 @@ let SuggestController = SuggestController_1 = class SuggestController {
             return widget;
         }));
         // Wire up text overtyping capture
-        this._overtypingCapturer = this._toDispose.add(new IdleValue(() => {
+        this._overtypingCapturer = this._toDispose.add(new WindowIdleValue(getWindow(editor.getDomNode()), () => {
             return this._toDispose.add(new OvertypingCapturer(this.editor, this.model));
         }));
-        this._alternatives = this._toDispose.add(new IdleValue(() => {
+        this._alternatives = this._toDispose.add(new WindowIdleValue(getWindow(editor.getDomNode()), () => {
             return this._toDispose.add(new SuggestAlternatives(this.editor, this._contextKeyService));
         }));
         this._toDispose.add(_instantiationService.createInstance(WordContextKey, editor));
@@ -847,7 +847,7 @@ registerEditorCommand(new SuggestCommand({
     id: 'insertBestCompletion',
     precondition: ContextKeyExpr.and(EditorContextKeys.textInputFocus, ContextKeyExpr.equals('config.editor.tabCompletion', 'on'), WordContextKey.AtEnd, SuggestContext.Visible.toNegated(), SuggestAlternatives.OtherSuggestions.toNegated(), SnippetController2.InSnippetMode.toNegated()),
     handler: (x, arg) => {
-        x.triggerSuggestAndAcceptBest(isObject(arg) ? Object.assign({ fallback: 'tab' }, arg) : { fallback: 'tab' });
+        x.triggerSuggestAndAcceptBest(isObject(arg) ? { fallback: 'tab', ...arg } : { fallback: 'tab' });
     },
     kbOpts: {
         weight,

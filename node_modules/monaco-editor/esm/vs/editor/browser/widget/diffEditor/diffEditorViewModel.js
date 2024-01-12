@@ -11,15 +11,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 import { RunOnceScheduler } from '../../../../base/common/async.js';
 import { CancellationTokenSource } from '../../../../base/common/cancellation.js';
 import { Disposable, toDisposable } from '../../../../base/common/lifecycle.js';
@@ -36,11 +27,10 @@ let DiffEditorViewModel = class DiffEditorViewModel extends Disposable {
     setActiveMovedText(movedText) {
         this._activeMovedText.set(movedText, undefined);
     }
-    constructor(model, _options, _editor, _diffProviderFactoryService) {
+    constructor(model, _options, _diffProviderFactoryService) {
         super();
         this.model = model;
         this._options = _options;
-        this._editor = _editor;
         this._diffProviderFactoryService = _diffProviderFactoryService;
         this._isDiffUpToDate = observableValue(this, false);
         this.isDiffUpToDate = this._isDiffUpToDate;
@@ -67,7 +57,7 @@ let DiffEditorViewModel = class DiffEditorViewModel extends Disposable {
         this.activeMovedText = derived(this, r => { var _a, _b; return (_b = (_a = this.movedTextToCompare.read(r)) !== null && _a !== void 0 ? _a : this._hoveredMovedText.read(r)) !== null && _b !== void 0 ? _b : this._activeMovedText.read(r); });
         this._cancellationTokenSource = new CancellationTokenSource();
         this._diffProvider = derived(this, reader => {
-            const diffProvider = this._diffProviderFactoryService.createDiffProvider(this._editor, {
+            const diffProvider = this._diffProviderFactoryService.createDiffProvider({
                 diffAlgorithm: this._options.diffAlgorithm.read(reader)
             });
             const onChangeSignal = observableSignalFromEvent('onDidChange', diffProvider.onDidChange);
@@ -85,18 +75,16 @@ let DiffEditorViewModel = class DiffEditorViewModel extends Disposable {
             const lastUnchangedRegions = this._unchangedRegions.get();
             const lastUnchangedRegionsOrigRanges = lastUnchangedRegions.originalDecorationIds
                 .map(id => model.original.getDecorationRange(id))
-                .filter(r => !!r)
-                .map(r => LineRange.fromRange(r));
+                .map(r => r ? LineRange.fromRange(r) : undefined);
             const lastUnchangedRegionsModRanges = lastUnchangedRegions.modifiedDecorationIds
                 .map(id => model.modified.getDecorationRange(id))
-                .filter(r => !!r)
-                .map(r => LineRange.fromRange(r));
+                .map(r => r ? LineRange.fromRange(r) : undefined);
             const originalDecorationIds = model.original.deltaDecorations(lastUnchangedRegions.originalDecorationIds, newUnchangedRegions.map(r => ({ range: r.originalUnchangedRange.toInclusiveRange(), options: { description: 'unchanged' } })));
             const modifiedDecorationIds = model.modified.deltaDecorations(lastUnchangedRegions.modifiedDecorationIds, newUnchangedRegions.map(r => ({ range: r.modifiedUnchangedRange.toInclusiveRange(), options: { description: 'unchanged' } })));
             for (const r of newUnchangedRegions) {
                 for (let i = 0; i < lastUnchangedRegions.regions.length; i++) {
-                    if (r.originalUnchangedRange.intersectsStrict(lastUnchangedRegionsOrigRanges[i])
-                        && r.modifiedUnchangedRange.intersectsStrict(lastUnchangedRegionsModRanges[i])) {
+                    if (lastUnchangedRegionsOrigRanges[i] && r.originalUnchangedRange.intersectsStrict(lastUnchangedRegionsOrigRanges[i])
+                        && lastUnchangedRegionsModRanges[i] && r.modifiedUnchangedRange.intersectsStrict(lastUnchangedRegionsModRanges[i])) {
                         r.setHiddenModifiedRange(lastUnchangedRegions.regions[i].getHiddenModifiedRange(undefined), tx);
                         break;
                     }
@@ -123,6 +111,7 @@ let DiffEditorViewModel = class DiffEditorViewModel extends Disposable {
                     });
                 }
             }
+            this._isDiffUpToDate.set(false, undefined);
             debouncer.schedule();
         }));
         this._register(model.original.onDidChangeContent((e) => {
@@ -140,9 +129,10 @@ let DiffEditorViewModel = class DiffEditorViewModel extends Disposable {
                     });
                 }
             }
+            this._isDiffUpToDate.set(false, undefined);
             debouncer.schedule();
         }));
-        this._register(autorunWithStore((reader, store) => __awaiter(this, void 0, void 0, function* () {
+        this._register(autorunWithStore(async (reader, store) => {
             /** @description compute diff */
             var _a, _b;
             // So that they get recomputed when these settings change
@@ -165,7 +155,7 @@ let DiffEditorViewModel = class DiffEditorViewModel extends Disposable {
                 const edits = TextEditInfo.fromModelContentChanges(e.changes);
                 modifiedTextEditInfos = combineTextEditInfos(modifiedTextEditInfos, edits);
             }));
-            let result = yield documentDiffProvider.diffProvider.computeDiff(model.original, model.modified, {
+            let result = await documentDiffProvider.diffProvider.computeDiff(model.original, model.modified, {
                 ignoreTrimWhitespace: this._options.ignoreTrimWhitespace.read(reader),
                 maxComputationTimeMs: this._options.maxComputationTimeMs.read(reader),
                 computeMoves: this._options.showMoves.read(reader),
@@ -177,6 +167,7 @@ let DiffEditorViewModel = class DiffEditorViewModel extends Disposable {
             result = (_a = applyOriginalEdits(result, originalTextEditInfos, model.original, model.modified)) !== null && _a !== void 0 ? _a : result;
             result = (_b = applyModifiedEdits(result, modifiedTextEditInfos, model.original, model.modified)) !== null && _b !== void 0 ? _b : result;
             transaction(tx => {
+                /** @description write diff result */
                 updateUnchangedRegions(result, tx);
                 this._lastDiff = result;
                 const state = DiffState.fromDiffResult(result);
@@ -185,7 +176,7 @@ let DiffEditorViewModel = class DiffEditorViewModel extends Disposable {
                 const currentSyncedMovedText = this.movedTextToCompare.get();
                 this.movedTextToCompare.set(currentSyncedMovedText ? this._lastDiff.moves.find(m => m.lineRangeMapping.modified.intersect(currentSyncedMovedText.lineRangeMapping.modified)) : undefined, tx);
             });
-        })));
+        }));
     }
     ensureModifiedLineIsVisible(lineNumber, tx) {
         var _a;
@@ -213,10 +204,8 @@ let DiffEditorViewModel = class DiffEditorViewModel extends Disposable {
             }
         }
     }
-    waitForDiff() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield waitForState(this.isDiffUpToDate, s => s);
-        });
+    async waitForDiff() {
+        await waitForState(this.isDiffUpToDate, s => s);
     }
     serializeState() {
         const regions = this._unchangedRegions.get();
@@ -240,7 +229,7 @@ let DiffEditorViewModel = class DiffEditorViewModel extends Disposable {
     }
 };
 DiffEditorViewModel = __decorate([
-    __param(3, IDiffProviderFactoryService)
+    __param(2, IDiffProviderFactoryService)
 ], DiffEditorViewModel);
 export { DiffEditorViewModel };
 function normalizeDocumentDiff(diff, original, modified) {
@@ -343,7 +332,7 @@ export class UnchangedRegion {
         this._visibleLineCountBottom = observableValue(this, 0);
         this.visibleLineCountBottom = this._visibleLineCountBottom;
         this._shouldHideControls = derived(this, reader => /** @description isVisible */ this.visibleLineCountTop.read(reader) + this.visibleLineCountBottom.read(reader) === this.lineCount && !this.isDragged.read(reader));
-        this.isDragged = observableValue(this, false);
+        this.isDragged = observableValue(this, undefined);
         this._visibleLineCountTop.set(visibleLineCountTop, undefined);
         this._visibleLineCountBottom.set(visibleLineCountBottom, undefined);
     }

@@ -11,16 +11,15 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { $ } from '../../../../base/browser/dom.js';
+import { $, addDisposableListener } from '../../../../base/browser/dom.js';
 import { ArrayQueue } from '../../../../base/common/arrays.js';
 import { RunOnceScheduler } from '../../../../base/common/async.js';
 import { Codicon } from '../../../../base/common/codicons.js';
-import { Disposable, DisposableStore, toDisposable } from '../../../../base/common/lifecycle.js';
-import { autorun, autorunWithStore, derived, observableFromEvent, observableValue } from '../../../../base/common/observable.js';
+import { Disposable, DisposableStore } from '../../../../base/common/lifecycle.js';
+import { autorun, derived, derivedWithStore, observableFromEvent, observableValue } from '../../../../base/common/observable.js';
 import { ThemeIcon } from '../../../../base/common/themables.js';
 import { assertIsDefined } from '../../../../base/common/types.js';
 import { applyFontInfo } from '../../config/domFontInfo.js';
-import { StableEditorScrollState } from '../../stableEditorScroll.js';
 import { diffDeleteDecoration, diffRemoveIcon } from './decorations.js';
 import { DiffMapping } from './diffEditorViewModel.js';
 import { InlineDiffDeletedCodeMargin } from './inlineDiffDeletedCodeMargin.js';
@@ -35,32 +34,36 @@ import { IContextMenuService } from '../../../../platform/contextview/browser/co
  * Ensures both editors have the same height by aligning unchanged lines.
  * In inline view mode, inserts viewzones to show deleted code from the original text model in the modified code editor.
  * Synchronizes scrolling.
+ *
+ * Make sure to add the view zones!
  */
 let ViewZoneManager = class ViewZoneManager extends Disposable {
-    constructor(_editors, _diffModel, _options, _diffEditorWidget, _canIgnoreViewZoneUpdateEvent, _clipboardService, _contextMenuService) {
+    constructor(_targetWindow, _editors, _diffModel, _options, _diffEditorWidget, _canIgnoreViewZoneUpdateEvent, _origViewZonesToIgnore, _modViewZonesToIgnore, _clipboardService, _contextMenuService) {
         super();
+        this._targetWindow = _targetWindow;
         this._editors = _editors;
         this._diffModel = _diffModel;
         this._options = _options;
         this._diffEditorWidget = _diffEditorWidget;
         this._canIgnoreViewZoneUpdateEvent = _canIgnoreViewZoneUpdateEvent;
+        this._origViewZonesToIgnore = _origViewZonesToIgnore;
+        this._modViewZonesToIgnore = _modViewZonesToIgnore;
         this._clipboardService = _clipboardService;
         this._contextMenuService = _contextMenuService;
         this._originalTopPadding = observableValue(this, 0);
         this._originalScrollOffset = observableValue(this, 0);
-        this._originalScrollOffsetAnimated = animatedObservable(this._originalScrollOffset, this._store);
+        this._originalScrollOffsetAnimated = animatedObservable(this._targetWindow, this._originalScrollOffset, this._store);
         this._modifiedTopPadding = observableValue(this, 0);
         this._modifiedScrollOffset = observableValue(this, 0);
-        this._modifiedScrollOffsetAnimated = animatedObservable(this._modifiedScrollOffset, this._store);
-        let isChangingViewZones = false;
-        const state = observableValue('state', 0);
+        this._modifiedScrollOffsetAnimated = animatedObservable(this._targetWindow, this._modifiedScrollOffset, this._store);
+        const state = observableValue('invalidateAlignmentsState', 0);
         const updateImmediately = this._register(new RunOnceScheduler(() => {
             state.set(state.get() + 1, undefined);
         }, 0));
-        this._register(this._editors.original.onDidChangeViewZones((_args) => { if (!isChangingViewZones && !this._canIgnoreViewZoneUpdateEvent()) {
+        this._register(this._editors.original.onDidChangeViewZones((_args) => { if (!this._canIgnoreViewZoneUpdateEvent()) {
             updateImmediately.schedule();
         } }));
-        this._register(this._editors.modified.onDidChangeViewZones((_args) => { if (!isChangingViewZones && !this._canIgnoreViewZoneUpdateEvent()) {
+        this._register(this._editors.modified.onDidChangeViewZones((_args) => { if (!this._canIgnoreViewZoneUpdateEvent()) {
             updateImmediately.schedule();
         } }));
         this._register(this._editors.original.onDidChangeConfiguration((args) => {
@@ -74,8 +77,6 @@ let ViewZoneManager = class ViewZoneManager extends Disposable {
             }
         }));
         const originalModelTokenizationCompleted = this._diffModel.map(m => m ? observableFromEvent(m.model.original.onDidChangeTokens, () => m.model.original.tokenization.backgroundTokenizationState === 2 /* BackgroundTokenizationState.Completed */) : undefined).map((m, reader) => m === null || m === void 0 ? void 0 : m.read(reader));
-        const alignmentViewZoneIdsOrig = new Set();
-        const alignmentViewZoneIdsMod = new Set();
         const alignments = derived((reader) => {
             /** @description alignments */
             const diffModel = this._diffModel.read(reader);
@@ -86,11 +87,11 @@ let ViewZoneManager = class ViewZoneManager extends Disposable {
             state.read(reader);
             const renderSideBySide = this._options.renderSideBySide.read(reader);
             const innerHunkAlignment = renderSideBySide;
-            return computeRangeAlignment(this._editors.original, this._editors.modified, diff.mappings, alignmentViewZoneIdsOrig, alignmentViewZoneIdsMod, innerHunkAlignment);
+            return computeRangeAlignment(this._editors.original, this._editors.modified, diff.mappings, this._origViewZonesToIgnore, this._modViewZonesToIgnore, innerHunkAlignment);
         });
         const alignmentsSyncedMovedText = derived((reader) => {
             var _a;
-            /** @description alignments */
+            /** @description alignmentsSyncedMovedText */
             const syncedMovedText = (_a = this._diffModel.read(reader)) === null || _a === void 0 ? void 0 : _a.movedTextToCompare.read(reader);
             if (!syncedMovedText) {
                 return null;
@@ -98,7 +99,7 @@ let ViewZoneManager = class ViewZoneManager extends Disposable {
             state.read(reader);
             const mappings = syncedMovedText.changes.map(c => new DiffMapping(c));
             // TODO dont include alignments outside syncedMovedText
-            return computeRangeAlignment(this._editors.original, this._editors.modified, mappings, alignmentViewZoneIdsOrig, alignmentViewZoneIdsMod, true);
+            return computeRangeAlignment(this._editors.original, this._editors.modified, mappings, this._origViewZonesToIgnore, this._modViewZonesToIgnore, true);
         });
         function createFakeLinesDiv() {
             const r = document.createElement('div');
@@ -106,9 +107,8 @@ let ViewZoneManager = class ViewZoneManager extends Disposable {
             return r;
         }
         const alignmentViewZonesDisposables = this._register(new DisposableStore());
-        const alignmentViewZones = derived((reader) => {
+        this.viewZones = derivedWithStore(this, (reader, store) => {
             var _a, _b, _c, _d, _e, _f, _g, _h;
-            /** @description alignment viewzones */
             alignmentViewZonesDisposables.clear();
             const alignmentsVal = alignments.read(reader) || [];
             const origViewZones = [];
@@ -232,6 +232,11 @@ let ViewZoneManager = class ViewZoneManager extends Disposable {
                         function createViewZoneMarginArrow() {
                             const arrow = document.createElement('div');
                             arrow.className = 'arrow-revert-change ' + ThemeIcon.asClassName(Codicon.arrowRight);
+                            store.add(addDisposableListener(arrow, 'mousedown', e => e.stopPropagation()));
+                            store.add(addDisposableListener(arrow, 'click', e => {
+                                e.stopPropagation();
+                                _diffEditorWidget.revert(a.diff);
+                            }));
                             return $('div', {}, arrow);
                         }
                         let marginDomNode = undefined;
@@ -277,54 +282,6 @@ let ViewZoneManager = class ViewZoneManager extends Disposable {
             }
             return { orig: origViewZones, mod: modViewZones };
         });
-        this._register(autorunWithStore((reader) => {
-            /** @description alignment viewzones */
-            const scrollState = StableEditorScrollState.capture(this._editors.modified);
-            const alignmentViewZones_ = alignmentViewZones.read(reader);
-            isChangingViewZones = true;
-            this._editors.original.changeViewZones((aOrig) => {
-                for (const id of alignmentViewZoneIdsOrig) {
-                    aOrig.removeZone(id);
-                }
-                alignmentViewZoneIdsOrig.clear();
-                for (const z of alignmentViewZones_.orig) {
-                    const id = aOrig.addZone(z);
-                    if (z.setZoneId) {
-                        z.setZoneId(id);
-                    }
-                    alignmentViewZoneIdsOrig.add(id);
-                }
-            });
-            this._editors.modified.changeViewZones(aMod => {
-                for (const id of alignmentViewZoneIdsMod) {
-                    aMod.removeZone(id);
-                }
-                alignmentViewZoneIdsMod.clear();
-                for (const z of alignmentViewZones_.mod) {
-                    const id = aMod.addZone(z);
-                    if (z.setZoneId) {
-                        z.setZoneId(id);
-                    }
-                    alignmentViewZoneIdsMod.add(id);
-                }
-            });
-            isChangingViewZones = false;
-            scrollState.restore(this._editors.modified);
-        }));
-        this._register(toDisposable(() => {
-            this._editors.original.changeViewZones((a) => {
-                for (const id of alignmentViewZoneIdsOrig) {
-                    a.removeZone(id);
-                }
-                alignmentViewZoneIdsOrig.clear();
-            });
-            this._editors.modified.changeViewZones((a) => {
-                for (const id of alignmentViewZoneIdsMod) {
-                    a.removeZone(id);
-                }
-                alignmentViewZoneIdsMod.clear();
-            });
-        }));
         let ignoreChange = false;
         this._register(this._editors.original.onDidScrollChange(e => {
             if (e.scrollLeftChanged && !ignoreChange) {
@@ -340,8 +297,8 @@ let ViewZoneManager = class ViewZoneManager extends Disposable {
                 ignoreChange = false;
             }
         }));
-        this._originalScrollTop = observableFromEvent(this._editors.original.onDidScrollChange, () => this._editors.original.getScrollTop());
-        this._modifiedScrollTop = observableFromEvent(this._editors.modified.onDidScrollChange, () => this._editors.modified.getScrollTop());
+        this._originalScrollTop = observableFromEvent(this._editors.original.onDidScrollChange, () => /** @description original.getScrollTop */ this._editors.original.getScrollTop());
+        this._modifiedScrollTop = observableFromEvent(this._editors.modified.onDidScrollChange, () => /** @description modified.getScrollTop */ this._editors.modified.getScrollTop());
         // origExtraHeight + origOffset - origScrollTop = modExtraHeight + modOffset - modScrollTop
         // origScrollTop = origExtraHeight + origOffset - modExtraHeight - modOffset + modScrollTop
         // modScrollTop = modExtraHeight + modOffset - origExtraHeight - origOffset + origScrollTop
@@ -399,8 +356,8 @@ let ViewZoneManager = class ViewZoneManager extends Disposable {
     }
 };
 ViewZoneManager = __decorate([
-    __param(5, IClipboardService),
-    __param(6, IContextMenuService)
+    __param(8, IClipboardService),
+    __param(9, IContextMenuService)
 ], ViewZoneManager);
 export { ViewZoneManager };
 function computeRangeAlignment(originalEditor, modifiedEditor, diffs, originalEditorAlignmentViewZones, modifiedEditorAlignmentViewZones, innerHunkAlignment) {

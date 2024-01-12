@@ -2,15 +2,6 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 import * as dom from '../../../base/browser/dom.js';
 import { StandardKeyboardEvent } from '../../../base/browser/keyboardEvent.js';
 import { Toggle } from '../../../base/browser/ui/toggle/toggle.js';
@@ -228,18 +219,18 @@ class QuickInput extends Disposable {
             this.ui.leftActionBar.clear();
             const leftButtons = this.buttons.filter(button => button === backButton);
             this.ui.leftActionBar.push(leftButtons.map((button, index) => {
-                const action = new Action(`id-${index}`, '', button.iconClass || getIconClass(button.iconPath), true, () => __awaiter(this, void 0, void 0, function* () {
+                const action = new Action(`id-${index}`, '', button.iconClass || getIconClass(button.iconPath), true, async () => {
                     this.onDidTriggerButtonEmitter.fire(button);
-                }));
+                });
                 action.tooltip = button.tooltip || '';
                 return action;
             }), { icon: true, label: false });
             this.ui.rightActionBar.clear();
             const rightButtons = this.buttons.filter(button => button !== backButton);
             this.ui.rightActionBar.push(rightButtons.map((button, index) => {
-                const action = new Action(`id-${index}`, '', button.iconClass || getIconClass(button.iconPath), true, () => __awaiter(this, void 0, void 0, function* () {
+                const action = new Action(`id-${index}`, '', button.iconClass || getIconClass(button.iconPath), true, async () => {
                     this.onDidTriggerButtonEmitter.fire(button);
-                }));
+                });
                 action.tooltip = button.tooltip || '';
                 return action;
             }), { icon: true, label: false });
@@ -671,7 +662,7 @@ export class QuickPick extends QuickInput {
                 this._selectedItems = selectedItems;
                 this.onDidChangeSelectionEmitter.fire(selectedItems);
                 if (selectedItems.length) {
-                    this.handleAccept(event instanceof MouseEvent && event.button === 1 /* mouse middle click */);
+                    this.handleAccept(dom.isMouseEvent(event) && event.button === 1 /* mouse middle click */);
                 }
             }));
             this.visibleDisposables.add(this.ui.list.onChangedCheckedElements(checkedItems => {

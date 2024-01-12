@@ -11,15 +11,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var MarkdownRenderer_1;
 import { renderMarkdown } from '../../../../base/browser/markdownRenderer.js';
 import { createTrustedTypesPolicy } from '../../../../base/browser/trustedTypes.js';
@@ -53,7 +44,7 @@ let MarkdownRenderer = MarkdownRenderer_1 = class MarkdownRenderer {
             return { element, dispose: () => { } };
         }
         const disposables = new DisposableStore();
-        const rendered = disposables.add(renderMarkdown(markdown, Object.assign(Object.assign({}, this._getRenderOptions(markdown, disposables)), options), markedOptions));
+        const rendered = disposables.add(renderMarkdown(markdown, { ...this._getRenderOptions(markdown, disposables), ...options }, markedOptions));
         rendered.element.classList.add('rendered-markdown');
         return {
             element: rendered.element,
@@ -62,7 +53,7 @@ let MarkdownRenderer = MarkdownRenderer_1 = class MarkdownRenderer {
     }
     _getRenderOptions(markdown, disposables) {
         return {
-            codeBlockRenderer: (languageAlias, value) => __awaiter(this, void 0, void 0, function* () {
+            codeBlockRenderer: async (languageAlias, value) => {
                 var _a, _b, _c;
                 // In markdown,
                 // it is possible that we stumble upon language aliases (e.g.js instead of javascript)
@@ -77,7 +68,7 @@ let MarkdownRenderer = MarkdownRenderer_1 = class MarkdownRenderer {
                 if (!languageId) {
                     languageId = PLAINTEXT_LANGUAGE_ID;
                 }
-                const html = yield tokenizeToString(this._languageService, value, languageId);
+                const html = await tokenizeToString(this._languageService, value, languageId);
                 const element = document.createElement('span');
                 element.innerHTML = ((_c = (_b = MarkdownRenderer_1._ttpTokenizer) === null || _b === void 0 ? void 0 : _b.createHTML(html)) !== null && _c !== void 0 ? _c : html);
                 // use "good" font
@@ -92,7 +83,7 @@ let MarkdownRenderer = MarkdownRenderer_1 = class MarkdownRenderer {
                     element.style.fontSize = this._options.codeBlockFontSize;
                 }
                 return element;
-            }),
+            },
             asyncRenderCallback: () => this._onDidRenderAsync.fire(),
             actionHandler: {
                 callback: (link) => openLinkFromMarkdown(this._openerService, link, markdown.isTrusted),
@@ -111,20 +102,18 @@ MarkdownRenderer = MarkdownRenderer_1 = __decorate([
     __param(2, IOpenerService)
 ], MarkdownRenderer);
 export { MarkdownRenderer };
-export function openLinkFromMarkdown(openerService, link, isTrusted) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            return yield openerService.open(link, {
-                fromUserGesture: true,
-                allowContributedOpeners: true,
-                allowCommands: toAllowCommandsOption(isTrusted),
-            });
-        }
-        catch (e) {
-            onUnexpectedError(e);
-            return false;
-        }
-    });
+export async function openLinkFromMarkdown(openerService, link, isTrusted) {
+    try {
+        return await openerService.open(link, {
+            fromUserGesture: true,
+            allowContributedOpeners: true,
+            allowCommands: toAllowCommandsOption(isTrusted),
+        });
+    }
+    catch (e) {
+        onUnexpectedError(e);
+        return false;
+    }
 }
 function toAllowCommandsOption(isTrusted) {
     if (isTrusted === true) {

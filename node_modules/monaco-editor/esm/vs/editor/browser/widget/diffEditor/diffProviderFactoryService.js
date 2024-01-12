@@ -19,7 +19,7 @@ let DiffProviderFactoryService = class DiffProviderFactoryService {
     constructor(instantiationService) {
         this.instantiationService = instantiationService;
     }
-    createDiffProvider(editor, options) {
+    createDiffProvider(options) {
         return this.instantiationService.createInstance(WorkerBasedDocumentDiffProvider, options);
     }
 };

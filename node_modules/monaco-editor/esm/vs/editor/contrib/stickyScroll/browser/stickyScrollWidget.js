@@ -2,15 +2,6 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 import * as dom from '../../../../base/browser/dom.js';
 import { createTrustedTypesPolicy } from '../../../../base/browser/trustedTypes.js';
 import { equals } from '../../../../base/common/arrays.js';
@@ -163,38 +154,36 @@ export class StickyScrollWidget extends Disposable {
             foldingIcon.setVisible(allVisible ? true : foldingIcon.isCollapsed);
         }
     }
-    _renderRootNode(previousStickyLines, foldingModel, rebuildFromLine = Infinity) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const layoutInfo = this._editor.getLayoutInfo();
-            for (const [index, line] of this._lineNumbers.entries()) {
-                const previousStickyLine = previousStickyLines[index];
-                const stickyLine = (line >= rebuildFromLine || (previousStickyLine === null || previousStickyLine === void 0 ? void 0 : previousStickyLine.lineNumber) !== line)
-                    ? this._renderChildNode(index, line, foldingModel, layoutInfo)
-                    : this._updateTopAndZIndexOfStickyLine(previousStickyLine);
-                if (!stickyLine) {
-                    continue;
-                }
-                this._linesDomNode.appendChild(stickyLine.lineDomNode);
-                this._lineNumbersDomNode.appendChild(stickyLine.lineNumberDomNode);
-                this._stickyLines.push(stickyLine);
+    async _renderRootNode(previousStickyLines, foldingModel, rebuildFromLine = Infinity) {
+        const layoutInfo = this._editor.getLayoutInfo();
+        for (const [index, line] of this._lineNumbers.entries()) {
+            const previousStickyLine = previousStickyLines[index];
+            const stickyLine = (line >= rebuildFromLine || (previousStickyLine === null || previousStickyLine === void 0 ? void 0 : previousStickyLine.lineNumber) !== line)
+                ? this._renderChildNode(index, line, foldingModel, layoutInfo)
+                : this._updateTopAndZIndexOfStickyLine(previousStickyLine);
+            if (!stickyLine) {
+                continue;
             }
-            if (foldingModel) {
-                this._setFoldingHoverListeners();
-                this._useFoldingOpacityTransition(!this._isOnGlyphMargin);
-            }
-            const widgetHeight = this._lineNumbers.length * this._lineHeight + this._lastLineRelativePosition;
-            if (widgetHeight === 0) {
-                this._clearStickyWidget();
-                return;
-            }
-            this._rootDomNode.style.display = 'block';
-            this._lineNumbersDomNode.style.height = `${widgetHeight}px`;
-            this._linesDomNodeScrollable.style.height = `${widgetHeight}px`;
-            this._rootDomNode.style.height = `${widgetHeight}px`;
-            this._rootDomNode.style.marginLeft = '0px';
-            this._updateMinContentWidth();
-            this._editor.layoutOverlayWidget(this);
-        });
+            this._linesDomNode.appendChild(stickyLine.lineDomNode);
+            this._lineNumbersDomNode.appendChild(stickyLine.lineNumberDomNode);
+            this._stickyLines.push(stickyLine);
+        }
+        if (foldingModel) {
+            this._setFoldingHoverListeners();
+            this._useFoldingOpacityTransition(!this._isOnGlyphMargin);
+        }
+        const widgetHeight = this._lineNumbers.length * this._lineHeight + this._lastLineRelativePosition;
+        if (widgetHeight === 0) {
+            this._clearStickyWidget();
+            return;
+        }
+        this._rootDomNode.style.display = 'block';
+        this._lineNumbersDomNode.style.height = `${widgetHeight}px`;
+        this._linesDomNodeScrollable.style.height = `${widgetHeight}px`;
+        this._rootDomNode.style.height = `${widgetHeight}px`;
+        this._rootDomNode.style.marginLeft = '0px';
+        this._updateMinContentWidth();
+        this._editor.layoutOverlayWidget(this);
     }
     _setFoldingHoverListeners() {
         const showFoldingControls = this._editor.getOption(109 /* EditorOption.showFoldingControls */);

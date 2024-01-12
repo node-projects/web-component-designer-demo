@@ -8,6 +8,7 @@ import { Color } from '../../../common/color.js';
 import { Emitter } from '../../../common/event.js';
 import { isMarkdownString, markdownStringEqual } from '../../../common/htmlContent.js';
 import { Disposable } from '../../../common/lifecycle.js';
+import { ThemeIcon } from '../../../common/themables.js';
 import './button.css';
 export const unthemedButtonStyles = {
     buttonBackground: '#0E639C',
@@ -168,6 +169,9 @@ export class Button extends Disposable {
     }
     get label() {
         return this._label;
+    }
+    set icon(icon) {
+        this._element.classList.add(...ThemeIcon.asClassNameArray(icon));
     }
     set enabled(value) {
         if (value) {

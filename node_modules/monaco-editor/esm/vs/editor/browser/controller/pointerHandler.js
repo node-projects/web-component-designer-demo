@@ -10,6 +10,7 @@ import { MouseHandler } from './mouseHandler.js';
 import { EditorMouseEvent, EditorPointerEventFactory } from '../editorDom.js';
 import { BrowserFeatures } from '../../../base/browser/canIUse.js';
 import { TextAreaSyntethicEvents } from './textAreaInput.js';
+import { mainWindow } from '../../../base/browser/window.js';
 /**
  * Currently only tested on iOS 13/ iPadOS.
  */
@@ -109,7 +110,7 @@ export class PointerHandler extends Disposable {
         if ((platform.isIOS && BrowserFeatures.pointerEvents)) {
             this.handler = this._register(new PointerEventHandler(context, viewController, viewHelper));
         }
-        else if (window.TouchEvent) {
+        else if (mainWindow.TouchEvent) {
             this.handler = this._register(new TouchHandler(context, viewController, viewHelper));
         }
         else {

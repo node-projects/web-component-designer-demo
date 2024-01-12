@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { Codicon } from '../../../../base/common/codicons.js';
-import { MarkdownString } from '../../../../base/common/htmlContent.js';
 import { ThemeIcon } from '../../../../base/common/themables.js';
 import { ModelDecorationOptions } from '../../../common/model/textModel.js';
 import { localize } from '../../../../nls.js';
@@ -63,11 +62,4 @@ export const diffWholeLineDeleteDecoration = ModelDecorationOptions.register({
 export const diffDeleteDecorationEmpty = ModelDecorationOptions.register({
     className: 'char-delete diff-range-empty',
     description: 'char-delete diff-range-empty',
-});
-export const arrowRevertChange = ModelDecorationOptions.register({
-    description: 'diff-editor-arrow-revert-change',
-    glyphMarginHoverMessage: new MarkdownString(undefined, { isTrusted: true, supportThemeIcons: true })
-        .appendMarkdown(localize('revertChangeHoverMessage', 'Click to revert change')),
-    glyphMarginClassName: 'arrow-revert-change ' + ThemeIcon.asClassName(Codicon.arrowRight),
-    zIndex: 10001,
 });

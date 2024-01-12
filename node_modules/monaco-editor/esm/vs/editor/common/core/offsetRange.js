@@ -34,6 +34,9 @@ export class OffsetRange {
     static ofLength(length) {
         return new OffsetRange(0, length);
     }
+    static ofStartAndLength(start, length) {
+        return new OffsetRange(start, start + length);
+    }
     constructor(start, endExclusive) {
         this.start = start;
         this.endExclusive = endExclusive;
@@ -88,6 +91,12 @@ export class OffsetRange {
             return new OffsetRange(start, end);
         }
         return undefined;
+    }
+    isBefore(other) {
+        return this.endExclusive <= other.start;
+    }
+    isAfter(other) {
+        return this.start >= other.endExclusive;
     }
     slice(arr) {
         return arr.slice(this.start, this.endExclusive);

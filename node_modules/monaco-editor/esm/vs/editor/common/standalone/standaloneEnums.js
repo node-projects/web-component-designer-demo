@@ -789,6 +789,12 @@ export var SelectionDirection;
      */
     SelectionDirection[SelectionDirection["RTL"] = 1] = "RTL";
 })(SelectionDirection || (SelectionDirection = {}));
+export var ShowAiIconMode;
+(function (ShowAiIconMode) {
+    ShowAiIconMode["Off"] = "off";
+    ShowAiIconMode["OnCode"] = "onCode";
+    ShowAiIconMode["On"] = "on";
+})(ShowAiIconMode || (ShowAiIconMode = {}));
 export var SignatureHelpTriggerKind;
 (function (SignatureHelpTriggerKind) {
     SignatureHelpTriggerKind[SignatureHelpTriggerKind["Invoke"] = 1] = "Invoke";

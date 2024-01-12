@@ -8,15 +8,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 import * as dom from '../../../base/browser/dom.js';
 import { StandardKeyboardEvent } from '../../../base/browser/keyboardEvent.js';
 import { ActionBar } from '../../../base/browser/ui/actionbar/actionbar.js';
@@ -420,7 +411,7 @@ export class QuickInputList {
             const delayer = new ThrottledDelayer(options.hoverDelegate.delay);
             // onMouseOver triggers every time a new element has been moused over
             // even if it's on the same list item.
-            this.disposables.push(this.list.onMouseOver((e) => __awaiter(this, void 0, void 0, function* () {
+            this.disposables.push(this.list.onMouseOver(async (e) => {
                 var _a;
                 // If we hover over an anchor element, we don't want to show the hover because
                 // the anchor may have a tooltip that we want to show instead.
@@ -436,11 +427,11 @@ export class QuickInputList {
                     return;
                 }
                 try {
-                    yield delayer.trigger(() => __awaiter(this, void 0, void 0, function* () {
+                    await delayer.trigger(async () => {
                         if (e.element) {
                             this.showHover(e.element);
                         }
-                    }));
+                    });
                 }
                 catch (e) {
                     // Ignore cancellation errors due to mouse out
@@ -448,7 +439,7 @@ export class QuickInputList {
                         throw e;
                     }
                 }
-            })));
+            }));
             this.disposables.push(this.list.onMouseOut(e => {
                 var _a;
                 // onMouseOut triggers every time a new element has been moused over
@@ -683,9 +674,13 @@ export class QuickInputList {
             linkHandler: (url) => {
                 this.options.linkOpenerDelegate(url);
             },
-            showPointer: true,
+            appearance: {
+                showPointer: true,
+            },
             container: this.container,
-            hoverPosition: 1 /* HoverPosition.RIGHT */
+            position: {
+                hoverPosition: 1 /* HoverPosition.RIGHT */
+            }
         }, false);
     }
     layout(maxHeight) {

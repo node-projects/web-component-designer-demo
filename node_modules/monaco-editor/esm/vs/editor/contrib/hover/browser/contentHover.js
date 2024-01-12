@@ -407,7 +407,11 @@ let ContentHoverWidget = ContentHoverWidget_1 = class ContentHoverWidget extends
         this._hoverFocusedKey = EditorContextKeys.hoverFocused.bindTo(contextKeyService);
         dom.append(this._resizableNode.domNode, this._hover.containerDomNode);
         this._resizableNode.domNode.style.zIndex = '50';
-        this._register(this._editor.onDidLayoutChange(() => this._layout()));
+        this._register(this._editor.onDidLayoutChange(() => {
+            if (this.isVisible) {
+                this._updateMaxDimensions();
+            }
+        }));
         this._register(this._editor.onDidChangeConfiguration((e) => {
             if (e.hasChanged(50 /* EditorOption.fontInfo */)) {
                 this._updateFont();
@@ -421,7 +425,6 @@ let ContentHoverWidget = ContentHoverWidget_1 = class ContentHoverWidget extends
             this._hoverFocusedKey.set(false);
         }));
         this._setHoverData(undefined);
-        this._layout();
         this._editor.addContentWidget(this);
     }
     dispose() {
@@ -584,14 +587,11 @@ let ContentHoverWidget = ContentHoverWidget_1 = class ContentHoverWidget extends
         this._hoverVisibleKey.set(!!hoverData);
         this._hover.containerDomNode.classList.toggle('hidden', !hoverData);
     }
-    _layout() {
+    _updateFont() {
         const { fontSize, lineHeight } = this._editor.getOption(50 /* EditorOption.fontInfo */);
         const contentsDomNode = this._hover.contentsDomNode;
         contentsDomNode.style.fontSize = `${fontSize}px`;
         contentsDomNode.style.lineHeight = `${lineHeight / fontSize}`;
-        this._updateMaxDimensions();
-    }
-    _updateFont() {
         const codeClasses = Array.prototype.slice.call(this._hover.contentsDomNode.getElementsByClassName('code'));
         codeClasses.forEach(node => this._editor.applyFontInfo(node));
     }
@@ -649,7 +649,8 @@ let ContentHoverWidget = ContentHoverWidget_1 = class ContentHoverWidget extends
         }
         (_b = hoverData.colorPicker) === null || _b === void 0 ? void 0 : _b.layout();
         // The aria label overrides the label, so if we add to it, add the contents of the hover
-        const accessibleViewHint = getHoverAccessibleViewHint(this._configurationService.getValue('accessibility.verbosity.hover') === true && this._accessibilityService.isScreenReaderOptimized(), (_d = (_c = this._keybindingService.lookupKeybinding('editor.action.accessibleView')) === null || _c === void 0 ? void 0 : _c.getAriaLabel()) !== null && _d !== void 0 ? _d : '');
+        const hoverFocused = this._hover.containerDomNode.ownerDocument.activeElement === this._hover.containerDomNode;
+        const accessibleViewHint = hoverFocused && getHoverAccessibleViewHint(this._configurationService.getValue('accessibility.verbosity.hover') === true && this._accessibilityService.isScreenReaderOptimized(), (_d = (_c = this._keybindingService.lookupKeybinding('editor.action.accessibleView')) === null || _c === void 0 ? void 0 : _c.getAriaLabel()) !== null && _d !== void 0 ? _d : '');
         if (accessibleViewHint) {
             this._hover.contentsDomNode.ariaLabel = this._hover.contentsDomNode.textContent + ', ' + accessibleViewHint;
         }

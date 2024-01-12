@@ -1,6 +1,6 @@
 /*!-----------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
- * Version: 0.44.0(3e047efd345ff102c8c61b5398fb30845aaac166)
+ * Version: 0.45.0(5e5af013f8d295555a7210df0d5f2cea0bf5dd56)
  * Released under the MIT license
  * https://github.com/microsoft/vscode/blob/main/LICENSE.txt
  *-----------------------------------------------------------*/
@@ -19,7 +19,7 @@ define("vs/editor/editor.main.nls.zh-tw", {
 	],
 	"vs/base/browser/ui/findinput/replaceInput": [
 		"輸入",
-		"保留案例",
+		"保留大小寫",
 	],
 	"vs/base/browser/ui/hover/hoverWidget": [
 		"使用 {0} 在可存取檢視中檢查此項目。",
@@ -32,7 +32,8 @@ define("vs/editor/editor.main.nls.zh-tw", {
 		"錯誤: {0}",
 		"警告: {0}",
 		"資訊: {0}",
-		"歷程記錄",
+		" 或 {0} 以取得歷程記錄",
+		" ({0} 以取得歷程記錄)",
 		"已清除輸入",
 	],
 	"vs/base/browser/ui/keybindingLabel/keybindingLabel": [
@@ -132,11 +133,11 @@ define("vs/editor/editor.main.nls.zh-tw", {
 	"vs/editor/browser/widget/diffEditor/colors": [
 		"在 Diff 編輯器中移動的文字的框線色彩。",
 		"在 Diff 編輯器中移動的文字的作用中框線色彩。",
+		"未變更的區域小工具周圍的陰影色彩。",
 	],
 	"vs/editor/browser/widget/diffEditor/decorations": [
 		"Diff 編輯器中用於插入的線條裝飾。",
 		"Diff 編輯器中用於移除的線條裝飾。",
-		"按一下以還原變更",
 	],
 	"vs/editor/browser/widget/diffEditor/diffEditor.contribution": [
 		"切換摺疊未變更的區域",
@@ -154,13 +155,17 @@ define("vs/editor/editor.main.nls.zh-tw", {
 		"開啟易存取差異檢視器",
 		"移至上一個差異",
 	],
+	"vs/editor/browser/widget/diffEditor/diffEditorDecorations": [
+		"還原選取的變更",
+		"還原變更",
+	],
 	"vs/editor/browser/widget/diffEditor/diffEditorEditors": [
 		" 使用 {0} 以開啟協助工具說明。",
 	],
 	"vs/editor/browser/widget/diffEditor/hideUnchangedRegionsFeature": [
 		"摺疊未變更的區域",
 		"按一下或拖曳以在上方顯示更多內容",
-		"全部顯示",
+		"顯示未變更的區域",
 		"按一下或拖曳以在下方顯示更多內容",
 		"{0} 條隱藏行",
 		"按兩下以展開",
@@ -180,6 +185,9 @@ define("vs/editor/editor.main.nls.zh-tw", {
 		"程式碼已移至行 {0}-{1}",
 		"行 {0}-{1} 的程式碼已移動",
 	],
+	"vs/editor/browser/widget/multiDiffEditorWidget/colors": [
+		"Diff 編輯器標頭的背景色彩",
+	],
 	"vs/editor/common/config/editorConfigurationSchema": [
 		"編輯器",
 		"與 Tab 相等的空格數量。當 {0} 已開啟時，會根據檔案內容覆寫此設定。",
@@ -188,11 +196,11 @@ define("vs/editor/editor.main.nls.zh-tw", {
 		"根據檔案內容，控制當檔案開啟時，是否自動偵測 {0} 和 {1}。",
 		"移除尾端自動插入的空白字元。",
 		"針對大型檔案停用部分高記憶體需求功能的特殊處理方式。",
-		"控制是否應根據文件中的單字計算自動完成。",
+		"關閉 Word 型建議。",
 		"僅建議來自使用中文件中的字組。",
 		"建議來自所有已開啟文件中，語言相同的字組。",
 		"建議來自所有已開啟文件中的字組。",
-		"控制要從哪些文件計算以字組為基礎的完成作業。",
+		"控制是否應該根據文件中的文字來計算完成，以及從哪些文件計算。",
 		"所有彩色主題皆已啟用語意醒目提示。",
 		"所有彩色主題皆已停用語意醒目提示。",
 		"語意醒目提示由目前之彩色佈景主題的 \'semanticHighlighting\' 設定所設定。",
@@ -230,9 +238,9 @@ define("vs/editor/editor.main.nls.zh-tw", {
 		"控制差異編輯器是否顯示空白裝飾項目，以查看插入或刪除字元的位置。",
 	],
 	"vs/editor/common/config/editorOptions": [
-		"使用平台 API 以偵測螢幕助讀程式附加",
-		"使用螢幕助讀程式最佳化使用方式",
-		"假設未附加螢幕助讀程式",
+		"使用平台 API 以偵測螢幕助讀程式附加。",
+		"使用螢幕助讀程式將使用方式最佳化。",
+		"假設螢幕助讀程式未連結。",
 		"控制 UI 是否應於已為螢幕助讀程式最佳化的模式中執行。",
 		"控制是否要在註解時插入空白字元。",
 		"控制是否應以行註解的切換、新增或移除動作，忽略空白的行。",
@@ -275,16 +283,20 @@ define("vs/editor/editor.main.nls.zh-tw", {
 		"控制是否顯示暫留。",
 		"控制暫留顯示的延遲時間 (以毫秒為單位)。",
 		"控制當滑鼠移過時，是否應保持顯示暫留。",
-		"控制隱藏暫留之後的延遲毫秒。需要啟用 \'editor.hover.sticky\'。",
+		"控制暫留隱藏的延遲時間 (以毫秒為單位)。需要啟用 `editor.hover.sticky`。",
 		"如果有空間，則偏好在行上方顯示游標。",
 		"假設所有字元的寬度均相同。這是一種快速的演算法，適用於等寬字型，以及字符寬度相同的部分指令碼 (例如拉丁文字元)。",
 		"將外圍點計算委派給瀏覽器。這是緩慢的演算法，如果檔案較大可能會導致凍結，但在所有情況下都正常運作。",
 		"控制計算外圍點的演算法。請注意，在協助工具模式中，會使用進階來獲得最佳體驗。",
 		"在編輯器中啟用程式碼動作燈泡。",
+		"請勿顯示 AI 圖示。",
+		"當程式碼動作選單包含 AI 動作，但僅在程式碼上顯示 AI 圖示。",
+		"當程式碼動作選單包含 AI 動作時，在程式碼和空行上顯示 AI 圖示。",
+		"當程式碼動作選單包含 AI 作業時，將 AI 圖示與燈泡一起顯示。",
 		"在編輯器頂端捲動期間顯示巢狀的目前範圍。",
 		"定義要顯示的自黏線數目上限。",
 		"定義要用於判斷要黏住的線條的模型。如果大綱模型不存在，則會回到摺疊提供者模型，其會回到縮排模型。這三種情況中會遵守此順序。",
-		"使用編輯器的水平捲軸，啟用自黏捲動小工具的捲動。",
+		"使用編輯器的水平捲軸，啟用自黏捲動的捲動。",
 		"啟用編輯器中的內嵌提示。",
 		"已啟用內嵌提示",
 		"預設會顯示內嵌提示，並在按住 {0} 時隱藏",
@@ -335,6 +347,7 @@ define("vs/editor/editor.main.nls.zh-tw", {
 		"垂直捲軸的寬度。",
 		"水平捲軸的高度。",
 		"控制項按一下是否按頁面滾動或跳到按一下位置。",
+		"設定時，水平捲軸不會增加編輯器內容的大小。",
 		"控制是否醒目提示所有非基本的 ASCII 字元。只有介於 U+0020和 U+007E、tab、換行和歸位字元之間的字元會視為基本 ASCII。",
 		"控制是否只保留空格或完全沒有寬度之字元的醒目提示。",
 		"控制是否醒目提示與基本 ASCII 字元混淆的字元，但目前使用者地區設定中通用的字元除外。",
@@ -345,6 +358,7 @@ define("vs/editor/editor.main.nls.zh-tw", {
 		"控制是否要在編輯器中自動顯示內嵌建議。",
 		"每當顯示內嵌建議時，顯示內嵌建議工具列。",
 		"每當游標停留在內嵌建議上方時，顯示內嵌建議工具列。",
+		"永不顯示內嵌建議工具列。",
 		"控制何時顯示內嵌建議工具列。",
 		"控制內嵌建議如何與建議小工具互動。如果啟用，有可用的內嵌建議時，不會自動顯示建議小工具。",
 		"控制是否啟用成對方括弧著色。使用 {0} 覆寫括弧亮顯顏色。",
@@ -418,7 +432,7 @@ define("vs/editor/editor.main.nls.zh-tw", {
 		"換行的縮排為父行 +1。",
 		"換行縮排為父行 +2。",
 		"控制換行的縮排。",
-		"控制您是否可以按住 `shift` 鍵 (而非在編輯器中開啟檔案)，將檔案拖放到文字編輯器中。",
+		"控制您是否可以按住 `Shift` 鍵，將檔案拖放到文字編輯器中 (而非在編輯器中開啟檔案)。",
 		"控制將檔案放入編輯器時是否顯示小工具。此小工具可讓您控制檔案的置放方式。",
 		"將檔案放入編輯器後顯示置放選取器小工具。",
 		"永不顯示置放選取器小工具。改為一律使用預設置放提供者。",
@@ -511,7 +525,10 @@ define("vs/editor/editor.main.nls.zh-tw", {
 		"每個游標都會貼上全文。",
 		"當已貼上文字的行數與游標數相符時控制貼上功能。",
 		"控制一次可在作用中編輯器中的游標數目上限。",
-		"控制編輯器是否應醒目顯示出現的語意符號。",
+		"不強調顯示出現項目。",
+		"僅強調顯示目前檔案中的出現項目。",
+		"實驗: 跨所有有效的開啟檔案強調顯示出現項目。",
+		"控制是否應跨開啟的檔案強調顯示出現項目。",
 		"控制是否應在概觀尺規周圍繪製框線。",
 		"開啟預覽時焦點樹狀",
 		"開啟時聚焦編輯器",
@@ -653,6 +670,9 @@ define("vs/editor/editor.main.nls.zh-tw", {
 		"編輯器是否為唯讀",
 		"內容是否為 Diff 編輯器",
 		"內容是否為內嵌 Diff 編輯器",
+		"內容是否為 Diff 編輯器",
+		"是否摺疊多重 Diff 編輯器中的所有檔案",
+		"Diff 編輯器是否有變更",
 		"是否選取移動的程式碼區塊進行比較",
 		"是否顯示易存取差異檢視器",
 		"是否已達到差異編輯器並排呈現內嵌中斷點",
@@ -753,6 +773,7 @@ define("vs/editor/editor.main.nls.zh-tw", {
 		"選取至括弧",
 		"移除括弧",
 		"前往括弧(&&B)",
+		"選取內部文字，並包含括弧或大括弧",
 	],
 	"vs/editor/contrib/caretOperations/browser/caretOperations": [
 		"將所選文字向左移動",
@@ -816,7 +837,7 @@ define("vs/editor/editor.main.nls.zh-tw", {
 	],
 	"vs/editor/contrib/codeAction/browser/codeActionContributions": [
 		"啟用/停用在 [程式碼動作] 功能表中顯示群組標頭。",
-		"啟用/停用目前不在診斷時顯示行內最接近的 Quickfix。",
+		"目前不在診斷時，啟用/停用顯示行內最近的 [快速修正]。",
 	],
 	"vs/editor/contrib/codeAction/browser/codeActionController": [
 		"內容: {0} 在行 {1} 和欄 {2}。",
@@ -837,6 +858,9 @@ define("vs/editor/editor.main.nls.zh-tw", {
 		"顯示程式碼動作。偏好的快速修正可用 ({0})",
 		"顯示程式碼動作 ({0})",
 		"顯示程式碼動作",
+		"開始內嵌聊天 ({0})",
+		"開始內嵌聊天",
+		"觸發 AI 動作",
 	],
 	"vs/editor/contrib/codelens/browser/codelensController": [
 		"顯示目前行的 Code Lens 命令",
@@ -992,12 +1016,6 @@ define("vs/editor/editor.main.nls.zh-tw", {
 		"編輯器字型縮小",
 		"編輯器字體重設縮放",
 	],
-	"vs/editor/contrib/format/browser/format": [
-		"在行 {0} 編輯了 1 項格式",
-		"在行 {1} 編輯了 {0} 項格式",
-		"在行 {0} 與行 {1} 之間編輯了 1 項格式",
-		"在行 {1} 與行 {2} 之間編輯了 {0} 項格式",
-	],
 	"vs/editor/contrib/format/browser/formatActions": [
 		"格式化文件",
 		"格式化選取範圍",
@@ -1104,6 +1122,9 @@ define("vs/editor/editor.main.nls.zh-tw", {
 	],
 	"vs/editor/contrib/hover/browser/hover": [
 		"顯示或聚焦暫留",
+		"游標暫留將不會自動聚焦。",
+		"只有在游標暫留顯示時才會聚焦。",
+		"游標暫留出現時將自動聚焦。",
 		"顯示定義預覽懸停",
 		"向上捲動暫留",
 		"向下捲動暫留",
@@ -1620,6 +1641,9 @@ define("vs/editor/editor.main.nls.zh-tw", {
 		"聊天要求已傳送",
 		"聊天回應已接收",
 		"聊天回應擱置中",
+		"清除",
+		"儲存",
+		"格式",
 	],
 	"vs/platform/configuration/common/configurationRegistry": [
 		"預設語言組態覆寫",
@@ -1699,6 +1723,8 @@ define("vs/editor/editor.main.nls.zh-tw", {
 		"搜尋時使用連續比對。",
 		"控制在工作台中搜尋清單和樹狀結構時所使用的比對類型。",
 		"控制當按下資料夾名稱時，樹狀目錄資料夾的展開方式。請注意，若不適用，某些樹狀目錄和清單可能會選擇忽略此設定。",
+		"控制是否要在樹狀中啟動黏性捲動。",
+		"控制啟用 `#workbench.tree.enableStickyScroll#` 時，樹狀中顯示的黏性元素數目。",
 		"控制工作台中清單和樹狀目錄的類型瀏覽運作方式。設定為 \'trigger\' 時，類型瀏覽會在執行 \'list.triggerTypeNavigation\' 命令時隨即開始。",
 	],
 	"vs/platform/markers/common/markers": [
@@ -1753,6 +1779,7 @@ define("vs/editor/editor.main.nls.zh-tw", {
 		"內文連結的前景色彩",
 		"當滑鼠點擊或懸停時，文字中連結的前景色彩。",
 		"提示及建議文字的前景色彩。",
+		"預先格式化文字區段的背景色彩。",
 		"文內引用區塊背景色彩。",
 		"引用文字的框線顏色。",
 		"文字區塊的背景顏色。",
@@ -1851,6 +1878,7 @@ define("vs/editor/editor.main.nls.zh-tw", {
 		"參數內嵌提示的背景色彩",
 		"用於燈泡動作圖示的色彩。",
 		"用於燈泡自動修正動作圖示的色彩。",
+		"燈泡 AI 圖示使用的色彩。",
 		"已插入文字的背景色彩。其不得為不透明色彩，以免隱藏底層裝飾。",
 		"已移除文字的背景色彩。其不得為不透明色彩，以免隱藏底層裝飾。",
 		"已插入程式行的背景色彩。其不得為不透明色彩，以免隱藏底層裝飾。",

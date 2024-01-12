@@ -11,15 +11,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var WorkerBasedDocumentDiffProvider_1;
 import { Emitter } from '../../../../base/common/event.js';
 import { StopWatch } from '../../../../base/common/stopwatch.js';
@@ -41,66 +32,64 @@ let WorkerBasedDocumentDiffProvider = WorkerBasedDocumentDiffProvider_1 = class 
         var _a;
         (_a = this.diffAlgorithmOnDidChangeSubscription) === null || _a === void 0 ? void 0 : _a.dispose();
     }
-    computeDiff(original, modified, options, cancellationToken) {
+    async computeDiff(original, modified, options, cancellationToken) {
         var _a, _b;
-        return __awaiter(this, void 0, void 0, function* () {
-            if (typeof this.diffAlgorithm !== 'string') {
-                return this.diffAlgorithm.computeDiff(original, modified, options, cancellationToken);
-            }
-            // This significantly speeds up the case when the original file is empty
-            if (original.getLineCount() === 1 && original.getLineMaxColumn(1) === 1) {
-                if (modified.getLineCount() === 1 && modified.getLineMaxColumn(1) === 1) {
-                    return {
-                        changes: [],
-                        identical: true,
-                        quitEarly: false,
-                        moves: [],
-                    };
-                }
+        if (typeof this.diffAlgorithm !== 'string') {
+            return this.diffAlgorithm.computeDiff(original, modified, options, cancellationToken);
+        }
+        // This significantly speeds up the case when the original file is empty
+        if (original.getLineCount() === 1 && original.getLineMaxColumn(1) === 1) {
+            if (modified.getLineCount() === 1 && modified.getLineMaxColumn(1) === 1) {
                 return {
-                    changes: [
-                        new DetailedLineRangeMapping(new LineRange(1, 2), new LineRange(1, modified.getLineCount() + 1), [
-                            new RangeMapping(original.getFullModelRange(), modified.getFullModelRange())
-                        ])
-                    ],
-                    identical: false,
+                    changes: [],
+                    identical: true,
                     quitEarly: false,
                     moves: [],
                 };
             }
-            const uriKey = JSON.stringify([original.uri.toString(), modified.uri.toString()]);
-            const context = JSON.stringify([original.id, modified.id, original.getAlternativeVersionId(), modified.getAlternativeVersionId(), JSON.stringify(options)]);
-            const c = WorkerBasedDocumentDiffProvider_1.diffCache.get(uriKey);
-            if (c && c.context === context) {
-                return c.result;
-            }
-            const sw = StopWatch.create();
-            const result = yield this.editorWorkerService.computeDiff(original.uri, modified.uri, options, this.diffAlgorithm);
-            const timeMs = sw.elapsed();
-            this.telemetryService.publicLog2('diffEditor.computeDiff', {
-                timeMs,
-                timedOut: (_a = result === null || result === void 0 ? void 0 : result.quitEarly) !== null && _a !== void 0 ? _a : true,
-                detectedMoves: options.computeMoves ? ((_b = result === null || result === void 0 ? void 0 : result.moves.length) !== null && _b !== void 0 ? _b : 0) : -1,
-            });
-            if (cancellationToken.isCancellationRequested) {
-                // Text models might be disposed!
-                return {
-                    changes: [],
-                    identical: false,
-                    quitEarly: true,
-                    moves: [],
-                };
-            }
-            if (!result) {
-                throw new Error('no diff result available');
-            }
-            // max 10 items in cache
-            if (WorkerBasedDocumentDiffProvider_1.diffCache.size > 10) {
-                WorkerBasedDocumentDiffProvider_1.diffCache.delete(WorkerBasedDocumentDiffProvider_1.diffCache.keys().next().value);
-            }
-            WorkerBasedDocumentDiffProvider_1.diffCache.set(uriKey, { result, context });
-            return result;
+            return {
+                changes: [
+                    new DetailedLineRangeMapping(new LineRange(1, 2), new LineRange(1, modified.getLineCount() + 1), [
+                        new RangeMapping(original.getFullModelRange(), modified.getFullModelRange())
+                    ])
+                ],
+                identical: false,
+                quitEarly: false,
+                moves: [],
+            };
+        }
+        const uriKey = JSON.stringify([original.uri.toString(), modified.uri.toString()]);
+        const context = JSON.stringify([original.id, modified.id, original.getAlternativeVersionId(), modified.getAlternativeVersionId(), JSON.stringify(options)]);
+        const c = WorkerBasedDocumentDiffProvider_1.diffCache.get(uriKey);
+        if (c && c.context === context) {
+            return c.result;
+        }
+        const sw = StopWatch.create();
+        const result = await this.editorWorkerService.computeDiff(original.uri, modified.uri, options, this.diffAlgorithm);
+        const timeMs = sw.elapsed();
+        this.telemetryService.publicLog2('diffEditor.computeDiff', {
+            timeMs,
+            timedOut: (_a = result === null || result === void 0 ? void 0 : result.quitEarly) !== null && _a !== void 0 ? _a : true,
+            detectedMoves: options.computeMoves ? ((_b = result === null || result === void 0 ? void 0 : result.moves.length) !== null && _b !== void 0 ? _b : 0) : -1,
         });
+        if (cancellationToken.isCancellationRequested) {
+            // Text models might be disposed!
+            return {
+                changes: [],
+                identical: false,
+                quitEarly: true,
+                moves: [],
+            };
+        }
+        if (!result) {
+            throw new Error('no diff result available');
+        }
+        // max 10 items in cache
+        if (WorkerBasedDocumentDiffProvider_1.diffCache.size > 10) {
+            WorkerBasedDocumentDiffProvider_1.diffCache.delete(WorkerBasedDocumentDiffProvider_1.diffCache.keys().next().value);
+        }
+        WorkerBasedDocumentDiffProvider_1.diffCache.set(uriKey, { result, context });
+        return result;
     }
     setOptions(newOptions) {
         var _a;

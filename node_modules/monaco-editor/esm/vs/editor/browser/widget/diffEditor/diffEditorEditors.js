@@ -19,7 +19,9 @@ import { EditorOptions } from '../../../common/config/editorOptions.js';
 import { localize } from '../../../../nls.js';
 import { IInstantiationService } from '../../../../platform/instantiation/common/instantiation.js';
 import { IKeybindingService } from '../../../../platform/keybinding/common/keybinding.js';
+import { Position } from '../../../common/core/position.js';
 let DiffEditorEditors = class DiffEditorEditors extends Disposable {
+    get onDidContentSizeChange() { return this._onDidContentSizeChange.event; }
     constructor(originalEditorElement, modifiedEditorElement, _options, codeEditorWidgetOptions, _createInnerEditor, _instantiationService, _keybindingService) {
         super();
         this.originalEditorElement = originalEditorElement;
@@ -31,7 +33,11 @@ let DiffEditorEditors = class DiffEditorEditors extends Disposable {
         this._onDidContentSizeChange = this._register(new Emitter());
         this.original = this._register(this._createLeftHandSideEditor(_options.editorOptions.get(), codeEditorWidgetOptions.originalEditor || {}));
         this.modified = this._register(this._createRightHandSideEditor(_options.editorOptions.get(), codeEditorWidgetOptions.modifiedEditor || {}));
-        this.modifiedModel = observableFromEvent(this.modified.onDidChangeModel, () => this.modified.getModel());
+        this.modifiedModel = observableFromEvent(this.modified.onDidChangeModel, () => /** @description modified.model */ this.modified.getModel());
+        this.modifiedScrollTop = observableFromEvent(this.modified.onDidScrollChange, () => /** @description modified.getScrollTop */ this.modified.getScrollTop());
+        this.modifiedScrollHeight = observableFromEvent(this.modified.onDidScrollChange, () => /** @description modified.getScrollHeight */ this.modified.getScrollHeight());
+        this.modifiedSelections = observableFromEvent(this.modified.onDidChangeCursorSelection, () => { var _a; return (_a = this.modified.getSelections()) !== null && _a !== void 0 ? _a : []; });
+        this.modifiedCursor = observableFromEvent(this.modified.onDidChangeCursorPosition, () => { var _a; return (_a = this.modified.getPosition()) !== null && _a !== void 0 ? _a : new Position(1, 1); });
         this._register(autorunHandleChanges({
             createEmptyChangeSummary: () => ({}),
             handleChange: (ctx, changeSummary) => {
@@ -88,6 +94,7 @@ let DiffEditorEditors = class DiffEditorEditors extends Disposable {
             result.unicodeHighlight = this._options.editorOptions.get().unicodeHighlight || {};
             result.wordWrapOverride1 = this._options.diffWordWrap.get();
         }
+        result.glyphMargin = this._options.renderSideBySide.get();
         if (changedOptions.originalAriaLabel) {
             result.ariaLabel = changedOptions.originalAriaLabel;
         }
@@ -110,20 +117,22 @@ let DiffEditorEditors = class DiffEditorEditors extends Disposable {
         return result;
     }
     _adjustOptionsForSubEditor(options) {
-        const clonedOptions = Object.assign(Object.assign({}, options), { dimension: {
+        const clonedOptions = {
+            ...options,
+            dimension: {
                 height: 0,
                 width: 0
-            } });
+            },
+        };
         clonedOptions.inDiffEditor = true;
         clonedOptions.automaticLayout = false;
         // Clone scrollbar options before changing them
-        clonedOptions.scrollbar = Object.assign({}, (clonedOptions.scrollbar || {}));
-        clonedOptions.scrollbar.vertical = 'visible';
+        clonedOptions.scrollbar = { ...(clonedOptions.scrollbar || {}) };
         clonedOptions.folding = false;
         clonedOptions.codeLens = this._options.diffCodeLens.get();
         clonedOptions.fixedOverflowWidgets = true;
         // Clone minimap options before changing them
-        clonedOptions.minimap = Object.assign({}, (clonedOptions.minimap || {}));
+        clonedOptions.minimap = { ...(clonedOptions.minimap || {}) };
         clonedOptions.minimap.enabled = false;
         if (this._options.hideUnchangedRegions.get()) {
             clonedOptions.stickyScroll = { enabled: false };

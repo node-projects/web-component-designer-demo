@@ -1,6 +1,6 @@
 /*!-----------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
- * Version: 0.44.0(3e047efd345ff102c8c61b5398fb30845aaac166)
+ * Version: 0.45.0(5e5af013f8d295555a7210df0d5f2cea0bf5dd56)
  * Released under the MIT license
  * https://github.com/microsoft/vscode/blob/main/LICENSE.txt
  *-----------------------------------------------------------*/
@@ -32,7 +32,8 @@ define("vs/editor/editor.main.nls.de", {
 		"Fehler: {0}",
 		"Warnung: {0}",
 		"Info: {0}",
-		"für Verlauf",
+		" oder {0} für Verlauf",
+		" ({0} für Verlauf)",
 		"Gelöschte Eingabe",
 	],
 	"vs/base/browser/ui/keybindingLabel/keybindingLabel": [
@@ -132,11 +133,11 @@ define("vs/editor/editor.main.nls.de", {
 	"vs/editor/browser/widget/diffEditor/colors": [
 		"Die Rahmenfarbe für Text, der im Diff-Editor verschoben wurde.",
 		"Die aktive Rahmenfarbe für Text, der im Diff-Editor verschoben wurde.",
+		"Die Farbe des Schattens um unveränderte Regionswidgets.",
 	],
 	"vs/editor/browser/widget/diffEditor/decorations": [
 		"Zeilenformatierung für Einfügungen im Diff-Editor",
 		"Zeilenformatierung für Entfernungen im Diff-Editor",
-		"Klicken Sie, um die Änderung rückgängig zu machen",
 	],
 	"vs/editor/browser/widget/diffEditor/diffEditor.contribution": [
 		"\"Unveränderte Bereiche reduzieren\" umschalten",
@@ -154,13 +155,17 @@ define("vs/editor/editor.main.nls.de", {
 		"Barrierefreien Diff-Viewer öffnen",
 		"Zum vorherigen Unterschied wechseln",
 	],
+	"vs/editor/browser/widget/diffEditor/diffEditorDecorations": [
+		"Ausgewählte Änderungen zurücksetzen",
+		"Änderung zurücksetzen",
+	],
 	"vs/editor/browser/widget/diffEditor/diffEditorEditors": [
 		" verwenden Sie {0}, um die Hilfe zur Barrierefreiheit zu öffnen.",
 	],
 	"vs/editor/browser/widget/diffEditor/hideUnchangedRegionsFeature": [
 		"Unveränderten Bereich falten",
 		"Klicken oder ziehen Sie, um oben mehr anzuzeigen.",
-		"Alle anzeigen",
+		"Unveränderte Regionen anzeigen",
 		"Klicken oder ziehen Sie, um unten mehr anzuzeigen.",
 		"{0} ausgeblendete Linien",
 		"Zum Auffalten doppelklicken",
@@ -180,6 +185,9 @@ define("vs/editor/editor.main.nls.de", {
 		"Code in Zeile {0}-{1} verschoben",
 		"Code aus Zeile {0}-{1} verschoben",
 	],
+	"vs/editor/browser/widget/multiDiffEditorWidget/colors": [
+		"Die Hintergrundfarbe des Diff-Editor-Headers",
+	],
 	"vs/editor/common/config/editorConfigurationSchema": [
 		"Editor",
 		"Die Anzahl der Leerzeichen, denen ein Tabstopp entspricht. Diese Einstellung wird basierend auf dem Inhalt der Datei überschrieben, wenn {0} aktiviert ist.",
@@ -188,11 +196,11 @@ define("vs/editor/editor.main.nls.de", {
 		"Steuert, ob {0} und {1} automatisch erkannt werden, wenn eine Datei basierend auf dem Dateiinhalt geöffnet wird.",
 		"Nachfolgende automatisch eingefügte Leerzeichen entfernen",
 		"Spezielle Behandlung für große Dateien zum Deaktivieren bestimmter speicherintensiver Funktionen.",
-		"Steuert, ob Vervollständigungen auf Grundlage der Wörter im Dokument berechnet werden sollen.",
+		"Deaktivieren Sie Word-basierte Vorschläge.",
 		"Nur Wörter aus dem aktiven Dokument vorschlagen",
 		"Wörter aus allen geöffneten Dokumenten derselben Sprache vorschlagen",
 		"Wörter aus allen geöffneten Dokumenten vorschlagen",
-		"Steuert, aus welchen Dokumenten wortbasierte Vervollständigungen berechnet werden.",
+		"Steuert, ob Vervollständigungen auf Grundlage der Wörter im Dokument berechnet werden sollen, und aus welchen Dokumenten sie berechnet werden sollen.",
 		"Die semantische Hervorhebung ist für alle Farbdesigns aktiviert.",
 		"Die semantische Hervorhebung ist für alle Farbdesigns deaktiviert.",
 		"Die semantische Hervorhebung wird durch die Einstellung \"semanticHighlighting\" des aktuellen Farbdesigns konfiguriert.",
@@ -230,9 +238,9 @@ define("vs/editor/editor.main.nls.de", {
 		"Steuert, ob der diff-Editor leere Dekorationen anzeigt, um anzuzeigen, wo Zeichen eingefügt oder gelöscht wurden.",
 	],
 	"vs/editor/common/config/editorOptions": [
-		"Plattform-APIs verwenden, um zu erkennen, wenn eine Sprachausgabe angefügt ist",
-		"Für die Verwendung mit einer Sprachausgabe optimieren",
-		"Annehmen, dass keine Sprachausgabe angefügt ist",
+		"Verwenden Sie Plattform-APIs, um zu erkennen, wenn eine Sprachausgabe angefügt ist.",
+		"Optimieren Sie diese Option für die Verwendung mit einer Sprachausgabe.",
+		"Hiermit wird angenommen, dass keine Sprachausgabe angefügt ist.",
 		"Steuert, ob die Benutzeroberfläche in einem Modus ausgeführt werden soll, in dem sie für Sprachausgaben optimiert ist.",
 		"Steuert, ob beim Kommentieren ein Leerzeichen eingefügt wird.",
 		"Steuert, ob leere Zeilen bei Umschalt-, Hinzufügungs- oder Entfernungsaktionen für Zeilenkommentare ignoriert werden sollen.",
@@ -281,10 +289,14 @@ define("vs/editor/editor.main.nls.de", {
 		"Delegiert die Berechnung von Umbruchpunkten an den Browser. Dies ist ein langsamer Algorithmus, der bei großen Dateien Code Freezes verursachen kann, aber in allen Fällen korrekt funktioniert.",
 		"Steuert den Algorithmus, der Umbruchpunkte berechnet. Beachten Sie, dass \"advanced\" im Barrierefreiheitsmodus für eine optimale Benutzererfahrung verwendet wird.",
 		"Aktiviert das Glühlampensymbol für Codeaktionen im Editor.",
+		"Das KI-Symbol nicht anzeigen.",
+		"Zeigen Sie ein KI-Symbol an, wenn das Codeaktionsmenü eine KI-Aktion ausschließlich im Code enthält.",
+		"Zeigen Sie ein KI-Symbol an, wenn das Codeaktionsmenü eine KI-Aktion in Code und leeren Zeilen enthält.",
+		"Ein KI-Symbol zusammen mit der Glühbirne anzeigen, wenn das Codeaktionsmenü eine KI-Aktion enthält.",
 		"Zeigt die geschachtelten aktuellen Bereiche während des Bildlaufs am oberen Rand des Editors an.",
 		"Definiert die maximale Anzahl fixierter Zeilen, die angezeigt werden sollen.",
 		"Legt das Modell fest, das zur Bestimmung der zu fixierenden Zeilen verwendet wird. Existiert das Gliederungsmodell nicht, wird auf das Modell des Folding Providers zurückgegriffen, der wiederum auf das Einrückungsmodell zurückgreift. Diese Reihenfolge wird in allen drei Fällen beachtet.",
-		"Aktiviert das Scrollen des Widgets für den fixierten Bildlauf mit der horizontalen Scrollleiste des Editors.",
+		"Hiermit aktivieren Sie das Scrollen mit fixiertem Bildlauf mit der horizontalen Scrollleiste des Editors.",
 		"Aktiviert die Inlay-Hinweise im Editor.",
 		"Inlay-Hinweise sind aktiviert",
 		"Inlay-Hinweise werden standardmäßig angezeigt und ausgeblendet, wenn Sie {0} gedrückt halten",
@@ -335,6 +347,7 @@ define("vs/editor/editor.main.nls.de", {
 		"Die Breite der vertikalen Bildlaufleiste.",
 		"Die Höhe der horizontalen Bildlaufleiste.",
 		"Steuert, ob Klicks nach Seite scrollen oder zur Klickposition springen.",
+		"Wenn diese Option festgelegt ist, wird die Größe des Editorinhalts nicht durch die horizontale Scrollleiste vergrößert.",
 		"Legt fest, ob alle nicht einfachen ASCII-Zeichen hervorgehoben werden. Nur Zeichen zwischen U+0020 und U+007E, Tabulator, Zeilenvorschub und Wagenrücklauf gelten als einfache ASCII-Zeichen.",
 		"Legt fest, ob Zeichen, die nur als Platzhalter dienen oder überhaupt keine Breite haben, hervorgehoben werden.",
 		"Legt fest, ob Zeichen hervorgehoben werden, die mit einfachen ASCII-Zeichen verwechselt werden können, mit Ausnahme derjenigen, die im aktuellen Gebietsschema des Benutzers üblich sind.",
@@ -345,6 +358,7 @@ define("vs/editor/editor.main.nls.de", {
 		"Steuert, ob Inline-Vorschläge automatisch im Editor angezeigt werden.",
 		"Die Symbolleiste „Inline-Vorschlag“ anzeigen, wenn ein Inline-Vorschlag angezeigt wird.",
 		"Die Symbolleiste „Inline-Vorschlag“ anzeigen, wenn Sie mit dem Mauszeiger auf einen Inline-Vorschlag zeigen.",
+		"Die Inlinevorschlagssymbolleiste nie anzeigen.",
 		"Steuert, wann die Inlinevorschlagssymbolleiste angezeigt werden soll.",
 		"Steuert, wie Inlinevorschläge mit dem Vorschlagswidget interagieren. Wenn diese Option aktiviert ist, wird das Vorschlagswidget nicht automatisch angezeigt, wenn Inlinevorschläge verfügbar sind.",
 		"Steuert, ob die Klammerpaar-Farbgebung aktiviert ist oder nicht. Verwenden Sie {0}, um die Hervorhebungsfarben der Klammer zu überschreiben.",
@@ -418,7 +432,7 @@ define("vs/editor/editor.main.nls.de", {
 		"Umbrochene Zeilen erhalten + 1 Einzug auf das übergeordnete Element.",
 		"Umgebrochene Zeilen werden im Vergleich zum übergeordneten Element +2 eingerückt.",
 		"Steuert die Einrückung der umbrochenen Zeilen.",
-		"Steuert, ob Sie eine Datei in einen Editor ziehen und ablegen können, indem Sie die UMSCHALTTASTE gedrückt halten (anstatt die Datei in einem Editor zu öffnen).",
+		"Steuert, ob Sie eine Datei in einen Text-Editor ziehen und ablegen können, indem Sie die UMSCHALTTASTE gedrückt halten (anstatt die Datei in einem Editor zu öffnen).",
 		"Steuert, ob beim Ablegen von Dateien im Editor ein Widget angezeigt wird. Mit diesem Widget können Sie steuern, wie die Datei ablegt wird.",
 		"Zeigt das Widget für die Dropdownauswahl an, nachdem eine Datei im Editor abgelegt wurde.",
 		"Das Widget für die Ablageauswahl wird nie angezeigt. Stattdessen wird immer der Standardablageanbieter verwendet.",
@@ -511,7 +525,10 @@ define("vs/editor/editor.main.nls.de", {
 		"Jeder Cursor fügt den vollständigen Text ein.",
 		"Steuert das Einfügen, wenn die Zeilenanzahl des Einfügetexts der Cursor-Anzahl entspricht.",
 		"Steuert die maximale Anzahl von Cursorn, die sich gleichzeitig in einem aktiven Editor befindet.",
-		"Steuert, ob der Editor das Vorkommen semantischer Symbole hervorheben soll.",
+		"Hebt keine Vorkommen hervor.",
+		"Hebt Vorkommen nur in der aktuellen Datei hervor.",
+		"Experimentell: Hebt Vorkommen in allen gültigen geöffneten Dateien hervor.",
+		"Steuert, ob Vorkommen in geöffneten Dateien hervorgehoben werden sollen.",
 		"Steuert, ob um das Übersichtslineal ein Rahmen gezeichnet werden soll.",
 		"Struktur beim Öffnen des Peek-Editors fokussieren",
 		"Editor fokussieren, wenn Sie den Peek-Editor öffnen",
@@ -653,6 +670,9 @@ define("vs/editor/editor.main.nls.de", {
 		"Gibt an, ob der Editor schreibgeschützt ist",
 		"Gibt an, ob der Kontext ein Diff-Editor ist.",
 		"Gibt an, ob der Kontext ein eingebetteter Diff-Editor ist.",
+		"Gibt an, ob der Kontext ein Multi-Diff-Editor ist.",
+		"Gibt an, ob alle Dateien im Multi-Diff-Editor reduziert sind",
+		"Gibt an, ob der Diff-Editor Änderungen aufweist.",
 		"Gibt an, ob ein verschobener Codeblock für den Vergleich ausgewählt wird.",
 		"Gibt an, ob der barrierefreie Diff-Viewer sichtbar ist.",
 		"Gibt an, ob für den Diff-Editor der Breakpoint für das Rendern im Modus \"Parallel\" oder \"Inline\" erreicht wurde.",
@@ -753,6 +773,7 @@ define("vs/editor/editor.main.nls.de", {
 		"Auswählen bis Klammer",
 		"Klammern entfernen",
 		"Gehe zu &&Klammer",
+		"Text auswählen und Klammern oder geschweifte Klammern einschließen",
 	],
 	"vs/editor/contrib/caretOperations/browser/caretOperations": [
 		"Ausgewählten Text nach links verschieben",
@@ -816,7 +837,7 @@ define("vs/editor/editor.main.nls.de", {
 	],
 	"vs/editor/contrib/codeAction/browser/codeActionContributions": [
 		"Aktivieren/Deaktivieren Sie die Anzeige von Gruppenheadern im Codeaktionsmenü.",
-		"Aktivieren/deaktivieren Sie die Anzeige der nächstgelegenen schnellen Problembehebung innerhalb einer Zeile, wenn derzeit keine Diagnose durchgeführt wird.",
+		"Hiermit aktivieren/deaktivieren Sie die Anzeige der nächstgelegenen schnellen Problembehebung innerhalb einer Zeile, wenn derzeit keine Diagnose durchgeführt wird.",
 	],
 	"vs/editor/contrib/codeAction/browser/codeActionController": [
 		"Kontext: {0} in Zeile {1} und Spalte {2}.",
@@ -837,6 +858,9 @@ define("vs/editor/editor.main.nls.de", {
 		"Zeigt Codeaktionen an. Bevorzugte Schnellkorrektur verfügbar ({0})",
 		"Codeaktionen anzeigen ({0})",
 		"Codeaktionen anzeigen",
+		"Inlinechat starten ({0})",
+		"Inlinechat starten",
+		"KI-Aktion auslösen",
 	],
 	"vs/editor/contrib/codelens/browser/codelensController": [
 		"CodeLens-Befehle für aktuelle Zeile anzeigen",
@@ -992,12 +1016,6 @@ define("vs/editor/editor.main.nls.de", {
 		"Editorschriftart verkleinern",
 		"Editor Schriftart Vergrößerung zurücksetzen",
 	],
-	"vs/editor/contrib/format/browser/format": [
-		"1 Formatierung in Zeile {0} vorgenommen",
-		"{0} Formatierungen in Zeile {1} vorgenommen",
-		"1 Formatierung zwischen Zeilen {0} und {1} vorgenommen",
-		"{0} Formatierungen zwischen Zeilen {1} und {2} vorgenommen",
-	],
 	"vs/editor/contrib/format/browser/formatActions": [
 		"Dokument formatieren",
 		"Auswahl formatieren",
@@ -1104,6 +1122,9 @@ define("vs/editor/editor.main.nls.de", {
 	],
 	"vs/editor/contrib/hover/browser/hover": [
 		"Anzeigen oder Fokus beim Daraufzeigen",
+		"Beim Daraufzeigen wird der Fokus nicht automatisch verwendet.",
+		"Beim Daraufzeigen wird nur dann den Fokus erhalten, wenn er bereits sichtbar ist.",
+		"Beim Daraufzeigen wird automatisch der Fokus erhalten, wenn er angezeigt wird.",
 		"Definitionsvorschauhover anzeigen",
 		"Bildlauf nach oben beim Daraufzeigen",
 		"Bildlauf nach unten beim Daraufzeigen",
@@ -1620,6 +1641,9 @@ define("vs/editor/editor.main.nls.de", {
 		"Chatanfrage gesendet",
 		"Chatantwort empfangen",
 		"Chatantwort ausstehend",
+		"Löschen",
+		"Speichern",
+		"Formatieren",
 	],
 	"vs/platform/configuration/common/configurationRegistry": [
 		"Außerkraftsetzungen für die Standardsprachkonfiguration",
@@ -1699,6 +1723,8 @@ define("vs/editor/editor.main.nls.de", {
 		"Verwenden Sie bei der Suche eine zusammenhängende Übereinstimmung.",
 		"Steuert den Typ der Übereinstimmung, der beim Durchsuchen von Listen und Strukturen in der Workbench verwendet wird.",
 		"Steuert, wie Strukturordner beim Klicken auf die Ordnernamen erweitert werden. Beachten Sie, dass einige Strukturen und Listen diese Einstellung ggf. ignorieren, wenn sie nicht zutrifft.",
+		"Steuert, ob fester Bildlauf in Strukturen aktiviert ist.",
+		"Steuert die Anzahl der festen Elemente, die in der Struktur angezeigt werden, wenn \"#workbench.tree.enableStickyScroll#\" aktiviert ist.",
 		"Steuert die Funktionsweise der Typnavigation in Listen und Strukturen in der Workbench. Bei einer Festlegung auf \"trigger\" beginnt die Typnavigation, sobald der Befehl \"list.triggerTypeNavigation\" ausgeführt wird.",
 	],
 	"vs/platform/markers/common/markers": [
@@ -1753,6 +1779,7 @@ define("vs/editor/editor.main.nls.de", {
 		"Vordergrundfarbe für Links im Text.",
 		"Vordergrundfarbe für angeklickte Links im Text und beim Zeigen darauf mit der Maus.",
 		"Vordergrundfarbe für vorformatierte Textsegmente.",
+		"Hintergrundfarbe für vorformatierte Textsegmente.",
 		"Hintergrundfarbe für Blockzitate im Text.",
 		"Rahmenfarbe für blockquote-Elemente im Text.",
 		"Hintergrundfarbe für Codeblöcke im Text.",
@@ -1851,6 +1878,7 @@ define("vs/editor/editor.main.nls.de", {
 		"Hintergrundfarbe von Inlinehinweisen für Parameter",
 		"Die für das Aktionssymbol \"Glühbirne\" verwendete Farbe.",
 		"Die für das Aktionssymbol \"Automatische Glühbirnenkorrektur\" verwendete Farbe.",
+		"Die Farbe, die für das KI-Symbol der Glühbirne verwendet wird.",
 		"Hintergrundfarbe für eingefügten Text. Die Farbe darf nicht deckend sein, weil sie sonst die zugrunde liegenden Dekorationen verdeckt.",
 		"Hintergrundfarbe für Text, der entfernt wurde. Die Farbe darf nicht deckend sein, weil sie sonst die zugrunde liegenden Dekorationen verdeckt.",
 		"Hintergrundfarbe für eingefügte Zeilen. Die Farbe darf nicht deckend sein, um zugrunde liegende Dekorationen nicht auszublenden.",

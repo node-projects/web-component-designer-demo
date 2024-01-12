@@ -30,6 +30,9 @@ Sound.chatResponseReceived1 = Sound.register({ fileName: 'chatResponseReceived1.
 Sound.chatResponseReceived2 = Sound.register({ fileName: 'chatResponseReceived2.mp3' });
 Sound.chatResponseReceived3 = Sound.register({ fileName: 'chatResponseReceived3.mp3' });
 Sound.chatResponseReceived4 = Sound.register({ fileName: 'chatResponseReceived4.mp3' });
+Sound.clear = Sound.register({ fileName: 'clear.mp3' });
+Sound.save = Sound.register({ fileName: 'save.mp3' });
+Sound.format = Sound.register({ fileName: 'format.mp3' });
 export class SoundSource {
     constructor(randomOneOf) {
         this.randomOneOf = randomOneOf;
@@ -155,4 +158,19 @@ AudioCue.chatResponsePending = AudioCue.register({
     name: localize('audioCues.chatResponsePending', 'Chat Response Pending'),
     sound: Sound.chatResponsePending,
     settingsKey: 'audioCues.chatResponsePending'
+});
+AudioCue.clear = AudioCue.register({
+    name: localize('audioCues.clear', 'Clear'),
+    sound: Sound.clear,
+    settingsKey: 'audioCues.clear'
+});
+AudioCue.save = AudioCue.register({
+    name: localize('audioCues.save', 'Save'),
+    sound: Sound.save,
+    settingsKey: 'audioCues.save'
+});
+AudioCue.format = AudioCue.register({
+    name: localize('audioCues.format', 'Format'),
+    sound: Sound.format,
+    settingsKey: 'audioCues.format'
 });

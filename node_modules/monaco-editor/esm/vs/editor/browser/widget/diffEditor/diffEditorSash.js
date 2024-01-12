@@ -6,11 +6,12 @@ import { Sash } from '../../../../base/browser/ui/sash/sash.js';
 import { Disposable } from '../../../../base/common/lifecycle.js';
 import { autorun, derived, observableValue } from '../../../../base/common/observable.js';
 export class DiffEditorSash extends Disposable {
-    constructor(_options, _domNode, _dimensions) {
+    constructor(_options, _domNode, _dimensions, _sashes) {
         super();
         this._options = _options;
         this._domNode = _domNode;
         this._dimensions = _dimensions;
+        this._sashes = _sashes;
         this._sashRatio = observableValue(this, undefined);
         this.sashLeft = derived(this, reader => {
             var _a;
@@ -34,16 +35,19 @@ export class DiffEditorSash extends Disposable {
         this._register(this._sash.onDidEnd(() => this._sash.layout()));
         this._register(this._sash.onDidReset(() => this._sashRatio.set(undefined, undefined)));
         this._register(autorun(reader => {
-            /** @description update sash layout */
+            const sashes = this._sashes.read(reader);
+            if (sashes) {
+                this._sash.orthogonalEndSash = sashes.bottom;
+            }
+        }));
+        this._register(autorun(reader => {
+            /** @description DiffEditorSash.layoutSash */
             const enabled = this._options.enableSplitViewResizing.read(reader);
             this._sash.state = enabled ? 3 /* SashState.Enabled */ : 0 /* SashState.Disabled */;
             this.sashLeft.read(reader);
             this._dimensions.height.read(reader);
             this._sash.layout();
         }));
-    }
-    setBoundarySashes(sashes) {
-        this._sash.orthogonalEndSash = sashes.bottom;
     }
     /** @pure */
     _computeSashLeft(desiredRatio, reader) {
