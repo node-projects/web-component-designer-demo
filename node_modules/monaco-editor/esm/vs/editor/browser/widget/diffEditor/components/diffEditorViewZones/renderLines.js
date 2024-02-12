@@ -2,13 +2,13 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { createTrustedTypesPolicy } from '../../../../base/browser/trustedTypes.js';
-import { applyFontInfo } from '../../config/domFontInfo.js';
-import { EditorFontLigatures } from '../../../common/config/editorOptions.js';
-import { StringBuilder } from '../../../common/core/stringBuilder.js';
-import { LineDecoration } from '../../../common/viewLayout/lineDecorations.js';
-import { RenderLineInput, renderViewLine } from '../../../common/viewLayout/viewLineRenderer.js';
-import { ViewLineRenderingData } from '../../../common/viewModel.js';
+import { createTrustedTypesPolicy } from '../../../../../../base/browser/trustedTypes.js';
+import { applyFontInfo } from '../../../../config/domFontInfo.js';
+import { EditorFontLigatures } from '../../../../../common/config/editorOptions.js';
+import { StringBuilder } from '../../../../../common/core/stringBuilder.js';
+import { LineDecoration } from '../../../../../common/viewLayout/lineDecorations.js';
+import { RenderLineInput, renderViewLine } from '../../../../../common/viewLayout/viewLineRenderer.js';
+import { ViewLineRenderingData } from '../../../../../common/viewModel.js';
 const ttPolicy = createTrustedTypesPolicy('diffEditorWidget', { createHTML: value => value });
 export function renderLines(source, options, decorations, domNode) {
     applyFontInfo(domNode, options.fontInfo);

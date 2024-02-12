@@ -7,6 +7,10 @@ let _recomputeInitiallyAndOnChange;
 export function _setRecomputeInitiallyAndOnChange(recomputeInitiallyAndOnChange) {
     _recomputeInitiallyAndOnChange = recomputeInitiallyAndOnChange;
 }
+let _keepObserved;
+export function _setKeepObserved(keepObserved) {
+    _keepObserved = keepObserved;
+}
 let _derived;
 /**
  * @internal
@@ -163,25 +167,25 @@ export class TransactionImpl {
 }
 const countPerName = new Map();
 const cachedDebugName = new WeakMap();
-export function getDebugName(obj, debugNameFn, fn, owner, self) {
+export function getDebugName(self, debugNameFn, fn, owner) {
     var _a;
-    const cached = cachedDebugName.get(obj);
+    const cached = cachedDebugName.get(self);
     if (cached) {
         return cached;
     }
-    const dbgName = computeDebugName(obj, debugNameFn, fn, owner, self);
+    const dbgName = computeDebugName(self, debugNameFn, fn, owner);
     if (dbgName) {
         let count = (_a = countPerName.get(dbgName)) !== null && _a !== void 0 ? _a : 0;
         count++;
         countPerName.set(dbgName, count);
         const result = count === 1 ? dbgName : `${dbgName}#${count}`;
-        cachedDebugName.set(obj, result);
+        cachedDebugName.set(self, result);
         return result;
     }
     return undefined;
 }
-function computeDebugName(obj, debugNameFn, fn, owner, self) {
-    const cached = cachedDebugName.get(obj);
+function computeDebugName(self, debugNameFn, fn, owner) {
+    const cached = cachedDebugName.get(self);
     if (cached) {
         return cached;
     }
@@ -255,7 +259,7 @@ export function observableValue(nameOrOwner, initialValue) {
 export class ObservableValue extends BaseObservable {
     get debugName() {
         var _a;
-        return (_a = getDebugName(this, this._debugName, undefined, this._owner, this)) !== null && _a !== void 0 ? _a : 'ObservableValue';
+        return (_a = getDebugName(this, this._debugName, undefined, this._owner)) !== null && _a !== void 0 ? _a : 'ObservableValue';
     }
     constructor(_owner, _debugName, initialValue) {
         super();

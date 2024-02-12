@@ -7,7 +7,7 @@ import { isCancellationError } from '../../../../base/common/errors.js';
 import { Emitter } from '../../../../base/common/event.js';
 import { Disposable, MutableDisposable } from '../../../../base/common/lifecycle.js';
 import { isEqual } from '../../../../base/common/resources.js';
-import { ShowAiIconMode } from '../../../common/config/editorOptions.js';
+import { ShowLightbulbIconMode } from '../../../common/config/editorOptions.js';
 import { Position } from '../../../common/core/position.js';
 import { Selection } from '../../../common/core/selection.js';
 import { RawContextKey } from '../../../../platform/contextkey/common/contextkey.js';
@@ -15,6 +15,7 @@ import { Progress } from '../../../../platform/progress/common/progress.js';
 import { CodeActionKind, CodeActionTriggerSource } from '../common/types.js';
 import { getCodeActions } from './codeAction.js';
 export const SUPPORTED_CODE_ACTIONS = new RawContextKey('supportedCodeAction', '');
+export const APPLY_FIX_ALL_COMMAND_ID = '_typescript.applyFixAllCodeAction';
 class CodeActionOracle extends Disposable {
     constructor(_editor, _markerService, _signalChange, _delay = 250) {
         super();
@@ -42,21 +43,31 @@ class CodeActionOracle extends Disposable {
         }, this._delay);
     }
     _getRangeOfSelectionUnlessWhitespaceEnclosed(trigger) {
-        var _a;
         if (!this._editor.hasModel()) {
             return undefined;
         }
-        const model = this._editor.getModel();
         const selection = this._editor.getSelection();
-        if (selection.isEmpty() && trigger.type === 2 /* CodeActionTriggerType.Auto */) {
+        if (trigger.type === 1 /* CodeActionTriggerType.Invoke */) {
+            return selection;
+        }
+        const enabled = this._editor.getOption(64 /* EditorOption.lightbulb */).enabled;
+        if (enabled === ShowLightbulbIconMode.Off) {
+            return undefined;
+        }
+        else if (enabled === ShowLightbulbIconMode.On) {
+            return selection;
+        }
+        else if (enabled === ShowLightbulbIconMode.OnCode) {
+            const isSelectionEmpty = selection.isEmpty();
+            if (!isSelectionEmpty) {
+                return selection;
+            }
+            const model = this._editor.getModel();
             const { lineNumber, column } = selection.getPosition();
             const line = model.getLineContent(lineNumber);
             if (line.length === 0) {
                 // empty line
-                const showAiIconOnEmptyLines = ((_a = this._editor.getOption(64 /* EditorOption.lightbulb */).experimental) === null || _a === void 0 ? void 0 : _a.showAiIcon) === ShowAiIconMode.On;
-                if (!showAiIconOnEmptyLines) {
-                    return undefined;
-                }
+                return undefined;
             }
             else if (column === 1) {
                 // look only right
@@ -128,6 +139,11 @@ export class CodeActionModel extends Disposable {
         this._register(this._editor.onDidChangeModel(() => this._update()));
         this._register(this._editor.onDidChangeModelLanguage(() => this._update()));
         this._register(this._registry.onDidChange(() => this._update()));
+        this._register(this._editor.onDidChangeConfiguration((e) => {
+            if (e.hasChanged(64 /* EditorOption.lightbulb */)) {
+                this._update();
+            }
+        }));
         this._update();
     }
     dispose() {
@@ -163,7 +179,7 @@ export class CodeActionModel extends Disposable {
                 }
                 const startPosition = trigger.selection.getStartPosition();
                 const actions = createCancelablePromise(async (token) => {
-                    var _a, _b, _c, _d, _e, _f;
+                    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
                     if (this._settingEnabledNearbyQuickfixes() && trigger.trigger.type === 1 /* CodeActionTriggerType.Invoke */ && (trigger.trigger.triggerAction === CodeActionTriggerSource.QuickFix || ((_b = (_a = trigger.trigger.filter) === null || _a === void 0 ? void 0 : _a.include) === null || _b === void 0 ? void 0 : _b.contains(CodeActionKind.QuickFix)))) {
                         const codeActionSet = await getCodeActions(this._registry, model, trigger.selection, trigger.trigger, Progress.None, token);
                         const allCodeActions = [...codeActionSet.allActions];
@@ -172,8 +188,16 @@ export class CodeActionModel extends Disposable {
                         }
                         // Search for quickfixes in the curret code action set.
                         const foundQuickfix = (_c = codeActionSet.validActions) === null || _c === void 0 ? void 0 : _c.some(action => action.action.kind ? CodeActionKind.QuickFix.contains(new CodeActionKind(action.action.kind)) : false);
-                        if (!foundQuickfix) {
-                            const allMarkers = this._markerService.read({ resource: model.uri });
+                        const allMarkers = this._markerService.read({ resource: model.uri });
+                        if (foundQuickfix) {
+                            for (const action of codeActionSet.validActions) {
+                                if ((_e = (_d = action.action.command) === null || _d === void 0 ? void 0 : _d.arguments) === null || _e === void 0 ? void 0 : _e.some(arg => typeof arg === 'string' && arg.includes(APPLY_FIX_ALL_COMMAND_ID))) {
+                                    action.action.diagnostics = [...allMarkers.filter(marker => marker.relatedInformation)];
+                                }
+                            }
+                            return { validActions: codeActionSet.validActions, allActions: allCodeActions, documentation: codeActionSet.documentation, hasAutoFix: codeActionSet.hasAutoFix, hasAIFix: codeActionSet.hasAIFix, allAIFixes: codeActionSet.allAIFixes, dispose: () => { codeActionSet.dispose(); } };
+                        }
+                        else if (!foundQuickfix) {
                             // If markers exists, and there are no quickfixes found or length is zero, check for quickfixes on that line.
                             if (allMarkers.length > 0) {
                                 const currPosition = trigger.selection.getPosition();
@@ -190,15 +214,17 @@ export class CodeActionModel extends Disposable {
                                         const newCodeActionTrigger = {
                                             type: trigger.trigger.type,
                                             triggerAction: trigger.trigger.triggerAction,
-                                            filter: { include: ((_d = trigger.trigger.filter) === null || _d === void 0 ? void 0 : _d.include) ? (_e = trigger.trigger.filter) === null || _e === void 0 ? void 0 : _e.include : CodeActionKind.QuickFix },
+                                            filter: { include: ((_f = trigger.trigger.filter) === null || _f === void 0 ? void 0 : _f.include) ? (_g = trigger.trigger.filter) === null || _g === void 0 ? void 0 : _g.include : CodeActionKind.QuickFix },
                                             autoApply: trigger.trigger.autoApply,
-                                            context: { notAvailableMessage: ((_f = trigger.trigger.context) === null || _f === void 0 ? void 0 : _f.notAvailableMessage) || '', position: trackedPosition }
+                                            context: { notAvailableMessage: ((_h = trigger.trigger.context) === null || _h === void 0 ? void 0 : _h.notAvailableMessage) || '', position: trackedPosition }
                                         };
                                         const selectionAsPosition = new Selection(trackedPosition.lineNumber, trackedPosition.column, trackedPosition.lineNumber, trackedPosition.column);
                                         const actionsAtMarker = await getCodeActions(this._registry, model, selectionAsPosition, newCodeActionTrigger, Progress.None, token);
                                         if (actionsAtMarker.validActions.length !== 0) {
                                             for (const action of actionsAtMarker.validActions) {
-                                                action.highlightRange = action.action.isPreferred;
+                                                if ((_k = (_j = action.action.command) === null || _j === void 0 ? void 0 : _j.arguments) === null || _k === void 0 ? void 0 : _k.some(arg => typeof arg === 'string' && arg.includes(APPLY_FIX_ALL_COMMAND_ID))) {
+                                                    action.action.diagnostics = [...allMarkers.filter(marker => marker.relatedInformation)];
+                                                }
                                             }
                                             if (codeActionSet.allActions.length === 0) {
                                                 allCodeActions.push(...actionsAtMarker.allActions);

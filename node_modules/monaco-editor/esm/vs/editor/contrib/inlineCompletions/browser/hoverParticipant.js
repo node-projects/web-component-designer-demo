@@ -20,7 +20,7 @@ import { ILanguageService } from '../../../common/languages/language.js';
 import { HoverForeignElementAnchor } from '../../hover/browser/hoverTypes.js';
 import { InlineCompletionsController } from './inlineCompletionsController.js';
 import { InlineSuggestionHintsContentWidget } from './inlineCompletionsHintsWidget.js';
-import { MarkdownRenderer } from '../../markdownRenderer/browser/markdownRenderer.js';
+import { MarkdownRenderer } from '../../../browser/widget/markdownRenderer/browser/markdownRenderer.js';
 import * as nls from '../../../../nls.js';
 import { IAccessibilityService } from '../../../../platform/accessibility/common/accessibility.js';
 import { IInstantiationService } from '../../../../platform/instantiation/common/instantiation.js';

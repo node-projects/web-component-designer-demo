@@ -11,39 +11,41 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { $, addDisposableListener, getWindow, h, reset } from '../../../../base/browser/dom.js';
-import { renderIcon, renderLabelWithIcons } from '../../../../base/browser/ui/iconLabel/iconLabels.js';
-import { compareBy, numberComparator, reverseOrder } from '../../../../base/common/arrays.js';
-import { Codicon } from '../../../../base/common/codicons.js';
-import { Event } from '../../../../base/common/event.js';
-import { MarkdownString } from '../../../../base/common/htmlContent.js';
-import { Disposable } from '../../../../base/common/lifecycle.js';
-import { autorun, autorunWithStore, derived, derivedWithStore, observableFromEvent, observableSignalFromEvent, observableValue, transaction } from '../../../../base/common/observable.js';
-import { derivedDisposable } from '../../../../base/common/observableInternal/derived.js';
-import { ThemeIcon } from '../../../../base/common/themables.js';
-import { isDefined } from '../../../../base/common/types.js';
-import { OutlineModel } from './outlineModel.js';
-import { DisposableCancellationTokenSource, PlaceholderViewZone, ViewZoneOverlayWidget, applyObservableDecorations, applyStyle } from './utils.js';
-import { LineRange } from '../../../common/core/lineRange.js';
-import { Position } from '../../../common/core/position.js';
-import { Range } from '../../../common/core/range.js';
-import { SymbolKinds } from '../../../common/languages.js';
-import { ILanguageFeaturesService } from '../../../common/services/languageFeatures.js';
-import { localize } from '../../../../nls.js';
+var HideUnchangedRegionsFeature_1;
+import { $, addDisposableListener, getWindow, h, reset } from '../../../../../base/browser/dom.js';
+import { renderIcon, renderLabelWithIcons } from '../../../../../base/browser/ui/iconLabel/iconLabels.js';
+import { Codicon } from '../../../../../base/common/codicons.js';
+import { MarkdownString } from '../../../../../base/common/htmlContent.js';
+import { Disposable } from '../../../../../base/common/lifecycle.js';
+import { autorun, derived, derivedWithStore, observableFromEvent, observableValue, transaction } from '../../../../../base/common/observable.js';
+import { derivedDisposable } from '../../../../../base/common/observableInternal/derived.js';
+import { ThemeIcon } from '../../../../../base/common/themables.js';
+import { isDefined } from '../../../../../base/common/types.js';
+import { PlaceholderViewZone, ViewZoneOverlayWidget, applyObservableDecorations, applyStyle } from '../utils.js';
+import { LineRange } from '../../../../common/core/lineRange.js';
+import { Position } from '../../../../common/core/position.js';
+import { Range } from '../../../../common/core/range.js';
+import { SymbolKinds } from '../../../../common/languages.js';
+import { localize } from '../../../../../nls.js';
+import { IInstantiationService } from '../../../../../platform/instantiation/common/instantiation.js';
 /**
  * Make sure to add the view zones to the editor!
  */
-let HideUnchangedRegionsFeature = class HideUnchangedRegionsFeature extends Disposable {
+let HideUnchangedRegionsFeature = HideUnchangedRegionsFeature_1 = class HideUnchangedRegionsFeature extends Disposable {
+    static setBreadcrumbsSourceFactory(factory) {
+        this._breadcrumbsSourceFactory.set(factory, undefined);
+    }
     get isUpdatingHiddenAreas() { return this._isUpdatingHiddenAreas; }
-    constructor(_editors, _diffModel, _options, _languageFeaturesService) {
+    constructor(_editors, _diffModel, _options, _instantiationService) {
         super();
         this._editors = _editors;
         this._diffModel = _diffModel;
         this._options = _options;
-        this._languageFeaturesService = _languageFeaturesService;
-        this._modifiedOutlineSource = derivedDisposable(this, reader => {
+        this._instantiationService = _instantiationService;
+        this._modifiedOutlineSource = derivedDisposable(this, (reader) => {
             const m = this._editors.modifiedModel.read(reader);
-            return !m ? undefined : new OutlineSource(this._languageFeaturesService, m);
+            const factory = HideUnchangedRegionsFeature_1._breadcrumbsSourceFactory.read(reader);
+            return (!m || !factory) ? undefined : factory(m, this._instantiationService);
         });
         this._isUpdatingHiddenAreas = false;
         this._register(this._editors.original.onDidChangeCursorPosition(e => {
@@ -51,8 +53,8 @@ let HideUnchangedRegionsFeature = class HideUnchangedRegionsFeature extends Disp
                 const m = this._diffModel.get();
                 transaction(tx => {
                     for (const s of this._editors.original.getSelections() || []) {
-                        m === null || m === void 0 ? void 0 : m.ensureOriginalLineIsVisible(s.getStartPosition().lineNumber, tx);
-                        m === null || m === void 0 ? void 0 : m.ensureOriginalLineIsVisible(s.getEndPosition().lineNumber, tx);
+                        m === null || m === void 0 ? void 0 : m.ensureOriginalLineIsVisible(s.getStartPosition().lineNumber, 0 /* RevealPreference.FromCloserSide */, tx);
+                        m === null || m === void 0 ? void 0 : m.ensureOriginalLineIsVisible(s.getEndPosition().lineNumber, 0 /* RevealPreference.FromCloserSide */, tx);
                     }
                 });
             }
@@ -62,13 +64,20 @@ let HideUnchangedRegionsFeature = class HideUnchangedRegionsFeature extends Disp
                 const m = this._diffModel.get();
                 transaction(tx => {
                     for (const s of this._editors.modified.getSelections() || []) {
-                        m === null || m === void 0 ? void 0 : m.ensureModifiedLineIsVisible(s.getStartPosition().lineNumber, tx);
-                        m === null || m === void 0 ? void 0 : m.ensureModifiedLineIsVisible(s.getEndPosition().lineNumber, tx);
+                        m === null || m === void 0 ? void 0 : m.ensureModifiedLineIsVisible(s.getStartPosition().lineNumber, 0 /* RevealPreference.FromCloserSide */, tx);
+                        m === null || m === void 0 ? void 0 : m.ensureModifiedLineIsVisible(s.getEndPosition().lineNumber, 0 /* RevealPreference.FromCloserSide */, tx);
                     }
                 });
             }
         }));
-        const unchangedRegions = this._diffModel.map((m, reader) => { var _a, _b; return ((_a = m === null || m === void 0 ? void 0 : m.diff.read(reader)) === null || _a === void 0 ? void 0 : _a.mappings.length) === 0 ? [] : (_b = m === null || m === void 0 ? void 0 : m.unchangedRegions.read(reader)) !== null && _b !== void 0 ? _b : []; });
+        const unchangedRegions = this._diffModel.map((m, reader) => {
+            var _a, _b;
+            const regions = (_a = m === null || m === void 0 ? void 0 : m.unchangedRegions.read(reader)) !== null && _a !== void 0 ? _a : [];
+            if (regions.length === 1 && regions[0].modifiedLineNumber === 1 && regions[0].lineCount === ((_b = this._editors.modifiedModel.read(reader)) === null || _b === void 0 ? void 0 : _b.getLineCount())) {
+                return [];
+            }
+            return regions;
+        });
         this.viewZones = derivedWithStore(this, (reader, store) => {
             /** @description view Zones */
             const modifiedOutlineSource = this._modifiedOutlineSource.read(reader);
@@ -87,13 +96,13 @@ let HideUnchangedRegionsFeature = class HideUnchangedRegionsFeature extends Disp
                     const d = derived(this, reader => /** @description hiddenOriginalRangeStart */ r.getHiddenOriginalRange(reader).startLineNumber - 1);
                     const origVz = new PlaceholderViewZone(d, 24);
                     origViewZones.push(origVz);
-                    store.add(new CollapsedCodeOverlayWidget(this._editors.original, origVz, r, r.originalUnchangedRange, !sideBySide, modifiedOutlineSource, l => this._diffModel.get().ensureModifiedLineIsVisible(l, undefined), this._options));
+                    store.add(new CollapsedCodeOverlayWidget(this._editors.original, origVz, r, r.originalUnchangedRange, !sideBySide, modifiedOutlineSource, l => this._diffModel.get().ensureModifiedLineIsVisible(l, 2 /* RevealPreference.FromBottom */, undefined), this._options));
                 }
                 {
                     const d = derived(this, reader => /** @description hiddenModifiedRangeStart */ r.getHiddenModifiedRange(reader).startLineNumber - 1);
                     const modViewZone = new PlaceholderViewZone(d, 24);
                     modViewZones.push(modViewZone);
-                    store.add(new CollapsedCodeOverlayWidget(this._editors.modified, modViewZone, r, r.modifiedUnchangedRange, false, modifiedOutlineSource, l => this._diffModel.get().ensureModifiedLineIsVisible(l, undefined), this._options));
+                    store.add(new CollapsedCodeOverlayWidget(this._editors.modified, modViewZone, r, r.modifiedUnchangedRange, false, modifiedOutlineSource, l => this._diffModel.get().ensureModifiedLineIsVisible(l, 2 /* RevealPreference.FromBottom */, undefined), this._options));
                 }
             }
             return { origViewZones, modViewZones, };
@@ -192,8 +201,9 @@ let HideUnchangedRegionsFeature = class HideUnchangedRegionsFeature extends Disp
         }));
     }
 };
-HideUnchangedRegionsFeature = __decorate([
-    __param(3, ILanguageFeaturesService)
+HideUnchangedRegionsFeature._breadcrumbsSourceFactory = observableValue('breadcrumbsSourceFactory', undefined);
+HideUnchangedRegionsFeature = HideUnchangedRegionsFeature_1 = __decorate([
+    __param(3, IInstantiationService)
 ], HideUnchangedRegionsFeature);
 export { HideUnchangedRegionsFeature };
 class CollapsedCodeOverlayWidget extends ViewZoneOverlayWidget {
@@ -359,36 +369,3 @@ class CollapsedCodeOverlayWidget extends ViewZoneOverlayWidget {
         }));
     }
 }
-let OutlineSource = class OutlineSource extends Disposable {
-    constructor(_languageFeaturesService, _textModel) {
-        super();
-        this._languageFeaturesService = _languageFeaturesService;
-        this._textModel = _textModel;
-        this._currentModel = observableValue(this, undefined);
-        const documentSymbolProviderChanged = observableSignalFromEvent('documentSymbolProvider.onDidChange', this._languageFeaturesService.documentSymbolProvider.onDidChange);
-        const textModelChanged = observableSignalFromEvent('_textModel.onDidChangeContent', Event.debounce(e => this._textModel.onDidChangeContent(e), () => undefined, 100));
-        this._register(autorunWithStore(async (reader, store) => {
-            documentSymbolProviderChanged.read(reader);
-            textModelChanged.read(reader);
-            const src = store.add(new DisposableCancellationTokenSource());
-            const model = await OutlineModel.create(this._languageFeaturesService.documentSymbolProvider, this._textModel, src.token);
-            if (store.isDisposed) {
-                return;
-            }
-            this._currentModel.set(model, undefined);
-        }));
-    }
-    getBreadcrumbItems(startRange, reader) {
-        const m = this._currentModel.read(reader);
-        if (!m) {
-            return [];
-        }
-        const symbols = m.asListOfDocumentSymbols()
-            .filter(s => startRange.contains(s.range.startLineNumber) && !startRange.contains(s.range.endLineNumber));
-        symbols.sort(reverseOrder(compareBy(s => s.range.endLineNumber - s.range.startLineNumber, numberComparator)));
-        return symbols.map(s => ({ name: s.name, kind: s.kind, startLineNumber: s.range.startLineNumber }));
-    }
-};
-OutlineSource = __decorate([
-    __param(0, ILanguageFeaturesService)
-], OutlineSource);

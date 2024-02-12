@@ -131,11 +131,11 @@ class AsyncDataTreeNodeListDragAndDrop {
         var _a, _b;
         (_b = (_a = this.dnd).onDragStart) === null || _b === void 0 ? void 0 : _b.call(_a, asAsyncDataTreeDragAndDropData(data), originalEvent);
     }
-    onDragOver(data, targetNode, targetIndex, originalEvent, raw = true) {
-        return this.dnd.onDragOver(asAsyncDataTreeDragAndDropData(data), targetNode && targetNode.element, targetIndex, originalEvent);
+    onDragOver(data, targetNode, targetIndex, targetSector, originalEvent, raw = true) {
+        return this.dnd.onDragOver(asAsyncDataTreeDragAndDropData(data), targetNode && targetNode.element, targetIndex, targetSector, originalEvent);
     }
-    drop(data, targetNode, targetIndex, originalEvent) {
-        this.dnd.drop(asAsyncDataTreeDragAndDropData(data), targetNode && targetNode.element, targetIndex, originalEvent);
+    drop(data, targetNode, targetIndex, targetSector, originalEvent) {
+        this.dnd.drop(asAsyncDataTreeDragAndDropData(data), targetNode && targetNode.element, targetIndex, targetSector, originalEvent);
     }
     onDragEnd(originalEvent) {
         var _a, _b;
@@ -235,6 +235,7 @@ export class AsyncDataTree {
     get onDidChangeModel() { return this.tree.onDidChangeModel; }
     get onDidChangeCollapseState() { return this.tree.onDidChangeCollapseState; }
     get onDidChangeFindOpenState() { return this.tree.onDidChangeFindOpenState; }
+    get onDidChangeStickyScrollFocused() { return this.tree.onDidChangeStickyScrollFocused; }
     get onDidDispose() { return this.tree.onDidDispose; }
     constructor(user, container, delegate, renderers, dataSource, options = {}) {
         this.user = user;
@@ -252,6 +253,7 @@ export class AsyncDataTree {
         this.getDefaultCollapseState = e => options.collapseByDefault ? (options.collapseByDefault(e) ? ObjectTreeElementCollapseState.PreserveOrCollapsed : ObjectTreeElementCollapseState.PreserveOrExpanded) : undefined;
         this.tree = this.createTree(user, container, delegate, renderers, options);
         this.onDidChangeFindMode = this.tree.onDidChangeFindMode;
+        this.onDidChangeFindMatchType = this.tree.onDidChangeFindMatchType;
         this.root = createAsyncDataTreeNode({
             element: undefined,
             parent: null,
@@ -423,6 +425,9 @@ export class AsyncDataTree {
     }
     async refreshAndRenderNode(node, recursive, viewStateContext, options) {
         await this.refreshNode(node, recursive, viewStateContext);
+        if (this.disposables.isDisposed) {
+            return; // tree disposed during refresh (#199264)
+        }
         this.render(node, viewStateContext, options);
     }
     async refreshNode(node, recursive, viewStateContext) {
@@ -760,7 +765,7 @@ export class CompressibleAsyncDataTree extends AsyncDataTree {
     updateOptions(options = {}) {
         this.tree.updateOptions(options);
     }
-    render(node, viewStateContext) {
+    render(node, viewStateContext, options) {
         if (!this.identityProvider) {
             return super.render(node, viewStateContext);
         }
@@ -783,7 +788,7 @@ export class CompressibleAsyncDataTree extends AsyncDataTree {
         };
         const oldSelection = getUncompressedIds(this.tree.getSelection());
         const oldFocus = getUncompressedIds(this.tree.getFocus());
-        super.render(node, viewStateContext);
+        super.render(node, viewStateContext, options);
         const selection = this.getSelection();
         let didChangeSelection = false;
         const focus = this.getFocus();

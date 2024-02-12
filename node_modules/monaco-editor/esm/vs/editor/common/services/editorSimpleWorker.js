@@ -251,7 +251,8 @@ export class EditorSimpleWorker {
         if (!original || !modified) {
             return null;
         }
-        return EditorSimpleWorker.computeDiff(original, modified, options, algorithm);
+        const result = EditorSimpleWorker.computeDiff(original, modified, options, algorithm);
+        return result;
     }
     static computeDiff(originalTextModel, modifiedTextModel, options, algorithm) {
         const diffAlgorithm = algorithm === 'advanced' ? linesDiffComputers.getDefault() : linesDiffComputers.getLegacy();

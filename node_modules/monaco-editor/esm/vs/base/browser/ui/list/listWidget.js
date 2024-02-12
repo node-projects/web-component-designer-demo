@@ -89,15 +89,12 @@ class Trait {
     }
     constructor(_trait) {
         this._trait = _trait;
-        this.length = 0;
         this.indexes = [];
         this.sortedIndexes = [];
         this._onChange = new Emitter();
         this.onChange = this._onChange.event;
     }
     splice(start, deleteCount, elements) {
-        var _a;
-        deleteCount = Math.max(0, Math.min(deleteCount, this.length - start));
         const diff = elements.length - deleteCount;
         const end = start + deleteCount;
         const sortedIndexes = [];
@@ -113,14 +110,8 @@ class Trait {
         while (i < this.sortedIndexes.length && this.sortedIndexes[i] >= end) {
             sortedIndexes.push(this.sortedIndexes[i++] + diff);
         }
-        const length = this.length + diff;
-        if (this.sortedIndexes.length > 0 && sortedIndexes.length === 0 && length > 0) {
-            const first = (_a = this.sortedIndexes.find(index => index >= start)) !== null && _a !== void 0 ? _a : length - 1;
-            sortedIndexes.push(Math.min(first, length - 1));
-        }
         this.renderer.splice(start, deleteCount, elements.length);
         this._set(sortedIndexes, sortedIndexes);
-        this.length = length;
     }
     renderIndex(index, container) {
         container.classList.toggle(this._trait, this.contains(index));
@@ -227,6 +218,9 @@ export function isActionItem(e) {
 }
 export function isStickyScrollElement(e) {
     return isListElementDescendantOfClass(e, 'monaco-tree-sticky-row');
+}
+export function isStickyScrollContainer(e) {
+    return e.classList.contains('monaco-tree-sticky-container');
 }
 export function isButton(e) {
     if ((e.tagName === 'A' && e.classList.contains('monaco-button')) ||
@@ -763,12 +757,26 @@ export class DefaultStyleController {
         if (styles.listHoverOutline) { // default: activeContrastBorder
             content.push(`.monaco-list${suffix} .monaco-list-row:hover { outline: 1px dashed ${styles.listHoverOutline}; outline-offset: -1px; }`);
         }
-        if (styles.listDropBackground) {
+        if (styles.listDropOverBackground) {
             content.push(`
 				.monaco-list${suffix}.drop-target,
 				.monaco-list${suffix} .monaco-list-rows.drop-target,
-				.monaco-list${suffix} .monaco-list-row.drop-target { background-color: ${styles.listDropBackground} !important; color: inherit !important; }
+				.monaco-list${suffix} .monaco-list-row.drop-target { background-color: ${styles.listDropOverBackground} !important; color: inherit !important; }
 			`);
+        }
+        if (styles.listDropBetweenBackground) {
+            content.push(`
+			.monaco-list${suffix} .monaco-list-rows.drop-target-before .monaco-list-row:first-child::before,
+			.monaco-list${suffix} .monaco-list-row.drop-target-before::before {
+				content: ""; position: absolute; top: 0px; left: 0px; width: 100%; height: 1px;
+				background-color: ${styles.listDropBetweenBackground};
+			}`);
+            content.push(`
+			.monaco-list${suffix} .monaco-list-rows.drop-target-after .monaco-list-row:last-child::after,
+			.monaco-list${suffix} .monaco-list-row.drop-target-after::after {
+				content: ""; position: absolute; bottom: 0px; left: 0px; width: 100%; height: 1px;
+				background-color: ${styles.listDropBetweenBackground};
+			}`);
         }
         if (styles.tableColumnsBorder) {
             content.push(`
@@ -808,7 +816,8 @@ export const unthemedListStyles = {
     listInactiveSelectionBackground: '#3F3F46',
     listInactiveSelectionIconForeground: '#FFFFFF',
     listHoverBackground: '#2A2D2E',
-    listDropBackground: '#383B3D',
+    listDropOverBackground: '#383B3D',
+    listDropBetweenBackground: '#EEEEEE',
     treeIndentGuidesStroke: '#a9a9a9',
     treeInactiveIndentGuidesStroke: Color.fromHex('#a9a9a9').transparent(0.4).toString(),
     tableColumnsBorder: Color.fromHex('#cccccc').transparent(0.2).toString(),
@@ -995,8 +1004,8 @@ class ListViewDragAndDrop {
         var _a, _b;
         (_b = (_a = this.dnd).onDragStart) === null || _b === void 0 ? void 0 : _b.call(_a, data, originalEvent);
     }
-    onDragOver(data, targetElement, targetIndex, originalEvent) {
-        return this.dnd.onDragOver(data, targetElement, targetIndex, originalEvent);
+    onDragOver(data, targetElement, targetIndex, targetSector, originalEvent) {
+        return this.dnd.onDragOver(data, targetElement, targetIndex, targetSector, originalEvent);
     }
     onDragLeave(data, targetElement, targetIndex, originalEvent) {
         var _a, _b;
@@ -1006,8 +1015,8 @@ class ListViewDragAndDrop {
         var _a, _b;
         (_b = (_a = this.dnd).onDragEnd) === null || _b === void 0 ? void 0 : _b.call(_a, originalEvent);
     }
-    drop(data, targetElement, targetIndex, originalEvent) {
-        this.dnd.drop(data, targetElement, targetIndex, originalEvent);
+    drop(data, targetElement, targetIndex, targetSector, originalEvent) {
+        this.dnd.drop(data, targetElement, targetIndex, targetSector, originalEvent);
     }
     dispose() {
         this.dnd.dispose();
@@ -1187,6 +1196,9 @@ export class List {
     indexOf(element) {
         return this.view.indexOf(element);
     }
+    indexAt(position) {
+        return this.view.indexAt(position);
+    }
     get length() {
         return this.view.length;
     }
@@ -1312,9 +1324,10 @@ export class List {
             }
         }
     }
-    async focusPreviousPage(browserEvent, filter) {
+    async focusPreviousPage(browserEvent, filter, getPaddingTop = () => 0) {
         let firstPageIndex;
-        const scrollTop = this.view.getScrollTop();
+        const paddingTop = getPaddingTop();
+        const scrollTop = this.view.getScrollTop() + paddingTop;
         if (scrollTop === 0) {
             firstPageIndex = this.view.indexAt(scrollTop);
         }
@@ -1333,12 +1346,12 @@ export class List {
         }
         else {
             const previousScrollTop = scrollTop;
-            this.view.setScrollTop(scrollTop - this.view.renderHeight);
-            if (this.view.getScrollTop() !== previousScrollTop) {
+            this.view.setScrollTop(scrollTop - this.view.renderHeight - paddingTop);
+            if (this.view.getScrollTop() + getPaddingTop() !== previousScrollTop) {
                 this.setFocus([]);
                 // Let the scroll event listener run
                 await timeout(0);
-                await this.focusPreviousPage(browserEvent, filter);
+                await this.focusPreviousPage(browserEvent, filter, getPaddingTop);
             }
         }
     }

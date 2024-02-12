@@ -551,7 +551,7 @@ export class TextAreaWrapper extends Disposable {
             return shadowRoot.activeElement === this._actual;
         }
         else if (this._actual.isConnected) {
-            return this._actual.ownerDocument.activeElement === this._actual;
+            return dom.getActiveElement() === this._actual;
         }
         else {
             return false;
@@ -594,7 +594,7 @@ export class TextAreaWrapper extends Disposable {
             activeElement = shadowRoot.activeElement;
         }
         else {
-            activeElement = textArea.ownerDocument.activeElement;
+            activeElement = dom.getActiveElement();
         }
         const activeWindow = dom.getWindow(activeElement);
         const currentIsFocused = (activeElement === textArea);

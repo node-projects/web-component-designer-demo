@@ -462,7 +462,7 @@ export function createMonacoEditorAPI() {
         WrappingIndent: standaloneEnums.WrappingIndent,
         InjectedTextCursorStops: standaloneEnums.InjectedTextCursorStops,
         PositionAffinity: standaloneEnums.PositionAffinity,
-        ShowAiIconMode: standaloneEnums.ShowAiIconMode,
+        ShowLightbulbIconMode: standaloneEnums.ShowLightbulbIconMode,
         // classes
         ConfigurationChangedEvent: ConfigurationChangedEvent,
         BareFontInfo: BareFontInfo,

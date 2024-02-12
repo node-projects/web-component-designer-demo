@@ -131,15 +131,23 @@ export function setupCustomHover(hoverDelegate, htmlElement, content, options) {
             }
         }, delay);
     };
+    let isMouseDown = false;
+    const mouseDownEmitter = dom.addDisposableListener(htmlElement, dom.EventType.MOUSE_DOWN, () => {
+        isMouseDown = true;
+        hideHover(true, true);
+    }, true);
+    const mouseUpEmitter = dom.addDisposableListener(htmlElement, dom.EventType.MOUSE_UP, () => {
+        isMouseDown = false;
+    }, true);
+    const mouseLeaveEmitter = dom.addDisposableListener(htmlElement, dom.EventType.MOUSE_LEAVE, (e) => {
+        isMouseDown = false;
+        hideHover(false, e.fromElement === htmlElement);
+    }, true);
     const onMouseOver = () => {
         if (hoverPreparation) {
             return;
         }
         const toDispose = new DisposableStore();
-        const onMouseLeave = (e) => hideHover(false, e.fromElement === htmlElement);
-        toDispose.add(dom.addDisposableListener(htmlElement, dom.EventType.MOUSE_LEAVE, onMouseLeave, true));
-        const onMouseDown = () => hideHover(true, true);
-        toDispose.add(dom.addDisposableListener(htmlElement, dom.EventType.MOUSE_DOWN, onMouseDown, true));
         const target = {
             targetElements: [htmlElement],
             dispose: () => { }
@@ -159,7 +167,7 @@ export function setupCustomHover(hoverDelegate, htmlElement, content, options) {
     };
     const mouseOverDomEmitter = dom.addDisposableListener(htmlElement, dom.EventType.MOUSE_OVER, onMouseOver, true);
     const onFocus = () => {
-        if (hoverPreparation) {
+        if (isMouseDown || hoverPreparation) {
             return;
         }
         const target = {
@@ -187,6 +195,9 @@ export function setupCustomHover(hoverDelegate, htmlElement, content, options) {
         },
         dispose: () => {
             mouseOverDomEmitter.dispose();
+            mouseLeaveEmitter.dispose();
+            mouseDownEmitter.dispose();
+            mouseUpEmitter.dispose();
             focusDomEmitter.dispose();
             hideHover(true, true);
         }

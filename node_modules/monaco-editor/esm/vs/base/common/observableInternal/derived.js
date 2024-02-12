@@ -2,9 +2,9 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { BugIndicatingError } from '../errors.js';
+import { assertFn } from '../assert.js';
 import { DisposableStore } from '../lifecycle.js';
-import { BaseObservable, _setDerivedOpts, getFunctionName, getDebugName } from './base.js';
+import { BaseObservable, _setDerivedOpts, getDebugName, getFunctionName } from './base.js';
 import { getLogger } from './logging.js';
 const defaultEqualityComparer = (a, b) => a === b;
 export function derived(computeFnOrOwner, computeFn) {
@@ -15,7 +15,7 @@ export function derived(computeFnOrOwner, computeFn) {
 }
 export function derivedOpts(options, computeFn) {
     var _a;
-    return new Derived(options.owner, options.debugName, computeFn, undefined, undefined, undefined, (_a = options.equalityComparer) !== null && _a !== void 0 ? _a : defaultEqualityComparer);
+    return new Derived(options.owner, options.debugName, computeFn, undefined, undefined, options.onLastObserverRemoved, (_a = options.equalityComparer) !== null && _a !== void 0 ? _a : defaultEqualityComparer);
 }
 /**
  * Represents an observable that is derived from other observables.
@@ -76,7 +76,7 @@ _setDerivedOpts(derivedOpts);
 export class Derived extends BaseObservable {
     get debugName() {
         var _a;
-        return (_a = getDebugName(this, this._debugName, this._computeFn, this._owner, this)) !== null && _a !== void 0 ? _a : '(anonymous)';
+        return (_a = getDebugName(this, this._debugName, this._computeFn, this._owner)) !== null && _a !== void 0 ? _a : '(anonymous)';
     }
     constructor(_owner, _debugName, _computeFn, createChangeSummary, _handleChange, _handleLastObserverRemoved = undefined, _equalityComparator) {
         var _a, _b;
@@ -216,9 +216,7 @@ export class Derived extends BaseObservable {
                 r.endUpdate(this);
             }
         }
-        if (this.updateCount < 0) {
-            throw new BugIndicatingError();
-        }
+        assertFn(() => this.updateCount >= 0);
     }
     handlePossibleChange(observable) {
         // In all other states, observers already know that we might have changed.

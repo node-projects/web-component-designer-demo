@@ -224,8 +224,8 @@ export class InstantiationService {
                 for (const [key, values] of earlyListeners) {
                     const candidate = result[key];
                     if (typeof candidate === 'function') {
-                        for (const listener of values) {
-                            candidate.apply(result, listener);
+                        for (const value of values) {
+                            value.disposable = candidate.apply(result, value.listener);
                         }
                     }
                 }
@@ -243,8 +243,19 @@ export class InstantiationService {
                                 earlyListeners.set(key, list);
                             }
                             const event = (callback, thisArg, disposables) => {
-                                const rm = list.push([callback, thisArg, disposables]);
-                                return toDisposable(rm);
+                                if (idle.isInitialized) {
+                                    return idle.value[key](callback, thisArg, disposables);
+                                }
+                                else {
+                                    const entry = { listener: [callback, thisArg, disposables], disposable: undefined };
+                                    const rm = list.push(entry);
+                                    const result = toDisposable(() => {
+                                        var _a;
+                                        rm();
+                                        (_a = entry.disposable) === null || _a === void 0 ? void 0 : _a.dispose();
+                                    });
+                                    return result;
+                                }
                             };
                             return event;
                         }

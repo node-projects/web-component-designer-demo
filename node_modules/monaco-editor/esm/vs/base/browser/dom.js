@@ -188,8 +188,16 @@ export let runAtThisOrScheduleAtNextAnimationFrame;
  */
 export let scheduleAtNextAnimationFrame;
 export class WindowIntervalTimer extends IntervalTimer {
+    /**
+     *
+     * @param node The optional node from which the target window is determined
+     */
+    constructor(node) {
+        super();
+        this.defaultTarget = node && getWindow(node);
+    }
     cancelAndSet(runner, interval, targetWindow) {
-        return super.cancelAndSet(runner, interval, targetWindow);
+        return super.cancelAndSet(runner, interval, targetWindow !== null && targetWindow !== void 0 ? targetWindow : this.defaultTarget);
     }
 }
 class AnimationFrameQueueItem {
@@ -527,8 +535,9 @@ export function getShadowRoot(domNode) {
     return isShadowRoot(domNode) ? domNode : null;
 }
 /**
- * Returns the active element across all child windows.
- * Use this instead of `document.activeElement` to handle multiple windows.
+ * Returns the active element across all child windows
+ * based on document focus. Falls back to the main
+ * window if no window has focus.
  */
 export function getActiveElement() {
     let result = getActiveDocument().activeElement;
@@ -538,38 +547,74 @@ export function getActiveElement() {
     return result;
 }
 /**
- * Returns whether the active element of the `document` that owns
- * the `element` is `element`.
+ * Returns true if the focused window active element matches
+ * the provided element. Falls back to the main window if no
+ * window has focus.
  */
 export function isActiveElement(element) {
-    return element.ownerDocument.activeElement === element;
+    return getActiveElement() === element;
 }
 /**
- * Returns whether the active element of the `document` that owns
- * the `ancestor` is contained in `ancestor`.
+ * Returns true if the focused window active element is contained in
+ * `ancestor`. Falls back to the main window if no window has focus.
  */
 export function isAncestorOfActiveElement(ancestor) {
-    return isAncestor(ancestor.ownerDocument.activeElement, ancestor);
+    return isAncestor(getActiveElement(), ancestor);
 }
 /**
- * Returns the active document across all child windows.
- * Use this instead of `document` when reacting to dom
- * events to handle multiple windows.
+ * Returns the active document across main and child windows.
+ * Prefers the window with focus, otherwise falls back to
+ * the main windows document.
  */
 export function getActiveDocument() {
     var _a;
     if (getWindowsCount() <= 1) {
-        return document;
+        return mainWindow.document;
     }
     const documents = Array.from(getWindows()).map(({ window }) => window.document);
-    return (_a = documents.find(doc => doc.hasFocus())) !== null && _a !== void 0 ? _a : document;
+    return (_a = documents.find(doc => doc.hasFocus())) !== null && _a !== void 0 ? _a : mainWindow.document;
 }
+/**
+ * Returns the active window across main and child windows.
+ * Prefers the window with focus, otherwise falls back to
+ * the main window.
+ */
 export function getActiveWindow() {
     var _a, _b;
     const document = getActiveDocument();
     return ((_b = (_a = document.defaultView) === null || _a === void 0 ? void 0 : _a.window) !== null && _b !== void 0 ? _b : mainWindow);
 }
 const globalStylesheets = new Map();
+/**
+ * A version of createStyleSheet which has a unified API to initialize/set the style content.
+ */
+export function createStyleSheet2() {
+    return new WrappedStyleElement();
+}
+class WrappedStyleElement {
+    constructor() {
+        this._currentCssStyle = '';
+        this._styleSheet = undefined;
+    }
+    setStyle(cssStyle) {
+        if (cssStyle === this._currentCssStyle) {
+            return;
+        }
+        this._currentCssStyle = cssStyle;
+        if (!this._styleSheet) {
+            this._styleSheet = createStyleSheet(mainWindow.document.head, (s) => s.innerText = cssStyle);
+        }
+        else {
+            this._styleSheet.innerText = cssStyle;
+        }
+    }
+    dispose() {
+        if (this._styleSheet) {
+            clearNode(this._styleSheet);
+            this._styleSheet = undefined;
+        }
+    }
+}
 export function createStyleSheet(container = mainWindow.document.head, beforeAppend, disposableStore) {
     const style = document.createElement('style');
     style.type = 'text/css';
@@ -1095,6 +1140,7 @@ export const basicMarkupHtmlTags = Object.freeze([
     'hr',
     'i',
     'img',
+    'input',
     'ins',
     'kbd',
     'label',

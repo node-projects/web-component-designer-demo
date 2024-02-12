@@ -192,3 +192,9 @@ registerEditorSettingMigration('codeActionWidget.includeNearbyQuickfixes', (valu
         }
     }
 });
+// Migrate the lightbulb settings
+registerEditorSettingMigration('lightbulb.enabled', (value, read, write) => {
+    if (typeof value === 'boolean') {
+        write('lightbulb.enabled', value ? undefined : 'off');
+    }
+});

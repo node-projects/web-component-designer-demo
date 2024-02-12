@@ -553,7 +553,7 @@ export class EditorFontLigatures extends BaseEditorOption {
             return this.defaultValue;
         }
         if (typeof input === 'string') {
-            if (input === 'false') {
+            if (input === 'false' || input.length === 0) {
                 return EditorFontLigatures.OFF;
             }
             if (input === 'true') {
@@ -1192,45 +1192,37 @@ class WrappingStrategy extends BaseEditorOption {
 }
 //#endregion
 //#region lightbulb
-export var ShowAiIconMode;
-(function (ShowAiIconMode) {
-    ShowAiIconMode["Off"] = "off";
-    ShowAiIconMode["OnCode"] = "onCode";
-    ShowAiIconMode["On"] = "on";
-})(ShowAiIconMode || (ShowAiIconMode = {}));
+export var ShowLightbulbIconMode;
+(function (ShowLightbulbIconMode) {
+    ShowLightbulbIconMode["Off"] = "off";
+    ShowLightbulbIconMode["OnCode"] = "onCode";
+    ShowLightbulbIconMode["On"] = "on";
+})(ShowLightbulbIconMode || (ShowLightbulbIconMode = {}));
 class EditorLightbulb extends BaseEditorOption {
     constructor() {
-        const defaults = { enabled: true, experimental: { showAiIcon: ShowAiIconMode.Off } };
+        const defaults = { enabled: ShowLightbulbIconMode.OnCode };
         super(64 /* EditorOption.lightbulb */, 'lightbulb', defaults, {
             'editor.lightbulb.enabled': {
-                type: 'boolean',
-                default: defaults.enabled,
-                description: nls.localize('codeActions', "Enables the Code Action lightbulb in the editor.")
-            },
-            'editor.lightbulb.experimental.showAiIcon': {
                 type: 'string',
-                enum: [ShowAiIconMode.Off, ShowAiIconMode.OnCode, ShowAiIconMode.On],
-                default: defaults.experimental.showAiIcon,
+                tags: ['experimental'],
+                enum: [ShowLightbulbIconMode.Off, ShowLightbulbIconMode.OnCode, ShowLightbulbIconMode.On],
+                default: defaults.enabled,
                 enumDescriptions: [
-                    nls.localize('editor.lightbulb.showAiIcon.off', 'Don not show the AI icon.'),
-                    nls.localize('editor.lightbulb.showAiIcon.onCode', 'Show an AI icon when the code action menu contains an AI action, but only on code.'),
-                    nls.localize('editor.lightbulb.showAiIcon.on', 'Show an AI icon when the code action menu contains an AI action, on code and empty lines.'),
+                    nls.localize('editor.lightbulb.enabled.off', 'Disable the code action menu.'),
+                    nls.localize('editor.lightbulb.enabled.onCode', 'Show the code action menu when the cursor is on lines with code.'),
+                    nls.localize('editor.lightbulb.enabled.on', 'Show the code action menu when the cursor is on lines with code or on empty lines.'),
                 ],
-                description: nls.localize('showAiIcons', "Show an AI icon along with the lightbulb when the code action menu contains an AI action.")
-            },
+                description: nls.localize('enabled', "Enables the Code Action lightbulb in the editor.")
+            }
         });
     }
     validate(_input) {
-        var _a, _b;
         if (!_input || typeof _input !== 'object') {
             return this.defaultValue;
         }
         const input = _input;
         return {
-            enabled: boolean(input.enabled, this.defaultValue.enabled),
-            experimental: {
-                showAiIcon: stringSet((_a = input.experimental) === null || _a === void 0 ? void 0 : _a.showAiIcon, (_b = this.defaultValue.experimental) === null || _b === void 0 ? void 0 : _b.showAiIcon, [ShowAiIconMode.Off, ShowAiIconMode.OnCode, ShowAiIconMode.On])
-            }
+            enabled: stringSet(input.enabled, this.defaultValue.enabled, [ShowLightbulbIconMode.Off, ShowLightbulbIconMode.OnCode, ShowLightbulbIconMode.On])
         };
     }
 }
@@ -1241,7 +1233,8 @@ class EditorStickyScroll extends BaseEditorOption {
             'editor.stickyScroll.enabled': {
                 type: 'boolean',
                 default: defaults.enabled,
-                description: nls.localize('editor.stickyScroll.enabled', "Shows the nested current scopes during the scroll at the top of the editor.")
+                description: nls.localize('editor.stickyScroll.enabled', "Shows the nested current scopes during the scroll at the top of the editor."),
+                tags: ['experimental']
             },
             'editor.stickyScroll.maxLineCount': {
                 type: 'number',
@@ -1967,6 +1960,7 @@ class InlineEditorSuggest extends BaseEditorOption {
             showToolbar: 'onHover',
             suppressSuggestions: false,
             keepOnBlur: false,
+            fontFamily: 'default'
         };
         super(62 /* EditorOption.inlineSuggest */, 'inlineSuggest', defaults, {
             'editor.inlineSuggest.enabled': {
@@ -1990,6 +1984,11 @@ class InlineEditorSuggest extends BaseEditorOption {
                 default: defaults.suppressSuggestions,
                 description: nls.localize('inlineSuggest.suppressSuggestions', "Controls how inline suggestions interact with the suggest widget. If enabled, the suggest widget is not shown automatically when inline suggestions are available.")
             },
+            'editor.inlineSuggest.fontFamily': {
+                type: 'string',
+                default: defaults.fontFamily,
+                description: nls.localize('inlineSuggest.fontFamily', "Controls the font family of the inline suggestions.")
+            },
         });
     }
     validate(_input) {
@@ -2003,6 +2002,7 @@ class InlineEditorSuggest extends BaseEditorOption {
             showToolbar: stringSet(input.showToolbar, this.defaultValue.showToolbar, ['always', 'onHover', 'never']),
             suppressSuggestions: boolean(input.suppressSuggestions, this.defaultValue.suppressSuggestions),
             keepOnBlur: boolean(input.keepOnBlur, this.defaultValue.keepOnBlur),
+            fontFamily: EditorStringOption.string(input.fontFamily, this.defaultValue.fontFamily)
         };
     }
 }
@@ -2519,7 +2519,7 @@ class EditorDropIntoEditor extends BaseEditorOption {
             'editor.dropIntoEditor.enabled': {
                 type: 'boolean',
                 default: defaults.enabled,
-                markdownDescription: nls.localize('dropIntoEditor.enabled', "Controls whether you can drag and drop a file into a text editor by holding down `Shift`-key (instead of opening the file in an editor)."),
+                markdownDescription: nls.localize('dropIntoEditor.enabled', "Controls whether you can drag and drop a file into a text editor by holding down the `Shift` key (instead of opening the file in an editor)."),
             },
             'editor.dropIntoEditor.showDropSelector': {
                 type: 'string',
@@ -2792,7 +2792,11 @@ export const EditorOptions = {
     minimap: register(new EditorMinimap()),
     mouseStyle: register(new EditorStringEnumOption(73 /* EditorOption.mouseStyle */, 'mouseStyle', 'text', ['text', 'default', 'copy'])),
     mouseWheelScrollSensitivity: register(new EditorFloatOption(74 /* EditorOption.mouseWheelScrollSensitivity */, 'mouseWheelScrollSensitivity', 1, x => (x === 0 ? 1 : x), { markdownDescription: nls.localize('mouseWheelScrollSensitivity', "A multiplier to be used on the `deltaX` and `deltaY` of mouse wheel scroll events.") })),
-    mouseWheelZoom: register(new EditorBooleanOption(75 /* EditorOption.mouseWheelZoom */, 'mouseWheelZoom', false, { markdownDescription: nls.localize('mouseWheelZoom', "Zoom the font of the editor when using mouse wheel and holding `Ctrl`.") })),
+    mouseWheelZoom: register(new EditorBooleanOption(75 /* EditorOption.mouseWheelZoom */, 'mouseWheelZoom', false, {
+        markdownDescription: platform.isMacintosh
+            ? nls.localize('mouseWheelZoom.mac', "Zoom the font of the editor when using mouse wheel and holding `Cmd`.")
+            : nls.localize('mouseWheelZoom', "Zoom the font of the editor when using mouse wheel and holding `Ctrl`.")
+    })),
     multiCursorMergeOverlapping: register(new EditorBooleanOption(76 /* EditorOption.multiCursorMergeOverlapping */, 'multiCursorMergeOverlapping', true, { description: nls.localize('multiCursorMergeOverlapping', "Merge multiple cursors when they are overlapping.") })),
     multiCursorModifier: register(new EditorEnumOption(77 /* EditorOption.multiCursorModifier */, 'multiCursorModifier', 'altKey', 'alt', ['ctrlCmd', 'alt'], _multiCursorModifierFromString, {
         markdownEnumDescriptions: [

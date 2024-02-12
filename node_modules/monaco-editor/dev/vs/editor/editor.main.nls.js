@@ -1,6 +1,6 @@
 /*!-----------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
- * Version: 0.45.0(5e5af013f8d295555a7210df0d5f2cea0bf5dd56)
+ * Version: 0.46.0(21007360cad28648bdf46282a2592cb47c3a7a6f)
  * Released under the MIT license
  * https://github.com/microsoft/vscode/blob/main/LICENSE.txt
  *-----------------------------------------------------------*/
@@ -117,7 +117,7 @@ define("vs/editor/editor.main.nls", {
 		"The number of cursors has been limited to {0}. Consider using [find and replace](https://code.visualstudio.com/docs/editor/codebasics#_find-and-replace) for larger changes or increase the editor multi cursor limit setting.",
 		"Increase Multi Cursor Limit"
 	],
-	"vs/editor/browser/widget/diffEditor/accessibleDiffViewer": [
+	"vs/editor/browser/widget/diffEditor/components/accessibleDiffViewer": [
 		"Icon for 'Insert' in accessible diff viewer.",
 		"Icon for 'Remove' in accessible diff viewer.",
 		"Icon for 'Close' in accessible diff viewer.",
@@ -133,47 +133,10 @@ define("vs/editor/editor.main.nls", {
 		"+ {0} modified line {1}",
 		"- {0} original line {1}"
 	],
-	"vs/editor/browser/widget/diffEditor/colors": [
-		"The border color for text that got moved in the diff editor.",
-		"The active border color for text that got moved in the diff editor.",
-		"The color of the shadow around unchanged region widgets."
-	],
-	"vs/editor/browser/widget/diffEditor/decorations": [
-		"Line decoration for inserts in the diff editor.",
-		"Line decoration for removals in the diff editor."
-	],
-	"vs/editor/browser/widget/diffEditor/diffEditor.contribution": [
-		"Toggle Collapse Unchanged Regions",
-		"Toggle Show Moved Code Blocks",
-		"Toggle Use Inline View When Space Is Limited",
-		"Use Inline View When Space Is Limited",
-		"Show Moved Code Blocks",
-		"Diff Editor",
-		"Switch Side",
-		"Exit Compare Move",
-		"Collapse All Unchanged Regions",
-		"Show All Unchanged Regions",
-		"Accessible Diff Viewer",
-		"Go to Next Difference",
-		"Open Accessible Diff Viewer",
-		"Go to Previous Difference"
-	],
-	"vs/editor/browser/widget/diffEditor/diffEditorDecorations": [
-		"Revert Selected Changes",
-		"Revert Change"
-	],
-	"vs/editor/browser/widget/diffEditor/diffEditorEditors": [
+	"vs/editor/browser/widget/diffEditor/components/diffEditorEditors": [
 		" use {0} to open the accessibility help."
 	],
-	"vs/editor/browser/widget/diffEditor/hideUnchangedRegionsFeature": [
-		"Fold Unchanged Region",
-		"Click or drag to show more above",
-		"Show Unchanged Region",
-		"Click or drag to show more below",
-		"{0} hidden lines",
-		"Double click to unfold"
-	],
-	"vs/editor/browser/widget/diffEditor/inlineDiffDeletedCodeMargin": [
+	"vs/editor/browser/widget/diffEditor/components/diffEditorViewZones/inlineDiffDeletedCodeMargin": [
 		"Copy deleted lines",
 		"Copy deleted line",
 		"Copy changed lines",
@@ -182,14 +145,54 @@ define("vs/editor/editor.main.nls", {
 		"Copy changed line ({0})",
 		"Revert this change"
 	],
-	"vs/editor/browser/widget/diffEditor/movedBlocksLines": [
+	"vs/editor/browser/widget/diffEditor/diffEditor.contribution": [
+		"Use Inline View When Space Is Limited",
+		"Show Moved Code Blocks",
+		"Diff Editor",
+		"Accessible Diff Viewer",
+		"Open Accessible Diff Viewer",
+		"Toggle Collapse Unchanged Regions",
+		"Toggle Show Moved Code Blocks",
+		"Toggle Use Inline View When Space Is Limited",
+		"Switch Side",
+		"Exit Compare Move",
+		"Collapse All Unchanged Regions",
+		"Show All Unchanged Regions",
+		"Go to Next Difference",
+		"Go to Previous Difference"
+	],
+	"vs/editor/browser/widget/diffEditor/features/hideUnchangedRegionsFeature": [
+		"Fold Unchanged Region",
+		"Click or drag to show more above",
+		"Show Unchanged Region",
+		"Click or drag to show more below",
+		"{0} hidden lines",
+		"Double click to unfold"
+	],
+	"vs/editor/browser/widget/diffEditor/features/movedBlocksLinesFeature": [
 		"Code moved with changes to line {0}-{1}",
 		"Code moved with changes from line {0}-{1}",
 		"Code moved to line {0}-{1}",
 		"Code moved from line {0}-{1}"
 	],
+	"vs/editor/browser/widget/diffEditor/features/revertButtonsFeature": [
+		"Revert Selected Changes",
+		"Revert Change"
+	],
+	"vs/editor/browser/widget/diffEditor/registrations.contribution": [
+		"The border color for text that got moved in the diff editor.",
+		"The active border color for text that got moved in the diff editor.",
+		"The color of the shadow around unchanged region widgets.",
+		"Line decoration for inserts in the diff editor.",
+		"Line decoration for removals in the diff editor."
+	],
+	"vs/editor/browser/widget/hoverWidget/hoverWidget": [
+		"Hold {0} key to mouse over"
+	],
 	"vs/editor/browser/widget/multiDiffEditorWidget/colors": [
-		"The background color of the diff editor's header"
+		"The background color of the diff editor's header",
+		"The background color of the multi file diff editor",
+		"The border color of the multi file diff editor"
 	],
 	"vs/editor/common/config/editorConfigurationSchema": [
 		"Editor",
@@ -291,11 +294,10 @@ define("vs/editor/editor.main.nls", {
 		"Assumes that all characters are of the same width. This is a fast algorithm that works correctly for monospace fonts and certain scripts (like Latin characters) where glyphs are of equal width.",
 		"Delegates wrapping points computation to the browser. This is a slow algorithm, that might cause freezes for large files, but it works correctly in all cases.",
 		"Controls the algorithm that computes wrapping points. Note that when in accessibility mode, advanced will be used for the best experience.",
+		"Disable the code action menu.",
+		"Show the code action menu when the cursor is on lines with code.",
+		"Show the code action menu when the cursor is on lines with code or on empty lines.",
 		"Enables the Code Action lightbulb in the editor.",
-		"Don not show the AI icon.",
-		"Show an AI icon when the code action menu contains an AI action, but only on code.",
-		"Show an AI icon when the code action menu contains an AI action, on code and empty lines.",
-		"Show an AI icon along with the lightbulb when the code action menu contains an AI action.",
 		"Shows the nested current scopes during the scroll at the top of the editor.",
 		"Defines the maximum number of sticky lines to show.",
 		"Defines the model to use for determining which lines to stick. If the outline model does not exist, it will fall back on the folding provider model which falls back on the indentation model. This order is respected in all three cases.",
@@ -364,6 +366,7 @@ define("vs/editor/editor.main.nls", {
 		"Never show the inline suggestion toolbar.",
 		"Controls when to show the inline suggestion toolbar.",
 		"Controls how inline suggestions interact with the suggest widget. If enabled, the suggest widget is not shown automatically when inline suggestions are available.",
+		"Controls the font family of the inline suggestions.",
 		"Controls whether bracket pair colorization is enabled or not. Use {0} to override the bracket highlight colors.",
 		"Controls whether each bracket type has its own independent color pool.",
 		"Enables bracket pair guides.",
@@ -435,7 +438,7 @@ define("vs/editor/editor.main.nls", {
 		"Wrapped lines get +1 indentation toward the parent.",
 		"Wrapped lines get +2 indentation toward the parent.",
 		"Controls the indentation of wrapped lines.",
-		"Controls whether you can drag and drop a file into a text editor by holding down `Shift`-key (instead of opening the file in an editor).",
+		"Controls whether you can drag and drop a file into a text editor by holding down the `Shift` key (instead of opening the file in an editor).",
 		"Controls if a widget is shown when dropping files into the editor. This widget lets you control how the file is dropped.",
 		"Show the drop selector widget after a file is dropped into the editor.",
 		"Never show the drop selector widget. Instead the default drop provider is always used.",
@@ -519,6 +522,7 @@ define("vs/editor/editor.main.nls", {
 		"Controls whether the editor should detect links and make them clickable.",
 		"Highlight matching brackets.",
 		"A multiplier to be used on the `deltaX` and `deltaY` of mouse wheel scroll events.",
+		"Zoom the font of the editor when using mouse wheel and holding `Cmd`.",
 		"Zoom the font of the editor when using mouse wheel and holding `Ctrl`.",
 		"Merge multiple cursors when they are overlapping.",
 		"Maps to `Control` on Windows and Linux and to `Command` on macOS.",
@@ -858,12 +862,10 @@ define("vs/editor/editor.main.nls", {
 		"Source Action"
 	],
 	"vs/editor/contrib/codeAction/browser/lightBulbWidget": [
+		"Run: {0}",
 		"Show Code Actions. Preferred Quick Fix Available ({0})",
 		"Show Code Actions ({0})",
-		"Show Code Actions",
-		"Start Inline Chat ({0})",
-		"Start Inline Chat",
-		"Trigger AI Action"
+		"Show Code Actions"
 	],
 	"vs/editor/contrib/codelens/browser/codelensController": [
 		"Show CodeLens Commands For Current Line",
@@ -905,11 +907,13 @@ define("vs/editor/editor.main.nls", {
 	],
 	"vs/editor/contrib/dropOrPasteInto/browser/copyPasteContribution": [
 		"Paste As...",
-		"The id of the paste edit to try applying. If not provided, the editor will show a picker."
+		"The id of the paste edit to try applying. If not provided, the editor will show a picker.",
+		"Paste as Text"
 	],
 	"vs/editor/contrib/dropOrPasteInto/browser/copyPasteController": [
 		"Whether the paste widget is showing",
 		"Show paste options...",
+		"No paste edits for '{0}' found",
 		"Running paste handlers. Click to cancel",
 		"Select Paste Action",
 		"Running paste handlers"
@@ -922,7 +926,8 @@ define("vs/editor/editor.main.nls", {
 		"Insert Paths",
 		"Insert Path",
 		"Insert Relative Paths",
-		"Insert Relative Path"
+		"Insert Relative Path",
+		"Insert HTML"
 	],
 	"vs/editor/contrib/dropOrPasteInto/browser/dropIntoEditorContribution": [
 		"Configures the default drop provider to use for content of a given mime type."
@@ -939,10 +944,6 @@ define("vs/editor/editor.main.nls", {
 		"The file is too large to perform a replace all operation.",
 		"Find",
 		"&&Find",
-		"Overrides \"Use Regular Expression\" flag.\nThe flag will not be saved for the future.\n0: Do Nothing\n1: True\n2: False",
-		"Overrides \"Match Whole Word\" flag.\nThe flag will not be saved for the future.\n0: Do Nothing\n1: True\n2: False",
-		"Overrides \"Math Case\" flag.\nThe flag will not be saved for the future.\n0: Do Nothing\n1: True\n2: False",
-		"Overrides \"Preserve Case\" flag.\nThe flag will not be saved for the future.\n0: Do Nothing\n1: True\n2: False",
 		"Find With Arguments",
 		"Find With Selection",
 		"Find Next",
@@ -1012,12 +1013,14 @@ define("vs/editor/editor.main.nls", {
 		"Icon for expanded ranges in the editor glyph margin.",
 		"Icon for collapsed ranges in the editor glyph margin.",
 		"Icon for manually collapsed ranges in the editor glyph margin.",
-		"Icon for manually expanded ranges in the editor glyph margin."
+		"Icon for manually expanded ranges in the editor glyph margin.",
+		"Click to expand the range.",
+		"Click to collapse the range."
 	],
 	"vs/editor/contrib/fontZoom/browser/fontZoom": [
-		"Editor Font Zoom In",
-		"Editor Font Zoom Out",
-		"Editor Font Zoom Reset"
+		"Increase Editor Font Size",
+		"Decrease Editor Font Size",
+		"Reset Editor Font Size"
 	],
 	"vs/editor/contrib/format/browser/formatActions": [
 		"Format Document",
@@ -1431,8 +1434,8 @@ define("vs/editor/editor.main.nls", {
 		"Dec"
 	],
 	"vs/editor/contrib/stickyScroll/browser/stickyScrollActions": [
-		"Toggle Sticky Scroll",
-		"&&Toggle Sticky Scroll",
+		"Toggle Editor Sticky Scroll",
+		"&&Toggle Editor Sticky Scroll",
 		"Sticky Scroll",
 		"&&Sticky Scroll",
 		"Focus Sticky Scroll",
@@ -1541,6 +1544,7 @@ define("vs/editor/editor.main.nls", {
 		"This document contains many non-basic ASCII unicode characters",
 		"This document contains many ambiguous unicode characters",
 		"This document contains many invisible unicode characters",
+		"Configure Unicode Highlight Options",
 		"The character {0} could be confused with the ASCII character {1}, which is more common in source code.",
 		"The character {0} could be confused with the character {1}, which is more common in source code.",
 		"The character {0} is invisible.",
@@ -1559,8 +1563,7 @@ define("vs/editor/editor.main.nls", {
 		"Show Exclude Options",
 		"Exclude {0} (invisible character) from being highlighted",
 		"Exclude {0} from being highlighted",
-		"Allow unicode characters that are more common in the language \"{0}\".",
-		"Configure Unicode Highlight Options"
+		"Allow unicode characters that are more common in the language \"{0}\"."
 	],
 	"vs/editor/contrib/unusualLineTerminators/browser/unusualLineTerminators": [
 		"Unusual Line Terminators",
@@ -1589,12 +1592,12 @@ define("vs/editor/editor.main.nls", {
 		"Delete Word"
 	],
 	"vs/platform/action/common/actionCommonCategories": [
+		"Developer",
 		"View",
 		"Help",
 		"Test",
 		"File",
-		"Preferences",
-		"Developer"
+		"Preferences"
 	],
 	"vs/platform/actionWidget/browser/actionList": [
 		"{0} to apply, {1} to preview",
@@ -1625,27 +1628,45 @@ define("vs/editor/editor.main.nls", {
 	],
 	"vs/platform/audioCues/browser/audioCueService": [
 		"Error on Line",
+		"Error",
 		"Warning on Line",
+		"Warning",
 		"Folded Area on Line",
+		"Folded",
 		"Breakpoint on Line",
+		"Breakpoint",
 		"Inline Suggestion on Line",
 		"Terminal Quick Fix",
+		"Quick Fix",
 		"Debugger Stopped on Breakpoint",
+		"Breakpoint",
 		"No Inlay Hints on Line",
+		"No Inlay Hints",
+		"Task Completed",
 		"Task Completed",
 		"Task Failed",
+		"Task Failed",
 		"Terminal Command Failed",
+		"Command Failed",
+		"Terminal Bell",
 		"Terminal Bell",
 		"Notebook Cell Completed",
+		"Notebook Cell Completed",
+		"Notebook Cell Failed",
 		"Notebook Cell Failed",
 		"Diff Line Inserted",
 		"Diff Line Deleted",
 		"Diff Line Modified",
 		"Chat Request Sent",
+		"Chat Request Sent",
 		"Chat Response Received",
 		"Chat Response Pending",
+		"Chat Response Pending",
+		"Clear",
 		"Clear",
 		"Save",
+		"Save",
+		"Format",
 		"Format"
 	],
 	"vs/platform/configuration/common/configurationRegistry": [
@@ -1838,8 +1859,10 @@ define("vs/editor/editor.main.nls", {
 		"Border color of active sashes.",
 		"Editor background color.",
 		"Editor default foreground color.",
-		"Sticky scroll background color for the editor",
-		"Sticky scroll on hover background color for the editor",
+		"Background color of sticky scroll in the editor",
+		"Background color of sticky scroll on hover in the editor",
+		"Border color of sticky scroll in the editor",
+		" Shadow color of sticky scroll in the editor",
 		"Background color of editor widgets, such as find/replace.",
 		"Foreground color of editor widgets, such as find/replace.",
 		"Border color of editor widgets. The color is only used if the widget chooses to have a border and if the color is not overridden by a widget.",
@@ -1911,7 +1934,8 @@ define("vs/editor/editor.main.nls", {
 		"List/Tree outline color for the focused item when the list/tree is inactive. An active list/tree has keyboard focus, an inactive does not.",
 		"List/Tree background when hovering over items using the mouse.",
 		"List/Tree foreground when hovering over items using the mouse.",
-		"List/Tree drag and drop background when moving items around using the mouse.",
+		"List/Tree drag and drop background when moving items over other items when using the mouse.",
+		"List/Tree drag and drop border color when moving items between items when using the mouse.",
 		"List/Tree foreground color of the match highlights when searching inside the list/tree.",
 		"List/Tree foreground color of the match highlights on actively focused items when searching inside the list/tree.",
 		"List/Tree foreground color for invalid items, for example an unresolved root in explorer.",

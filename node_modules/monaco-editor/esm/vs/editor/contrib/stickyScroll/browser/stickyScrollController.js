@@ -314,6 +314,9 @@ let StickyScrollController = StickyScrollController_1 = class StickyScrollContro
                 // not hovering a sticky scroll line
                 return;
             }
+            if (!this._editor.hasModel() || !this._stickyRangeProjectedOnEditor) {
+                return;
+            }
             if (this._candidateDefinitionsLength > 1) {
                 if (this._focused) {
                     this._disposeFocusStickyScrollStore();
@@ -334,7 +337,7 @@ let StickyScrollController = StickyScrollController_1 = class StickyScrollContro
         if (!this._foldingModel || line === null) {
             return;
         }
-        const stickyLine = this._stickyScrollWidget.getStickyLineForLine(line);
+        const stickyLine = this._stickyScrollWidget.getRenderedStickyLine(line);
         const foldingIcon = stickyLine === null || stickyLine === void 0 ? void 0 : stickyLine.foldingIcon;
         if (!foldingIcon) {
             return;
@@ -377,7 +380,7 @@ let StickyScrollController = StickyScrollController_1 = class StickyScrollContro
         if (lineNumberOption.renderType === 2 /* RenderLineNumbersType.Relative */) {
             this._sessionStore.add(this._editor.onDidChangeCursorPosition(() => {
                 this._showEndForLine = null;
-                this._renderStickyScroll(-1);
+                this._renderStickyScroll(0);
             }));
         }
     }
@@ -394,8 +397,8 @@ let StickyScrollController = StickyScrollController_1 = class StickyScrollContro
     }
     _onTokensChange(event) {
         if (this._needsUpdate(event)) {
-            // Rebuilding the whole widget from line -1
-            this._renderStickyScroll(-1);
+            // Rebuilding the whole widget from line 0
+            this._renderStickyScroll(0);
         }
     }
     _onDidResize() {
@@ -404,12 +407,12 @@ let StickyScrollController = StickyScrollController_1 = class StickyScrollContro
         const theoreticalLines = layoutInfo.height / this._editor.getOption(66 /* EditorOption.lineHeight */);
         this._maxStickyLines = Math.round(theoreticalLines * .25);
     }
-    async _renderStickyScroll(rebuildFromLine = Infinity) {
+    async _renderStickyScroll(rebuildFromLine) {
         var _a, _b;
         const model = this._editor.getModel();
         if (!model || model.isTooLargeForTokenization()) {
             this._foldingModel = null;
-            this._stickyScrollWidget.setState(undefined, null, rebuildFromLine);
+            this._stickyScrollWidget.setState(undefined, null);
             return;
         }
         const stickyLineVersion = this._stickyLineCandidateProvider.getVersionId();

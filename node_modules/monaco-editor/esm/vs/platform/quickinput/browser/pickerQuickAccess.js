@@ -50,6 +50,7 @@ export class PickerQuickAccessProvider extends Disposable {
         let picksCts = undefined;
         const picksDisposable = disposables.add(new MutableDisposable());
         const updatePickerItems = async () => {
+            var _a;
             const picksDisposables = picksDisposable.value = new DisposableStore();
             // Cancel any previous ask for picks and busy
             picksCts === null || picksCts === void 0 ? void 0 : picksCts.dispose(true);
@@ -58,7 +59,10 @@ export class PickerQuickAccessProvider extends Disposable {
             picksCts = new CancellationTokenSource(token);
             // Collect picks and support both long running and short or combined
             const picksToken = picksCts.token;
-            const picksFilter = picker.value.substr(this.prefix.length).trim();
+            let picksFilter = picker.value.substring(this.prefix.length);
+            if (!((_a = this.options) === null || _a === void 0 ? void 0 : _a.shouldSkipTrimPickFilter)) {
+                picksFilter = picksFilter.trim();
+            }
             const providedPicks = this._getPicks(picksFilter, picksDisposables, picksToken, runOptions);
             const applyPicks = (picks, skipEmpty) => {
                 var _a;

@@ -186,7 +186,7 @@ function renderHoverParts(participant, editor, themeService, hoverParts, context
         disposables.add(model.onColorFlushed(async (color) => {
             await _updateColorPresentations(editorModel, model, color, range, colorHover);
             editorUpdatedByColorPicker = true;
-            range = _updateEditorModel(editor, range, model, context);
+            range = _updateEditorModel(editor, range, model);
         }));
     }
     disposables.add(model.onDidChangeColor((color) => {
@@ -203,32 +203,19 @@ function renderHoverParts(participant, editor, themeService, hoverParts, context
     }));
     return disposables;
 }
-function _updateEditorModel(editor, range, model, context) {
-    let textEdits;
-    let newRange;
-    if (model.presentation.textEdit) {
-        textEdits = [model.presentation.textEdit];
-        newRange = new Range(model.presentation.textEdit.range.startLineNumber, model.presentation.textEdit.range.startColumn, model.presentation.textEdit.range.endLineNumber, model.presentation.textEdit.range.endColumn);
-        const trackedRange = editor.getModel()._setTrackedRange(null, newRange, 3 /* TrackedRangeStickiness.GrowsOnlyWhenTypingAfter */);
-        editor.pushUndoStop();
-        editor.executeEdits('colorpicker', textEdits);
-        newRange = editor.getModel()._getTrackedRange(trackedRange) || newRange;
-    }
-    else {
-        textEdits = [{ range, text: model.presentation.label, forceMoveMarkers: false }];
-        newRange = range.setEndPosition(range.endLineNumber, range.startColumn + model.presentation.label.length);
-        editor.pushUndoStop();
-        editor.executeEdits('colorpicker', textEdits);
-    }
+function _updateEditorModel(editor, range, model) {
+    var _a, _b;
+    const textEdits = [];
+    const edit = (_a = model.presentation.textEdit) !== null && _a !== void 0 ? _a : { range, text: model.presentation.label, forceMoveMarkers: false };
+    textEdits.push(edit);
     if (model.presentation.additionalTextEdits) {
-        textEdits = [...model.presentation.additionalTextEdits];
-        editor.executeEdits('colorpicker', textEdits);
-        if (context) {
-            context.hide();
-        }
+        textEdits.push(...model.presentation.additionalTextEdits);
     }
+    const replaceRange = Range.lift(edit.range);
+    const trackedRange = editor.getModel()._setTrackedRange(null, replaceRange, 3 /* TrackedRangeStickiness.GrowsOnlyWhenTypingAfter */);
+    editor.executeEdits('colorpicker', textEdits);
     editor.pushUndoStop();
-    return newRange;
+    return (_b = editor.getModel()._getTrackedRange(trackedRange)) !== null && _b !== void 0 ? _b : replaceRange;
 }
 async function _updateColorPresentations(editorModel, colorPickerModel, color, range, colorHover) {
     const colorPresentations = await getColorPresentations(editorModel, {

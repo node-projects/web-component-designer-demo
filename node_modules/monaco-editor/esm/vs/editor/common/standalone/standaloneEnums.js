@@ -358,7 +358,8 @@ export var EndOfLineSequence;
 export var GlyphMarginLane;
 (function (GlyphMarginLane) {
     GlyphMarginLane[GlyphMarginLane["Left"] = 1] = "Left";
-    GlyphMarginLane[GlyphMarginLane["Right"] = 2] = "Right";
+    GlyphMarginLane[GlyphMarginLane["Center"] = 2] = "Center";
+    GlyphMarginLane[GlyphMarginLane["Right"] = 3] = "Right";
 })(GlyphMarginLane || (GlyphMarginLane = {}));
 /**
  * Describes what to do with the indentation when pressing Enter.
@@ -789,12 +790,12 @@ export var SelectionDirection;
      */
     SelectionDirection[SelectionDirection["RTL"] = 1] = "RTL";
 })(SelectionDirection || (SelectionDirection = {}));
-export var ShowAiIconMode;
-(function (ShowAiIconMode) {
-    ShowAiIconMode["Off"] = "off";
-    ShowAiIconMode["OnCode"] = "onCode";
-    ShowAiIconMode["On"] = "on";
-})(ShowAiIconMode || (ShowAiIconMode = {}));
+export var ShowLightbulbIconMode;
+(function (ShowLightbulbIconMode) {
+    ShowLightbulbIconMode["Off"] = "off";
+    ShowLightbulbIconMode["OnCode"] = "onCode";
+    ShowLightbulbIconMode["On"] = "on";
+})(ShowLightbulbIconMode || (ShowLightbulbIconMode = {}));
 export var SignatureHelpTriggerKind;
 (function (SignatureHelpTriggerKind) {
     SignatureHelpTriggerKind[SignatureHelpTriggerKind["Invoke"] = 1] = "Invoke";

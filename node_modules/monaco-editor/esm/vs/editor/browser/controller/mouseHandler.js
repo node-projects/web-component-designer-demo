@@ -496,6 +496,7 @@ class TopBottomDragScrollingOperation extends Disposable {
     }
     dispose() {
         this._animationFrameDisposable.dispose();
+        super.dispose();
     }
     setPosition(position, mouseEvent) {
         this._position = position;

@@ -208,6 +208,9 @@ let SuggestWidget = SuggestWidget_1 = class SuggestWidget {
                 applyStatusBarStyle();
                 applyIconStyle();
             }
+            if (this._completionModel && (e.hasChanged(50 /* EditorOption.fontInfo */) || e.hasChanged(118 /* EditorOption.suggestFontSize */) || e.hasChanged(119 /* EditorOption.suggestLineHeight */))) {
+                this._list.splice(0, this._list.length, this._completionModel.items);
+            }
         }));
         this._ctxSuggestWidgetVisible = SuggestContext.Visible.bindTo(_contextKeyService);
         this._ctxSuggestWidgetDetailsVisible = SuggestContext.DetailsVisible.bindTo(_contextKeyService);
@@ -594,9 +597,14 @@ let SuggestWidget = SuggestWidget_1 = class SuggestWidget {
             else {
                 this._details.widget.renderItem(this._list.getFocusedElements()[0], this._explainMode);
             }
-            this._positionDetails();
+            if (!this._details.widget.isEmpty) {
+                this._positionDetails();
+                this.element.domNode.classList.add('shows-details');
+            }
+            else {
+                this._details.hide();
+            }
             this.editor.focus();
-            this.element.domNode.classList.add('shows-details');
         });
     }
     toggleExplainMode() {
@@ -643,7 +651,7 @@ let SuggestWidget = SuggestWidget_1 = class SuggestWidget {
             // no special positioning when widget isn't showing list
             return;
         }
-        if (this._isDetailsVisible()) {
+        if (this._isDetailsVisible() && !this._details.widget.isEmpty) {
             this._details.show();
         }
         this._positionDetails();

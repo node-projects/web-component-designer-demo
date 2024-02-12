@@ -1,6 +1,6 @@
 /*!-----------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
- * Version: 0.45.0(5e5af013f8d295555a7210df0d5f2cea0bf5dd56)
+ * Version: 0.46.0(21007360cad28648bdf46282a2592cb47c3a7a6f)
  * Released under the MIT license
  * https://github.com/microsoft/vscode/blob/main/LICENSE.txt
  *-----------------------------------------------------------*/
@@ -3680,7 +3680,7 @@ define(__m[5/*vs/base/common/errors*/], __M([0/*require*/,1/*exports*/]), functi
 define(__m[12/*vs/base/common/assert*/], __M([0/*require*/,1/*exports*/,5/*vs/base/common/errors*/]), function (require, exports, errors_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.checkAdjacentItems = exports.assertFn = exports.assertNever = exports.ok = void 0;
+    exports.checkAdjacentItems = exports.assertFn = exports.softAssert = exports.assertNever = exports.ok = void 0;
     /**
      * Throws an error with the provided message if the provided value does not evaluate to a true Javascript value.
      *
@@ -3705,6 +3705,12 @@ define(__m[12/*vs/base/common/assert*/], __M([0/*require*/,1/*exports*/,5/*vs/ba
         throw new Error(message);
     }
     exports.assertNever = assertNever;
+    function softAssert(condition) {
+        if (!condition) {
+            (0, errors_1.onUnexpectedError)(new errors_1.BugIndicatingError('Assertion Failed'));
+        }
+    }
+    exports.softAssert = softAssert;
     /**
      * condition must be side-effect free!
      */
@@ -3905,6 +3911,14 @@ define(__m[21/*vs/base/common/iterator*/], __M([0/*require*/,1/*exports*/]), fun
             return [consumed, { [Symbol.iterator]() { return iterator; } }];
         }
         Iterable.consume = consume;
+        async function asyncToArray(iterable) {
+            const result = [];
+            for await (const item of iterable) {
+                result.push(item);
+            }
+            return Promise.resolve(result);
+        }
+        Iterable.asyncToArray = asyncToArray;
     })(Iterable || (exports.Iterable = Iterable = {}));
 });
 
@@ -5919,25 +5933,6 @@ define(__m[9/*vs/base/common/event*/], __M([0/*require*/,1/*exports*/,5/*vs/base
             return event(e => handler(e));
         }
         Event.runAndSubscribe = runAndSubscribe;
-        /**
-         * Adds a listener to an event and calls the listener immediately with undefined as the event object. A new
-         * {@link DisposableStore} is passed to the listener which is disposed when the returned disposable is disposed.
-         */
-        function runAndSubscribeWithStore(event, handler) {
-            let store = null;
-            function run(e) {
-                store === null || store === void 0 ? void 0 : store.dispose();
-                store = new lifecycle_1.DisposableStore();
-                handler(e, store);
-            }
-            run(undefined);
-            const disposable = event(e => run(e));
-            return (0, lifecycle_1.toDisposable)(() => {
-                disposable.dispose();
-                store === null || store === void 0 ? void 0 : store.dispose();
-            });
-        }
-        Event.runAndSubscribeWithStore = runAndSubscribeWithStore;
         class EmitterObserver {
             constructor(_observable, store) {
                 this._observable = _observable;
@@ -6741,7 +6736,7 @@ define(__m[6/*vs/base/common/strings*/], __M([0/*require*/,1/*exports*/,32/*vs/b
     "use strict";
     var _a;
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.InvisibleCharacters = exports.AmbiguousCharacters = exports.noBreakWhitespace = exports.getLeftDeleteOffset = exports.singleLetterHash = exports.containsUppercaseCharacter = exports.startsWithUTF8BOM = exports.UTF8_BOM_CHARACTER = exports.isEmojiImprecise = exports.isFullWidthCharacter = exports.containsUnusualLineTerminators = exports.UNUSUAL_LINE_TERMINATORS = exports.isBasicASCII = exports.containsRTL = exports.getCharContainingOffset = exports.prevCharLength = exports.nextCharLength = exports.GraphemeIterator = exports.CodePointIterator = exports.getNextCodePoint = exports.computeCodePoint = exports.isLowSurrogate = exports.isHighSurrogate = exports.commonSuffixLength = exports.commonPrefixLength = exports.startsWithIgnoreCase = exports.equalsIgnoreCase = exports.isUpperAsciiLetter = exports.isLowerAsciiLetter = exports.isAsciiDigit = exports.compareSubstringIgnoreCase = exports.compareIgnoreCase = exports.compareSubstring = exports.compare = exports.lastNonWhitespaceIndex = exports.getLeadingWhitespace = exports.firstNonWhitespaceIndex = exports.splitLines = exports.regExpLeadsToEndlessLoop = exports.createRegExp = exports.stripWildcards = exports.convertSimple2RegExpPattern = exports.rtrim = exports.ltrim = exports.trim = exports.escapeRegExpCharacters = exports.escape = exports.format = exports.isFalsyOrWhitespace = void 0;
+    exports.InvisibleCharacters = exports.AmbiguousCharacters = exports.noBreakWhitespace = exports.getLeftDeleteOffset = exports.singleLetterHash = exports.containsUppercaseCharacter = exports.startsWithUTF8BOM = exports.UTF8_BOM_CHARACTER = exports.isEmojiImprecise = exports.isFullWidthCharacter = exports.containsUnusualLineTerminators = exports.UNUSUAL_LINE_TERMINATORS = exports.isBasicASCII = exports.containsRTL = exports.getCharContainingOffset = exports.prevCharLength = exports.nextCharLength = exports.GraphemeIterator = exports.CodePointIterator = exports.getNextCodePoint = exports.computeCodePoint = exports.isLowSurrogate = exports.isHighSurrogate = exports.commonSuffixLength = exports.commonPrefixLength = exports.startsWithIgnoreCase = exports.equalsIgnoreCase = exports.isUpperAsciiLetter = exports.isLowerAsciiLetter = exports.isAsciiDigit = exports.compareSubstringIgnoreCase = exports.compareIgnoreCase = exports.compareSubstring = exports.compare = exports.lastNonWhitespaceIndex = exports.getLeadingWhitespace = exports.firstNonWhitespaceIndex = exports.splitLines = exports.regExpLeadsToEndlessLoop = exports.createRegExp = exports.stripWildcards = exports.convertSimple2RegExpPattern = exports.rtrim = exports.ltrim = exports.trim = exports.escapeRegExpCharacters = exports.escape = exports.htmlAttributeEncodeValue = exports.format = exports.isFalsyOrWhitespace = void 0;
     function isFalsyOrWhitespace(str) {
         if (!str || typeof str !== 'string') {
             return true;
@@ -6768,6 +6763,25 @@ define(__m[6/*vs/base/common/strings*/], __M([0/*require*/,1/*exports*/,32/*vs/b
         });
     }
     exports.format = format;
+    /**
+     * Encodes the given value so that it can be used as literal value in html attributes.
+     *
+     * In other words, computes `$val`, such that `attr` in `<div attr="$val" />` has the runtime value `value`.
+     * This prevents XSS injection.
+     */
+    function htmlAttributeEncodeValue(value) {
+        return value.replace(/[<>"'&]/g, ch => {
+            switch (ch) {
+                case '<': return '&lt;';
+                case '>': return '&gt;';
+                case '"': return '&quot;';
+                case '\'': return '&apos;';
+                case '&': return '&amp;';
+            }
+            return ch;
+        });
+    }
+    exports.htmlAttributeEncodeValue = htmlAttributeEncodeValue;
     /**
      * Converts HTML characters inside the string to use entities instead. Makes the string safe from
      * being used e.g. in HTMLElement.innerHTML.
@@ -8995,6 +9009,7 @@ define(__m[40/*vs/base/common/codicons*/], __M([0/*require*/,1/*exports*/,25/*vs
         closeDirty: register('close-dirty', 0xea71),
         debugBreakpoint: register('debug-breakpoint', 0xea71),
         debugBreakpointDisabled: register('debug-breakpoint-disabled', 0xea71),
+        debugBreakpointPending: register('debug-breakpoint-pending', 0xebd9),
         debugHint: register('debug-hint', 0xea71),
         primitiveSquare: register('primitive-square', 0xea72),
         edit: register('edit', 0xea73),
@@ -9488,6 +9503,10 @@ define(__m[40/*vs/base/common/codicons*/], __M([0/*require*/,1/*exports*/,25/*vs
         sparkleFilled: register('sparkle-filled', 0xec21),
         diffSingle: register('diff-single', 0xec22),
         diffMultiple: register('diff-multiple', 0xec23),
+        surroundWith: register('surround-with', 0xec24),
+        gitStash: register('git-stash', 0xec26),
+        gitStashApply: register('git-stash-apply', 0xec27),
+        gitStashPop: register('git-stash-pop', 0xec28),
         // derived icons, that could become separate icons
         dialogError: register('dialog-error', 'error'),
         dialogWarning: register('dialog-warning', 'warning'),
@@ -9825,12 +9844,6 @@ define(__m[3/*vs/editor/common/core/offsetRange*/], __M([0/*require*/,1/*exports
                 sortedRanges.splice(i, j - i, new OffsetRange(start, end));
             }
         }
-        static tryCreate(start, endExclusive) {
-            if (start > endExclusive) {
-                return undefined;
-            }
-            return new OffsetRange(start, endExclusive);
-        }
         static ofLength(length) {
             return new OffsetRange(0, length);
         }
@@ -9862,12 +9875,6 @@ define(__m[3/*vs/editor/common/core/offsetRange*/], __M([0/*require*/,1/*exports
         toString() {
             return `[${this.start}, ${this.endExclusive})`;
         }
-        equals(other) {
-            return this.start === other.start && this.endExclusive === other.endExclusive;
-        }
-        containsRange(other) {
-            return this.start <= other.start && other.endExclusive <= this.endExclusive;
-        }
         contains(offset) {
             return this.start <= offset && offset < this.endExclusive;
         }
@@ -9891,6 +9898,11 @@ define(__m[3/*vs/editor/common/core/offsetRange*/], __M([0/*require*/,1/*exports
                 return new OffsetRange(start, end);
             }
             return undefined;
+        }
+        intersects(other) {
+            const start = Math.max(this.start, other.start);
+            const end = Math.min(this.endExclusive, other.endExclusive);
+            return start < end;
         }
         isBefore(other) {
             return this.endExclusive <= other.start;
@@ -10558,9 +10570,6 @@ define(__m[10/*vs/editor/common/core/lineRange*/], __M([0/*require*/,1/*exports*
      * A range of lines (1-based).
      */
     class LineRange {
-        static fromRange(range) {
-            return new LineRange(range.startLineNumber, range.endLineNumber);
-        }
         static fromRangeInclusive(range) {
             return new LineRange(range.startLineNumber, range.endLineNumber + 1);
         }
@@ -11242,6 +11251,15 @@ define(__m[8/*vs/editor/common/diff/defaultLinesDiffComputer/algorithms/diffAlgo
         toString() {
             return `${this.offset1} <-> ${this.offset2}`;
         }
+        delta(offset) {
+            if (offset === 0) {
+                return this;
+            }
+            return new OffsetPair(this.offset1 + offset, this.offset2 + offset);
+        }
+        equals(other) {
+            return this.offset1 === other.offset1 && this.offset2 === other.offset2;
+        }
     }
     exports.OffsetPair = OffsetPair;
     OffsetPair.zero = new OffsetPair(0, 0);
@@ -11550,8 +11568,8 @@ define(__m[43/*vs/editor/common/diff/defaultLinesDiffComputer/heuristicSequenceO
             const prevDiff = (i > 0 ? sequenceDiffs[i - 1] : undefined);
             const diff = sequenceDiffs[i];
             const nextDiff = (i + 1 < sequenceDiffs.length ? sequenceDiffs[i + 1] : undefined);
-            const seq1ValidRange = new offsetRange_1.OffsetRange(prevDiff ? prevDiff.seq1Range.start + 1 : 0, nextDiff ? nextDiff.seq1Range.endExclusive - 1 : sequence1.length);
-            const seq2ValidRange = new offsetRange_1.OffsetRange(prevDiff ? prevDiff.seq2Range.start + 1 : 0, nextDiff ? nextDiff.seq2Range.endExclusive - 1 : sequence2.length);
+            const seq1ValidRange = new offsetRange_1.OffsetRange(prevDiff ? prevDiff.seq1Range.endExclusive + 1 : 0, nextDiff ? nextDiff.seq1Range.start - 1 : sequence1.length);
+            const seq2ValidRange = new offsetRange_1.OffsetRange(prevDiff ? prevDiff.seq2Range.endExclusive + 1 : 0, nextDiff ? nextDiff.seq2Range.start - 1 : sequence2.length);
             if (diff.seq1Range.isEmpty) {
                 sequenceDiffs[i] = shiftDiffToBetterPosition(diff, sequence1, sequence2, seq1ValidRange, seq2ValidRange);
             }
@@ -11616,62 +11634,60 @@ define(__m[43/*vs/editor/common/diff/defaultLinesDiffComputer/heuristicSequenceO
     }
     exports.removeShortMatches = removeShortMatches;
     function extendDiffsToEntireWordIfAppropriate(sequence1, sequence2, sequenceDiffs) {
+        const equalMappings = diffAlgorithm_1.SequenceDiff.invert(sequenceDiffs, sequence1.length);
         const additional = [];
-        let lastModifiedWord = undefined;
-        function maybePushWordToAdditional() {
-            if (!lastModifiedWord) {
+        let lastPoint = new diffAlgorithm_1.OffsetPair(0, 0);
+        function scanWord(pair, equalMapping) {
+            if (pair.offset1 < lastPoint.offset1 || pair.offset2 < lastPoint.offset2) {
                 return;
             }
-            const originalLength1 = lastModifiedWord.s1Range.length - lastModifiedWord.deleted;
-            const originalLength2 = lastModifiedWord.s2Range.length - lastModifiedWord.added;
-            if (originalLength1 !== originalLength2) {
-                // TODO figure out why this happens
+            const w1 = sequence1.findWordContaining(pair.offset1);
+            const w2 = sequence2.findWordContaining(pair.offset2);
+            if (!w1 || !w2) {
+                return;
             }
-            if (Math.max(lastModifiedWord.deleted, lastModifiedWord.added) + (lastModifiedWord.count - 1) > originalLength1) {
-                additional.push(new diffAlgorithm_1.SequenceDiff(lastModifiedWord.s1Range, lastModifiedWord.s2Range));
+            let w = new diffAlgorithm_1.SequenceDiff(w1, w2);
+            const equalPart = w.intersect(equalMapping);
+            let equalChars1 = equalPart.seq1Range.length;
+            let equalChars2 = equalPart.seq2Range.length;
+            // The words do not touch previous equals mappings, as we would have processed them already.
+            // But they might touch the next ones.
+            while (equalMappings.length > 0) {
+                const next = equalMappings[0];
+                const intersects = next.seq1Range.intersects(w1) || next.seq2Range.intersects(w2);
+                if (!intersects) {
+                    break;
+                }
+                const v1 = sequence1.findWordContaining(next.seq1Range.start);
+                const v2 = sequence2.findWordContaining(next.seq2Range.start);
+                // Because there is an intersection, we know that the words are not empty.
+                const v = new diffAlgorithm_1.SequenceDiff(v1, v2);
+                const equalPart = v.intersect(next);
+                equalChars1 += equalPart.seq1Range.length;
+                equalChars2 += equalPart.seq2Range.length;
+                w = w.join(v);
+                if (w.seq1Range.endExclusive >= next.seq1Range.endExclusive) {
+                    // The word extends beyond the next equal mapping.
+                    equalMappings.shift();
+                }
+                else {
+                    break;
+                }
             }
-            lastModifiedWord = undefined;
+            if (equalChars1 + equalChars2 < (w.seq1Range.length + w.seq2Range.length) * 2 / 3) {
+                additional.push(w);
+            }
+            lastPoint = w.getEndExclusives();
         }
-        for (const s of sequenceDiffs) {
-            function processWord(s1Range, s2Range) {
-                var _a, _b, _c, _d;
-                if (!lastModifiedWord || !lastModifiedWord.s1Range.containsRange(s1Range) || !lastModifiedWord.s2Range.containsRange(s2Range)) {
-                    if (lastModifiedWord && !(lastModifiedWord.s1Range.endExclusive < s1Range.start && lastModifiedWord.s2Range.endExclusive < s2Range.start)) {
-                        const s1Added = offsetRange_1.OffsetRange.tryCreate(lastModifiedWord.s1Range.endExclusive, s1Range.start);
-                        const s2Added = offsetRange_1.OffsetRange.tryCreate(lastModifiedWord.s2Range.endExclusive, s2Range.start);
-                        lastModifiedWord.deleted += (_a = s1Added === null || s1Added === void 0 ? void 0 : s1Added.length) !== null && _a !== void 0 ? _a : 0;
-                        lastModifiedWord.added += (_b = s2Added === null || s2Added === void 0 ? void 0 : s2Added.length) !== null && _b !== void 0 ? _b : 0;
-                        lastModifiedWord.s1Range = lastModifiedWord.s1Range.join(s1Range);
-                        lastModifiedWord.s2Range = lastModifiedWord.s2Range.join(s2Range);
-                    }
-                    else {
-                        maybePushWordToAdditional();
-                        lastModifiedWord = { added: 0, deleted: 0, count: 0, s1Range: s1Range, s2Range: s2Range };
-                    }
-                }
-                const changedS1 = s1Range.intersect(s.seq1Range);
-                const changedS2 = s2Range.intersect(s.seq2Range);
-                lastModifiedWord.count++;
-                lastModifiedWord.deleted += (_c = changedS1 === null || changedS1 === void 0 ? void 0 : changedS1.length) !== null && _c !== void 0 ? _c : 0;
-                lastModifiedWord.added += (_d = changedS2 === null || changedS2 === void 0 ? void 0 : changedS2.length) !== null && _d !== void 0 ? _d : 0;
+        while (equalMappings.length > 0) {
+            const next = equalMappings.shift();
+            if (next.seq1Range.isEmpty) {
+                continue;
             }
-            const w1Before = sequence1.findWordContaining(s.seq1Range.start - 1);
-            const w2Before = sequence2.findWordContaining(s.seq2Range.start - 1);
-            const w1After = sequence1.findWordContaining(s.seq1Range.endExclusive);
-            const w2After = sequence2.findWordContaining(s.seq2Range.endExclusive);
-            if (w1Before && w1After && w2Before && w2After && w1Before.equals(w1After) && w2Before.equals(w2After)) {
-                processWord(w1Before, w2Before);
-            }
-            else {
-                if (w1Before && w2Before) {
-                    processWord(w1Before, w2Before);
-                }
-                if (w1After && w2After) {
-                    processWord(w1After, w2After);
-                }
-            }
+            scanWord(next.getStarts(), next);
+            // The equal parts are not empty, so -1 gives us a character that is equal in both parts.
+            scanWord(next.getEndExclusives().delta(-1), next);
         }
-        maybePushWordToAdditional();
         const merged = mergeSequenceDiffs(sequenceDiffs, additional);
         return merged;
     }
@@ -11809,7 +11825,12 @@ define(__m[43/*vs/editor/common/diff/defaultLinesDiffComputer/heuristicSequenceO
             }
             const availableSpace = diffAlgorithm_1.SequenceDiff.fromOffsetPairs(prev ? prev.getEndExclusives() : diffAlgorithm_1.OffsetPair.zero, next ? next.getStarts() : diffAlgorithm_1.OffsetPair.max);
             const result = newDiff.intersect(availableSpace);
-            newDiffs.push(result);
+            if (newDiffs.length > 0 && result.getStarts().equals(newDiffs[newDiffs.length - 1].getEndExclusives())) {
+                newDiffs[newDiffs.length - 1] = newDiffs[newDiffs.length - 1].join(result);
+            }
+            else {
+                newDiffs.push(result);
+            }
         });
         return newDiffs;
     }
@@ -12105,6 +12126,10 @@ define(__m[30/*vs/editor/common/diff/defaultLinesDiffComputer/linesSliceCharSequ
                 // don't break between \r and \n
                 return 0;
             }
+            if (prevCategory === 8 /* CharBoundaryCategory.LineBreakLF */) {
+                // prefer the linebreak before the change
+                return 150;
+            }
             let score = 0;
             if (prevCategory !== nextCategory) {
                 score += 10;
@@ -12174,7 +12199,7 @@ define(__m[30/*vs/editor/common/diff/defaultLinesDiffComputer/linesSliceCharSequ
         [2 /* CharBoundaryCategory.WordNumber */]: 0,
         [3 /* CharBoundaryCategory.End */]: 10,
         [4 /* CharBoundaryCategory.Other */]: 2,
-        [5 /* CharBoundaryCategory.Separator */]: 3,
+        [5 /* CharBoundaryCategory.Separator */]: 30,
         [6 /* CharBoundaryCategory.Space */]: 3,
         [7 /* CharBoundaryCategory.LineBreakCR */]: 10,
         [8 /* CharBoundaryCategory.LineBreakLF */]: 10,
@@ -12265,16 +12290,27 @@ define(__m[16/*vs/editor/common/diff/rangeMapping*/], __M([0/*require*/,1/*expor
             let lastOriginalEndLineNumber = 1;
             let lastModifiedEndLineNumber = 1;
             for (const m of mapping) {
-                const r = new DetailedLineRangeMapping(new lineRange_1.LineRange(lastOriginalEndLineNumber, m.original.startLineNumber), new lineRange_1.LineRange(lastModifiedEndLineNumber, m.modified.startLineNumber), undefined);
+                const r = new LineRangeMapping(new lineRange_1.LineRange(lastOriginalEndLineNumber, m.original.startLineNumber), new lineRange_1.LineRange(lastModifiedEndLineNumber, m.modified.startLineNumber));
                 if (!r.modified.isEmpty) {
                     result.push(r);
                 }
                 lastOriginalEndLineNumber = m.original.endLineNumberExclusive;
                 lastModifiedEndLineNumber = m.modified.endLineNumberExclusive;
             }
-            const r = new DetailedLineRangeMapping(new lineRange_1.LineRange(lastOriginalEndLineNumber, originalLineCount + 1), new lineRange_1.LineRange(lastModifiedEndLineNumber, modifiedLineCount + 1), undefined);
+            const r = new LineRangeMapping(new lineRange_1.LineRange(lastOriginalEndLineNumber, originalLineCount + 1), new lineRange_1.LineRange(lastModifiedEndLineNumber, modifiedLineCount + 1));
             if (!r.modified.isEmpty) {
                 result.push(r);
+            }
+            return result;
+        }
+        static clip(mapping, originalRange, modifiedRange) {
+            const result = [];
+            for (const m of mapping) {
+                const original = m.original.intersect(originalRange);
+                const modified = m.modified.intersect(modifiedRange);
+                if (original && !original.isEmpty && modified && !modified.isEmpty) {
+                    result.push(new LineRangeMapping(original, modified));
+                }
             }
             return result;
         }
@@ -13796,7 +13832,8 @@ define(__m[53/*vs/editor/common/model*/], __M([0/*require*/,1/*exports*/,14/*vs/
     var GlyphMarginLane;
     (function (GlyphMarginLane) {
         GlyphMarginLane[GlyphMarginLane["Left"] = 1] = "Left";
-        GlyphMarginLane[GlyphMarginLane["Right"] = 2] = "Right";
+        GlyphMarginLane[GlyphMarginLane["Center"] = 2] = "Center";
+        GlyphMarginLane[GlyphMarginLane["Right"] = 3] = "Right";
     })(GlyphMarginLane || (exports.GlyphMarginLane = GlyphMarginLane = {}));
     /**
      * Position in the minimap to render the decoration.
@@ -14925,7 +14962,7 @@ define(__m[57/*vs/editor/common/services/unicodeTextModelHighlighter*/], __M([0/
 define(__m[58/*vs/editor/common/standalone/standaloneEnums*/], __M([0/*require*/,1/*exports*/]), function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.WrappingIndent = exports.TrackedRangeStickiness = exports.TextEditorCursorStyle = exports.TextEditorCursorBlinkingStyle = exports.SymbolTag = exports.SymbolKind = exports.SignatureHelpTriggerKind = exports.ShowAiIconMode = exports.SelectionDirection = exports.ScrollbarVisibility = exports.ScrollType = exports.RenderMinimap = exports.RenderLineNumbersType = exports.PositionAffinity = exports.OverviewRulerLane = exports.OverlayWidgetPositionPreference = exports.MouseTargetType = exports.MinimapPosition = exports.MarkerTag = exports.MarkerSeverity = exports.KeyCode = exports.InlineCompletionTriggerKind = exports.InlayHintKind = exports.InjectedTextCursorStops = exports.IndentAction = exports.GlyphMarginLane = exports.EndOfLineSequence = exports.EndOfLinePreference = exports.EditorOption = exports.EditorAutoIndentStrategy = exports.DocumentHighlightKind = exports.DefaultEndOfLine = exports.CursorChangeReason = exports.ContentWidgetPositionPreference = exports.CompletionTriggerKind = exports.CompletionItemTag = exports.CompletionItemKind = exports.CompletionItemInsertTextRule = exports.CodeActionTriggerType = exports.AccessibilitySupport = void 0;
+    exports.WrappingIndent = exports.TrackedRangeStickiness = exports.TextEditorCursorStyle = exports.TextEditorCursorBlinkingStyle = exports.SymbolTag = exports.SymbolKind = exports.SignatureHelpTriggerKind = exports.ShowLightbulbIconMode = exports.SelectionDirection = exports.ScrollbarVisibility = exports.ScrollType = exports.RenderMinimap = exports.RenderLineNumbersType = exports.PositionAffinity = exports.OverviewRulerLane = exports.OverlayWidgetPositionPreference = exports.MouseTargetType = exports.MinimapPosition = exports.MarkerTag = exports.MarkerSeverity = exports.KeyCode = exports.InlineCompletionTriggerKind = exports.InlayHintKind = exports.InjectedTextCursorStops = exports.IndentAction = exports.GlyphMarginLane = exports.EndOfLineSequence = exports.EndOfLinePreference = exports.EditorOption = exports.EditorAutoIndentStrategy = exports.DocumentHighlightKind = exports.DefaultEndOfLine = exports.CursorChangeReason = exports.ContentWidgetPositionPreference = exports.CompletionTriggerKind = exports.CompletionItemTag = exports.CompletionItemKind = exports.CompletionItemInsertTextRule = exports.CodeActionTriggerType = exports.AccessibilitySupport = void 0;
     // THIS IS A GENERATED FILE. DO NOT EDIT DIRECTLY.
     var AccessibilitySupport;
     (function (AccessibilitySupport) {
@@ -15282,7 +15319,8 @@ define(__m[58/*vs/editor/common/standalone/standaloneEnums*/], __M([0/*require*/
     var GlyphMarginLane;
     (function (GlyphMarginLane) {
         GlyphMarginLane[GlyphMarginLane["Left"] = 1] = "Left";
-        GlyphMarginLane[GlyphMarginLane["Right"] = 2] = "Right";
+        GlyphMarginLane[GlyphMarginLane["Center"] = 2] = "Center";
+        GlyphMarginLane[GlyphMarginLane["Right"] = 3] = "Right";
     })(GlyphMarginLane || (exports.GlyphMarginLane = GlyphMarginLane = {}));
     /**
      * Describes what to do with the indentation when pressing Enter.
@@ -15713,12 +15751,12 @@ define(__m[58/*vs/editor/common/standalone/standaloneEnums*/], __M([0/*require*/
          */
         SelectionDirection[SelectionDirection["RTL"] = 1] = "RTL";
     })(SelectionDirection || (exports.SelectionDirection = SelectionDirection = {}));
-    var ShowAiIconMode;
-    (function (ShowAiIconMode) {
-        ShowAiIconMode["Off"] = "off";
-        ShowAiIconMode["OnCode"] = "onCode";
-        ShowAiIconMode["On"] = "on";
-    })(ShowAiIconMode || (exports.ShowAiIconMode = ShowAiIconMode = {}));
+    var ShowLightbulbIconMode;
+    (function (ShowLightbulbIconMode) {
+        ShowLightbulbIconMode["Off"] = "off";
+        ShowLightbulbIconMode["OnCode"] = "onCode";
+        ShowLightbulbIconMode["On"] = "on";
+    })(ShowLightbulbIconMode || (exports.ShowLightbulbIconMode = ShowLightbulbIconMode = {}));
     var SignatureHelpTriggerKind;
     (function (SignatureHelpTriggerKind) {
         SignatureHelpTriggerKind[SignatureHelpTriggerKind["Invoke"] = 1] = "Invoke";
@@ -16016,27 +16054,8 @@ define(__m[17/*vs/base/common/platform*/], __M([0/*require*/,1/*exports*/,60/*vs
     }
     const isElectronProcess = typeof ((_a = nodeProcess === null || nodeProcess === void 0 ? void 0 : nodeProcess.versions) === null || _a === void 0 ? void 0 : _a.electron) === 'string';
     const isElectronRenderer = isElectronProcess && (nodeProcess === null || nodeProcess === void 0 ? void 0 : nodeProcess.type) === 'renderer';
-    // Web environment
-    if (typeof navigator === 'object' && !isElectronRenderer) {
-        _userAgent = navigator.userAgent;
-        _isWindows = _userAgent.indexOf('Windows') >= 0;
-        _isMacintosh = _userAgent.indexOf('Macintosh') >= 0;
-        _isIOS = (_userAgent.indexOf('Macintosh') >= 0 || _userAgent.indexOf('iPad') >= 0 || _userAgent.indexOf('iPhone') >= 0) && !!navigator.maxTouchPoints && navigator.maxTouchPoints > 0;
-        _isLinux = _userAgent.indexOf('Linux') >= 0;
-        _isMobile = (_userAgent === null || _userAgent === void 0 ? void 0 : _userAgent.indexOf('Mobi')) >= 0;
-        _isWeb = true;
-        const configuredLocale = nls.getConfiguredDefaultLocale(
-        // This call _must_ be done in the file that calls `nls.getConfiguredDefaultLocale`
-        // to ensure that the NLS AMD Loader plugin has been loaded and configured.
-        // This is because the loader plugin decides what the default locale is based on
-        // how it's able to resolve the strings.
-        nls.localize(0, null));
-        _locale = configuredLocale || exports.LANGUAGE_DEFAULT;
-        _language = _locale;
-        _platformLocale = navigator.language;
-    }
     // Native environment
-    else if (typeof nodeProcess === 'object') {
+    if (typeof nodeProcess === 'object') {
         _isWindows = (nodeProcess.platform === 'win32');
         _isMacintosh = (nodeProcess.platform === 'darwin');
         _isLinux = (nodeProcess.platform === 'linux');
@@ -16060,6 +16079,25 @@ define(__m[17/*vs/base/common/platform*/], __M([0/*require*/,1/*exports*/,60/*vs
             }
         }
         _isNative = true;
+    }
+    // Web environment
+    else if (typeof navigator === 'object' && !isElectronRenderer) {
+        _userAgent = navigator.userAgent;
+        _isWindows = _userAgent.indexOf('Windows') >= 0;
+        _isMacintosh = _userAgent.indexOf('Macintosh') >= 0;
+        _isIOS = (_userAgent.indexOf('Macintosh') >= 0 || _userAgent.indexOf('iPad') >= 0 || _userAgent.indexOf('iPhone') >= 0) && !!navigator.maxTouchPoints && navigator.maxTouchPoints > 0;
+        _isLinux = _userAgent.indexOf('Linux') >= 0;
+        _isMobile = (_userAgent === null || _userAgent === void 0 ? void 0 : _userAgent.indexOf('Mobi')) >= 0;
+        _isWeb = true;
+        const configuredLocale = nls.getConfiguredDefaultLocale(
+        // This call _must_ be done in the file that calls `nls.getConfiguredDefaultLocale`
+        // to ensure that the NLS AMD Loader plugin has been loaded and configured.
+        // This is because the loader plugin decides what the default locale is based on
+        // how it's able to resolve the strings.
+        nls.localize(0, null));
+        _locale = configuredLocale || exports.LANGUAGE_DEFAULT;
+        _language = _locale;
+        _platformLocale = navigator.language;
     }
     // Unknown environment
     else {
@@ -18600,7 +18638,7 @@ define(__m[67/*vs/base/common/worker/simpleWorker*/], __M([0/*require*/,1/*expor
                         delete loaderConfig.paths['vs'];
                     }
                 }
-                if (typeof loaderConfig.trustedTypesPolicy !== undefined) {
+                if (typeof loaderConfig.trustedTypesPolicy !== 'undefined') {
                     // don't use, it has been destroyed during serialize
                     delete loaderConfig['trustedTypesPolicy'];
                 }
@@ -19298,7 +19336,8 @@ define(__m[68/*vs/editor/common/services/editorSimpleWorker*/], __M([0/*require*
             if (!original || !modified) {
                 return null;
             }
-            return EditorSimpleWorker.computeDiff(original, modified, options, algorithm);
+            const result = EditorSimpleWorker.computeDiff(original, modified, options, algorithm);
+            return result;
         }
         static computeDiff(originalTextModel, modifiedTextModel, options, algorithm) {
             const diffAlgorithm = algorithm === 'advanced' ? linesDiffComputers_1.linesDiffComputers.getDefault() : linesDiffComputers_1.linesDiffComputers.getLegacy();

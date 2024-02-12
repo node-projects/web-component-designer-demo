@@ -129,4 +129,12 @@ export var Iterable;
         return [consumed, { [Symbol.iterator]() { return iterator; } }];
     }
     Iterable.consume = consume;
+    async function asyncToArray(iterable) {
+        const result = [];
+        for await (const item of iterable) {
+            result.push(item);
+        }
+        return Promise.resolve(result);
+    }
+    Iterable.asyncToArray = asyncToArray;
 })(Iterable || (Iterable = {}));

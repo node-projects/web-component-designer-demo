@@ -311,11 +311,11 @@ let DropdownWithDefaultActionViewItem = class DropdownWithDefaultActionViewItem 
             actionRunner: (_c = options === null || options === void 0 ? void 0 : options.actionRunner) !== null && _c !== void 0 ? _c : new ActionRunner(),
         };
         this._dropdown = new DropdownMenuActionViewItem(submenuAction, submenuAction.actions, this._contextMenuService, dropdownOptions);
-        this._dropdown.actionRunner.onDidRun((e) => {
+        this._register(this._dropdown.actionRunner.onDidRun((e) => {
             if (e.action instanceof MenuItemAction) {
                 this.update(e.action);
             }
-        });
+        }));
     }
     update(lastAction) {
         var _a;

@@ -352,3 +352,11 @@ export function bindContextKey(key, service, computeValue) {
         boundKey.set(computeValue(reader));
     });
 }
+export function filterWithPrevious(arr, filter) {
+    let prev;
+    return arr.filter(cur => {
+        const result = filter(cur, prev);
+        prev = cur;
+        return result;
+    });
+}

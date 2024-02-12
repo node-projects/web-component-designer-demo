@@ -58,7 +58,7 @@ let CodeActionController = CodeActionController_1 = class CodeActionController e
         this._lightBulbWidget = new Lazy(() => {
             const widget = this._editor.getContribution(LightBulbWidget.ID);
             if (widget) {
-                this._register(widget.onClick(e => this.showCodeActionList(e.actions, e, { includeDisabledActions: false, fromLightbulb: true })));
+                this._register(widget.onClick(e => this.showCodeActionsFromLightbulb(e.actions, e)));
             }
             return widget;
         });
@@ -68,6 +68,20 @@ let CodeActionController = CodeActionController_1 = class CodeActionController e
     dispose() {
         this._disposed = true;
         super.dispose();
+    }
+    async showCodeActionsFromLightbulb(actions, at) {
+        if (actions.allAIFixes && actions.validActions.length === 1) {
+            const actionItem = actions.validActions[0];
+            const command = actionItem.action.command;
+            if (command && command.id === 'inlineChat.start') {
+                if (command.arguments && command.arguments.length >= 1) {
+                    command.arguments[0] = { ...command.arguments[0], autoSend: false };
+                }
+            }
+            await this._applyCodeAction(actionItem, false, false, ApplyCodeActionReason.FromAILightbulb);
+            return;
+        }
+        await this.showCodeActionList(actions, at, { includeDisabledActions: false, fromLightbulb: true });
     }
     showCodeActions(_trigger, actions, at) {
         return this.showCodeActionList(actions, at, { includeDisabledActions: false, fromLightbulb: false });
@@ -84,9 +98,9 @@ let CodeActionController = CodeActionController_1 = class CodeActionController e
     _trigger(trigger) {
         return this._model.trigger(trigger);
     }
-    async _applyCodeAction(action, retrigger, preview) {
+    async _applyCodeAction(action, retrigger, preview, actionReason) {
         try {
-            await this._instantiationService.invokeFunction(applyCodeAction, action, ApplyCodeActionReason.FromCodeActions, { preview, editor: this._editor });
+            await this._instantiationService.invokeFunction(applyCodeAction, action, actionReason, { preview, editor: this._editor });
         }
         finally {
             if (retrigger) {
@@ -119,7 +133,7 @@ let CodeActionController = CodeActionController_1 = class CodeActionController e
                 if (validActionToApply) {
                     try {
                         (_d = this._lightBulbWidget.value) === null || _d === void 0 ? void 0 : _d.hide();
-                        await this._applyCodeAction(validActionToApply, false, false);
+                        await this._applyCodeAction(validActionToApply, false, false, ApplyCodeActionReason.FromCodeActions);
                     }
                     finally {
                         actions.dispose();
@@ -192,7 +206,7 @@ let CodeActionController = CodeActionController_1 = class CodeActionController e
         const anchor = Position.isIPosition(at) ? this.toCoords(at) : at;
         const delegate = {
             onSelect: async (action, preview) => {
-                this._applyCodeAction(action, /* retrigger */ true, !!preview);
+                this._applyCodeAction(action, /* retrigger */ true, !!preview, ApplyCodeActionReason.FromCodeActions);
                 this._actionWidgetService.hide();
                 currentDecorations.clear();
             },
@@ -203,7 +217,6 @@ let CodeActionController = CodeActionController_1 = class CodeActionController e
             },
             onHover: async (action, token) => {
                 var _a;
-                await action.resolve(token);
                 if (token.isCancellationRequested) {
                     return;
                 }
@@ -211,12 +224,23 @@ let CodeActionController = CodeActionController_1 = class CodeActionController e
             },
             onFocus: (action) => {
                 var _a, _b;
-                if (action && action.highlightRange && action.action.diagnostics) {
-                    const decorations = [{ range: action.action.diagnostics[0], options: CodeActionController_1.DECORATION }];
-                    currentDecorations.set(decorations);
-                    const diagnostic = action.action.diagnostics[0];
-                    const selectionText = (_b = (_a = this._editor.getModel()) === null || _a === void 0 ? void 0 : _a.getWordAtPosition({ lineNumber: diagnostic.startLineNumber, column: diagnostic.startColumn })) === null || _b === void 0 ? void 0 : _b.word;
-                    aria.status(localize('editingNewSelection', "Context: {0} at line {1} and column {2}.", selectionText, diagnostic.startLineNumber, diagnostic.startColumn));
+                if (action && action.action) {
+                    const ranges = action.action.ranges;
+                    const diagnostics = action.action.diagnostics;
+                    currentDecorations.clear();
+                    if (ranges && ranges.length > 0) {
+                        const decorations = ranges.map(range => ({ range, options: CodeActionController_1.DECORATION }));
+                        currentDecorations.set(decorations);
+                    }
+                    else if (diagnostics && diagnostics.length > 0) {
+                        const decorations = diagnostics.map(diagnostic => ({ range: diagnostic, options: CodeActionController_1.DECORATION }));
+                        currentDecorations.set(decorations);
+                        const diagnostic = diagnostics[0];
+                        if (diagnostic.startLineNumber && diagnostic.startColumn) {
+                            const selectionText = (_b = (_a = this._editor.getModel()) === null || _a === void 0 ? void 0 : _a.getWordAtPosition({ lineNumber: diagnostic.startLineNumber, column: diagnostic.startColumn })) === null || _b === void 0 ? void 0 : _b.word;
+                            aria.status(localize('editingNewSelection', "Context: {0} at line {1} and column {2}.", selectionText, diagnostic.startLineNumber, diagnostic.startColumn));
+                        }
+                    }
                 }
                 else {
                     currentDecorations.clear();

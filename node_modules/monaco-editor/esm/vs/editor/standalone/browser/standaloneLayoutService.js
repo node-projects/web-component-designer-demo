@@ -12,12 +12,12 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 import * as dom from '../../../base/browser/dom.js';
+import { mainWindow } from '../../../base/browser/window.js';
+import { coalesce, firstOrDefault } from '../../../base/common/arrays.js';
 import { Event } from '../../../base/common/event.js';
-import { ILayoutService } from '../../../platform/layout/browser/layoutService.js';
 import { ICodeEditorService } from '../../browser/services/codeEditorService.js';
 import { registerSingleton } from '../../../platform/instantiation/common/extensions.js';
-import { coalesce, firstOrDefault } from '../../../base/common/arrays.js';
-import { mainWindow } from '../../../base/browser/window.js';
+import { ILayoutService } from '../../../platform/layout/browser/layoutService.js';
 let StandaloneLayoutService = class StandaloneLayoutService {
     get mainContainer() {
         var _a, _b;
@@ -51,6 +51,7 @@ let StandaloneLayoutService = class StandaloneLayoutService {
         this.onDidLayoutContainer = Event.None;
         this.onDidChangeActiveContainer = Event.None;
         this.onDidAddContainer = Event.None;
+        this.whenActiveContainerStylesLoaded = Promise.resolve();
         this.mainContainerOffset = { top: 0, quickPickTop: 0 };
         this.activeContainerOffset = { top: 0, quickPickTop: 0 };
     }

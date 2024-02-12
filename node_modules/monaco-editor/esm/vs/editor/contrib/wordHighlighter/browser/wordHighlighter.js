@@ -25,6 +25,7 @@ import { ICodeEditorService } from '../../../browser/services/codeEditorService.
 import { Range } from '../../../common/core/range.js';
 import { EditorContextKeys } from '../../../common/editorContextKeys.js';
 import { DocumentHighlightKind } from '../../../common/languages.js';
+import { shouldSynchronizeModel } from '../../../common/model.js';
 import { ILanguageFeaturesService } from '../../../common/services/languageFeatures.js';
 import { getHighlightDecorationOptions } from './highlightDecorations.js';
 import { IContextKeyService, RawContextKey } from '../../../../platform/contextkey/common/contextkey.js';
@@ -58,6 +59,8 @@ export function getOccurrencesAcrossMultipleModels(registry, model, position, wo
     // (good = none empty array)
     return first(orderedByScore.map(provider => () => {
         const filteredModels = otherModels.filter(otherModel => {
+            return shouldSynchronizeModel(otherModel);
+        }).filter(otherModel => {
             return score(provider.selector, otherModel.uri, otherModel.getLanguageId(), true, undefined, undefined) > 0;
         });
         return Promise.resolve(provider.provideMultiDocumentHighlights(model, position, filteredModels, token))

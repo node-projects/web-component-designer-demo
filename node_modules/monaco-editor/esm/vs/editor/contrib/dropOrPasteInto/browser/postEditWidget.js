@@ -18,7 +18,8 @@ import { toAction } from '../../../../base/common/actions.js';
 import { Event } from '../../../../base/common/event.js';
 import { Disposable, MutableDisposable, toDisposable } from '../../../../base/common/lifecycle.js';
 import './postEditWidget.css';
-import { IBulkEditService, ResourceTextEdit } from '../../../browser/services/bulkEditService.js';
+import { IBulkEditService } from '../../../browser/services/bulkEditService.js';
+import { createCombinedWorkspaceEdit } from './edit.js';
 import { IContextKeyService } from '../../../../platform/contextkey/common/contextkey.js';
 import { IContextMenuService } from '../../../../platform/contextview/browser/contextView.js';
 import { IInstantiationService } from '../../../../platform/instantiation/common/instantiation.js';
@@ -117,7 +118,6 @@ let PostEditWidgetManager = class PostEditWidgetManager extends Disposable {
         this._register(Event.any(_editor.onDidChangeModel, _editor.onDidChangeModelContent)(() => this.clear()));
     }
     async applyEditAndShowIfNeeded(ranges, edits, canShowWidget, token) {
-        var _a, _b;
         const model = this._editor.getModel();
         if (!model || !ranges.length) {
             return;
@@ -126,22 +126,7 @@ let PostEditWidgetManager = class PostEditWidgetManager extends Disposable {
         if (!edit) {
             return;
         }
-        let insertTextEdit = [];
-        if (typeof edit.insertText === 'string' ? edit.insertText === '' : edit.insertText.snippet === '') {
-            insertTextEdit = [];
-        }
-        else {
-            insertTextEdit = ranges.map(range => new ResourceTextEdit(model.uri, typeof edit.insertText === 'string'
-                ? { range, text: edit.insertText, insertAsSnippet: false }
-                : { range, text: edit.insertText.snippet, insertAsSnippet: true }));
-        }
-        const allEdits = [
-            ...insertTextEdit,
-            ...((_b = (_a = edit.additionalEdit) === null || _a === void 0 ? void 0 : _a.edits) !== null && _b !== void 0 ? _b : [])
-        ];
-        const combinedWorkspaceEdit = {
-            edits: allEdits
-        };
+        const combinedWorkspaceEdit = createCombinedWorkspaceEdit(model.uri, ranges, edit);
         // Use a decoration to track edits around the trigger range
         const primaryRange = ranges[0];
         const editTrackingDecoration = model.deltaDecorations([], [{

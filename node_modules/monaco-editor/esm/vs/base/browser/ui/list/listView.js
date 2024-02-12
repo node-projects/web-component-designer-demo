@@ -660,7 +660,8 @@ export class ListView {
         const index = this.getItemIndexFromEventTarget(browserEvent.target || null);
         const item = typeof index === 'undefined' ? undefined : this.items[index];
         const element = item && item.element;
-        return { browserEvent, index, element };
+        const sector = this.getTargetSector(browserEvent, index);
+        return { browserEvent, index, element, sector };
     }
     onScroll(e) {
         try {
@@ -716,7 +717,7 @@ export class ListView {
         (_b = (_a = this.dnd).onDragStart) === null || _b === void 0 ? void 0 : _b.call(_a, this.currentDragData, event);
     }
     onDragOver(event) {
-        var _a;
+        var _a, _b;
         event.browserEvent.preventDefault(); // needed so that the drop event fires (https://stackoverflow.com/questions/21339924/drop-event-not-firing-in-chrome)
         this.onDragLeaveTimeout.dispose();
         if (StaticDND.CurrentDragAndDropData && StaticDND.CurrentDragAndDropData.getData() === 'vscode-ui') {
@@ -740,14 +741,14 @@ export class ListView {
                 this.currentDragData = new NativeDragAndDropData();
             }
         }
-        const result = this.dnd.onDragOver(this.currentDragData, event.element, event.index, event.browserEvent);
+        const result = this.dnd.onDragOver(this.currentDragData, event.element, event.index, event.sector, event.browserEvent);
         this.canDrop = typeof result === 'boolean' ? result : result.accept;
         if (!this.canDrop) {
             this.currentDragFeedback = undefined;
             this.currentDragFeedbackDisposable.dispose();
             return false;
         }
-        event.browserEvent.dataTransfer.dropEffect = (typeof result !== 'boolean' && result.effect === 0 /* ListDragOverEffect.Copy */) ? 'copy' : 'move';
+        event.browserEvent.dataTransfer.dropEffect = (typeof result !== 'boolean' && ((_a = result.effect) === null || _a === void 0 ? void 0 : _a.type) === 0 /* ListDragOverEffectType.Copy */) ? 'copy' : 'move';
         let feedback;
         if (typeof result !== 'boolean' && result.feedback) {
             feedback = result.feedback;
@@ -763,31 +764,44 @@ export class ListView {
         // sanitize feedback list
         feedback = distinct(feedback).filter(i => i >= -1 && i < this.length).sort((a, b) => a - b);
         feedback = feedback[0] === -1 ? [-1] : feedback;
-        if (equalsDragFeedback(this.currentDragFeedback, feedback)) {
+        let dragOverEffectPosition = typeof result !== 'boolean' && result.effect && result.effect.position ? result.effect.position : "drop-target" /* ListDragOverEffectPosition.Over */;
+        if (equalsDragFeedback(this.currentDragFeedback, feedback) && this.currentDragFeedbackPosition === dragOverEffectPosition) {
             return true;
         }
         this.currentDragFeedback = feedback;
+        this.currentDragFeedbackPosition = dragOverEffectPosition;
         this.currentDragFeedbackDisposable.dispose();
         if (feedback[0] === -1) { // entire list feedback
-            this.domNode.classList.add('drop-target');
-            this.rowsContainer.classList.add('drop-target');
+            this.domNode.classList.add(dragOverEffectPosition);
+            this.rowsContainer.classList.add(dragOverEffectPosition);
             this.currentDragFeedbackDisposable = toDisposable(() => {
-                this.domNode.classList.remove('drop-target');
-                this.rowsContainer.classList.remove('drop-target');
+                this.domNode.classList.remove(dragOverEffectPosition);
+                this.rowsContainer.classList.remove(dragOverEffectPosition);
             });
         }
         else {
+            if (feedback.length > 1 && dragOverEffectPosition !== "drop-target" /* ListDragOverEffectPosition.Over */) {
+                throw new Error('Can\'t use multiple feedbacks with position different than \'over\'');
+            }
+            // Make sure there is no flicker when moving between two items
+            // Always use the before feedback if possible
+            if (dragOverEffectPosition === "drop-target-after" /* ListDragOverEffectPosition.After */) {
+                if (feedback[0] < this.length - 1) {
+                    feedback[0] += 1;
+                    dragOverEffectPosition = "drop-target-before" /* ListDragOverEffectPosition.Before */;
+                }
+            }
             for (const index of feedback) {
                 const item = this.items[index];
                 item.dropTarget = true;
-                (_a = item.row) === null || _a === void 0 ? void 0 : _a.domNode.classList.add('drop-target');
+                (_b = item.row) === null || _b === void 0 ? void 0 : _b.domNode.classList.add(dragOverEffectPosition);
             }
             this.currentDragFeedbackDisposable = toDisposable(() => {
                 var _a;
                 for (const index of feedback) {
                     const item = this.items[index];
                     item.dropTarget = false;
-                    (_a = item.row) === null || _a === void 0 ? void 0 : _a.domNode.classList.remove('drop-target');
+                    (_a = item.row) === null || _a === void 0 ? void 0 : _a.domNode.classList.remove(dragOverEffectPosition);
                 }
             });
         }
@@ -816,7 +830,7 @@ export class ListView {
         }
         event.browserEvent.preventDefault();
         dragData.update(event.browserEvent.dataTransfer);
-        this.dnd.drop(dragData, event.element, event.index, event.browserEvent);
+        this.dnd.drop(dragData, event.element, event.index, event.sector, event.browserEvent);
     }
     onDragEnd(event) {
         var _a, _b;
@@ -830,6 +844,7 @@ export class ListView {
     }
     clearDragOverFeedback() {
         this.currentDragFeedback = undefined;
+        this.currentDragFeedbackPosition = undefined;
         this.currentDragFeedbackDisposable.dispose();
         this.currentDragFeedbackDisposable = Disposable.None;
     }
@@ -869,6 +884,13 @@ export class ListView {
         }
     }
     // Util
+    getTargetSector(browserEvent, targetIndex) {
+        if (targetIndex === undefined) {
+            return undefined;
+        }
+        const relativePosition = browserEvent.offsetY / this.items[targetIndex].size;
+        return Math.floor(relativePosition / 0.25);
+    }
     getItemIndexFromEventTarget(target) {
         const scrollableElement = this.scrollableElement.getDomNode();
         let element = target;

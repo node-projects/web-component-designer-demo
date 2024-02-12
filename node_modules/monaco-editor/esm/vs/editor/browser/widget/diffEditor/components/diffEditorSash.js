@@ -2,9 +2,9 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { Sash } from '../../../../base/browser/ui/sash/sash.js';
-import { Disposable } from '../../../../base/common/lifecycle.js';
-import { autorun, derived, observableValue } from '../../../../base/common/observable.js';
+import { Sash } from '../../../../../base/browser/ui/sash/sash.js';
+import { Disposable } from '../../../../../base/common/lifecycle.js';
+import { autorun, derived, observableValue } from '../../../../../base/common/observable.js';
 export class DiffEditorSash extends Disposable {
     constructor(_options, _domNode, _dimensions, _sashes) {
         super();

@@ -39,9 +39,9 @@ let DiffEditorItemTemplate = class DiffEditorItemTemplate extends Disposable {
         this._instantiationService = _instantiationService;
         this._viewModel = observableValue(this, undefined);
         this._collapsed = derived(this, reader => { var _a; return (_a = this._viewModel.read(reader)) === null || _a === void 0 ? void 0 : _a.collapsed.read(reader); });
-        this._contentHeight = observableValue(this, 500);
-        this.height = derived(this, reader => {
-            const h = this._collapsed.read(reader) ? 0 : this._contentHeight.read(reader);
+        this._editorContentHeight = observableValue(this, 500);
+        this.contentHeight = derived(this, reader => {
+            const h = this._collapsed.read(reader) ? 0 : this._editorContentHeight.read(reader);
             return h + this._outerEditorHeight;
         });
         this._modifiedContentWidth = observableValue(this, 0);
@@ -59,28 +59,17 @@ let DiffEditorItemTemplate = class DiffEditorItemTemplate extends Disposable {
             }
         });
         this._elements = h('div.multiDiffEntry', [
-            h('div.content', {
-                style: {
-                    display: 'flex',
-                    flexDirection: 'column',
-                    flex: '1',
-                    overflow: 'hidden',
-                }
-            }, [
-                h('div.header@header', [
-                    h('div.collapse-button@collapseButton'),
-                    h('div.title.show-file-icons@title', []),
-                    h('div.actions@actions'),
+            h('div.header@header', [
+                h('div.collapse-button@collapseButton'),
+                h('div.file-path', [
+                    h('div.title.modified.show-file-icons@primaryPath', []),
+                    h('div.status.deleted@status', ['R']),
+                    h('div.title.original.show-file-icons@secondaryPath', []),
                 ]),
-                h('div.editorParent', {
-                    style: {
-                        flex: '1',
-                        display: 'flex',
-                        flexDirection: 'column',
-                    }
-                }, [
-                    h('div.editorContainer@editor', { style: { flex: '1' } }),
-                ])
+                h('div.actions@actions'),
+            ]),
+            h('div.editorParent', [
+                h('div.editorContainer@editor'),
             ])
         ]);
         this.editor = this._register(this._instantiationService.createInstance(DiffEditorWidget, this._elements.editor, {
@@ -90,10 +79,13 @@ let DiffEditorItemTemplate = class DiffEditorItemTemplate extends Disposable {
         this.isOriginalFocused = isFocused(this.editor.getOriginalEditor());
         this.isFocused = derived(this, reader => this.isModifedFocused.read(reader) || this.isOriginalFocused.read(reader));
         this._resourceLabel = this._workbenchUIElementFactory.createResourceLabel
-            ? this._register(this._workbenchUIElementFactory.createResourceLabel(this._elements.title))
+            ? this._register(this._workbenchUIElementFactory.createResourceLabel(this._elements.primaryPath))
+            : undefined;
+        this._resourceLabel2 = this._workbenchUIElementFactory.createResourceLabel
+            ? this._register(this._workbenchUIElementFactory.createResourceLabel(this._elements.secondaryPath))
             : undefined;
         this._dataStore = new DisposableStore();
-        this._headerHeight = this._elements.header.clientHeight;
+        this._headerHeight = 38;
         const btn = new Button(this._elements.collapseButton, {});
         this._register(autorun(reader => {
             btn.element.className = '';
@@ -116,7 +108,7 @@ let DiffEditorItemTemplate = class DiffEditorItemTemplate extends Disposable {
         });
         this._register(this.editor.onDidContentSizeChange(e => {
             globalTransaction(tx => {
-                this._contentHeight.set(e.contentHeight, tx);
+                this._editorContentHeight.set(e.contentHeight, tx);
                 this._modifiedContentWidth.set(this.editor.getModifiedEditor().getContentWidth(), tx);
                 this._originalContentWidth.set(this.editor.getOriginalEditor().getContentWidth(), tx);
             });
@@ -128,10 +120,11 @@ let DiffEditorItemTemplate = class DiffEditorItemTemplate extends Disposable {
         this._container.appendChild(this._elements.root);
         this._outerEditorHeight = 38;
         this._register(this._instantiationService.createInstance(MenuWorkbenchToolBar, this._elements.actions, MenuId.MultiDiffEditorFileToolbar, {
-            actionRunner: this._register(new ActionRunnerWithContext(() => { var _a, _b; return ((_b = (_a = this._viewModel.get()) === null || _a === void 0 ? void 0 : _a.diffEditorViewModel) === null || _b === void 0 ? void 0 : _b.model.modified.uri); })),
+            actionRunner: this._register(new ActionRunnerWithContext(() => { var _a; return ((_a = this._viewModel.get()) === null || _a === void 0 ? void 0 : _a.modifiedUri); })),
             menuOptions: {
                 shouldForwardArgs: true,
-            }
+            },
+            toolbarOptions: { primaryGroup: g => g.startsWith('navigation') },
         }));
     }
     setScrollLeft(left) {
@@ -158,6 +151,7 @@ let DiffEditorItemTemplate = class DiffEditorItemTemplate extends Disposable {
                 },
                 renderOverviewRuler: false,
                 fixedOverflowWidgets: true,
+                overviewRulerBorder: false,
             };
         }
         const value = data.viewModel.entry.value; // TODO
@@ -168,12 +162,33 @@ let DiffEditorItemTemplate = class DiffEditorItemTemplate extends Disposable {
             }));
         }
         globalTransaction(tx => {
-            var _a, _b;
-            (_a = this._resourceLabel) === null || _a === void 0 ? void 0 : _a.setUri(data.viewModel.diffEditorViewModel.model.modified.uri);
+            var _a, _b, _c, _d;
+            (_a = this._resourceLabel) === null || _a === void 0 ? void 0 : _a.setUri((_b = data.viewModel.modifiedUri) !== null && _b !== void 0 ? _b : data.viewModel.originalUri, { strikethrough: data.viewModel.modifiedUri === undefined });
+            let isRenamed = false;
+            let isDeleted = false;
+            let isAdded = false;
+            let flag = '';
+            if (data.viewModel.modifiedUri && data.viewModel.originalUri && data.viewModel.modifiedUri.path !== data.viewModel.originalUri.path) {
+                flag = 'R';
+                isRenamed = true;
+            }
+            else if (!data.viewModel.modifiedUri) {
+                flag = 'D';
+                isDeleted = true;
+            }
+            else if (!data.viewModel.originalUri) {
+                flag = 'A';
+                isAdded = true;
+            }
+            this._elements.status.classList.toggle('renamed', isRenamed);
+            this._elements.status.classList.toggle('deleted', isDeleted);
+            this._elements.status.classList.toggle('added', isAdded);
+            this._elements.status.innerText = flag;
+            (_c = this._resourceLabel2) === null || _c === void 0 ? void 0 : _c.setUri(isRenamed ? data.viewModel.originalUri : undefined, { strikethrough: true });
             this._dataStore.clear();
             this._viewModel.set(data.viewModel, tx);
             this.editor.setModel(data.viewModel.diffEditorViewModel, tx);
-            this.editor.updateOptions(updateOptions((_b = value.options) !== null && _b !== void 0 ? _b : {}));
+            this.editor.updateOptions(updateOptions((_d = value.options) !== null && _d !== void 0 ? _d : {}));
         });
     }
     render(verticalRange, width, editorScroll, viewPort) {

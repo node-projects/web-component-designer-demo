@@ -116,7 +116,7 @@ let TextAreaHandler = class TextAreaHandler extends ViewPart {
         this._lastRenderPosition = null;
         // Text Area (The focus will always be in the textarea when the cursor is blinking)
         this.textArea = createFastDomNode(document.createElement('textarea'));
-        PartFingerprints.write(this.textArea, 6 /* PartFingerprint.TextArea */);
+        PartFingerprints.write(this.textArea, 7 /* PartFingerprint.TextArea */);
         this.textArea.setClassName(`inputarea ${MOUSE_CURSOR_TEXT_CSS_CLASS_NAME}`);
         this.textArea.setAttribute('wrap', this._textAreaWrapping && !this._visibleTextArea ? 'on' : 'off');
         const { tabSize } = this._context.viewModel.model.getOptions();

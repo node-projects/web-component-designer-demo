@@ -336,6 +336,7 @@ class ViewportUnicodeHighlighter extends Disposable {
         };
     }
 }
+const configureUnicodeHighlightOptionsStr = nls.localize('unicodeHighlight.configureUnicodeHighlightOptions', 'Configure Unicode Highlight Options');
 let UnicodeHighlighterHoverParticipant = class UnicodeHighlighterHoverParticipant {
     constructor(_editor, _languageService, _openerService) {
         this._editor = _editor;
@@ -397,7 +398,7 @@ let UnicodeHighlighterHoverParticipant = class UnicodeHighlighterHoverParticipan
             const markdown = new MarkdownString('', true)
                 .appendMarkdown(reason)
                 .appendText(' ')
-                .appendLink(uri, adjustSettings);
+                .appendLink(uri, adjustSettings, configureUnicodeHighlightOptionsStr);
             result.push(new MarkdownHover(this, d.range, [markdown], false, index++));
         }
         return result;
@@ -619,7 +620,7 @@ export class ShowExcludeOptions extends EditorAction {
         else {
             expectNever(reason);
         }
-        const result = await quickPickService.pick(options, { title: nls.localize('unicodeHighlight.configureUnicodeHighlightOptions', 'Configure Unicode Highlight Options') });
+        const result = await quickPickService.pick(options, { title: configureUnicodeHighlightOptionsStr });
         if (result) {
             await result.run();
         }

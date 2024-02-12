@@ -12,6 +12,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 var InlineCompletionsController_1;
+import { createStyleSheet2 } from '../../../../base/browser/dom.js';
 import { alert } from '../../../../base/browser/ui/aria/aria.js';
 import { Disposable, toDisposable } from '../../../../base/common/lifecycle.js';
 import { autorun, autorunHandleChanges, constObservable, derived, disposableObservableValue, observableFromEvent, observableSignal, observableValue, transaction } from '../../../../base/common/observable.js';
@@ -59,6 +60,7 @@ let InlineCompletionsController = InlineCompletionsController_1 = class InlineCo
             });
         }));
         this._enabled = observableFromEvent(this.editor.onDidChangeConfiguration, () => this.editor.getOption(62 /* EditorOption.inlineSuggest */).enabled);
+        this._fontFamily = observableFromEvent(this.editor.onDidChangeConfiguration, () => this.editor.getOption(62 /* EditorOption.inlineSuggest */).fontFamily);
         this._ghostTextWidget = this._register(this._instantiationService.createInstance(GhostTextWidget, this.editor, {
             ghostText: this.model.map((v, reader) => /** ghostText */ v === null || v === void 0 ? void 0 : v.ghostText.read(reader)),
             minReservedLineCount: constObservable(0),
@@ -82,6 +84,16 @@ let InlineCompletionsController = InlineCompletionsController_1 = class InlineCo
                     this.model.set(model, tx);
                 }
             });
+        }));
+        const styleElement = this._register(createStyleSheet2());
+        this._register(autorun(reader => {
+            const fontFamily = this._fontFamily.read(reader);
+            styleElement.setStyle(fontFamily === '' || fontFamily === 'default' ? `` : `
+.monaco-editor .ghost-text-decoration,
+.monaco-editor .ghost-text-decoration-preview,
+.monaco-editor .ghost-text {
+	font-family: ${fontFamily};
+}`);
         }));
         const getReason = (e) => {
             var _a;

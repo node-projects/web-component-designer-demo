@@ -336,6 +336,7 @@ function resolveWithBaseUri(baseUri, href) {
 function sanitizeRenderedMarkdown(options, renderedMarkdown) {
     const { config, allowedSchemes } = getSanitizerOptions(options);
     dompurify.addHook('uponSanitizeAttribute', (element, e) => {
+        var _a;
         if (e.attrName === 'style' || e.attrName === 'class') {
             if (element.tagName === 'SPAN') {
                 if (e.attrName === 'style') {
@@ -349,6 +350,24 @@ function sanitizeRenderedMarkdown(options, renderedMarkdown) {
             }
             e.keepAttr = false;
             return;
+        }
+        else if (element.tagName === 'INPUT' && ((_a = element.attributes.getNamedItem('type')) === null || _a === void 0 ? void 0 : _a.value) === 'checkbox') {
+            if ((e.attrName === 'type' && e.attrValue === 'checkbox') || e.attrName === 'disabled' || e.attrName === 'checked') {
+                e.keepAttr = true;
+                return;
+            }
+            e.keepAttr = false;
+        }
+    });
+    dompurify.addHook('uponSanitizeElement', (element, e) => {
+        var _a, _b;
+        if (e.tagName === 'input') {
+            if (((_a = element.attributes.getNamedItem('type')) === null || _a === void 0 ? void 0 : _a.value) === 'checkbox') {
+                element.setAttribute('disabled', '');
+            }
+            else {
+                (_b = element.parentElement) === null || _b === void 0 ? void 0 : _b.removeChild(element);
+            }
         }
     });
     const hook = DOM.hookDomPurifyHrefAndSrcSanitizer(allowedSchemes);
@@ -364,10 +383,12 @@ export const allowedMarkdownAttr = [
     'align',
     'autoplay',
     'alt',
+    'checked',
     'class',
     'controls',
     'data-code',
     'data-href',
+    'disabled',
     'draggable',
     'height',
     'href',
@@ -379,6 +400,7 @@ export const allowedMarkdownAttr = [
     'style',
     'target',
     'title',
+    'type',
     'width',
     'start',
 ];
@@ -506,7 +528,9 @@ function mergeRawTokenText(tokens) {
     return mergedTokenText;
 }
 function completeSingleLinePattern(token) {
-    for (const subtoken of token.tokens) {
+    var _a, _b;
+    for (let i = 0; i < token.tokens.length; i++) {
+        const subtoken = token.tokens[i];
         if (subtoken.type === 'text') {
             const lines = subtoken.raw.split('\n');
             const lastLine = lines[lines.length - 1];
@@ -526,6 +550,13 @@ function completeSingleLinePattern(token) {
                 return completeUnderscore(token);
             }
             else if (lastLine.match(/(^|\s)\[.*\]\(\w*/)) {
+                const nextTwoSubTokens = token.tokens.slice(i + 1);
+                if (((_a = nextTwoSubTokens[0]) === null || _a === void 0 ? void 0 : _a.type) === 'link' && ((_b = nextTwoSubTokens[1]) === null || _b === void 0 ? void 0 : _b.type) === 'text' && nextTwoSubTokens[1].raw.match(/^ *"[^"]*$/)) {
+                    // A markdown link can look like
+                    // [link text](https://microsoft.com "more text")
+                    // Where "more text" is a title for the link or an argument to a vscode command link
+                    return completeLinkTargetArg(token);
+                }
                 return completeLinkTarget(token);
             }
             else if (lastLine.match(/(^|\s)\[\w/)) {
@@ -606,6 +637,9 @@ function completeUnderscore(tokens) {
 }
 function completeLinkTarget(tokens) {
     return completeWithString(tokens, ')');
+}
+function completeLinkTargetArg(tokens) {
+    return completeWithString(tokens, '")');
 }
 function completeLinkText(tokens) {
     return completeWithString(tokens, '](about:blank)');

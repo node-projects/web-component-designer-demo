@@ -45,6 +45,9 @@ export class Button extends Disposable {
             this._element.appendChild(this._labelElement);
             this._element.classList.add('monaco-text-button-with-short-label');
         }
+        if (typeof options.ariaLabel === 'string') {
+            this._element.setAttribute('aria-label', options.ariaLabel);
+        }
         container.appendChild(this._element);
         this._register(Gesture.addTarget(this._element));
         [EventType.CLICK, TouchEventType.Tap].forEach(eventType => {
@@ -164,6 +167,12 @@ export class Button extends Disposable {
         }
         else if (this.options.title) {
             this._element.title = renderStringAsPlaintext(value);
+        }
+        if (typeof this.options.ariaLabel === 'string') {
+            this._element.setAttribute('aria-label', this.options.ariaLabel);
+        }
+        else if (this.options.ariaLabel) {
+            this._element.setAttribute('aria-label', this._element.title);
         }
         this._label = value;
     }

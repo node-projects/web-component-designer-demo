@@ -22,7 +22,7 @@ import { ExtensionIdentifierSet } from '../../../../platform/extensions/common/e
 import { IInstantiationService } from '../../../../platform/instantiation/common/instantiation.js';
 import { ILanguageFeaturesService } from '../../../common/services/languageFeatures.js';
 import { ILogService } from '../../../../platform/log/common/log.js';
-import { IAccessibleNotificationService } from '../../../../platform/accessibility/common/accessibility.js';
+import { AudioCue, IAudioCueService } from '../../../../platform/audioCues/browser/audioCueService.js';
 export function getRealAndSyntheticDocumentFormattersOrdered(documentFormattingEditProvider, documentRangeFormattingEditProvider, model) {
     const result = [];
     const seen = new ExtensionIdentifierSet();
@@ -58,13 +58,13 @@ export class FormattingConflicts {
         const remove = FormattingConflicts._selectors.unshift(selector);
         return { dispose: remove };
     }
-    static async select(formatter, document, mode) {
+    static async select(formatter, document, mode, kind) {
         if (formatter.length === 0) {
             return undefined;
         }
         const selector = Iterable.first(FormattingConflicts._selectors);
         if (selector) {
-            return await selector(formatter, document, mode);
+            return await selector(formatter, document, mode, kind);
         }
         return undefined;
     }
@@ -75,7 +75,7 @@ export async function formatDocumentRangesWithSelectedProvider(accessor, editorO
     const { documentRangeFormattingEditProvider: documentRangeFormattingEditProviderRegistry } = accessor.get(ILanguageFeaturesService);
     const model = isCodeEditor(editorOrModel) ? editorOrModel.getModel() : editorOrModel;
     const provider = documentRangeFormattingEditProviderRegistry.ordered(model);
-    const selected = await FormattingConflicts.select(provider, model, mode);
+    const selected = await FormattingConflicts.select(provider, model, mode, 2 /* FormattingKind.Selection */);
     if (selected) {
         progress.report(selected);
         await instaService.invokeFunction(formatDocumentRangesWithProvider, selected, editorOrModel, rangeOrRanges, token, userGesture);
@@ -85,7 +85,7 @@ export async function formatDocumentRangesWithProvider(accessor, provider, edito
     var _a, _b;
     const workerService = accessor.get(IEditorWorkerService);
     const logService = accessor.get(ILogService);
-    const accessibleNotificationService = accessor.get(IAccessibleNotificationService);
+    const audioCueService = accessor.get(IAudioCueService);
     let model;
     let cts;
     if (isCodeEditor(editorOrModel)) {
@@ -211,7 +211,7 @@ export async function formatDocumentRangesWithProvider(accessor, provider, edito
             return null;
         });
     }
-    accessibleNotificationService.notify("format" /* AccessibleNotificationEvent.Format */, userGesture);
+    audioCueService.playAudioCue(AudioCue.format, { userGesture });
     return true;
 }
 export async function formatDocumentWithSelectedProvider(accessor, editorOrModel, mode, progress, token, userGesture) {
@@ -219,7 +219,7 @@ export async function formatDocumentWithSelectedProvider(accessor, editorOrModel
     const languageFeaturesService = accessor.get(ILanguageFeaturesService);
     const model = isCodeEditor(editorOrModel) ? editorOrModel.getModel() : editorOrModel;
     const provider = getRealAndSyntheticDocumentFormattersOrdered(languageFeaturesService.documentFormattingEditProvider, languageFeaturesService.documentRangeFormattingEditProvider, model);
-    const selected = await FormattingConflicts.select(provider, model, mode);
+    const selected = await FormattingConflicts.select(provider, model, mode, 1 /* FormattingKind.File */);
     if (selected) {
         progress.report(selected);
         await instaService.invokeFunction(formatDocumentWithProvider, selected, editorOrModel, mode, token, userGesture);
@@ -227,7 +227,7 @@ export async function formatDocumentWithSelectedProvider(accessor, editorOrModel
 }
 export async function formatDocumentWithProvider(accessor, provider, editorOrModel, mode, token, userGesture) {
     const workerService = accessor.get(IEditorWorkerService);
-    const accessibleNotificationService = accessor.get(IAccessibleNotificationService);
+    const audioCueService = accessor.get(IAudioCueService);
     let model;
     let cts;
     if (isCodeEditor(editorOrModel)) {
@@ -278,7 +278,7 @@ export async function formatDocumentWithProvider(accessor, provider, editorOrMod
             return null;
         });
     }
-    accessibleNotificationService.notify("format" /* AccessibleNotificationEvent.Format */, userGesture);
+    audioCueService.playAudioCue(AudioCue.format, { userGesture });
     return true;
 }
 export async function getDocumentRangeFormattingEditsUntilResult(workerService, languageFeaturesService, model, range, options, token) {

@@ -2,19 +2,19 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { h } from '../../../../base/browser/dom.js';
-import { ActionBar } from '../../../../base/browser/ui/actionbar/actionbar.js';
-import { Action } from '../../../../base/common/actions.js';
-import { booleanComparator, compareBy, numberComparator, tieBreakComparators } from '../../../../base/common/arrays.js';
-import { findMaxIdxBy } from '../../../../base/common/arraysFind.js';
-import { Codicon } from '../../../../base/common/codicons.js';
-import { Disposable, toDisposable } from '../../../../base/common/lifecycle.js';
-import { autorun, autorunHandleChanges, autorunWithStore, constObservable, derived, derivedWithStore, observableFromEvent, observableSignalFromEvent, observableValue, recomputeInitiallyAndOnChange } from '../../../../base/common/observable.js';
-import { ThemeIcon } from '../../../../base/common/themables.js';
-import { PlaceholderViewZone, ViewZoneOverlayWidget, applyStyle, applyViewZones } from './utils.js';
-import { OffsetRange, OffsetRangeSet } from '../../../common/core/offsetRange.js';
-import { localize } from '../../../../nls.js';
-export class MovedBlocksLinesPart extends Disposable {
+import { h } from '../../../../../base/browser/dom.js';
+import { ActionBar } from '../../../../../base/browser/ui/actionbar/actionbar.js';
+import { Action } from '../../../../../base/common/actions.js';
+import { booleanComparator, compareBy, numberComparator, tieBreakComparators } from '../../../../../base/common/arrays.js';
+import { findMaxIdxBy } from '../../../../../base/common/arraysFind.js';
+import { Codicon } from '../../../../../base/common/codicons.js';
+import { Disposable, toDisposable } from '../../../../../base/common/lifecycle.js';
+import { autorun, autorunHandleChanges, autorunWithStore, constObservable, derived, derivedWithStore, observableFromEvent, observableSignalFromEvent, observableValue, recomputeInitiallyAndOnChange } from '../../../../../base/common/observable.js';
+import { ThemeIcon } from '../../../../../base/common/themables.js';
+import { PlaceholderViewZone, ViewZoneOverlayWidget, applyStyle, applyViewZones } from '../utils.js';
+import { OffsetRange, OffsetRangeSet } from '../../../../common/core/offsetRange.js';
+import { localize } from '../../../../../nls.js';
+export class MovedBlocksLinesFeature extends Disposable {
     constructor(_rootElement, _diffModel, _originalEditorLayoutInfo, _modifiedEditorLayoutInfo, _editors) {
         super();
         this._rootElement = _rootElement;
@@ -68,7 +68,7 @@ export class MovedBlocksLinesPart extends Disposable {
             const padding = 10;
             const lineAreaLeft = infoOrig.verticalScrollbarWidth;
             const lineAreaWidth = (layout.getTrackCount() - 1) * 10 + padding * 2;
-            const width = lineAreaLeft + lineAreaWidth + (infoMod.contentLeft - MovedBlocksLinesPart.movedCodeBlockPadding);
+            const width = lineAreaLeft + lineAreaWidth + (infoMod.contentLeft - MovedBlocksLinesFeature.movedCodeBlockPadding);
             let idx = 0;
             for (const line of lines) {
                 const track = layout.getTrack(idx);
@@ -124,7 +124,7 @@ export class MovedBlocksLinesPart extends Disposable {
             }
             this._element.style.left = `${info.width - info.verticalScrollbarWidth}px`;
             this._element.style.height = `${info.height}px`;
-            this._element.style.width = `${info.verticalScrollbarWidth + info.contentLeft - MovedBlocksLinesPart.movedCodeBlockPadding + this.width.read(reader)}px`;
+            this._element.style.width = `${info.verticalScrollbarWidth + info.contentLeft - MovedBlocksLinesFeature.movedCodeBlockPadding + this.width.read(reader)}px`;
         }));
         this._register(recomputeInitiallyAndOnChange(this._state));
         const movedBlockViewZones = derived(reader => {
@@ -193,7 +193,7 @@ export class MovedBlocksLinesPart extends Disposable {
         }));
     }
 }
-MovedBlocksLinesPart.movedCodeBlockPadding = 4;
+MovedBlocksLinesFeature.movedCodeBlockPadding = 4;
 class LinesLayout {
     static compute(lines) {
         const setsPerTrack = [];

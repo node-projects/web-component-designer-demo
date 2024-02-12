@@ -32,27 +32,8 @@ else if (typeof process !== 'undefined') {
 }
 const isElectronProcess = typeof ((_a = nodeProcess === null || nodeProcess === void 0 ? void 0 : nodeProcess.versions) === null || _a === void 0 ? void 0 : _a.electron) === 'string';
 const isElectronRenderer = isElectronProcess && (nodeProcess === null || nodeProcess === void 0 ? void 0 : nodeProcess.type) === 'renderer';
-// Web environment
-if (typeof navigator === 'object' && !isElectronRenderer) {
-    _userAgent = navigator.userAgent;
-    _isWindows = _userAgent.indexOf('Windows') >= 0;
-    _isMacintosh = _userAgent.indexOf('Macintosh') >= 0;
-    _isIOS = (_userAgent.indexOf('Macintosh') >= 0 || _userAgent.indexOf('iPad') >= 0 || _userAgent.indexOf('iPhone') >= 0) && !!navigator.maxTouchPoints && navigator.maxTouchPoints > 0;
-    _isLinux = _userAgent.indexOf('Linux') >= 0;
-    _isMobile = (_userAgent === null || _userAgent === void 0 ? void 0 : _userAgent.indexOf('Mobi')) >= 0;
-    _isWeb = true;
-    const configuredLocale = nls.getConfiguredDefaultLocale(
-    // This call _must_ be done in the file that calls `nls.getConfiguredDefaultLocale`
-    // to ensure that the NLS AMD Loader plugin has been loaded and configured.
-    // This is because the loader plugin decides what the default locale is based on
-    // how it's able to resolve the strings.
-    nls.localize({ key: 'ensureLoaderPluginIsLoaded', comment: ['{Locked}'] }, '_'));
-    _locale = configuredLocale || LANGUAGE_DEFAULT;
-    _language = _locale;
-    _platformLocale = navigator.language;
-}
 // Native environment
-else if (typeof nodeProcess === 'object') {
+if (typeof nodeProcess === 'object') {
     _isWindows = (nodeProcess.platform === 'win32');
     _isMacintosh = (nodeProcess.platform === 'darwin');
     _isLinux = (nodeProcess.platform === 'linux');
@@ -76,6 +57,25 @@ else if (typeof nodeProcess === 'object') {
         }
     }
     _isNative = true;
+}
+// Web environment
+else if (typeof navigator === 'object' && !isElectronRenderer) {
+    _userAgent = navigator.userAgent;
+    _isWindows = _userAgent.indexOf('Windows') >= 0;
+    _isMacintosh = _userAgent.indexOf('Macintosh') >= 0;
+    _isIOS = (_userAgent.indexOf('Macintosh') >= 0 || _userAgent.indexOf('iPad') >= 0 || _userAgent.indexOf('iPhone') >= 0) && !!navigator.maxTouchPoints && navigator.maxTouchPoints > 0;
+    _isLinux = _userAgent.indexOf('Linux') >= 0;
+    _isMobile = (_userAgent === null || _userAgent === void 0 ? void 0 : _userAgent.indexOf('Mobi')) >= 0;
+    _isWeb = true;
+    const configuredLocale = nls.getConfiguredDefaultLocale(
+    // This call _must_ be done in the file that calls `nls.getConfiguredDefaultLocale`
+    // to ensure that the NLS AMD Loader plugin has been loaded and configured.
+    // This is because the loader plugin decides what the default locale is based on
+    // how it's able to resolve the strings.
+    nls.localize({ key: 'ensureLoaderPluginIsLoaded', comment: ['{Locked}'] }, '_'));
+    _locale = configuredLocale || LANGUAGE_DEFAULT;
+    _language = _locale;
+    _platformLocale = navigator.language;
 }
 // Unknown environment
 else {

@@ -17,7 +17,6 @@ export function createCancelablePromise(callback) {
     const promise = new Promise((resolve, reject) => {
         const subscription = source.token.onCancellationRequested(() => {
             subscription.dispose();
-            source.dispose();
             reject(new CancellationError());
         });
         Promise.resolve(thenable).then(value => {
@@ -33,6 +32,7 @@ export function createCancelablePromise(callback) {
     return new class {
         cancel() {
             source.cancel();
+            source.dispose();
         }
         then(resolve, reject) {
             return promise.then(resolve, reject);

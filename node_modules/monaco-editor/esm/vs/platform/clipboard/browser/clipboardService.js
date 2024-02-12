@@ -11,14 +11,17 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var BrowserClipboardService_1;
 import { isSafari, isWebkitWebView } from '../../../base/browser/browser.js';
-import { $, addDisposableListener, getActiveDocument } from '../../../base/browser/dom.js';
+import { $, addDisposableListener, getActiveDocument, onDidRegisterWindow } from '../../../base/browser/dom.js';
+import { mainWindow } from '../../../base/browser/window.js';
 import { DeferredPromise } from '../../../base/common/async.js';
 import { Event } from '../../../base/common/event.js';
+import { hash } from '../../../base/common/hash.js';
 import { Disposable } from '../../../base/common/lifecycle.js';
 import { ILayoutService } from '../../layout/browser/layoutService.js';
 import { ILogService } from '../../log/common/log.js';
-let BrowserClipboardService = class BrowserClipboardService extends Disposable {
+let BrowserClipboardService = BrowserClipboardService_1 = class BrowserClipboardService extends Disposable {
     constructor(layoutService, logService) {
         super();
         this.layoutService = layoutService;
@@ -26,9 +29,17 @@ let BrowserClipboardService = class BrowserClipboardService extends Disposable {
         this.mapTextToType = new Map(); // unsupported in web (only in-memory)
         this.findText = ''; // unsupported in web (only in-memory)
         this.resources = []; // unsupported in web (only in-memory)
+        this.resourcesStateHash = undefined;
         if (isSafari || isWebkitWebView) {
             this.installWebKitWriteTextWorkaround();
         }
+        // Keep track of copy operations to reset our set of
+        // copied resources: since we keep resources in memory
+        // and not in the clipboard, we have to invalidate
+        // that state when the user copies other data.
+        this._register(Event.runAndSubscribe(onDidRegisterWindow, ({ window, disposables }) => {
+            disposables.add(addDisposableListener(window.document, 'copy', () => this.clearResources()));
+        }, { window: mainWindow, disposables: this._store }));
     }
     // In Safari, it has the following note:
     //
@@ -68,6 +79,8 @@ let BrowserClipboardService = class BrowserClipboardService extends Disposable {
         }, { container: this.layoutService.mainContainer, disposables: this._store }));
     }
     async writeText(text, type) {
+        // Clear resources given we are writing text
+        this.writeResources([]);
         // With type: only in-memory is supported
         if (type) {
             this.mapTextToType.set(type, text);
@@ -89,6 +102,9 @@ let BrowserClipboardService = class BrowserClipboardService extends Disposable {
             console.error(error);
         }
         // Fallback to textarea and execCommand solution
+        this.fallbackWriteText(text);
+    }
+    fallbackWriteText(text) {
         const activeDocument = getActiveDocument();
         const activeElement = activeDocument.activeElement;
         const textArea = activeDocument.body.appendChild($('textarea', { 'aria-hidden': true }));
@@ -103,7 +119,6 @@ let BrowserClipboardService = class BrowserClipboardService extends Disposable {
             activeElement.focus();
         }
         activeDocument.body.removeChild(textArea);
-        return;
     }
     async readText(type) {
         // With type: only in-memory is supported
@@ -118,8 +133,8 @@ let BrowserClipboardService = class BrowserClipboardService extends Disposable {
         }
         catch (error) {
             console.error(error);
-            return '';
         }
+        return '';
     }
     async readFindText() {
         return this.findText;
@@ -128,13 +143,39 @@ let BrowserClipboardService = class BrowserClipboardService extends Disposable {
         this.findText = text;
     }
     async writeResources(resources) {
-        this.resources = resources;
+        if (resources.length === 0) {
+            this.clearResources();
+        }
+        else {
+            this.resources = resources;
+            this.resourcesStateHash = await this.computeResourcesStateHash();
+        }
     }
     async readResources() {
+        const resourcesStateHash = await this.computeResourcesStateHash();
+        if (this.resourcesStateHash !== resourcesStateHash) {
+            this.clearResources(); // state mismatch, resources no longer valid
+        }
         return this.resources;
     }
+    async computeResourcesStateHash() {
+        if (this.resources.length === 0) {
+            return undefined; // no resources, no hash needed
+        }
+        // Resources clipboard is managed in-memory only and thus
+        // fails to invalidate when clipboard data is changing.
+        // As such, we compute the hash of the current clipboard
+        // and use that to later validate the resources clipboard.
+        const clipboardText = await this.readText();
+        return hash(clipboardText.substring(0, BrowserClipboardService_1.MAX_RESOURCE_STATE_SOURCE_LENGTH));
+    }
+    clearResources() {
+        this.resources = [];
+        this.resourcesStateHash = undefined;
+    }
 };
-BrowserClipboardService = __decorate([
+BrowserClipboardService.MAX_RESOURCE_STATE_SOURCE_LENGTH = 1000;
+BrowserClipboardService = BrowserClipboardService_1 = __decorate([
     __param(0, ILayoutService),
     __param(1, ILogService)
 ], BrowserClipboardService);

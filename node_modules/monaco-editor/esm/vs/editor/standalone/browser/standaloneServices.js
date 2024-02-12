@@ -18,6 +18,7 @@ import '../../../platform/undoRedo/common/undoRedoService.js';
 import '../../common/services/languageFeatureDebounce.js';
 import '../../common/services/semanticTokensStylingService.js';
 import '../../common/services/languageFeaturesService.js';
+import '../../browser/services/hoverService.js';
 import * as strings from '../../../base/common/strings.js';
 import * as dom from '../../../base/browser/dom.js';
 import { StandardKeyboardEvent } from '../../../base/browser/keyboardEvent.js';
@@ -74,7 +75,7 @@ import { StandaloneQuickInputService } from './quickInput/standaloneQuickInputSe
 import { StandaloneThemeService } from './standaloneThemeService.js';
 import { IStandaloneThemeService } from '../common/standaloneTheme.js';
 import { AccessibilityService } from '../../../platform/accessibility/browser/accessibilityService.js';
-import { IAccessibilityService, IAccessibleNotificationService } from '../../../platform/accessibility/common/accessibility.js';
+import { IAccessibilityService } from '../../../platform/accessibility/common/accessibility.js';
 import { IMenuService } from '../../../platform/actions/common/actions.js';
 import { MenuService } from '../../../platform/actions/common/menuService.js';
 import { BrowserClipboardService } from '../../../platform/clipboard/browser/clipboardService.js';
@@ -426,7 +427,6 @@ export class StandaloneConfigurationService {
         if (changedKeys.length > 0) {
             const configurationChangeEvent = new ConfigurationChangeEvent({ keys: changedKeys, overrides: [] }, previous, this._configuration);
             configurationChangeEvent.source = 8 /* ConfigurationTarget.MEMORY */;
-            configurationChangeEvent.sourceConfig = null;
             this._onDidChangeConfiguration.fire(configurationChangeEvent);
         }
         return Promise.resolve();
@@ -641,11 +641,6 @@ class StandaloneAudioService {
     async playAudioCue(cue, options) {
     }
 }
-class StandaloneAccessibleNotificationService {
-    notify(event, userGesture) {
-        // NOOP
-    }
-}
 registerSingleton(IConfigurationService, StandaloneConfigurationService, 0 /* InstantiationType.Eager */);
 registerSingleton(ITextResourceConfigurationService, StandaloneResourceConfigurationService, 0 /* InstantiationType.Eager */);
 registerSingleton(ITextResourcePropertiesService, StandaloneResourcePropertiesService, 0 /* InstantiationType.Eager */);
@@ -680,7 +675,6 @@ registerSingleton(IClipboardService, BrowserClipboardService, 0 /* Instantiation
 registerSingleton(IContextMenuService, StandaloneContextMenuService, 0 /* InstantiationType.Eager */);
 registerSingleton(IMenuService, MenuService, 0 /* InstantiationType.Eager */);
 registerSingleton(IAudioCueService, StandaloneAudioService, 0 /* InstantiationType.Eager */);
-registerSingleton(IAccessibleNotificationService, StandaloneAccessibleNotificationService, 0 /* InstantiationType.Eager */);
 /**
  * We don't want to eagerly instantiate services because embedders get a one time chance
  * to override services when they create the first editor.

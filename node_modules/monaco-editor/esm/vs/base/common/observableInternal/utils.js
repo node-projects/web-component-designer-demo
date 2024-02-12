@@ -2,10 +2,10 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { toDisposable } from '../lifecycle.js';
+import { DisposableStore, toDisposable } from '../lifecycle.js';
 import { autorun } from './autorun.js';
-import { BaseObservable, ConvenientObservable, _setRecomputeInitiallyAndOnChange, getDebugName, getFunctionName, subtransaction, transaction } from './base.js';
-import { derived } from './derived.js';
+import { BaseObservable, ConvenientObservable, _setKeepObserved, _setRecomputeInitiallyAndOnChange, getDebugName, getFunctionName, subtransaction, transaction } from './base.js';
+import { derived, derivedOpts } from './derived.js';
 import { getLogger } from './logging.js';
 /**
  * Represents an efficient observable whose value never changes.
@@ -183,7 +183,7 @@ export function observableSignal(debugNameOrOwner) {
 class ObservableSignal extends BaseObservable {
     get debugName() {
         var _a;
-        return (_a = getDebugName(this, this._debugName, undefined, this._owner, this)) !== null && _a !== void 0 ? _a : 'Observable Signal';
+        return (_a = getDebugName(this, this._debugName, undefined, this._owner)) !== null && _a !== void 0 ? _a : 'Observable Signal';
     }
     constructor(_debugName, _owner) {
         super();
@@ -206,6 +206,17 @@ class ObservableSignal extends BaseObservable {
         // NO OP
     }
 }
+/**
+ * This makes sure the observable is being observed and keeps its cache alive.
+ */
+export function keepObserved(observable) {
+    const o = new KeepAliveObserver(false, undefined);
+    observable.addObserver(o);
+    return toDisposable(() => {
+        observable.removeObserver(o);
+    });
+}
+_setKeepObserved(keepObserved);
 /**
  * This converts the given observable into an autorun.
  */
@@ -257,4 +268,61 @@ export function derivedObservableWithCache(computeFn) {
         return lastValue;
     });
     return observable;
+}
+/**
+ * When the items array changes, referential equal items are not mapped again.
+ */
+export function mapObservableArrayCached(owner, items, map, keySelector) {
+    let m = new ArrayMap(map, keySelector);
+    const self = derivedOpts({
+        debugName: () => getDebugName(m, undefined, map, owner),
+        owner,
+        onLastObserverRemoved: () => {
+            m.dispose();
+            m = new ArrayMap(map);
+        }
+    }, (reader) => {
+        m.setItems(items.read(reader));
+        return m.getItems();
+    });
+    return self;
+}
+class ArrayMap {
+    constructor(_map, _keySelector) {
+        this._map = _map;
+        this._keySelector = _keySelector;
+        this._cache = new Map();
+        this._items = [];
+    }
+    dispose() {
+        this._cache.forEach(entry => entry.store.dispose());
+        this._cache.clear();
+    }
+    setItems(items) {
+        const newItems = [];
+        const itemsToRemove = new Set(this._cache.keys());
+        for (const item of items) {
+            const key = this._keySelector ? this._keySelector(item) : item;
+            let entry = this._cache.get(key);
+            if (!entry) {
+                const store = new DisposableStore();
+                const out = this._map(item, store);
+                entry = { out, store };
+                this._cache.set(key, entry);
+            }
+            else {
+                itemsToRemove.delete(key);
+            }
+            newItems.push(entry.out);
+        }
+        for (const item of itemsToRemove) {
+            const entry = this._cache.get(item);
+            entry.store.dispose();
+            this._cache.delete(item);
+        }
+        this._items = newItems;
+    }
+    getItems() {
+        return this._items;
+    }
 }

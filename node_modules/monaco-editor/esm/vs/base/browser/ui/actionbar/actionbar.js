@@ -385,9 +385,6 @@ export class ActionBar extends Disposable {
             if (actionViewItem.action.id === Separator.ID) {
                 focusItem = false;
             }
-            if (focusItem) {
-                (_b = actionViewItem.showHover) === null || _b === void 0 ? void 0 : _b.call(actionViewItem);
-            }
             if (!focusItem) {
                 this.actionsList.focus({ preventScroll });
                 this.previouslyFocusedItem = undefined;
@@ -395,6 +392,9 @@ export class ActionBar extends Disposable {
             else if (forceFocus || this.previouslyFocusedItem !== this.focusedItem) {
                 actionViewItem.focus(fromRight);
                 this.previouslyFocusedItem = this.focusedItem;
+            }
+            if (focusItem) {
+                (_b = actionViewItem.showHover) === null || _b === void 0 ? void 0 : _b.call(actionViewItem);
             }
         }
     }

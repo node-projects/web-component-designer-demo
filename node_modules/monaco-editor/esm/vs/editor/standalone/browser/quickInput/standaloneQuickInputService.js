@@ -22,9 +22,11 @@ import { EditorScopedLayoutService } from '../standaloneLayoutService.js';
 import { ICodeEditorService } from '../../../browser/services/codeEditorService.js';
 import { QuickInputService } from '../../../../platform/quickinput/browser/quickInputService.js';
 import { createSingleCallFunction } from '../../../../base/common/functional.js';
+import { IConfigurationService } from '../../../../platform/configuration/common/configuration.js';
+import { IHoverService } from '../../../../platform/hover/browser/hover.js';
 let EditorScopedQuickInputService = class EditorScopedQuickInputService extends QuickInputService {
-    constructor(editor, instantiationService, contextKeyService, themeService, codeEditorService) {
-        super(instantiationService, contextKeyService, themeService, new EditorScopedLayoutService(editor.getContainerDomNode(), codeEditorService));
+    constructor(editor, instantiationService, contextKeyService, themeService, codeEditorService, configurationService, hoverService) {
+        super(instantiationService, contextKeyService, themeService, new EditorScopedLayoutService(editor.getContainerDomNode(), codeEditorService), configurationService, hoverService);
         this.host = undefined;
         // Use the passed in code editor as host for the quick input widget
         const contribution = QuickInputEditorContribution.get(editor);
@@ -43,6 +45,7 @@ let EditorScopedQuickInputService = class EditorScopedQuickInputService extends 
                 get onDidLayoutContainer() { return Event.map(editor.onDidLayoutChange, dimension => ({ container: widget.getDomNode(), dimension })); },
                 get onDidChangeActiveContainer() { return Event.None; },
                 get onDidAddContainer() { return Event.None; },
+                get whenActiveContainerStylesLoaded() { return Promise.resolve(); },
                 get mainContainerOffset() { return { top: 0, quickPickTop: 0 }; },
                 get activeContainerOffset() { return { top: 0, quickPickTop: 0 }; },
                 focus: () => editor.focus()
@@ -60,7 +63,9 @@ EditorScopedQuickInputService = __decorate([
     __param(1, IInstantiationService),
     __param(2, IContextKeyService),
     __param(3, IThemeService),
-    __param(4, ICodeEditorService)
+    __param(4, ICodeEditorService),
+    __param(5, IConfigurationService),
+    __param(6, IHoverService)
 ], EditorScopedQuickInputService);
 let StandaloneQuickInputService = class StandaloneQuickInputService {
     get activeService() {

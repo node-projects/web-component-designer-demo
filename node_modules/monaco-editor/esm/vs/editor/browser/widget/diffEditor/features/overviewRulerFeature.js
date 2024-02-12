@@ -11,18 +11,18 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var OverviewRulerPart_1;
-import { EventType, addDisposableListener, addStandardDisposableListener, h } from '../../../../base/browser/dom.js';
-import { createFastDomNode } from '../../../../base/browser/fastDomNode.js';
-import { ScrollbarState } from '../../../../base/browser/ui/scrollbar/scrollbarState.js';
-import { Disposable } from '../../../../base/common/lifecycle.js';
-import { autorun, autorunWithStore, derived, observableFromEvent, observableSignalFromEvent } from '../../../../base/common/observable.js';
-import { appendRemoveOnDispose } from './utils.js';
-import { Position } from '../../../common/core/position.js';
-import { OverviewRulerZone } from '../../../common/viewModel/overviewZoneManager.js';
-import { defaultInsertColor, defaultRemoveColor, diffInserted, diffOverviewRulerInserted, diffOverviewRulerRemoved, diffRemoved } from '../../../../platform/theme/common/colorRegistry.js';
-import { IThemeService } from '../../../../platform/theme/common/themeService.js';
-let OverviewRulerPart = OverviewRulerPart_1 = class OverviewRulerPart extends Disposable {
+var OverviewRulerFeature_1;
+import { EventType, addDisposableListener, addStandardDisposableListener, h } from '../../../../../base/browser/dom.js';
+import { createFastDomNode } from '../../../../../base/browser/fastDomNode.js';
+import { ScrollbarState } from '../../../../../base/browser/ui/scrollbar/scrollbarState.js';
+import { Disposable } from '../../../../../base/common/lifecycle.js';
+import { autorun, autorunWithStore, derived, observableFromEvent, observableSignalFromEvent } from '../../../../../base/common/observable.js';
+import { appendRemoveOnDispose } from '../utils.js';
+import { Position } from '../../../../common/core/position.js';
+import { OverviewRulerZone } from '../../../../common/viewModel/overviewZoneManager.js';
+import { defaultInsertColor, defaultRemoveColor, diffInserted, diffOverviewRulerInserted, diffOverviewRulerRemoved, diffRemoved } from '../../../../../platform/theme/common/colorRegistry.js';
+import { IThemeService } from '../../../../../platform/theme/common/themeService.js';
+let OverviewRulerFeature = OverviewRulerFeature_1 = class OverviewRulerFeature extends Disposable {
     constructor(_editors, _rootElement, _diffModel, _rootWidth, _rootHeight, _modifiedEditorLayoutInfo, _themeService) {
         super();
         this._editors = _editors;
@@ -32,7 +32,7 @@ let OverviewRulerPart = OverviewRulerPart_1 = class OverviewRulerPart extends Di
         this._rootHeight = _rootHeight;
         this._modifiedEditorLayoutInfo = _modifiedEditorLayoutInfo;
         this._themeService = _themeService;
-        this.width = OverviewRulerPart_1.ENTIRE_DIFF_OVERVIEW_WIDTH;
+        this.width = OverviewRulerFeature_1.ENTIRE_DIFF_OVERVIEW_WIDTH;
         const currentColorTheme = observableFromEvent(this._themeService.onDidColorThemeChange, () => this._themeService.getColorTheme());
         const currentColors = derived(reader => {
             /** @description colors */
@@ -45,7 +45,7 @@ let OverviewRulerPart = OverviewRulerPart_1 = class OverviewRulerPart extends Di
         viewportDomElement.setClassName('diffViewport');
         viewportDomElement.setPosition('absolute');
         const diffOverviewRoot = h('div.diffOverview', {
-            style: { position: 'absolute', top: '0px', width: OverviewRulerPart_1.ENTIRE_DIFF_OVERVIEW_WIDTH + 'px' }
+            style: { position: 'absolute', top: '0px', width: OverviewRulerFeature_1.ENTIRE_DIFF_OVERVIEW_WIDTH + 'px' }
         }).root;
         this._register(appendRemoveOnDispose(diffOverviewRoot, viewportDomElement.domNode));
         this._register(addStandardDisposableListener(diffOverviewRoot, EventType.POINTER_DOWN, (e) => {
@@ -113,18 +113,18 @@ let OverviewRulerPart = OverviewRulerPart_1 = class OverviewRulerPart extends Di
                 const width = this._rootWidth.read(reader);
                 const layoutInfo = this._modifiedEditorLayoutInfo.read(reader);
                 if (layoutInfo) {
-                    const freeSpace = OverviewRulerPart_1.ENTIRE_DIFF_OVERVIEW_WIDTH - 2 * OverviewRulerPart_1.ONE_OVERVIEW_WIDTH;
+                    const freeSpace = OverviewRulerFeature_1.ENTIRE_DIFF_OVERVIEW_WIDTH - 2 * OverviewRulerFeature_1.ONE_OVERVIEW_WIDTH;
                     originalOverviewRuler.setLayout({
                         top: 0,
                         height: height,
-                        right: freeSpace + OverviewRulerPart_1.ONE_OVERVIEW_WIDTH,
-                        width: OverviewRulerPart_1.ONE_OVERVIEW_WIDTH,
+                        right: freeSpace + OverviewRulerFeature_1.ONE_OVERVIEW_WIDTH,
+                        width: OverviewRulerFeature_1.ONE_OVERVIEW_WIDTH,
                     });
                     modifiedOverviewRuler.setLayout({
                         top: 0,
                         height: height,
                         right: 0,
-                        width: OverviewRulerPart_1.ONE_OVERVIEW_WIDTH,
+                        width: OverviewRulerFeature_1.ONE_OVERVIEW_WIDTH,
                     });
                     const scrollTop = this._editors.modifiedScrollTop.read(reader);
                     const scrollHeight = this._editors.modifiedScrollHeight.read(reader);
@@ -138,15 +138,15 @@ let OverviewRulerPart = OverviewRulerPart_1 = class OverviewRulerPart extends Di
                     viewportDomElement.setHeight(0);
                 }
                 diffOverviewRoot.style.height = height + 'px';
-                diffOverviewRoot.style.left = (width - OverviewRulerPart_1.ENTIRE_DIFF_OVERVIEW_WIDTH) + 'px';
-                viewportDomElement.setWidth(OverviewRulerPart_1.ENTIRE_DIFF_OVERVIEW_WIDTH);
+                diffOverviewRoot.style.left = (width - OverviewRulerFeature_1.ENTIRE_DIFF_OVERVIEW_WIDTH) + 'px';
+                viewportDomElement.setWidth(OverviewRulerFeature_1.ENTIRE_DIFF_OVERVIEW_WIDTH);
             }));
         }));
     }
 };
-OverviewRulerPart.ONE_OVERVIEW_WIDTH = 15;
-OverviewRulerPart.ENTIRE_DIFF_OVERVIEW_WIDTH = OverviewRulerPart_1.ONE_OVERVIEW_WIDTH * 2;
-OverviewRulerPart = OverviewRulerPart_1 = __decorate([
+OverviewRulerFeature.ONE_OVERVIEW_WIDTH = 15;
+OverviewRulerFeature.ENTIRE_DIFF_OVERVIEW_WIDTH = OverviewRulerFeature_1.ONE_OVERVIEW_WIDTH * 2;
+OverviewRulerFeature = OverviewRulerFeature_1 = __decorate([
     __param(6, IThemeService)
-], OverviewRulerPart);
-export { OverviewRulerPart };
+], OverviewRulerFeature);
+export { OverviewRulerFeature };

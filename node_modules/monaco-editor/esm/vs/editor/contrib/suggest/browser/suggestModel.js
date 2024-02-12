@@ -389,7 +389,7 @@ let SuggestModel = SuggestModel_1 = class SuggestModel {
                 snippetSortOrder = 2 /* SnippetSortOrder.Bottom */;
                 break;
         }
-        const { itemKind: itemKindFilter, showDeprecated } = SuggestModel_1._createSuggestFilter(this._editor);
+        const { itemKind: itemKindFilter, showDeprecated } = SuggestModel_1.createSuggestFilter(this._editor);
         const completionOptions = new CompletionOptions(snippetSortOrder, (_d = (_c = options.completionOptions) === null || _c === void 0 ? void 0 : _c.kindFilter) !== null && _d !== void 0 ? _d : itemKindFilter, (_e = options.completionOptions) === null || _e === void 0 ? void 0 : _e.providerFilter, (_f = options.completionOptions) === null || _f === void 0 ? void 0 : _f.providerItemsToReuse, showDeprecated);
         const wordDistance = WordDistance.create(this._editorWorkerService, this._editor);
         const completions = provideSuggestionItems(this._languageFeaturesService.completionProvider, model, this._editor.getPosition(), completionOptions, suggestCtx, this._requestToken.token);
@@ -445,7 +445,7 @@ let SuggestModel = SuggestModel_1 = class SuggestModel {
             this._logService.debug('suggest.durations.json', durations);
         });
     }
-    static _createSuggestFilter(editor) {
+    static createSuggestFilter(editor) {
         // kind filter and snippet sort rules
         const result = new Set();
         // snippet setting

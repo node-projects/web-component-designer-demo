@@ -238,7 +238,6 @@ let ActionList = class ActionList extends Disposable {
     }
     onFocus() {
         var _a, _b;
-        this._list.domFocus();
         const focused = this._list.getFocus();
         if (focused.length === 0) {
             return;

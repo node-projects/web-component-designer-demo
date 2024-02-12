@@ -47,6 +47,7 @@ MenuId.DebugBreakpointsContext = new MenuId('DebugBreakpointsContext');
 MenuId.DebugCallStackContext = new MenuId('DebugCallStackContext');
 MenuId.DebugConsoleContext = new MenuId('DebugConsoleContext');
 MenuId.DebugVariablesContext = new MenuId('DebugVariablesContext');
+MenuId.DebugHoverContext = new MenuId('DebugHoverContext');
 MenuId.DebugWatchContext = new MenuId('DebugWatchContext');
 MenuId.DebugToolBar = new MenuId('DebugToolBar');
 MenuId.DebugToolBarStop = new MenuId('DebugToolBarStop');
@@ -65,6 +66,7 @@ MenuId.EmptyEditorGroup = new MenuId('EmptyEditorGroup');
 MenuId.EmptyEditorGroupContext = new MenuId('EmptyEditorGroupContext');
 MenuId.EditorTabsBarContext = new MenuId('EditorTabsBarContext');
 MenuId.EditorTabsBarShowTabsSubmenu = new MenuId('EditorTabsBarShowTabsSubmenu');
+MenuId.EditorTabsBarShowTabsZenModeSubmenu = new MenuId('EditorTabsBarShowTabsZenModeSubmenu');
 MenuId.EditorActionsPositionSubmenu = new MenuId('EditorActionsPositionSubmenu');
 MenuId.ExplorerContext = new MenuId('ExplorerContext');
 MenuId.ExplorerContextShare = new MenuId('ExplorerContextShare');
@@ -100,13 +102,19 @@ MenuId.OpenEditorsContext = new MenuId('OpenEditorsContext');
 MenuId.OpenEditorsContextShare = new MenuId('OpenEditorsContextShare');
 MenuId.ProblemsPanelContext = new MenuId('ProblemsPanelContext');
 MenuId.SCMInputBox = new MenuId('SCMInputBox');
-MenuId.SCMHistoryItem = new MenuId('SCMHistoryItem');
+MenuId.SCMIncomingChanges = new MenuId('SCMIncomingChanges');
+MenuId.SCMOutgoingChanges = new MenuId('SCMOutgoingChanges');
+MenuId.SCMIncomingChangesAllChangesContext = new MenuId('SCMIncomingChangesAllChangesContext');
+MenuId.SCMIncomingChangesHistoryItemContext = new MenuId('SCMIncomingChangesHistoryItemContext');
+MenuId.SCMOutgoingChangesAllChangesContext = new MenuId('SCMOutgoingChangesAllChangesContext');
+MenuId.SCMOutgoingChangesHistoryItemContext = new MenuId('SCMOutgoingChangesHistoryItemContext');
 MenuId.SCMChangeContext = new MenuId('SCMChangeContext');
 MenuId.SCMResourceContext = new MenuId('SCMResourceContext');
 MenuId.SCMResourceContextShare = new MenuId('SCMResourceContextShare');
 MenuId.SCMResourceFolderContext = new MenuId('SCMResourceFolderContext');
 MenuId.SCMResourceGroupContext = new MenuId('SCMResourceGroupContext');
 MenuId.SCMSourceControl = new MenuId('SCMSourceControl');
+MenuId.SCMSourceControlInline = new MenuId('SCMSourceControlInline');
 MenuId.SCMTitle = new MenuId('SCMTitle');
 MenuId.SearchContext = new MenuId('SearchContext');
 MenuId.SearchActionMenu = new MenuId('SearchActionContext');
@@ -368,6 +376,9 @@ export function registerAction2(ctor) {
     const disposables = new DisposableStore();
     const action = new ctor();
     const { f1, menu, keybinding, ...command } = action.desc;
+    if (CommandsRegistry.getCommand(command.id)) {
+        throw new Error(`Cannot register two commands with the same id: ${command.id}`);
+    }
     // command
     disposables.add(CommandsRegistry.registerCommand({
         id: command.id,

@@ -12,17 +12,17 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 var MarkdownRenderer_1;
-import { renderMarkdown } from '../../../../base/browser/markdownRenderer.js';
-import { createTrustedTypesPolicy } from '../../../../base/browser/trustedTypes.js';
-import { onUnexpectedError } from '../../../../base/common/errors.js';
-import { Emitter } from '../../../../base/common/event.js';
-import { DisposableStore } from '../../../../base/common/lifecycle.js';
+import { renderMarkdown } from '../../../../../base/browser/markdownRenderer.js';
+import { createTrustedTypesPolicy } from '../../../../../base/browser/trustedTypes.js';
+import { onUnexpectedError } from '../../../../../base/common/errors.js';
+import { Emitter } from '../../../../../base/common/event.js';
+import { DisposableStore } from '../../../../../base/common/lifecycle.js';
 import './renderedMarkdown.css';
-import { applyFontInfo } from '../../../browser/config/domFontInfo.js';
-import { ILanguageService } from '../../../common/languages/language.js';
-import { PLAINTEXT_LANGUAGE_ID } from '../../../common/languages/modesRegistry.js';
-import { tokenizeToString } from '../../../common/languages/textToHtmlTokenizer.js';
-import { IOpenerService } from '../../../../platform/opener/common/opener.js';
+import { applyFontInfo } from '../../../config/domFontInfo.js';
+import { ILanguageService } from '../../../../common/languages/language.js';
+import { PLAINTEXT_LANGUAGE_ID } from '../../../../common/languages/modesRegistry.js';
+import { tokenizeToString } from '../../../../common/languages/textToHtmlTokenizer.js';
+import { IOpenerService } from '../../../../../platform/opener/common/opener.js';
 /**
  * Markdown renderer that can render codeblocks with the editor mechanics. This
  * renderer should always be preferred.

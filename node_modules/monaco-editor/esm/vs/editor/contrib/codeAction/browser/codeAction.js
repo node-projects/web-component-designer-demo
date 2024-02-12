@@ -197,6 +197,7 @@ export var ApplyCodeActionReason;
     ApplyCodeActionReason["OnSave"] = "onSave";
     ApplyCodeActionReason["FromProblemsView"] = "fromProblemsView";
     ApplyCodeActionReason["FromCodeActions"] = "fromCodeActions";
+    ApplyCodeActionReason["FromAILightbulb"] = "fromAILightbulb"; // direct invocation when clicking on the AI lightbulb
 })(ApplyCodeActionReason || (ApplyCodeActionReason = {}));
 export async function applyCodeAction(accessor, item, codeActionReason, options, token = CancellationToken.None) {
     var _a;

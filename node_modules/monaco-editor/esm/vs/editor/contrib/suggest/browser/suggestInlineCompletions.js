@@ -11,21 +11,20 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var EditorContribution_1;
 import { CancellationToken } from '../../../../base/common/cancellation.js';
 import { FuzzyScore } from '../../../../base/common/filters.js';
 import { Iterable } from '../../../../base/common/iterator.js';
-import { RefCountedDisposable } from '../../../../base/common/lifecycle.js';
-import { registerEditorContribution } from '../../../browser/editorExtensions.js';
+import { Disposable, RefCountedDisposable } from '../../../../base/common/lifecycle.js';
 import { ICodeEditorService } from '../../../browser/services/codeEditorService.js';
 import { Range } from '../../../common/core/range.js';
+import { registerEditorFeature } from '../../../common/editorFeatures.js';
 import { ILanguageFeaturesService } from '../../../common/services/languageFeatures.js';
 import { CompletionModel, LineContext } from './completionModel.js';
 import { CompletionOptions, provideSuggestionItems, QuickSuggestionsOptions } from './suggest.js';
 import { ISuggestMemoryService } from './suggestMemory.js';
+import { SuggestModel } from './suggestModel.js';
 import { WordDistance } from './wordDistance.js';
 import { IClipboardService } from '../../../../platform/clipboard/common/clipboardService.js';
-import { IInstantiationService } from '../../../../platform/instantiation/common/instantiation.js';
 class SuggestInlineCompletion {
     constructor(range, insertText, filterText, additionalTextEdits, command, completion) {
         this.range = range;
@@ -84,19 +83,31 @@ let InlineCompletionResults = class InlineCompletionResults extends RefCountedDi
 InlineCompletionResults = __decorate([
     __param(5, ISuggestMemoryService)
 ], InlineCompletionResults);
-let SuggestInlineCompletions = class SuggestInlineCompletions {
-    constructor(_getEditorOption, _languageFeatureService, _clipboardService, _suggestMemoryService) {
-        this._getEditorOption = _getEditorOption;
+let SuggestInlineCompletions = class SuggestInlineCompletions extends Disposable {
+    constructor(_languageFeatureService, _clipboardService, _suggestMemoryService, _editorService) {
+        super();
         this._languageFeatureService = _languageFeatureService;
         this._clipboardService = _clipboardService;
         this._suggestMemoryService = _suggestMemoryService;
+        this._editorService = _editorService;
+        this._store.add(_languageFeatureService.inlineCompletionsProvider.register('*', this));
     }
     async provideInlineCompletions(model, position, context, token) {
         var _a;
         if (context.selectedSuggestionInfo) {
             return;
         }
-        const config = this._getEditorOption(88 /* EditorOption.quickSuggestions */, model);
+        let editor;
+        for (const candidate of this._editorService.listCodeEditors()) {
+            if (candidate.getModel() === model) {
+                editor = candidate;
+                break;
+            }
+        }
+        if (!editor) {
+            return;
+        }
+        const config = editor.getOption(88 /* EditorOption.quickSuggestions */);
         if (QuickSuggestionsOptions.isAllOff(config)) {
             // quick suggest is off (for this model/language)
             return;
@@ -140,12 +151,12 @@ let SuggestInlineCompletions = class SuggestInlineCompletions {
         }
         else {
             // refesh model is required
-            const completions = await provideSuggestionItems(this._languageFeatureService.completionProvider, model, position, new CompletionOptions(undefined, undefined, triggerCharacterInfo === null || triggerCharacterInfo === void 0 ? void 0 : triggerCharacterInfo.providers), triggerCharacterInfo && { triggerKind: 1 /* CompletionTriggerKind.TriggerCharacter */, triggerCharacter: triggerCharacterInfo.ch }, token);
+            const completions = await provideSuggestionItems(this._languageFeatureService.completionProvider, model, position, new CompletionOptions(undefined, SuggestModel.createSuggestFilter(editor).itemKind, triggerCharacterInfo === null || triggerCharacterInfo === void 0 ? void 0 : triggerCharacterInfo.providers), triggerCharacterInfo && { triggerKind: 1 /* CompletionTriggerKind.TriggerCharacter */, triggerCharacter: triggerCharacterInfo.ch }, token);
             let clipboardText;
             if (completions.needsClipboard) {
                 clipboardText = await this._clipboardService.readText();
             }
-            const completionModel = new CompletionModel(completions.items, position.column, new LineContext(leadingLineContents, 0), WordDistance.None, this._getEditorOption(117 /* EditorOption.suggest */, model), this._getEditorOption(111 /* EditorOption.snippetSuggestions */, model), { boostFullMatch: false, firstMatchCanBeWeak: false }, clipboardText);
+            const completionModel = new CompletionModel(completions.items, position.column, new LineContext(leadingLineContents, 0), WordDistance.None, editor.getOption(117 /* EditorOption.suggest */), editor.getOption(111 /* EditorOption.snippetSuggestions */), { boostFullMatch: false, firstMatchCanBeWeak: false }, clipboardText);
             result = new InlineCompletionResults(model, position.lineNumber, wordInfo, completionModel, completions, this._suggestMemoryService);
         }
         this._lastResult = result;
@@ -173,36 +184,10 @@ let SuggestInlineCompletions = class SuggestInlineCompletions {
     }
 };
 SuggestInlineCompletions = __decorate([
-    __param(1, ILanguageFeaturesService),
-    __param(2, IClipboardService),
-    __param(3, ISuggestMemoryService)
+    __param(0, ILanguageFeaturesService),
+    __param(1, IClipboardService),
+    __param(2, ISuggestMemoryService),
+    __param(3, ICodeEditorService)
 ], SuggestInlineCompletions);
 export { SuggestInlineCompletions };
-let EditorContribution = EditorContribution_1 = class EditorContribution {
-    constructor(_editor, languageFeatureService, editorService, instaService) {
-        // HACK - way to contribute something only once
-        if (++EditorContribution_1._counter === 1) {
-            const provider = instaService.createInstance(SuggestInlineCompletions, (id, model) => {
-                var _a;
-                // HACK - reuse the editor options world outside from a "normal" contribution
-                const editor = (_a = editorService.listCodeEditors().find(editor => editor.getModel() === model)) !== null && _a !== void 0 ? _a : _editor;
-                return editor.getOption(id);
-            });
-            EditorContribution_1._disposable = languageFeatureService.inlineCompletionsProvider.register('*', provider);
-        }
-    }
-    dispose() {
-        var _a;
-        if (--EditorContribution_1._counter === 0) {
-            (_a = EditorContribution_1._disposable) === null || _a === void 0 ? void 0 : _a.dispose();
-            EditorContribution_1._disposable = undefined;
-        }
-    }
-};
-EditorContribution._counter = 0;
-EditorContribution = EditorContribution_1 = __decorate([
-    __param(1, ILanguageFeaturesService),
-    __param(2, ICodeEditorService),
-    __param(3, IInstantiationService)
-], EditorContribution);
-registerEditorContribution('suggest.inlineCompletionsProvider', EditorContribution, 0 /* EditorContributionInstantiation.Eager */); // eager because the contribution is used as a way to ONCE access a service to which a provider is registered
+registerEditorFeature(SuggestInlineCompletions);

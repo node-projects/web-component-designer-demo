@@ -47,11 +47,12 @@ export class InlayHintItem {
         await this._currentResolve;
     }
     async _doResolve(token) {
-        var _a, _b;
+        var _a, _b, _c;
         try {
             const newHint = await Promise.resolve(this.provider.resolveInlayHint(this.hint, token));
             this.hint.tooltip = (_a = newHint === null || newHint === void 0 ? void 0 : newHint.tooltip) !== null && _a !== void 0 ? _a : this.hint.tooltip;
             this.hint.label = (_b = newHint === null || newHint === void 0 ? void 0 : newHint.label) !== null && _b !== void 0 ? _b : this.hint.label;
+            this.hint.textEdits = (_c = newHint === null || newHint === void 0 ? void 0 : newHint.textEdits) !== null && _c !== void 0 ? _c : this.hint.textEdits;
             this._isResolved = true;
         }
         catch (err) {
@@ -66,8 +67,8 @@ export class InlayHintsFragments {
         const promises = registry.ordered(model).reverse().map(provider => ranges.map(async (range) => {
             try {
                 const result = await provider.provideInlayHints(model, range, token);
-                if (result === null || result === void 0 ? void 0 : result.hints.length) {
-                    data.push([result, provider]);
+                if ((result === null || result === void 0 ? void 0 : result.hints.length) || provider.onDidChangeInlayHints) {
+                    data.push([result !== null && result !== void 0 ? result : InlayHintsFragments._emptyInlayHintList, provider]);
                 }
             }
             catch (err) {
@@ -139,6 +140,7 @@ export class InlayHintsFragments {
         return new Range(line, start + 1, line, end + 1);
     }
 }
+InlayHintsFragments._emptyInlayHintList = Object.freeze({ dispose() { }, hints: [] });
 export function asCommandLink(command) {
     return URI.from({
         scheme: Schemas.command,

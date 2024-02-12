@@ -24,6 +24,7 @@ import { MinimapLinesRenderingData, OverviewRulerDecorationsGroup, ViewLineRende
 import { ViewModelDecorations } from './viewModelDecorations.js';
 import { FocusChangedEvent, HiddenAreasChangedEvent, ModelContentChangedEvent, ModelDecorationsChangedEvent, ModelLanguageChangedEvent, ModelLanguageConfigurationChangedEvent, ModelOptionsChangedEvent, ModelTokensChangedEvent, ReadOnlyEditAttemptEvent, ScrollChangedEvent, ViewModelEventDispatcher, ViewZonesChangedEvent } from '../viewModelEventDispatcher.js';
 import { ViewModelLinesFromModelAsIs, ViewModelLinesFromProjectedModel } from './viewModelLines.js';
+import { GlyphMarginLanesModel } from './glyphLanesModel.js';
 const USE_IDENTITY_LINES_COLLECTION = true;
 export class ViewModel extends Disposable {
     constructor(editorId, configuration, model, domLineBreaksComputerFactory, monospaceLineBreaksComputerFactory, scheduleAtNextAnimationFrame, languageConfigurationService, _themeService, _attachedView) {
@@ -42,6 +43,7 @@ export class ViewModel extends Disposable {
         this._updateConfigurationViewLineCount = this._register(new RunOnceScheduler(() => this._updateConfigurationViewLineCountNow(), 0));
         this._hasFocus = false;
         this._viewportStart = ViewportStart.create(this.model);
+        this.glyphLanes = new GlyphMarginLanesModel(0);
         if (USE_IDENTITY_LINES_COLLECTION && this.model.isTooLargeForTokenization()) {
             this._lines = new ViewModelLinesFromModelAsIs(this.model);
         }
@@ -611,7 +613,8 @@ export class ViewModel extends Disposable {
     }
     modifyPosition(position, offset) {
         const modelPosition = this.coordinatesConverter.convertViewPositionToModelPosition(position);
-        return this.model.modifyPosition(modelPosition, offset);
+        const resultModelPosition = this.model.modifyPosition(modelPosition, offset);
+        return this.coordinatesConverter.convertModelPositionToViewPosition(resultModelPosition);
     }
     deduceModelPositionRelativeToViewPosition(viewAnchorPosition, deltaOffset, lineFeedCnt) {
         const modelAnchor = this.coordinatesConverter.convertViewPositionToModelPosition(viewAnchorPosition);

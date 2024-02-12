@@ -29,7 +29,6 @@ import { InputFocusedContextKey } from '../../contextkey/common/contextkeys.js';
 import { IContextViewService } from '../../contextview/browser/contextView.js';
 import { createDecorator, IInstantiationService } from '../../instantiation/common/instantiation.js';
 import { IKeybindingService } from '../../keybinding/common/keybinding.js';
-import product from '../../product/common/product.js';
 import { Registry } from '../../registry/common/platform.js';
 import { defaultFindWidgetStyles, defaultListStyles, getListStyles } from '../../theme/browser/defaultStyles.js';
 export const IListService = createDecorator('listService');
@@ -84,8 +83,9 @@ export const RawWorkbenchListScrollAtBoundaryContextKey = new RawContextKey('lis
 export const WorkbenchListScrollAtTopContextKey = ContextKeyExpr.or(RawWorkbenchListScrollAtBoundaryContextKey.isEqualTo('top'), RawWorkbenchListScrollAtBoundaryContextKey.isEqualTo('both'));
 export const WorkbenchListScrollAtBottomContextKey = ContextKeyExpr.or(RawWorkbenchListScrollAtBoundaryContextKey.isEqualTo('bottom'), RawWorkbenchListScrollAtBoundaryContextKey.isEqualTo('both'));
 export const RawWorkbenchListFocusContextKey = new RawContextKey('listFocus', true);
+export const WorkbenchTreeStickyScrollFocused = new RawContextKey('treestickyScrollFocused', false);
 export const WorkbenchListSupportsMultiSelectContextKey = new RawContextKey('listSupportsMultiselect', true);
-export const WorkbenchListFocusContextKey = ContextKeyExpr.and(RawWorkbenchListFocusContextKey, ContextKeyExpr.not(InputFocusedContextKey));
+export const WorkbenchListFocusContextKey = ContextKeyExpr.and(RawWorkbenchListFocusContextKey, ContextKeyExpr.not(InputFocusedContextKey), WorkbenchTreeStickyScrollFocused.negate());
 export const WorkbenchListHasSelectionOrFocus = new RawContextKey('listHasSelectionOrFocus', false);
 export const WorkbenchListDoubleSelection = new RawContextKey('listDoubleSelection', false);
 export const WorkbenchListMultiSelection = new RawContextKey('listMultiSelection', false);
@@ -792,6 +792,7 @@ let WorkbenchTreeInternals = class WorkbenchTreeInternals {
         this.treeElementCanExpand = WorkbenchTreeElementCanExpand.bindTo(this.contextKeyService);
         this.treeElementHasChild = WorkbenchTreeElementHasChild.bindTo(this.contextKeyService);
         this.treeFindOpen = WorkbenchTreeFindOpen.bindTo(this.contextKeyService);
+        this.treeStickyScrollFocused = WorkbenchTreeStickyScrollFocused.bindTo(this.contextKeyService);
         this._useAltAsMultipleSelectionModifier = useAltAsMultipleSelectionModifier(configurationService);
         this.updateStyleOverrides(overrideStyles);
         const updateCollapseContextKeys = () => {
@@ -821,7 +822,7 @@ let WorkbenchTreeInternals = class WorkbenchTreeInternals {
             const focus = tree.getFocus();
             this.hasSelectionOrFocus.set(selection.length > 0 || focus.length > 0);
             updateCollapseContextKeys();
-        }), tree.onDidChangeCollapseState(updateCollapseContextKeys), tree.onDidChangeModel(updateCollapseContextKeys), tree.onDidChangeFindOpenState(enabled => this.treeFindOpen.set(enabled)), configurationService.onDidChangeConfiguration(e => {
+        }), tree.onDidChangeCollapseState(updateCollapseContextKeys), tree.onDidChangeModel(updateCollapseContextKeys), tree.onDidChangeFindOpenState(enabled => this.treeFindOpen.set(enabled)), tree.onDidChangeStickyScrollFocused(focused => this.treeStickyScrollFocused.set(focused)), configurationService.onDidChangeConfiguration(e => {
             let newOptions = {};
             if (e.affectsConfiguration(multiSelectModifierSettingKey)) {
                 this._useAltAsMultipleSelectionModifier = useAltAsMultipleSelectionModifier(configurationService);
@@ -1016,7 +1017,7 @@ configurationRegistry.registerConfiguration({
         },
         [treeStickyScroll]: {
             type: 'boolean',
-            default: typeof product.quality === 'string' && product.quality !== 'stable', // only enable as default in insiders
+            default: true,
             description: localize('sticky scroll', "Controls whether sticky scrolling is enabled in trees."),
         },
         [treeStickyScrollMaxElements]: {

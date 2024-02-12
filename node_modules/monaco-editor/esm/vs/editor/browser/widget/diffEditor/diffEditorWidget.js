@@ -23,13 +23,13 @@ import { EditorExtensionsRegistry } from '../../editorExtensions.js';
 import { ICodeEditorService } from '../../services/codeEditorService.js';
 import { StableEditorScrollState } from '../../stableEditorScroll.js';
 import { CodeEditorWidget } from '../codeEditorWidget.js';
-import { AccessibleDiffViewer } from './accessibleDiffViewer.js';
-import { DiffEditorDecorations } from './diffEditorDecorations.js';
-import { DiffEditorSash } from './diffEditorSash.js';
-import { HideUnchangedRegionsFeature } from './hideUnchangedRegionsFeature.js';
-import { ViewZoneManager } from './lineAlignment.js';
-import { MovedBlocksLinesPart } from './movedBlocksLines.js';
-import { OverviewRulerPart } from './overviewRulerPart.js';
+import { AccessibleDiffViewer } from './components/accessibleDiffViewer.js';
+import { DiffEditorDecorations } from './components/diffEditorDecorations.js';
+import { DiffEditorSash } from './components/diffEditorSash.js';
+import { HideUnchangedRegionsFeature } from './features/hideUnchangedRegionsFeature.js';
+import { DiffEditorViewZones } from './components/diffEditorViewZones/diffEditorViewZones.js';
+import { MovedBlocksLinesFeature } from './features/movedBlocksLinesFeature.js';
+import { OverviewRulerFeature } from './features/overviewRulerFeature.js';
 import { ObservableElementSizeObserver, applyStyle, applyViewZones, bindContextKey, readHotReloadableExport, translatePosition } from './utils.js';
 import { Position } from '../../../common/core/position.js';
 import { Range } from '../../../common/core/range.js';
@@ -40,11 +40,11 @@ import { IContextKeyService } from '../../../../platform/contextkey/common/conte
 import { IInstantiationService } from '../../../../platform/instantiation/common/instantiation.js';
 import { ServiceCollection } from '../../../../platform/instantiation/common/serviceCollection.js';
 import { IEditorProgressService } from '../../../../platform/progress/common/progress.js';
-import './colors.js';
 import { DelegatingEditor } from './delegatingEditorImpl.js';
-import { DiffEditorEditors } from './diffEditorEditors.js';
+import { DiffEditorEditors } from './components/diffEditorEditors.js';
 import { DiffEditorOptions } from './diffEditorOptions.js';
 import { DiffEditorViewModel } from './diffEditorViewModel.js';
+import { RevertButtonsFeature } from './features/revertButtonsFeature.js';
 let DiffEditorWidget = class DiffEditorWidget extends DelegatingEditor {
     get onDidContentSizeChange() { return this._editors.onDidContentSizeChange; }
     constructor(_domElement, options, codeEditorWidgetOptions, _parentContextKeyService, _parentInstantiationService, codeEditorService, _audioCueService, _editorProgressService) {
@@ -112,7 +112,7 @@ let DiffEditorWidget = class DiffEditorWidget extends DelegatingEditor {
         this._editors = this._register(this._instantiationService.createInstance(DiffEditorEditors, this.elements.original, this.elements.modified, this._options, codeEditorWidgetOptions, (i, c, o, o2) => this._createInnerEditor(i, c, o, o2)));
         this._overviewRulerPart = derivedDisposable(this, reader => !this._options.renderOverviewRuler.read(reader)
             ? undefined
-            : this._instantiationService.createInstance(readHotReloadableExport(OverviewRulerPart, reader), this._editors, this.elements.root, this._diffModel, this._rootSizeObserver.width, this._rootSizeObserver.height, this._layoutInfo.map(i => i.modifiedEditor))).recomputeInitiallyAndOnChange(this._store);
+            : this._instantiationService.createInstance(readHotReloadableExport(OverviewRulerFeature, reader), this._editors, this.elements.root, this._diffModel, this._rootSizeObserver.width, this._rootSizeObserver.height, this._layoutInfo.map(i => i.modifiedEditor))).recomputeInitiallyAndOnChange(this._store);
         this._sash = derivedDisposable(this, reader => {
             const showSash = this._options.renderSideBySide.read(reader);
             this.elements.root.classList.toggle('side-by-side', showSash);
@@ -126,7 +126,7 @@ let DiffEditorWidget = class DiffEditorWidget extends DelegatingEditor {
         const origViewZoneIdsToIgnore = new Set();
         const modViewZoneIdsToIgnore = new Set();
         let isUpdatingViewZones = false;
-        const viewZoneManager = derivedDisposable(this, reader => /** @description ViewZoneManager */ this._instantiationService.createInstance(readHotReloadableExport(ViewZoneManager, reader), getWindow(this._domElement), this._editors, this._diffModel, this._options, this, () => isUpdatingViewZones || unchangedRangesFeature.get().isUpdatingHiddenAreas, origViewZoneIdsToIgnore, modViewZoneIdsToIgnore)).recomputeInitiallyAndOnChange(this._store);
+        const viewZoneManager = derivedDisposable(this, reader => /** @description ViewZoneManager */ this._instantiationService.createInstance(readHotReloadableExport(DiffEditorViewZones, reader), getWindow(this._domElement), this._editors, this._diffModel, this._options, this, () => isUpdatingViewZones || unchangedRangesFeature.get().isUpdatingHiddenAreas, origViewZoneIdsToIgnore, modViewZoneIdsToIgnore)).recomputeInitiallyAndOnChange(this._store);
         const originalViewZones = derived(this, (reader) => {
             const orig = viewZoneManager.read(reader).viewZones.read(reader).orig;
             const orig2 = unchangedRangesFeature.read(reader).viewZones.read(reader).origViewZones;
@@ -158,7 +158,7 @@ let DiffEditorWidget = class DiffEditorWidget extends DelegatingEditor {
         this._createDiffEditorContributions();
         codeEditorService.addDiffEditor(this);
         this._register(recomputeInitiallyAndOnChange(this._layoutInfo));
-        derivedDisposable(this, reader => /** @description MovedBlocksLinesPart */ new (readHotReloadableExport(MovedBlocksLinesPart, reader))(this.elements.root, this._diffModel, this._layoutInfo.map(i => i.originalEditor), this._layoutInfo.map(i => i.modifiedEditor), this._editors)).recomputeInitiallyAndOnChange(this._store, value => {
+        derivedDisposable(this, reader => /** @description MovedBlocksLinesPart */ new (readHotReloadableExport(MovedBlocksLinesFeature, reader))(this.elements.root, this._diffModel, this._layoutInfo.map(i => i.originalEditor), this._layoutInfo.map(i => i.modifiedEditor), this._editors)).recomputeInitiallyAndOnChange(this._store, value => {
             // This is to break the layout info <-> moved blocks lines part dependency cycle.
             this._movedBlocksLinesPart.set(value, undefined);
         });
@@ -205,6 +205,7 @@ let DiffEditorWidget = class DiffEditorWidget extends DelegatingEditor {
                 (_a = this._diffModel.get()) === null || _a === void 0 ? void 0 : _a.dispose();
             }
         }));
+        this._register(new RevertButtonsFeature(this._editors, this._diffModel, this._options, this));
     }
     _createInnerEditor(instantiationService, container, options, editorWidgetOptions) {
         const editor = instantiationService.createInstance(CodeEditorWidget, container, options, editorWidgetOptions);
@@ -301,19 +302,18 @@ let DiffEditorWidget = class DiffEditorWidget extends DelegatingEditor {
         return toLineChanges(diffState);
     }
     revert(diff) {
-        var _a;
         if (diff.innerChanges) {
             this.revertRangeMappings(diff.innerChanges);
             return;
         }
-        const model = (_a = this._diffModel.get()) === null || _a === void 0 ? void 0 : _a.model;
-        if (!model) {
+        const model = this._diffModel.get();
+        if (!model || !model.isDiffUpToDate.get()) {
             return;
         }
         this._editors.modified.executeEdits('diffEditor', [
             {
                 range: diff.modified.toExclusiveRange(),
-                text: model.original.getValueInRange(diff.original.toExclusiveRange())
+                text: model.model.original.getValueInRange(diff.original.toExclusiveRange())
             }
         ]);
     }

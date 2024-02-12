@@ -23,7 +23,7 @@ import { localize } from '../../../../nls.js';
 import { IWorkspaceContextService } from '../../../../platform/workspace/common/workspace.js';
 const builtInLabel = localize('builtIn', 'Built-in');
 class SimplePasteAndDropProvider {
-    async provideDocumentPasteEdits(_model, _ranges, dataTransfer, token) {
+    async provideDocumentPasteEdits(_model, _ranges, dataTransfer, context, token) {
         const edit = await this.getEdit(dataTransfer, token);
         return edit ? { insertText: edit.insertText, label: edit.label, detail: edit.detail, handledMimeType: edit.handledMimeType, yieldTo: edit.yieldTo } : undefined;
     }
@@ -136,6 +136,29 @@ let RelativePathProvider = class RelativePathProvider extends SimplePasteAndDrop
 RelativePathProvider = __decorate([
     __param(0, IWorkspaceContextService)
 ], RelativePathProvider);
+class PasteHtmlProvider {
+    constructor() {
+        this.id = 'html';
+        this.pasteMimeTypes = ['text/html'];
+        this._yieldTo = [{ mimeType: Mimes.text }];
+    }
+    async provideDocumentPasteEdits(_model, _ranges, dataTransfer, context, token) {
+        if (context.trigger !== 'explicit' && context.only !== this.id) {
+            return;
+        }
+        const entry = dataTransfer.get('text/html');
+        const htmlText = await (entry === null || entry === void 0 ? void 0 : entry.asString());
+        if (!htmlText || token.isCancellationRequested) {
+            return;
+        }
+        return {
+            insertText: htmlText,
+            yieldTo: this._yieldTo,
+            label: localize('pasteHtmlLabel', 'Insert HTML'),
+            detail: builtInLabel,
+        };
+    }
+}
 async function extractUriList(dataTransfer) {
     const urlListEntry = dataTransfer.get(Mimes.uriList);
     if (!urlListEntry) {
@@ -172,6 +195,7 @@ let DefaultPasteProvidersFeature = class DefaultPasteProvidersFeature extends Di
         this._register(languageFeaturesService.documentPasteEditProvider.register('*', new DefaultTextProvider()));
         this._register(languageFeaturesService.documentPasteEditProvider.register('*', new PathProvider()));
         this._register(languageFeaturesService.documentPasteEditProvider.register('*', new RelativePathProvider(workspaceContextService)));
+        this._register(languageFeaturesService.documentPasteEditProvider.register('*', new PasteHtmlProvider()));
     }
 };
 DefaultPasteProvidersFeature = __decorate([

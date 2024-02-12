@@ -9,6 +9,7 @@ import { CopyOptions, InMemoryClipboardMetadataManager } from '../../../browser/
 import { EditorAction, MultiCommand, registerEditorAction } from '../../../browser/editorExtensions.js';
 import { ICodeEditorService } from '../../../browser/services/codeEditorService.js';
 import { EditorContextKeys } from '../../../common/editorContextKeys.js';
+import { CopyPasteController } from '../../dropOrPasteInto/browser/copyPasteController.js';
 import * as nls from '../../../../nls.js';
 import { MenuId, MenuRegistry } from '../../../../platform/actions/common/actions.js';
 import { IClipboardService } from '../../../../platform/clipboard/common/clipboardService.js';
@@ -192,14 +193,18 @@ registerExecCommandImpl(CopyAction, 'copy');
 if (PasteAction) {
     // 1. Paste: handle case when focus is in editor.
     PasteAction.addImplementation(10000, 'code-editor', (accessor, args) => {
+        var _a, _b;
         const codeEditorService = accessor.get(ICodeEditorService);
         const clipboardService = accessor.get(IClipboardService);
         // Only if editor text focus (i.e. not if editor has widget focus).
         const focusedEditor = codeEditorService.getFocusedCodeEditor();
         if (focusedEditor && focusedEditor.hasTextFocus()) {
             const result = focusedEditor.getContainerDomNode().ownerDocument.execCommand('paste');
-            // Use the clipboard service if document.execCommand('paste') was not successful
-            if (!result && platform.isWeb) {
+            if (result) {
+                return (_b = (_a = CopyPasteController.get(focusedEditor)) === null || _a === void 0 ? void 0 : _a.finishedPaste()) !== null && _b !== void 0 ? _b : Promise.resolve();
+            }
+            else if (platform.isWeb) {
+                // Use the clipboard service if document.execCommand('paste') was not successful
                 return (async () => {
                     const clipboardText = await clipboardService.readText();
                     if (clipboardText !== '') {

@@ -40,6 +40,7 @@ let ContextMenuService = class ContextMenuService extends Disposable {
         this.contextKeyService = contextKeyService;
         this._contextMenuHandler = undefined;
         this._onDidShowContextMenu = this._store.add(new Emitter());
+        this.onDidShowContextMenu = this._onDidShowContextMenu.event;
         this._onDidHideContextMenu = this._store.add(new Emitter());
     }
     configure(options) {

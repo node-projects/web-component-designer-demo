@@ -11,25 +11,25 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { $, addDisposableListener } from '../../../../base/browser/dom.js';
-import { ArrayQueue } from '../../../../base/common/arrays.js';
-import { RunOnceScheduler } from '../../../../base/common/async.js';
-import { Codicon } from '../../../../base/common/codicons.js';
-import { Disposable, DisposableStore } from '../../../../base/common/lifecycle.js';
-import { autorun, derived, derivedWithStore, observableFromEvent, observableValue } from '../../../../base/common/observable.js';
-import { ThemeIcon } from '../../../../base/common/themables.js';
-import { assertIsDefined } from '../../../../base/common/types.js';
-import { applyFontInfo } from '../../config/domFontInfo.js';
-import { diffDeleteDecoration, diffRemoveIcon } from './decorations.js';
-import { DiffMapping } from './diffEditorViewModel.js';
+import { $, addDisposableListener } from '../../../../../../base/browser/dom.js';
+import { ArrayQueue } from '../../../../../../base/common/arrays.js';
+import { RunOnceScheduler } from '../../../../../../base/common/async.js';
+import { Codicon } from '../../../../../../base/common/codicons.js';
+import { Disposable, DisposableStore } from '../../../../../../base/common/lifecycle.js';
+import { autorun, derived, derivedWithStore, observableFromEvent, observableValue } from '../../../../../../base/common/observable.js';
+import { ThemeIcon } from '../../../../../../base/common/themables.js';
+import { assertIsDefined } from '../../../../../../base/common/types.js';
+import { applyFontInfo } from '../../../../config/domFontInfo.js';
+import { diffDeleteDecoration, diffRemoveIcon } from '../../registrations.contribution.js';
+import { DiffMapping } from '../../diffEditorViewModel.js';
 import { InlineDiffDeletedCodeMargin } from './inlineDiffDeletedCodeMargin.js';
 import { LineSource, RenderOptions, renderLines } from './renderLines.js';
-import { animatedObservable, joinCombine } from './utils.js';
-import { LineRange } from '../../../common/core/lineRange.js';
-import { Position } from '../../../common/core/position.js';
-import { InlineDecoration } from '../../../common/viewModel.js';
-import { IClipboardService } from '../../../../platform/clipboard/common/clipboardService.js';
-import { IContextMenuService } from '../../../../platform/contextview/browser/contextView.js';
+import { animatedObservable, joinCombine } from '../../utils.js';
+import { LineRange } from '../../../../../common/core/lineRange.js';
+import { Position } from '../../../../../common/core/position.js';
+import { InlineDecoration } from '../../../../../common/viewModel.js';
+import { IClipboardService } from '../../../../../../platform/clipboard/common/clipboardService.js';
+import { IContextMenuService } from '../../../../../../platform/contextview/browser/contextView.js';
 /**
  * Ensures both editors have the same height by aligning unchanged lines.
  * In inline view mode, inserts viewzones to show deleted code from the original text model in the modified code editor.
@@ -37,7 +37,7 @@ import { IContextMenuService } from '../../../../platform/contextview/browser/co
  *
  * Make sure to add the view zones!
  */
-let ViewZoneManager = class ViewZoneManager extends Disposable {
+let DiffEditorViewZones = class DiffEditorViewZones extends Disposable {
     constructor(_targetWindow, _editors, _diffModel, _options, _diffEditorWidget, _canIgnoreViewZoneUpdateEvent, _origViewZonesToIgnore, _modViewZonesToIgnore, _clipboardService, _contextMenuService) {
         super();
         this._targetWindow = _targetWindow;
@@ -136,10 +136,17 @@ let ViewZoneManager = class ViewZoneManager extends Disposable {
             const renderSideBySide = this._options.renderSideBySide.read(reader);
             const deletedCodeLineBreaksComputer = !renderSideBySide ? (_a = this._editors.modified._getViewModel()) === null || _a === void 0 ? void 0 : _a.createLineBreaksComputer() : undefined;
             if (deletedCodeLineBreaksComputer) {
+                const originalModel = this._editors.original.getModel();
                 for (const a of alignmentsVal) {
                     if (a.diff) {
                         for (let i = a.originalRange.startLineNumber; i < a.originalRange.endLineNumberExclusive; i++) {
-                            deletedCodeLineBreaksComputer === null || deletedCodeLineBreaksComputer === void 0 ? void 0 : deletedCodeLineBreaksComputer.addRequest(this._editors.original.getModel().getLineContent(i), null, null);
+                            // `i` can be out of bound when the diff has not been updated yet.
+                            // In this case, we do an early return.
+                            // TODO@hediet: Fix this by applying the edit directly to the diff model, so that the diff is always valid.
+                            if (i > originalModel.getLineCount()) {
+                                return { orig: origViewZones, mod: modViewZones };
+                            }
+                            deletedCodeLineBreaksComputer === null || deletedCodeLineBreaksComputer === void 0 ? void 0 : deletedCodeLineBreaksComputer.addRequest(originalModel.getLineContent(i), null, null);
                         }
                     }
                 }
@@ -157,7 +164,14 @@ let ViewZoneManager = class ViewZoneManager extends Disposable {
                         originalModelTokenizationCompleted.read(reader); // Update view-zones once tokenization completes
                         const deletedCodeDomNode = document.createElement('div');
                         deletedCodeDomNode.classList.add('view-lines', 'line-delete', 'monaco-mouse-cursor-text');
-                        const source = new LineSource(a.originalRange.mapToLineArray(l => this._editors.original.getModel().tokenization.getLineTokens(l)), a.originalRange.mapToLineArray(_ => lineBreakData[lineBreakDataIdx++]), mightContainNonBasicASCII, mightContainRTL);
+                        const originalModel = this._editors.original.getModel();
+                        // `a.originalRange` can be out of bound when the diff has not been updated yet.
+                        // In this case, we do an early return.
+                        // TODO@hediet: Fix this by applying the edit directly to the diff model, so that the diff is always valid.
+                        if (a.originalRange.endLineNumberExclusive - 1 > originalModel.getLineCount()) {
+                            return { orig: origViewZones, mod: modViewZones };
+                        }
+                        const source = new LineSource(a.originalRange.mapToLineArray(l => originalModel.tokenization.getLineTokens(l)), a.originalRange.mapToLineArray(_ => lineBreakData[lineBreakDataIdx++]), mightContainNonBasicASCII, mightContainRTL);
                         const decorations = [];
                         for (const i of a.diff.innerChanges || []) {
                             decorations.push(new InlineDecoration(i.originalRange.delta(-(a.diff.original.startLineNumber - 1)), diffDeleteDecoration.className, 0 /* InlineDecorationType.Regular */));
@@ -355,11 +369,11 @@ let ViewZoneManager = class ViewZoneManager extends Disposable {
         }));
     }
 };
-ViewZoneManager = __decorate([
+DiffEditorViewZones = __decorate([
     __param(8, IClipboardService),
     __param(9, IContextMenuService)
-], ViewZoneManager);
-export { ViewZoneManager };
+], DiffEditorViewZones);
+export { DiffEditorViewZones };
 function computeRangeAlignment(originalEditor, modifiedEditor, diffs, originalEditorAlignmentViewZones, modifiedEditorAlignmentViewZones, innerHunkAlignment) {
     const originalLineHeightOverrides = new ArrayQueue(getAdditionalLineHeights(originalEditor, originalEditorAlignmentViewZones));
     const modifiedLineHeightOverrides = new ArrayQueue(getAdditionalLineHeights(modifiedEditor, modifiedEditorAlignmentViewZones));
@@ -452,7 +466,10 @@ function computeRangeAlignment(originalEditor, modifiedEditor, diffs, originalEd
                     // There is some unmodified text on this line before the diff
                     emitAlignment(i.originalRange.startLineNumber, i.modifiedRange.startLineNumber);
                 }
-                if (i.originalRange.endColumn < originalEditor.getModel().getLineMaxColumn(i.originalRange.endLineNumber)) {
+                const originalModel = originalEditor.getModel();
+                // When the diff is invalid, the ranges might be out of bounds (this should be fixed in the diff model by applying edits directly).
+                const maxColumn = i.originalRange.endLineNumber <= originalModel.getLineCount() ? originalModel.getLineMaxColumn(i.originalRange.endLineNumber) : Number.MAX_SAFE_INTEGER;
+                if (i.originalRange.endColumn < maxColumn) {
                     // // There is some unmodified text on this line after the diff
                     emitAlignment(i.originalRange.endLineNumber, i.modifiedRange.endLineNumber);
                 }

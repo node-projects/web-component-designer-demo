@@ -125,27 +125,27 @@ class ElementPath {
     static isTextArea(path) {
         return (path.length === 2
             && path[0] === 3 /* PartFingerprint.OverflowGuard */
-            && path[1] === 6 /* PartFingerprint.TextArea */);
+            && path[1] === 7 /* PartFingerprint.TextArea */);
     }
     static isChildOfViewLines(path) {
         return (path.length >= 4
             && path[0] === 3 /* PartFingerprint.OverflowGuard */
-            && path[3] === 7 /* PartFingerprint.ViewLines */);
+            && path[3] === 8 /* PartFingerprint.ViewLines */);
     }
     static isStrictChildOfViewLines(path) {
         return (path.length > 4
             && path[0] === 3 /* PartFingerprint.OverflowGuard */
-            && path[3] === 7 /* PartFingerprint.ViewLines */);
+            && path[3] === 8 /* PartFingerprint.ViewLines */);
     }
     static isChildOfScrollableElement(path) {
         return (path.length >= 2
             && path[0] === 3 /* PartFingerprint.OverflowGuard */
-            && path[1] === 5 /* PartFingerprint.ScrollableElement */);
+            && path[1] === 6 /* PartFingerprint.ScrollableElement */);
     }
     static isChildOfMinimap(path) {
         return (path.length >= 2
             && path[0] === 3 /* PartFingerprint.OverflowGuard */
-            && path[1] === 8 /* PartFingerprint.Minimap */);
+            && path[1] === 9 /* PartFingerprint.Minimap */);
     }
     static isChildOfContentWidgets(path) {
         return (path.length >= 4
@@ -164,6 +164,10 @@ class ElementPath {
         return (path.length >= 2
             && path[0] === 3 /* PartFingerprint.OverflowGuard */
             && path[1] === 4 /* PartFingerprint.OverlayWidgets */);
+    }
+    static isChildOfOverflowingOverlayWidgets(path) {
+        return (path.length >= 1
+            && path[0] === 5 /* PartFingerprint.OverflowingOverlayWidgets */);
     }
 }
 export class HitTestContext {
@@ -370,7 +374,7 @@ export class MouseTargetFactory {
             return true;
         }
         // Is it an overlay widget?
-        if (ElementPath.isChildOfOverlayWidgets(path)) {
+        if (ElementPath.isChildOfOverlayWidgets(path) || ElementPath.isChildOfOverflowingOverlayWidgets(path)) {
             return true;
         }
         return false;
@@ -413,7 +417,7 @@ export class MouseTargetFactory {
         // we know for a fact that request.target is not null
         const resolvedRequest = request;
         let result = null;
-        if (!ElementPath.isChildOfOverflowGuard(request.targetPath) && !ElementPath.isChildOfOverflowingContentWidgets(request.targetPath)) {
+        if (!ElementPath.isChildOfOverflowGuard(request.targetPath) && !ElementPath.isChildOfOverflowingContentWidgets(request.targetPath) && !ElementPath.isChildOfOverflowingOverlayWidgets(request.targetPath)) {
             // We only render dom nodes inside the overflow guard or in the overflowing content widgets
             result = result || request.fulfillUnknown();
         }
@@ -444,7 +448,7 @@ export class MouseTargetFactory {
     }
     static _hitTestOverlayWidget(ctx, request) {
         // Is it an overlay widget?
-        if (ElementPath.isChildOfOverlayWidgets(request.targetPath)) {
+        if (ElementPath.isChildOfOverlayWidgets(request.targetPath) || ElementPath.isChildOfOverflowingOverlayWidgets(request.targetPath)) {
             const widgetId = ctx.findAttribute(request.target, 'widgetId');
             if (widgetId) {
                 return request.fulfillOverlayWidget(widgetId);
@@ -524,6 +528,9 @@ export class MouseTargetFactory {
             offset -= ctx.layoutInfo.glyphMarginLeft;
             if (offset <= ctx.layoutInfo.glyphMarginWidth) {
                 // On the glyph margin
+                const modelCoordinate = ctx.viewModel.coordinatesConverter.convertViewPositionToModelPosition(res.range.getStartPosition());
+                const lanes = ctx.viewModel.glyphLanes.getLanesAtLine(modelCoordinate.lineNumber);
+                detail.glyphMarginLane = lanes[Math.floor(offset / ctx.lineHeight)];
                 return request.fulfillMargin(2 /* MouseTargetType.GUTTER_GLYPH_MARGIN */, pos, res.range, detail);
             }
             offset -= ctx.layoutInfo.glyphMarginWidth;

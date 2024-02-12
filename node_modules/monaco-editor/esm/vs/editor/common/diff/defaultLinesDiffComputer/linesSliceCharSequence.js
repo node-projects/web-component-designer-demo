@@ -75,6 +75,10 @@ export class LinesSliceCharSequence {
             // don't break between \r and \n
             return 0;
         }
+        if (prevCategory === 8 /* CharBoundaryCategory.LineBreakLF */) {
+            // prefer the linebreak before the change
+            return 150;
+        }
         let score = 0;
         if (prevCategory !== nextCategory) {
             score += 10;
@@ -143,7 +147,7 @@ const score = {
     [2 /* CharBoundaryCategory.WordNumber */]: 0,
     [3 /* CharBoundaryCategory.End */]: 10,
     [4 /* CharBoundaryCategory.Other */]: 2,
-    [5 /* CharBoundaryCategory.Separator */]: 3,
+    [5 /* CharBoundaryCategory.Separator */]: 30,
     [6 /* CharBoundaryCategory.Space */]: 3,
     [7 /* CharBoundaryCategory.LineBreakCR */]: 10,
     [8 /* CharBoundaryCategory.LineBreakLF */]: 10,

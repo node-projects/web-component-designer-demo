@@ -653,7 +653,7 @@ CommandsRegistry.registerCommand({
             { name: 'uri', description: 'The text document in which to start', constraint: URI },
             { name: 'position', description: 'The position at which to start', constraint: corePosition.Position.isIPosition },
             { name: 'locations', description: 'An array of locations.', constraint: Array },
-            { name: 'multiple', description: 'Define what to do when having multiple results, either `peek`, `gotoAndPeek`, or `goto' },
+            { name: 'multiple', description: 'Define what to do when having multiple results, either `peek`, `gotoAndPeek`, or `goto`' },
             { name: 'noResultsMessage', description: 'Human readable message that shows when locations is empty.' },
         ]
     },
@@ -691,7 +691,7 @@ CommandsRegistry.registerCommand({
             { name: 'uri', description: 'The text document in which to start', constraint: URI },
             { name: 'position', description: 'The position at which to start', constraint: corePosition.Position.isIPosition },
             { name: 'locations', description: 'An array of locations.', constraint: Array },
-            { name: 'multiple', description: 'Define what to do when having multiple results, either `peek`, `gotoAndPeek`, or `goto' },
+            { name: 'multiple', description: 'Define what to do when having multiple results, either `peek`, `gotoAndPeek`, or `goto`' },
         ]
     },
     handler: async (accessor, resource, position, references, multiple) => {

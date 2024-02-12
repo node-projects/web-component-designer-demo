@@ -1,3 +1,7 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -7,19 +11,15 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-import { Emitter } from '../../../../base/common/event.js';
-import { Disposable } from '../../../../base/common/lifecycle.js';
-import { autorunHandleChanges, observableFromEvent } from '../../../../base/common/observable.js';
-import { OverviewRulerPart } from './overviewRulerPart.js';
-import { EditorOptions } from '../../../common/config/editorOptions.js';
-import { localize } from '../../../../nls.js';
-import { IInstantiationService } from '../../../../platform/instantiation/common/instantiation.js';
-import { IKeybindingService } from '../../../../platform/keybinding/common/keybinding.js';
-import { Position } from '../../../common/core/position.js';
+import { Emitter } from '../../../../../base/common/event.js';
+import { Disposable } from '../../../../../base/common/lifecycle.js';
+import { autorunHandleChanges, observableFromEvent } from '../../../../../base/common/observable.js';
+import { OverviewRulerFeature } from '../features/overviewRulerFeature.js';
+import { EditorOptions } from '../../../../common/config/editorOptions.js';
+import { localize } from '../../../../../nls.js';
+import { IInstantiationService } from '../../../../../platform/instantiation/common/instantiation.js';
+import { IKeybindingService } from '../../../../../platform/keybinding/common/keybinding.js';
+import { Position } from '../../../../common/core/position.js';
 let DiffEditorEditors = class DiffEditorEditors extends Disposable {
     get onDidContentSizeChange() { return this._onDidContentSizeChange.event; }
     constructor(originalEditorElement, modifiedEditorElement, _options, codeEditorWidgetOptions, _createInnerEditor, _instantiationService, _keybindingService) {
@@ -69,7 +69,7 @@ let DiffEditorEditors = class DiffEditorEditors extends Disposable {
     _constructInnerEditor(instantiationService, container, options, editorWidgetOptions) {
         const editor = this._createInnerEditor(instantiationService, container, options, editorWidgetOptions);
         this._register(editor.onDidContentSizeChange(e => {
-            const width = this.original.getContentWidth() + this.modified.getContentWidth() + OverviewRulerPart.ENTIRE_DIFF_OVERVIEW_WIDTH;
+            const width = this.original.getContentWidth() + this.modified.getContentWidth() + OverviewRulerFeature.ENTIRE_DIFF_OVERVIEW_WIDTH;
             const height = Math.max(this.modified.getContentHeight(), this.original.getContentHeight());
             this._onDidContentSizeChange.fire({
                 contentHeight: height,
@@ -111,7 +111,7 @@ let DiffEditorEditors = class DiffEditorEditors extends Disposable {
         }
         result.ariaLabel = this._updateAriaLabel(result.ariaLabel);
         result.wordWrapOverride1 = this._options.diffWordWrap.get();
-        result.revealHorizontalRightPadding = EditorOptions.revealHorizontalRightPadding.defaultValue + OverviewRulerPart.ENTIRE_DIFF_OVERVIEW_WIDTH;
+        result.revealHorizontalRightPadding = EditorOptions.revealHorizontalRightPadding.defaultValue + OverviewRulerFeature.ENTIRE_DIFF_OVERVIEW_WIDTH;
         result.scrollbar.verticalHasArrows = false;
         result.extraEditorClassName = 'modified-in-monaco-diff-editor';
         return result;

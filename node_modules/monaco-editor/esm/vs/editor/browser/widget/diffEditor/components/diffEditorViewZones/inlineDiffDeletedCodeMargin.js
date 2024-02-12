@@ -2,13 +2,13 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { addStandardDisposableListener, getDomNodePagePosition } from '../../../../base/browser/dom.js';
-import { Action } from '../../../../base/common/actions.js';
-import { Codicon } from '../../../../base/common/codicons.js';
-import { Disposable } from '../../../../base/common/lifecycle.js';
-import { isIOS } from '../../../../base/common/platform.js';
-import { ThemeIcon } from '../../../../base/common/themables.js';
-import { localize } from '../../../../nls.js';
+import { addStandardDisposableListener, getDomNodePagePosition } from '../../../../../../base/browser/dom.js';
+import { Action } from '../../../../../../base/common/actions.js';
+import { Codicon } from '../../../../../../base/common/codicons.js';
+import { Disposable } from '../../../../../../base/common/lifecycle.js';
+import { isIOS } from '../../../../../../base/common/platform.js';
+import { ThemeIcon } from '../../../../../../base/common/themables.js';
+import { localize } from '../../../../../../nls.js';
 export class InlineDiffDeletedCodeMargin extends Disposable {
     get visibility() {
         return this._visibility;

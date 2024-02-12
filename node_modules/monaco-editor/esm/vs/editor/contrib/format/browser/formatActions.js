@@ -26,17 +26,17 @@ import { ILanguageFeaturesService } from '../../../common/services/languageFeatu
 import { formatDocumentRangesWithSelectedProvider, formatDocumentWithSelectedProvider, getOnTypeFormattingEdits } from './format.js';
 import { FormattingEdit } from './formattingEdit.js';
 import * as nls from '../../../../nls.js';
-import { IAccessibleNotificationService } from '../../../../platform/accessibility/common/accessibility.js';
+import { AudioCue, IAudioCueService } from '../../../../platform/audioCues/browser/audioCueService.js';
 import { CommandsRegistry, ICommandService } from '../../../../platform/commands/common/commands.js';
 import { ContextKeyExpr } from '../../../../platform/contextkey/common/contextkey.js';
 import { IInstantiationService } from '../../../../platform/instantiation/common/instantiation.js';
 import { IEditorProgressService, Progress } from '../../../../platform/progress/common/progress.js';
 let FormatOnType = class FormatOnType {
-    constructor(_editor, _languageFeaturesService, _workerService, _accessibleNotificationService) {
+    constructor(_editor, _languageFeaturesService, _workerService, _audioCueService) {
         this._editor = _editor;
         this._languageFeaturesService = _languageFeaturesService;
         this._workerService = _workerService;
-        this._accessibleNotificationService = _accessibleNotificationService;
+        this._audioCueService = _audioCueService;
         this._disposables = new DisposableStore();
         this._sessionDisposables = new DisposableStore();
         this._disposables.add(_languageFeaturesService.onTypeFormattingEditProvider.onDidChange(this._update, this));
@@ -118,7 +118,7 @@ let FormatOnType = class FormatOnType {
                 return;
             }
             if (isNonEmptyArray(edits)) {
-                this._accessibleNotificationService.notify("format" /* AccessibleNotificationEvent.Format */, false);
+                this._audioCueService.playAudioCue(AudioCue.format, { userGesture: false });
                 FormattingEdit.execute(this._editor, edits, true);
             }
         }).finally(() => {
@@ -130,7 +130,7 @@ FormatOnType.ID = 'editor.contrib.autoFormat';
 FormatOnType = __decorate([
     __param(1, ILanguageFeaturesService),
     __param(2, IEditorWorkerService),
-    __param(3, IAccessibleNotificationService)
+    __param(3, IAudioCueService)
 ], FormatOnType);
 export { FormatOnType };
 let FormatOnPaste = class FormatOnPaste {

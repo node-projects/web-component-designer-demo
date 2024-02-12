@@ -246,6 +246,9 @@ class ActionViewItemWithClassName extends ActionViewItem {
             container.classList.add(this._className);
         }
     }
+    updateTooltip() {
+        // NOOP, disable tooltip
+    }
 }
 class StatusBarViewItem extends MenuEntryActionViewItem {
     updateLabel() {
@@ -261,6 +264,9 @@ class StatusBarViewItem extends MenuEntryActionViewItem {
             this.label.appendChild(div);
             this.label.classList.add('inlineSuggestionStatusBarItemLabel');
         }
+    }
+    updateTooltip() {
+        // NOOP, disable tooltip
     }
 }
 let CustomizedMenuWorkbenchToolBar = class CustomizedMenuWorkbenchToolBar extends WorkbenchToolBar {

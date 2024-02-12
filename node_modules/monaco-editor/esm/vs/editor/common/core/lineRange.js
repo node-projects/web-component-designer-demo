@@ -10,9 +10,6 @@ import { findFirstIdxMonotonousOrArrLen, findLastIdxMonotonous, findLastMonotono
  * A range of lines (1-based).
  */
 export class LineRange {
-    static fromRange(range) {
-        return new LineRange(range.startLineNumber, range.endLineNumber);
-    }
     static fromRangeInclusive(range) {
         return new LineRange(range.startLineNumber, range.endLineNumber + 1);
     }
