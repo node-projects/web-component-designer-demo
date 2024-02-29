@@ -3,7 +3,6 @@ import createDefaultServiceContainer from '@node-projects/web-component-designer
 
 import { NodeHtmlParserService } from '@node-projects/web-component-designer-htmlparserservice-nodehtmlparser';
 import { CodeViewMonaco } from '@node-projects/web-component-designer-codeview-monaco';
-import { EditTextWithStyloExtensionProvider } from '@node-projects/web-component-designer-texteditextension-stylo';
 import { CssToolsStylesheetService } from '@node-projects/web-component-designer-stylesheetservice-css-tools';
 
 import '@node-projects/web-component-designer-widgets-wunderbaum';
@@ -22,7 +21,6 @@ serviceContainer.register("refactorService", new BindingsRefactorService());
 serviceContainer.register("refactorService", new TextRefactorService());
 
 serviceContainer.config.codeViewWidget = CodeViewMonaco;
-serviceContainer.designerExtensions.set(ExtensionType.Doubleclick, [new EditTextWithStyloExtensionProvider()]);
 
 //Instance Service Container Factories
 serviceContainer.register("stylesheetService", designerCanvas => new CssToolsStylesheetService(designerCanvas));
