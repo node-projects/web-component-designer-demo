@@ -156,7 +156,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
           </div>
       
           <div id="attributeDock" title="Properties" dock-spawn-dock-type="right" dock-spawn-dock-ratio="0.2">
-            <node-projects-property-grid-with-header id="propertyGrid"></node-projects-property-grid-with-header>
+            <node-projects-web-component-designer-property-grid-with-header id="propertyGrid"></node-projects-web-component-designer-property-grid-with-header>
           </div>
 
           <div id="debugDock" title="Debug" dock-spawn-dock-type="down" dock-spawn-dock-to="attributeDock" dock-spawn-dock-ratio="0.2">
