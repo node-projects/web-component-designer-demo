@@ -121,6 +121,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
               <div style="display: flex; height: 100%;">
                 <input list="npmInputList" id="npmInput" title="NPM Package Name" placeholder="npm-package" type="text" style="height: 100%; border: solid black 1px; box-sizing: border-box; width: 100%">
                 <datalist id="npmInputList">
+                  <option value="@christianliebel/paint"></option>
                   <option value="@vanillawc/wc-marquee"></option>
                   <option value="@vanillawc/wc-blink"></option>
                   <option value="vanilla-colorful"></option>
@@ -128,7 +129,6 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
                   <option value="@microsoft/fast-components"></option>
                   <option value="@shoelace-style/shoelace"></option>
                   <option value="@patternfly/elements"></option>
-                  <option value="@christianliebel/paint"></option>
                   <option value="@node-projects/wired-elements"></option>
                   <option value="@spectrum-web-components/button"></option>
                   <option value="@node-projects/tab.webcomponent"></option>
