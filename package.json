@@ -25,7 +25,7 @@
     "@adobe/css-tools": "4.3.3",
     "@doubletrade/lit-datepicker": "^1.0.0",
     "@fortawesome/fontawesome-free": "^6.5.1",
-    "@node-projects/base-custom-webcomponent": "0.25.0",
+    "@node-projects/base-custom-webcomponent": "0.25.1",
     "@node-projects/lean-he-esm": "^3.3.0",
     "@node-projects/node-html-parser-esm": "^6.2.0",
     "@node-projects/web-component-designer": "^0.1.103",
