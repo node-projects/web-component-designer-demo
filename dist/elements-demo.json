@@ -8,6 +8,7 @@
         { "tag": "div", "defaultContent": "Default Text 1" },
         { "tag": "div", "name": "div with text", "defaultContent": "Default Text 2", "ghostElement": "<div style='background: red; width:40px; height:40px'></div>" },
         { "tag": "div", "name": "div red", "defaultStyles": { "background": "red", "width": "20px", "height": "20px" } },
-        { "tag": "div", "name": "div", "defaultStyles": { "width": "20px", "height": "20px" } }
+        { "tag": "div", "name": "div", "defaultStyles": { "width": "20px", "height": "20px" } },
+        { "tag": "div", "name": "div with dsd", "defaultContent": "<template shadowrootmode='open'><button>Button</button></template>" }
     ]
 }
