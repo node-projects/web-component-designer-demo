@@ -1,4 +1,4 @@
-import { NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, PropertyGrid, DocumentContainer, CopyPasteAsJsonService, DebugView, UnkownElementsPropertiesService, sleep, RefactorView, BindingsRefactorService, TextRefactorService } from '@node-projects/web-component-designer';
+import { NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, PropertyGrid, DocumentContainer, CopyPasteAsJsonService, DebugView, UnkownElementsPropertiesService, sleep, RefactorView, BindingsRefactorService, TextRefactorService, SeperatorContextMenu, IDesignItem, DomConverter } from '@node-projects/web-component-designer';
 import createDefaultServiceContainer from '@node-projects/web-component-designer/dist/elements/services/DefaultServiceBootstrap.js';
 
 import { NodeHtmlParserService } from '@node-projects/web-component-designer-htmlparserservice-nodehtmlparser';
@@ -22,6 +22,8 @@ serviceContainer.register("refactorService", new TextRefactorService());
 
 serviceContainer.config.codeViewWidget = CodeViewMonaco;
 
+serviceContainer.designerContextMenuExtensions.push(new SeperatorContextMenu(), new EditTemplateContextMenu());
+
 //Instance Service Container Factories
 serviceContainer.register("stylesheetService", designerCanvas => new CssToolsStylesheetService(designerCanvas));
 
@@ -33,6 +35,7 @@ import { StyleEditor } from './styleEditor.js';
 import './styleEditor.js';
 import { CustomBindableObjectsService } from './services/CustomBindableObjectsService.js';
 import { CustomBindableObjectDragDropService } from './services/CustomBindableObjectDragDropService.js';
+import { EditTemplateContextMenu } from './services/EditTemplateContextMenu.js';
 
 DockSpawnTsWebcomponent.cssRootDirectory = "./node_modules/dock-spawn-ts/lib/css/";
 
@@ -245,7 +248,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
           let element = this._dock.getElementInSlot((<HTMLSlotElement><any>panel.elementContent));
           if (element && element instanceof DocumentContainer) {
             let sampleDocument = element as DocumentContainer;
-            this._styleEditor.model = sampleDocument.additionalData.model;
+            this._styleEditor.model = sampleDocument.additionalData?.model;
             this._propertyGrid.instanceServiceContainer = sampleDocument.instanceServiceContainer;
             this._treeViewExtended.instanceServiceContainer = sampleDocument.instanceServiceContainer;
             this._refactorView.instanceServiceContainer = sampleDocument.instanceServiceContainer;
@@ -342,6 +345,36 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     if (code) {
       sampleDocument.content = code;
     }
+  }
+
+  public editTemplate(templateDesignItem: IDesignItem) {
+    this._documentNumber++;
+    let sampleDocument = new DocumentContainer(serviceContainer);
+    sampleDocument.setAttribute('dock-spawn-panel-type', 'document');
+    sampleDocument.title = "template in " + templateDesignItem.parent.name;
+
+    sampleDocument.tabIndex = 0;
+    sampleDocument.addEventListener('keydown', (e) => {
+      if (e.key == "Escape") {
+        e.stopPropagation();
+      }
+    }, true);
+    this._dock.appendChild(sampleDocument);
+
+    sampleDocument.content = templateDesignItem.innerHTML;
+
+    sampleDocument.onContentChanged.on(() => {
+      templateDesignItem.innerHTML = sampleDocument.content;
+      const html = DomConverter.ConvertToString([templateDesignItem.instanceServiceContainer.designerCanvas.rootDesignItem], false);
+      const div = document.createElement('div')
+      div.innerHTML = html;
+      requestAnimationFrame(() => {
+        div.querySelectorAll('node-projects-dce').forEach(x => (<any>x).upgradeAllInstances());
+      });
+    });
+
+
+
   }
 
   activateDockById(name: string) {
