@@ -1,0 +1,6 @@
+- when toolbar extension has no event, show it at a fix pos at element head 
+- create a stacking toolbar context (when more toolbars are show)
+- work on svg extension
+- work on grid resize edxtension
+- word on grid child toolbar extension
+- work on flexbox toolbar extension
