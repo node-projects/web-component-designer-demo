@@ -62,6 +62,11 @@
   <!-- Drag/Drop support on touch devices -->
   <link rel="stylesheet" href="./node_modules/mobile-drag-drop/default.css">
   <script src="./node_modules/mobile-drag-drop/index.js"></script>
+  <script>
+    MobileDragDrop.polyfill({
+      forceApply: !!(navigator.maxTouchPoints && navigator.userAgent.includes('Safari') && !navigator.userAgent.includes('Chrome'))
+    });
+  </script>
 
   <!-- if you use Moacco Editor -->
   <script src="./node_modules/monaco-editor/min/vs/loader.js"></script>
