@@ -37,8 +37,6 @@ import { CustomBindableObjectsService } from './services/CustomBindableObjectsSe
 import { CustomBindableObjectDragDropService } from './services/CustomBindableObjectDragDropService.js';
 import { EditTemplateContextMenu } from './services/EditTemplateContextMenu.js';
 
-DockSpawnTsWebcomponent.cssRootDirectory = "./node_modules/dock-spawn-ts/lib/css/";
-
 export class AppShell extends BaseCustomWebComponentConstructorAppend {
   activeElement: HTMLElement;
   mainPage = 'designer';
