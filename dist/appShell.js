@@ -19,14 +19,12 @@ serviceContainer.config.codeViewWidget = CodeViewMonaco;
 serviceContainer.designerContextMenuExtensions.push(new SeperatorContextMenu(), new EditTemplateContextMenu());
 //Instance Service Container Factories
 serviceContainer.register("stylesheetService", designerCanvas => new CssToolsStylesheetService(designerCanvas));
-import { DockSpawnTsWebcomponent } from 'dock-spawn-ts/lib/js/webcomponent/DockSpawnTsWebcomponent.js';
 import { BaseCustomWebComponentConstructorAppend, css, html } from '@node-projects/base-custom-webcomponent';
 import { CommandHandling } from './CommandHandling.js';
 import './styleEditor.js';
 import { CustomBindableObjectsService } from './services/CustomBindableObjectsService.js';
 import { CustomBindableObjectDragDropService } from './services/CustomBindableObjectDragDropService.js';
 import { EditTemplateContextMenu } from './services/EditTemplateContextMenu.js';
-DockSpawnTsWebcomponent.cssRootDirectory = "./node_modules/dock-spawn-ts/lib/css/";
 export class AppShell extends BaseCustomWebComponentConstructorAppend {
     activeElement;
     mainPage = 'designer';

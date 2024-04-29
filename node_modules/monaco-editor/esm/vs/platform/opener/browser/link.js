@@ -19,6 +19,8 @@ import { Event } from '../../../base/common/event.js';
 import { Disposable } from '../../../base/common/lifecycle.js';
 import { IOpenerService } from '../common/opener.js';
 import './link.css';
+import { setupCustomHover } from '../../../base/browser/ui/hover/updatableHoverWidget.js';
+import { getDefaultHoverDelegate } from '../../../base/browser/ui/hover/hoverDelegateFactory.js';
 let Link = class Link extends Disposable {
     get enabled() {
         return this._enabled;
@@ -43,15 +45,16 @@ let Link = class Link extends Disposable {
         this._enabled = enabled;
     }
     constructor(container, _link, options = {}, openerService) {
-        var _a;
+        var _a, _b;
         super();
         this._link = _link;
         this._enabled = true;
         this.el = append(container, $('a.monaco-link', {
             tabIndex: (_a = _link.tabIndex) !== null && _a !== void 0 ? _a : 0,
             href: _link.href,
-            title: _link.title
         }, _link.label));
+        this.hoverDelegate = (_b = options.hoverDelegate) !== null && _b !== void 0 ? _b : getDefaultHoverDelegate('mouse');
+        this.setTooltip(_link.title);
         this.el.setAttribute('role', 'button');
         const onClickEmitter = this._register(new DomEmitter(this.el, 'click'));
         const onKeyPress = this._register(new DomEmitter(this.el, 'keypress'));
@@ -73,6 +76,17 @@ let Link = class Link extends Disposable {
             }
         }));
         this.enabled = true;
+    }
+    setTooltip(title) {
+        if (this.hoverDelegate.showNativeHover) {
+            this.el.title = title !== null && title !== void 0 ? title : '';
+        }
+        else if (!this.hover && title) {
+            this.hover = this._register(setupCustomHover(this.hoverDelegate, this.el, title));
+        }
+        else if (this.hover) {
+            this.hover.update(title);
+        }
     }
 };
 Link = __decorate([

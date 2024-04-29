@@ -22,7 +22,7 @@ import { DisposableStore, MutableDisposable } from '../../../../base/common/life
 import { clamp } from '../../../../base/common/numbers.js';
 import * as strings from '../../../../base/common/strings.js';
 import './media/suggest.css';
-import { EmbeddedCodeEditorWidget } from '../../../browser/widget/embeddedCodeEditorWidget.js';
+import { EmbeddedCodeEditorWidget } from '../../../browser/widget/codeEditor/embeddedCodeEditorWidget.js';
 import { SuggestWidgetStatus } from './suggestWidgetStatus.js';
 import '../../symbolIcons/browser/symbolIcons.js'; // The codicon symbol colors are defined here and must be loaded to get colors
 import * as nls from '../../../../nls.js';

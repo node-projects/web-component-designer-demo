@@ -226,7 +226,7 @@ let InlineCompletionsController = InlineCompletionsController_1 = class InlineCo
         const accessibleViewShowing = this._contextKeyService.getContextKeyValue('accessibleViewIsShown');
         const accessibleViewKeybinding = this._keybindingService.lookupKeybinding('editor.action.accessibleView');
         let hint;
-        if (!accessibleViewShowing && accessibleViewKeybinding && this.editor.getOption(148 /* EditorOption.inlineCompletionsAccessibilityVerbose */)) {
+        if (!accessibleViewShowing && accessibleViewKeybinding && this.editor.getOption(149 /* EditorOption.inlineCompletionsAccessibilityVerbose */)) {
             hint = localize('showAccessibleViewHint', "Inspect this in the accessible view ({0})", accessibleViewKeybinding.getAriaLabel());
         }
         hint ? alert(content + ', ' + hint) : alert(content);

@@ -12,7 +12,7 @@ import { EditorStateCancellationTokenSource } from '../../editorState/browser/ed
 import { isCodeEditor } from '../../../browser/editorBrowser.js';
 import { EditorAction2 } from '../../../browser/editorExtensions.js';
 import { ICodeEditorService } from '../../../browser/services/codeEditorService.js';
-import { EmbeddedCodeEditorWidget } from '../../../browser/widget/embeddedCodeEditorWidget.js';
+import { EmbeddedCodeEditorWidget } from '../../../browser/widget/codeEditor/embeddedCodeEditorWidget.js';
 import * as corePosition from '../../../common/core/position.js';
 import { Range } from '../../../common/core/range.js';
 import { EditorContextKeys } from '../../../common/editorContextKeys.js';

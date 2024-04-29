@@ -22,7 +22,7 @@ import * as objects from '../../../../base/common/objects.js';
 import './media/peekViewWidget.css';
 import { registerEditorContribution } from '../../../browser/editorExtensions.js';
 import { ICodeEditorService } from '../../../browser/services/codeEditorService.js';
-import { EmbeddedCodeEditorWidget } from '../../../browser/widget/embeddedCodeEditorWidget.js';
+import { EmbeddedCodeEditorWidget } from '../../../browser/widget/codeEditor/embeddedCodeEditorWidget.js';
 import { ZoneWidget } from '../../zoneWidget/browser/zoneWidget.js';
 import * as nls from '../../../../nls.js';
 import { createActionViewItem } from '../../../../platform/actions/browser/menuEntryActionViewItem.js';

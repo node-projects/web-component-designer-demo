@@ -55,6 +55,11 @@ export class LineRangeMapping {
  * Also contains inner range mappings.
  */
 export class DetailedLineRangeMapping extends LineRangeMapping {
+    static fromRangeMappings(rangeMappings) {
+        const originalRange = LineRange.join(rangeMappings.map(r => LineRange.fromRangeInclusive(r.originalRange)));
+        const modifiedRange = LineRange.join(rangeMappings.map(r => LineRange.fromRangeInclusive(r.modifiedRange)));
+        return new DetailedLineRangeMapping(originalRange, modifiedRange, rangeMappings);
+    }
     constructor(originalRange, modifiedRange, innerChanges) {
         super(originalRange, modifiedRange);
         this.innerChanges = innerChanges;
@@ -62,6 +67,11 @@ export class DetailedLineRangeMapping extends LineRangeMapping {
     flip() {
         var _a;
         return new DetailedLineRangeMapping(this.modified, this.original, (_a = this.innerChanges) === null || _a === void 0 ? void 0 : _a.map(c => c.flip()));
+    }
+    withInnerChangesFromLineRanges() {
+        return new DetailedLineRangeMapping(this.original, this.modified, [
+            new RangeMapping(this.original.toExclusiveRange(), this.modified.toExclusiveRange()),
+        ]);
     }
 }
 /**

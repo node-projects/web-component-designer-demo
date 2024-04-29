@@ -170,7 +170,7 @@ function renderHoverParts(participant, editor, themeService, hoverParts, context
     const colorHover = hoverParts[0];
     const editorModel = editor.getModel();
     const model = colorHover.model;
-    const widget = disposables.add(new ColorPickerWidget(context.fragment, model, editor.getOption(142 /* EditorOption.pixelRatio */), themeService, participant instanceof StandaloneColorPickerParticipant));
+    const widget = disposables.add(new ColorPickerWidget(context.fragment, model, editor.getOption(143 /* EditorOption.pixelRatio */), themeService, participant instanceof StandaloneColorPickerParticipant));
     context.setColorPicker(widget);
     let editorUpdatedByColorPicker = false;
     let range = new Range(colorHover.range.startLineNumber, colorHover.range.startColumn, colorHover.range.endLineNumber, colorHover.range.endColumn);

@@ -26,7 +26,7 @@ export class LineNumbersOverlay extends DynamicViewOverlay {
         this._renderLineNumbers = lineNumbers.renderType;
         this._renderCustomLineNumbers = lineNumbers.renderFn;
         this._renderFinalNewline = options.get(95 /* EditorOption.renderFinalNewline */);
-        const layoutInfo = options.get(144 /* EditorOption.layoutInfo */);
+        const layoutInfo = options.get(145 /* EditorOption.layoutInfo */);
         this._lineNumbersLeft = layoutInfo.lineNumbersLeft;
         this._lineNumbersWidth = layoutInfo.lineNumbersWidth;
     }
@@ -96,6 +96,10 @@ export class LineNumbersOverlay extends DynamicViewOverlay {
                 return String(modelLineNumber);
             }
             if (modelLineNumber % 10 === 0) {
+                return String(modelLineNumber);
+            }
+            const finalLineNumber = this._context.viewModel.getLineCount();
+            if (modelLineNumber === finalLineNumber) {
                 return String(modelLineNumber);
             }
             return '';

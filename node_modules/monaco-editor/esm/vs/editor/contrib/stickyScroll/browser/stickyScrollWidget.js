@@ -9,7 +9,7 @@ import { Disposable, DisposableStore } from '../../../../base/common/lifecycle.j
 import { ThemeIcon } from '../../../../base/common/themables.js';
 import './stickyScroll.css';
 import { getColumnOfNodeOffset } from '../../../browser/viewParts/lines/viewLine.js';
-import { EmbeddedCodeEditorWidget } from '../../../browser/widget/embeddedCodeEditorWidget.js';
+import { EmbeddedCodeEditorWidget } from '../../../browser/widget/codeEditor/embeddedCodeEditorWidget.js';
 import { Position } from '../../../common/core/position.js';
 import { StringBuilder } from '../../../common/core/stringBuilder.js';
 import { LineDecoration } from '../../../common/viewLayout/lineDecorations.js';

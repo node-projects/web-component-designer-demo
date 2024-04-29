@@ -22,7 +22,7 @@ import { HoverAction, HoverWidget as BaseHoverWidget, getHoverAccessibleViewHint
 import { Widget } from '../../../../base/browser/ui/widget.js';
 import { IOpenerService } from '../../../../platform/opener/common/opener.js';
 import { IInstantiationService } from '../../../../platform/instantiation/common/instantiation.js';
-import { MarkdownRenderer, openLinkFromMarkdown } from '../markdownRenderer/browser/markdownRenderer.js';
+import { MarkdownRenderer, openLinkFromMarkdown } from '../../widget/markdownRenderer/browser/markdownRenderer.js';
 import { isMarkdownString } from '../../../../base/common/htmlContent.js';
 import { localize } from '../../../../nls.js';
 import { isMacintosh } from '../../../../base/common/platform.js';
@@ -279,10 +279,7 @@ let HoverWidget = class HoverWidget extends Widget {
             };
         };
         const targetBounds = this._target.targetElements.map(e => getZoomAccountedBoundingClientRect(e));
-        const top = Math.min(...targetBounds.map(e => e.top));
-        const right = Math.max(...targetBounds.map(e => e.right));
-        const bottom = Math.max(...targetBounds.map(e => e.bottom));
-        const left = Math.min(...targetBounds.map(e => e.left));
+        const { top, right, bottom, left } = targetBounds[0];
         const width = right - left;
         const height = bottom - top;
         const targetRect = {
@@ -399,9 +396,10 @@ let HoverWidget = class HoverWidget extends Widget {
         if (this._target.x !== undefined) {
             return;
         }
+        const hoverPointerOffset = (this._hoverPointer ? 3 /* Constants.PointerSize */ : 0);
         // When force position is enabled, restrict max width
         if (this._forcePosition) {
-            const padding = (this._hoverPointer ? 3 /* Constants.PointerSize */ : 0) + 2 /* Constants.HoverBorderWidth */;
+            const padding = hoverPointerOffset + 2 /* Constants.HoverBorderWidth */;
             if (this._hoverPosition === 1 /* HoverPosition.RIGHT */) {
                 this._hover.containerDomNode.style.maxWidth = `${this._targetDocumentElement.clientWidth - target.right - padding}px`;
             }
@@ -414,10 +412,10 @@ let HoverWidget = class HoverWidget extends Widget {
         if (this._hoverPosition === 1 /* HoverPosition.RIGHT */) {
             const roomOnRight = this._targetDocumentElement.clientWidth - target.right;
             // Hover on the right is going beyond window.
-            if (roomOnRight < this._hover.containerDomNode.clientWidth) {
+            if (roomOnRight < this._hover.containerDomNode.clientWidth + hoverPointerOffset) {
                 const roomOnLeft = target.left;
                 // There's enough room on the left, flip the hover position
-                if (roomOnLeft >= this._hover.containerDomNode.clientWidth) {
+                if (roomOnLeft >= this._hover.containerDomNode.clientWidth + hoverPointerOffset) {
                     this._hoverPosition = 0 /* HoverPosition.LEFT */;
                 }
                 // Hover on the left would go beyond window too
@@ -430,10 +428,10 @@ let HoverWidget = class HoverWidget extends Widget {
         else if (this._hoverPosition === 0 /* HoverPosition.LEFT */) {
             const roomOnLeft = target.left;
             // Hover on the left is going beyond window.
-            if (roomOnLeft < this._hover.containerDomNode.clientWidth) {
+            if (roomOnLeft < this._hover.containerDomNode.clientWidth + hoverPointerOffset) {
                 const roomOnRight = this._targetDocumentElement.clientWidth - target.right;
                 // There's enough room on the right, flip the hover position
-                if (roomOnRight >= this._hover.containerDomNode.clientWidth) {
+                if (roomOnRight >= this._hover.containerDomNode.clientWidth + hoverPointerOffset) {
                     this._hoverPosition = 1 /* HoverPosition.RIGHT */;
                 }
                 // Hover on the right would go beyond window too
@@ -442,7 +440,7 @@ let HoverWidget = class HoverWidget extends Widget {
                 }
             }
             // Hover on the left is going beyond window.
-            if (target.left - this._hover.containerDomNode.clientWidth <= this._targetDocumentElement.clientLeft) {
+            if (target.left - this._hover.containerDomNode.clientWidth - hoverPointerOffset <= this._targetDocumentElement.clientLeft) {
                 this._hoverPosition = 1 /* HoverPosition.RIGHT */;
             }
         }
@@ -453,17 +451,18 @@ let HoverWidget = class HoverWidget extends Widget {
         if (this._target.y !== undefined || this._forcePosition) {
             return;
         }
+        const hoverPointerOffset = (this._hoverPointer ? 3 /* Constants.PointerSize */ : 0);
         // Position hover on top of the target
         if (this._hoverPosition === 3 /* HoverPosition.ABOVE */) {
             // Hover on top is going beyond window
-            if (target.top - this._hover.containerDomNode.clientHeight < 0) {
+            if (target.top - this._hover.containerDomNode.clientHeight - hoverPointerOffset < 0) {
                 this._hoverPosition = 2 /* HoverPosition.BELOW */;
             }
         }
         // Position hover below the target
         else if (this._hoverPosition === 2 /* HoverPosition.BELOW */) {
             // Hover on bottom is going beyond window
-            if (target.bottom + this._hover.containerDomNode.clientHeight > this._targetWindow.innerHeight) {
+            if (target.bottom + this._hover.containerDomNode.clientHeight + hoverPointerOffset > this._targetWindow.innerHeight) {
                 this._hoverPosition = 3 /* HoverPosition.ABOVE */;
             }
         }

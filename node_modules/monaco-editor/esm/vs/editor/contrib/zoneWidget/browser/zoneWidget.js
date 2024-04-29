@@ -81,7 +81,7 @@ class Arrow {
     }
     _updateStyle() {
         dom.removeCSSRulesContainingSelector(this._ruleName);
-        dom.createCSSRule(`.monaco-editor ${this._ruleName}`, `border-style: solid; border-color: transparent; border-bottom-color: ${this._color}; border-width: ${this._height}px; bottom: -${this._height}px; margin-left: -${this._height}px; `);
+        dom.createCSSRule(`.monaco-editor ${this._ruleName}`, `border-style: solid; border-color: transparent; border-bottom-color: ${this._color}; border-width: ${this._height}px; bottom: -${this._height}px !important; margin-left: -${this._height}px; `);
     }
     show(where) {
         if (where.column === 1) {

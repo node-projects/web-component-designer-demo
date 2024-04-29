@@ -2,9 +2,9 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { getWindow, runWhenWindowIdle } from '../../../base/browser/dom.js';
-import { onUnexpectedError } from '../../../base/common/errors.js';
-import { Disposable, DisposableMap } from '../../../base/common/lifecycle.js';
+import { getWindow, runWhenWindowIdle } from '../../../../base/browser/dom.js';
+import { onUnexpectedError } from '../../../../base/common/errors.js';
+import { Disposable, DisposableMap } from '../../../../base/common/lifecycle.js';
 export class CodeEditorContributions extends Disposable {
     constructor() {
         super();

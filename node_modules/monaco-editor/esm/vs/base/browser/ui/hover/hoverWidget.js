@@ -6,7 +6,7 @@ import * as dom from '../../dom.js';
 import { StandardKeyboardEvent } from '../../keyboardEvent.js';
 import { DomScrollableElement } from '../scrollbar/scrollableElement.js';
 import { Disposable } from '../../../common/lifecycle.js';
-import './hover.css';
+import './hoverWidget.css';
 import { localize } from '../../../../nls.js';
 const $ = dom.$;
 export class HoverWidget extends Disposable {

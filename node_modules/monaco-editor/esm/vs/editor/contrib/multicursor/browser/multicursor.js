@@ -320,7 +320,7 @@ export class MultiCursorSession {
         this.findController.highlightFindOptions();
         const allSelections = this._editor.getSelections();
         const lastAddedSelection = allSelections[allSelections.length - 1];
-        const nextMatch = this._editor.getModel().findNextMatch(this.searchText, lastAddedSelection.getEndPosition(), false, this.matchCase, this.wholeWord ? this._editor.getOption(130 /* EditorOption.wordSeparators */) : null, false);
+        const nextMatch = this._editor.getModel().findNextMatch(this.searchText, lastAddedSelection.getEndPosition(), false, this.matchCase, this.wholeWord ? this._editor.getOption(131 /* EditorOption.wordSeparators */) : null, false);
         if (!nextMatch) {
             return null;
         }
@@ -360,7 +360,7 @@ export class MultiCursorSession {
         this.findController.highlightFindOptions();
         const allSelections = this._editor.getSelections();
         const lastAddedSelection = allSelections[allSelections.length - 1];
-        const previousMatch = this._editor.getModel().findPreviousMatch(this.searchText, lastAddedSelection.getStartPosition(), false, this.matchCase, this.wholeWord ? this._editor.getOption(130 /* EditorOption.wordSeparators */) : null, false);
+        const previousMatch = this._editor.getModel().findPreviousMatch(this.searchText, lastAddedSelection.getStartPosition(), false, this.matchCase, this.wholeWord ? this._editor.getOption(131 /* EditorOption.wordSeparators */) : null, false);
         if (!previousMatch) {
             return null;
         }
@@ -373,9 +373,9 @@ export class MultiCursorSession {
         this.findController.highlightFindOptions();
         const editorModel = this._editor.getModel();
         if (searchScope) {
-            return editorModel.findMatches(this.searchText, searchScope, false, this.matchCase, this.wholeWord ? this._editor.getOption(130 /* EditorOption.wordSeparators */) : null, false, 1073741824 /* Constants.MAX_SAFE_SMALL_INTEGER */);
+            return editorModel.findMatches(this.searchText, searchScope, false, this.matchCase, this.wholeWord ? this._editor.getOption(131 /* EditorOption.wordSeparators */) : null, false, 1073741824 /* Constants.MAX_SAFE_SMALL_INTEGER */);
         }
-        return editorModel.findMatches(this.searchText, true, false, this.matchCase, this.wholeWord ? this._editor.getOption(130 /* EditorOption.wordSeparators */) : null, false, 1073741824 /* Constants.MAX_SAFE_SMALL_INTEGER */);
+        return editorModel.findMatches(this.searchText, true, false, this.matchCase, this.wholeWord ? this._editor.getOption(131 /* EditorOption.wordSeparators */) : null, false, 1073741824 /* Constants.MAX_SAFE_SMALL_INTEGER */);
     }
 }
 export class MultiCursorSelectionController extends Disposable {
@@ -522,10 +522,10 @@ export class MultiCursorSelectionController extends Disposable {
         if (findState.isRevealed && findState.searchString.length > 0 && findState.isRegex) {
             const editorModel = this._editor.getModel();
             if (findState.searchScope) {
-                matches = editorModel.findMatches(findState.searchString, findState.searchScope, findState.isRegex, findState.matchCase, findState.wholeWord ? this._editor.getOption(130 /* EditorOption.wordSeparators */) : null, false, 1073741824 /* Constants.MAX_SAFE_SMALL_INTEGER */);
+                matches = editorModel.findMatches(findState.searchString, findState.searchScope, findState.isRegex, findState.matchCase, findState.wholeWord ? this._editor.getOption(131 /* EditorOption.wordSeparators */) : null, false, 1073741824 /* Constants.MAX_SAFE_SMALL_INTEGER */);
             }
             else {
-                matches = editorModel.findMatches(findState.searchString, true, findState.isRegex, findState.matchCase, findState.wholeWord ? this._editor.getOption(130 /* EditorOption.wordSeparators */) : null, false, 1073741824 /* Constants.MAX_SAFE_SMALL_INTEGER */);
+                matches = editorModel.findMatches(findState.searchString, true, findState.isRegex, findState.matchCase, findState.wholeWord ? this._editor.getOption(131 /* EditorOption.wordSeparators */) : null, false, 1073741824 /* Constants.MAX_SAFE_SMALL_INTEGER */);
             }
         }
         else {
@@ -839,7 +839,7 @@ let SelectionHighlighter = SelectionHighlighter_1 = class SelectionHighlighter e
                 return null;
             }
         }
-        return new SelectionHighlighterState(editor.getModel(), r.searchText, r.matchCase, r.wholeWord ? editor.getOption(130 /* EditorOption.wordSeparators */) : null, oldState);
+        return new SelectionHighlighterState(editor.getModel(), r.searchText, r.matchCase, r.wholeWord ? editor.getOption(131 /* EditorOption.wordSeparators */) : null, oldState);
     }
     _setState(newState) {
         this.state = newState;

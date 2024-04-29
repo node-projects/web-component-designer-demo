@@ -105,7 +105,7 @@ export class ViewLayout extends Disposable {
         super();
         this._configuration = configuration;
         const options = this._configuration.options;
-        const layoutInfo = options.get(144 /* EditorOption.layoutInfo */);
+        const layoutInfo = options.get(145 /* EditorOption.layoutInfo */);
         const padding = options.get(84 /* EditorOption.padding */);
         this._linesLayout = new LinesLayout(lineCount, options.get(67 /* EditorOption.lineHeight */), padding.top, padding.bottom);
         this._maxLineWidth = 0;
@@ -139,8 +139,8 @@ export class ViewLayout extends Disposable {
             const padding = options.get(84 /* EditorOption.padding */);
             this._linesLayout.setPadding(padding.top, padding.bottom);
         }
-        if (e.hasChanged(144 /* EditorOption.layoutInfo */)) {
-            const layoutInfo = options.get(144 /* EditorOption.layoutInfo */);
+        if (e.hasChanged(145 /* EditorOption.layoutInfo */)) {
+            const layoutInfo = options.get(145 /* EditorOption.layoutInfo */);
             const width = layoutInfo.contentWidth;
             const height = layoutInfo.height;
             const scrollDimensions = this._scrollable.getScrollDimensions();
@@ -209,9 +209,9 @@ export class ViewLayout extends Disposable {
     _computeContentWidth() {
         const options = this._configuration.options;
         const maxLineWidth = this._maxLineWidth;
-        const wrappingInfo = options.get(145 /* EditorOption.wrappingInfo */);
+        const wrappingInfo = options.get(146 /* EditorOption.wrappingInfo */);
         const fontInfo = options.get(50 /* EditorOption.fontInfo */);
-        const layoutInfo = options.get(144 /* EditorOption.layoutInfo */);
+        const layoutInfo = options.get(145 /* EditorOption.layoutInfo */);
         if (wrappingInfo.isViewportWrapping) {
             const minimap = options.get(73 /* EditorOption.minimap */);
             if (maxLineWidth > layoutInfo.contentWidth + fontInfo.typicalHalfwidthCharacterWidth) {

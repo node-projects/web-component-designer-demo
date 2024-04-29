@@ -19,7 +19,7 @@ export class ColorContribution extends Disposable {
         super.dispose();
     }
     onMouseDown(mouseEvent) {
-        const colorDecoratorsActivatedOn = this._editor.getOption(147 /* EditorOption.colorDecoratorsActivatedOn */);
+        const colorDecoratorsActivatedOn = this._editor.getOption(148 /* EditorOption.colorDecoratorsActivatedOn */);
         if (colorDecoratorsActivatedOn !== 'click' && colorDecoratorsActivatedOn !== 'clickAndHover') {
             return;
         }

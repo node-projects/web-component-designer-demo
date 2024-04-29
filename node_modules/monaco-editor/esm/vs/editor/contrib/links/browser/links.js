@@ -201,10 +201,10 @@ let LinkDetector = LinkDetector_1 = class LinkDetector extends Disposable {
                     if (parsedUri.scheme === Schemas.file) {
                         const fsPath = resources.originalFSPath(parsedUri);
                         let relativePath = null;
-                        if (fsPath.startsWith('/./')) {
+                        if (fsPath.startsWith('/./') || fsPath.startsWith('\\.\\')) {
                             relativePath = `.${fsPath.substr(1)}`;
                         }
-                        else if (fsPath.startsWith('//./')) {
+                        else if (fsPath.startsWith('//./') || fsPath.startsWith('\\\\.\\')) {
                             relativePath = `.${fsPath.substr(2)}`;
                         }
                         if (relativePath) {

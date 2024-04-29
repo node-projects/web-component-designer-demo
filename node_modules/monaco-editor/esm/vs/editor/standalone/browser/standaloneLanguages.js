@@ -573,6 +573,7 @@ export function createMonacoLanguagesAPI() {
         InlineEditTriggerKind: standaloneEnums.InlineEditTriggerKind,
         CodeActionTriggerType: standaloneEnums.CodeActionTriggerType,
         NewSymbolNameTag: standaloneEnums.NewSymbolNameTag,
+        PartialAcceptTriggerKind: standaloneEnums.PartialAcceptTriggerKind,
         // classes
         FoldingRangeKind: languages.FoldingRangeKind,
         SelectedSuggestionInfo: languages.SelectedSuggestionInfo,

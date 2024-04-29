@@ -68,7 +68,7 @@ export class ViewLines extends ViewPart {
         const conf = this._context.configuration;
         const options = this._context.configuration.options;
         const fontInfo = options.get(50 /* EditorOption.fontInfo */);
-        const wrappingInfo = options.get(145 /* EditorOption.wrappingInfo */);
+        const wrappingInfo = options.get(146 /* EditorOption.wrappingInfo */);
         this._lineHeight = options.get(67 /* EditorOption.lineHeight */);
         this._typicalHalfwidthCharacterWidth = fontInfo.typicalHalfwidthCharacterWidth;
         this._isViewportWrapping = wrappingInfo.isViewportWrapping;
@@ -110,12 +110,12 @@ export class ViewLines extends ViewPart {
     // ---- begin view event handlers
     onConfigurationChanged(e) {
         this._visibleLines.onConfigurationChanged(e);
-        if (e.hasChanged(145 /* EditorOption.wrappingInfo */)) {
+        if (e.hasChanged(146 /* EditorOption.wrappingInfo */)) {
             this._maxLineWidth = 0;
         }
         const options = this._context.configuration.options;
         const fontInfo = options.get(50 /* EditorOption.fontInfo */);
-        const wrappingInfo = options.get(145 /* EditorOption.wrappingInfo */);
+        const wrappingInfo = options.get(146 /* EditorOption.wrappingInfo */);
         this._lineHeight = options.get(67 /* EditorOption.lineHeight */);
         this._typicalHalfwidthCharacterWidth = fontInfo.typicalHalfwidthCharacterWidth;
         this._isViewportWrapping = wrappingInfo.isViewportWrapping;
@@ -128,7 +128,7 @@ export class ViewLines extends ViewPart {
         this._maxNumberStickyLines = options.get(115 /* EditorOption.stickyScroll */).maxLineCount;
         applyFontInfo(this.domNode, fontInfo);
         this._onOptionsMaybeChanged();
-        if (e.hasChanged(144 /* EditorOption.layoutInfo */)) {
+        if (e.hasChanged(145 /* EditorOption.layoutInfo */)) {
             this._maxLineWidth = 0;
         }
         return true;
@@ -619,7 +619,7 @@ export class ViewLines extends ViewPart {
     }
     _computeScrollLeftToReveal(horizontalRevealRequest) {
         const viewport = this._context.viewLayout.getCurrentViewport();
-        const layoutInfo = this._context.configuration.options.get(144 /* EditorOption.layoutInfo */);
+        const layoutInfo = this._context.configuration.options.get(145 /* EditorOption.layoutInfo */);
         const viewportStartX = viewport.left;
         const viewportEndX = viewportStartX + viewport.width - layoutInfo.verticalScrollbarWidth;
         let boxStartX = 1073741824 /* Constants.MAX_SAFE_SMALL_INTEGER */;

@@ -26,7 +26,7 @@ export class WhitespaceOverlay extends DynamicViewOverlay {
     onConfigurationChanged(e) {
         const newOptions = new WhitespaceOptions(this._context.configuration);
         if (this._options.equals(newOptions)) {
-            return e.hasChanged(144 /* EditorOption.layoutInfo */);
+            return e.hasChanged(145 /* EditorOption.layoutInfo */);
         }
         this._options = newOptions;
         return true;
@@ -194,7 +194,7 @@ export class WhitespaceOverlay extends DynamicViewOverlay {
         }
         if (USE_SVG) {
             maxLeft = Math.round(maxLeft + spaceWidth);
-            return (`<svg style="position:absolute;width:${maxLeft}px;height:${lineHeight}px" viewBox="0 0 ${maxLeft} ${lineHeight}" xmlns="http://www.w3.org/2000/svg" fill="${color}">`
+            return (`<svg style="bottom:0;position:absolute;width:${maxLeft}px;height:${lineHeight}px" viewBox="0 0 ${maxLeft} ${lineHeight}" xmlns="http://www.w3.org/2000/svg" fill="${color}">`
                 + result
                 + `</svg>`);
         }

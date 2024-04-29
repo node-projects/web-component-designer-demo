@@ -28,6 +28,10 @@ exports.features = [
     "entry": "vs/editor/contrib/codeAction/browser/codeActionContributions"
   },
   {
+    "label": "codeEditor",
+    "entry": "vs/editor/browser/widget/codeEditor/codeEditorWidget"
+  },
+  {
     "label": "codelens",
     "entry": "vs/editor/contrib/codelens/browser/codelensController"
   },
@@ -191,6 +195,10 @@ exports.features = [
   {
     "label": "rename",
     "entry": "vs/editor/contrib/rename/browser/rename"
+  },
+  {
+    "label": "sectionHeaders",
+    "entry": "vs/editor/contrib/sectionHeaders/browser/sectionHeaders"
   },
   {
     "label": "semanticTokens",

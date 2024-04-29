@@ -16,7 +16,6 @@ import { Emitter } from '../../../base/common/event.js';
 import { IContextKeyService, RawContextKey } from '../../contextkey/common/contextkey.js';
 import { IInstantiationService } from '../../instantiation/common/instantiation.js';
 import { ILayoutService } from '../../layout/browser/layoutService.js';
-import { WorkbenchList } from '../../list/browser/listService.js';
 import { IOpenerService } from '../../opener/common/opener.js';
 import { QuickAccessController } from './quickAccess.js';
 import { defaultButtonStyles, defaultCountBadgeStyles, defaultInputBoxStyles, defaultKeybindingLabelStyles, defaultProgressBarStyles, defaultToggleStyles, getListStyles } from '../../theme/browser/defaultStyles.js';
@@ -65,14 +64,13 @@ let QuickInputService = class QuickInputService extends Themable {
                 });
             },
             returnFocus: () => host.focus(),
-            createList: (user, container, delegate, renderers, options) => this.instantiationService.createInstance(WorkbenchList, user, container, delegate, renderers, options),
             styles: this.computeStyles(),
             hoverDelegate: this._register(this.instantiationService.createInstance(QuickInputHoverDelegate))
         };
-        const controller = this._register(new QuickInputController({
+        const controller = this._register(this.instantiationService.createInstance(QuickInputController, {
             ...defaultOptions,
             ...options
-        }, this.themeService, this.layoutService));
+        }));
         controller.layout(host.activeContainerDimension, host.activeContainerOffset.quickPickTop);
         // Layout changes
         this._register(host.onDidLayoutActiveContainer(dimension => {

@@ -32,7 +32,7 @@ export class AcceptInlineEdit extends EditorAction {
     }
     async run(accessor, editor) {
         const controller = InlineEditController.get(editor);
-        controller === null || controller === void 0 ? void 0 : controller.accept();
+        await (controller === null || controller === void 0 ? void 0 : controller.accept());
     }
 }
 export class TriggerInlineEdit extends EditorAction {
@@ -132,6 +132,6 @@ export class RejectInlineEdit extends EditorAction {
     }
     async run(accessor, editor) {
         const controller = InlineEditController.get(editor);
-        controller === null || controller === void 0 ? void 0 : controller.clear();
+        await (controller === null || controller === void 0 ? void 0 : controller.clear());
     }
 }

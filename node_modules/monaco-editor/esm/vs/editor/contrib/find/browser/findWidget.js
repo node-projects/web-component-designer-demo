@@ -26,6 +26,8 @@ import { ThemeIcon } from '../../../../base/common/themables.js';
 import { isHighContrast } from '../../../../platform/theme/common/theme.js';
 import { assertIsDefined } from '../../../../base/common/types.js';
 import { defaultInputBoxStyles, defaultToggleStyles } from '../../../../platform/theme/browser/defaultStyles.js';
+import { setupCustomHover } from '../../../../base/browser/ui/hover/updatableHoverWidget.js';
+import { createInstantHoverDelegate, getDefaultHoverDelegate } from '../../../../base/browser/ui/hover/hoverDelegateFactory.js';
 const findSelectionIcon = registerIcon('find-selection', Codicon.selection, nls.localize('findSelectionIcon', 'Icon for \'Find in Selection\' in the editor find widget.'));
 const findCollapsedIcon = registerIcon('find-collapsed', Codicon.chevronRight, nls.localize('findCollapsedIcon', 'Icon to indicate that the editor find widget is collapsed.'));
 const findExpandedIcon = registerIcon('find-expanded', Codicon.chevronDown, nls.localize('findExpandedIcon', 'Icon to indicate that the editor find widget is expanded.'));
@@ -111,7 +113,7 @@ export class FindWidget extends Widget {
                 }
                 this._updateButtons();
             }
-            if (e.hasChanged(144 /* EditorOption.layoutInfo */)) {
+            if (e.hasChanged(145 /* EditorOption.layoutInfo */)) {
                 this._tryUpdateWidgetWidth();
             }
             if (e.hasChanged(2 /* EditorOption.accessibilitySupport */)) {
@@ -812,10 +814,13 @@ export class FindWidget extends Widget {
         this._matchesCount = document.createElement('div');
         this._matchesCount.className = 'matchesCount';
         this._updateMatchesCount();
+        // Create a scoped hover delegate for all find related buttons
+        const hoverDelegate = this._register(createInstantHoverDelegate());
         // Previous button
         this._prevBtn = this._register(new SimpleButton({
             label: NLS_PREVIOUS_MATCH_BTN_LABEL + this._keybindingLabelFor(FIND_IDS.PreviousMatchFindAction),
             icon: findPreviousMatchIcon,
+            hoverDelegate,
             onTrigger: () => {
                 assertIsDefined(this._codeEditor.getAction(FIND_IDS.PreviousMatchFindAction)).run().then(undefined, onUnexpectedError);
             }
@@ -824,6 +829,7 @@ export class FindWidget extends Widget {
         this._nextBtn = this._register(new SimpleButton({
             label: NLS_NEXT_MATCH_BTN_LABEL + this._keybindingLabelFor(FIND_IDS.NextMatchFindAction),
             icon: findNextMatchIcon,
+            hoverDelegate,
             onTrigger: () => {
                 assertIsDefined(this._codeEditor.getAction(FIND_IDS.NextMatchFindAction)).run().then(undefined, onUnexpectedError);
             }
@@ -842,6 +848,7 @@ export class FindWidget extends Widget {
             icon: findSelectionIcon,
             title: NLS_TOGGLE_SELECTION_FIND_TITLE + this._keybindingLabelFor(FIND_IDS.ToggleSearchScopeCommand),
             isChecked: false,
+            hoverDelegate: hoverDelegate,
             inputActiveOptionBackground: asCssVariable(inputActiveOptionBackground),
             inputActiveOptionBorder: asCssVariable(inputActiveOptionBorder),
             inputActiveOptionForeground: asCssVariable(inputActiveOptionForeground),
@@ -873,6 +880,7 @@ export class FindWidget extends Widget {
         this._closeBtn = this._register(new SimpleButton({
             label: NLS_CLOSE_BTN_LABEL + this._keybindingLabelFor(FIND_IDS.CloseFindWidgetCommand),
             icon: widgetClose,
+            hoverDelegate,
             onTrigger: () => {
                 this._state.change({ isRevealed: false, searchScope: null }, false);
             },
@@ -935,10 +943,13 @@ export class FindWidget extends Widget {
                 e.preventDefault();
             }
         }));
+        // Create scoped hover delegate for replace actions
+        const replaceHoverDelegate = this._register(createInstantHoverDelegate());
         // Replace one button
         this._replaceBtn = this._register(new SimpleButton({
             label: NLS_REPLACE_BTN_LABEL + this._keybindingLabelFor(FIND_IDS.ReplaceOneAction),
             icon: findReplaceIcon,
+            hoverDelegate: replaceHoverDelegate,
             onTrigger: () => {
                 this._controller.replace();
             },
@@ -953,6 +964,7 @@ export class FindWidget extends Widget {
         this._replaceAllBtn = this._register(new SimpleButton({
             label: NLS_REPLACE_ALL_BTN_LABEL + this._keybindingLabelFor(FIND_IDS.ReplaceAllAction),
             icon: findReplaceAllIcon,
+            hoverDelegate: replaceHoverDelegate,
             onTrigger: () => {
                 this._controller.replaceAll();
             }
@@ -1050,6 +1062,7 @@ export class FindWidget extends Widget {
 FindWidget.ID = 'editor.contrib.findWidget';
 export class SimpleButton extends Widget {
     constructor(opts) {
+        var _a;
         super();
         this._opts = opts;
         let className = 'button';
@@ -1060,11 +1073,11 @@ export class SimpleButton extends Widget {
             className = className + ' ' + ThemeIcon.asClassName(this._opts.icon);
         }
         this._domNode = document.createElement('div');
-        this._domNode.title = this._opts.label;
         this._domNode.tabIndex = 0;
         this._domNode.className = className;
         this._domNode.setAttribute('role', 'button');
         this._domNode.setAttribute('aria-label', this._opts.label);
+        this._register(setupCustomHover((_a = opts.hoverDelegate) !== null && _a !== void 0 ? _a : getDefaultHoverDelegate('element'), this._domNode, this._opts.label));
         this.onclick(this._domNode, (e) => {
             this._opts.onTrigger();
             e.preventDefault();

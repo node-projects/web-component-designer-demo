@@ -3,8 +3,8 @@ import { sanitize } from '../../dompurify/dompurify.js';
 import { StandardKeyboardEvent } from '../../keyboardEvent.js';
 import { renderMarkdown, renderStringAsPlaintext } from '../../markdownRenderer.js';
 import { Gesture, EventType as TouchEventType } from '../../touch.js';
-import { getDefaultHoverDelegate } from '../hover/hoverDelegate.js';
-import { setupCustomHover } from '../iconLabel/iconLabelHover.js';
+import { getDefaultHoverDelegate } from '../hover/hoverDelegateFactory.js';
+import { setupCustomHover } from '../hover/updatableHoverWidget.js';
 import { renderLabelWithIcons } from '../iconLabel/iconLabels.js';
 import { Color } from '../../../common/color.js';
 import { Emitter } from '../../../common/event.js';
@@ -47,6 +47,9 @@ export class Button extends Disposable {
             this._labelElement.classList.add('monaco-button-label');
             this._element.appendChild(this._labelElement);
             this._element.classList.add('monaco-text-button-with-short-label');
+        }
+        if (typeof options.title === 'string') {
+            this.setTitle(options.title);
         }
         if (typeof options.ariaLabel === 'string') {
             this._element.setAttribute('aria-label', options.ariaLabel);
@@ -173,17 +176,12 @@ export class Button extends Disposable {
         else if (this.options.title) {
             title = renderStringAsPlaintext(value);
         }
-        if (!this._hover) {
-            this._hover = this._register(setupCustomHover(getDefaultHoverDelegate('mouse'), this._element, title));
-        }
-        else {
-            this._hover.update(title);
-        }
+        this.setTitle(title);
         if (typeof this.options.ariaLabel === 'string') {
             this._element.setAttribute('aria-label', this.options.ariaLabel);
         }
         else if (this.options.ariaLabel) {
-            this._element.setAttribute('aria-label', this._element.title);
+            this._element.setAttribute('aria-label', title);
         }
         this._label = value;
     }
@@ -206,5 +204,14 @@ export class Button extends Disposable {
     }
     get enabled() {
         return !this._element.classList.contains('disabled');
+    }
+    setTitle(title) {
+        var _a;
+        if (!this._hover && title !== '') {
+            this._hover = this._register(setupCustomHover((_a = this.options.hoverDelegate) !== null && _a !== void 0 ? _a : getDefaultHoverDelegate('mouse'), this._element, title));
+        }
+        else if (this._hover) {
+            this._hover.update(title);
+        }
     }
 }

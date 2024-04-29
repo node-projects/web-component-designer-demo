@@ -105,7 +105,20 @@ class UpdatableHoverWidget {
         this._cancellationTokenSource = undefined;
     }
 }
+function getHoverTargetElement(element, stopElement) {
+    stopElement = stopElement !== null && stopElement !== void 0 ? stopElement : dom.getWindow(element).document.body;
+    while (!element.hasAttribute('custom-hover') && element !== stopElement) {
+        element = element.parentElement;
+    }
+    return element;
+}
 export function setupCustomHover(hoverDelegate, htmlElement, content, options) {
+    htmlElement.setAttribute('custom-hover', 'true');
+    if (htmlElement.title !== '') {
+        console.warn('HTML element already has a title attribute, which will conflict with the custom hover. Please remove the title attribute.');
+        console.trace('Stack trace:', htmlElement.title);
+        htmlElement.title = '';
+    }
     let hoverPreparation;
     let hoverWidget;
     const hideHover = (disposeWidget, disposePreparation) => {
@@ -144,7 +157,7 @@ export function setupCustomHover(hoverDelegate, htmlElement, content, options) {
         isMouseDown = false;
         hideHover(false, e.fromElement === htmlElement);
     }, true);
-    const onMouseOver = () => {
+    const onMouseOver = (e) => {
         if (hoverPreparation) {
             return;
         }
@@ -157,14 +170,17 @@ export function setupCustomHover(hoverDelegate, htmlElement, content, options) {
             // track the mouse position
             const onMouseMove = (e) => {
                 target.x = e.x + 10;
-                if ((e.target instanceof HTMLElement) && e.target.classList.contains('action-label')) {
+                if ((e.target instanceof HTMLElement) && getHoverTargetElement(e.target, htmlElement) !== htmlElement) {
                     hideHover(true, true);
                 }
             };
             toDispose.add(dom.addDisposableListener(htmlElement, dom.EventType.MOUSE_MOVE, onMouseMove, true));
         }
-        toDispose.add(triggerShowHover(hoverDelegate.delay, false, target));
         hoverPreparation = toDispose;
+        if ((e.target instanceof HTMLElement) && getHoverTargetElement(e.target, htmlElement) !== htmlElement) {
+            return; // Do not show hover when the mouse is over another hover target
+        }
+        toDispose.add(triggerShowHover(hoverDelegate.delay, false, target));
     };
     const mouseOverDomEmitter = dom.addDisposableListener(htmlElement, dom.EventType.MOUSE_OVER, onMouseOver, true);
     const onFocus = () => {
@@ -181,7 +197,12 @@ export function setupCustomHover(hoverDelegate, htmlElement, content, options) {
         toDispose.add(triggerShowHover(hoverDelegate.delay, false, target));
         hoverPreparation = toDispose;
     };
-    const focusDomEmitter = dom.addDisposableListener(htmlElement, dom.EventType.FOCUS, onFocus, true);
+    // Do not show hover when focusing an input or textarea
+    let focusDomEmitter;
+    const tagName = htmlElement.tagName.toLowerCase();
+    if (tagName !== 'input' && tagName !== 'textarea') {
+        focusDomEmitter = dom.addDisposableListener(htmlElement, dom.EventType.FOCUS, onFocus, true);
+    }
     const hover = {
         show: focus => {
             hideHover(false, true); // terminate a ongoing mouse over preparation
@@ -199,7 +220,7 @@ export function setupCustomHover(hoverDelegate, htmlElement, content, options) {
             mouseLeaveEmitter.dispose();
             mouseDownEmitter.dispose();
             mouseUpEmitter.dispose();
-            focusDomEmitter.dispose();
+            focusDomEmitter === null || focusDomEmitter === void 0 ? void 0 : focusDomEmitter.dispose();
             hideHover(true, true);
         }
     };

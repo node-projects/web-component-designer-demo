@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import './browser/coreCommands.js';
-import './browser/widget/codeEditorWidget.js';
+import './browser/widget/codeEditor/codeEditorWidget.js';
 import './browser/widget/diffEditor/diffEditor.contribution.js';
 import './contrib/anchorSelect/browser/anchorSelect.js';
 import './contrib/bracketMatching/browser/bracketMatching.js';
@@ -43,6 +43,7 @@ import './contrib/multicursor/browser/multicursor.js';
 import './contrib/inlineEdit/browser/inlineEdit.contribution.js';
 import './contrib/parameterHints/browser/parameterHints.js';
 import './contrib/rename/browser/rename.js';
+import './contrib/sectionHeaders/browser/sectionHeaders.js';
 import './contrib/semanticTokens/browser/documentSemanticTokens.js';
 import './contrib/semanticTokens/browser/viewportSemanticTokens.js';
 import './contrib/smartSelect/browser/smartSelect.js';

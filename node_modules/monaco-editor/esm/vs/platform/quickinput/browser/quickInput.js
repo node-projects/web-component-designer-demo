@@ -19,16 +19,16 @@ import { TimeoutTimer } from '../../../base/common/async.js';
 import { Codicon } from '../../../base/common/codicons.js';
 import { Emitter } from '../../../base/common/event.js';
 import { Disposable, DisposableStore } from '../../../base/common/lifecycle.js';
-import { isIOS } from '../../../base/common/platform.js';
+import { isIOS, isMacintosh } from '../../../base/common/platform.js';
 import Severity from '../../../base/common/severity.js';
 import { ThemeIcon } from '../../../base/common/themables.js';
 import './media/quickInput.css';
 import { localize } from '../../../nls.js';
 import { ItemActivation, NO_KEY_MODS, QuickInputHideReason } from '../common/quickInput.js';
-import { QuickInputListFocus } from './quickInputList.js';
 import { quickInputButtonToAction, renderQuickInputDescription } from './quickInputUtils.js';
 import { IConfigurationService } from '../../configuration/common/configuration.js';
 import { IHoverService, WorkbenchHoverDelegate } from '../../hover/browser/hover.js';
+import { QuickInputListFocus } from './quickInputTree.js';
 export const backButton = {
     iconClass: ThemeIcon.asClassName(Codicon.quickInputBack),
     tooltip: localize('quickInput.back', "Back"),
@@ -51,6 +51,7 @@ class QuickInput extends Disposable {
         this._severity = Severity.Ignore;
         this.onDidTriggerButtonEmitter = this._register(new Emitter());
         this.onDidHideEmitter = this._register(new Emitter());
+        this.onWillHideEmitter = this._register(new Emitter());
         this.onDisposeEmitter = this._register(new Emitter());
         this.visibleDisposables = this._register(new DisposableStore());
         this.onDidHide = this.onDidHideEmitter.event;
@@ -182,6 +183,9 @@ class QuickInput extends Disposable {
         this.visible = false;
         this.visibleDisposables.clear();
         this.onDidHideEmitter.fire({ reason });
+    }
+    willHide(reason = QuickInputHideReason.Other) {
+        this.onWillHideEmitter.fire({ reason });
     }
     update() {
         var _a, _b;
@@ -494,6 +498,13 @@ export class QuickPick extends QuickInput {
         }
         return this.ui.keyMods;
     }
+    get valueSelection() {
+        const selection = this.ui.inputBox.getSelection();
+        if (!selection) {
+            return undefined;
+        }
+        return [selection.start, selection.end];
+    }
     set valueSelection(valueSelection) {
         this._valueSelection = valueSelection;
         this.valueSelectionUpdated = true;
@@ -544,21 +555,27 @@ export class QuickPick extends QuickInput {
             this.visibleDisposables.add(this.ui.inputBox.onDidChange(value => {
                 this.doSetValue(value, true /* skip update since this originates from the UI */);
             }));
+            // Keybindings for the input box or list if there is no input box
             this.visibleDisposables.add((this._hideInput ? this.ui.list : this.ui.inputBox).onKeyDown((event) => {
                 switch (event.keyCode) {
                     case 18 /* KeyCode.DownArrow */:
-                        this.ui.list.focus(QuickInputListFocus.Next);
+                        if (isMacintosh ? event.metaKey : event.altKey) {
+                            this.ui.list.focus(QuickInputListFocus.NextSeparator);
+                        }
+                        else {
+                            this.ui.list.focus(QuickInputListFocus.Next);
+                        }
                         if (this.canSelectMany) {
                             this.ui.list.domFocus();
                         }
                         dom.EventHelper.stop(event, true);
                         break;
                     case 16 /* KeyCode.UpArrow */:
-                        if (this.ui.list.getFocusedElements().length) {
-                            this.ui.list.focus(QuickInputListFocus.Previous);
+                        if (isMacintosh ? event.metaKey : event.altKey) {
+                            this.ui.list.focus(QuickInputListFocus.PreviousSeparator);
                         }
                         else {
-                            this.ui.list.focus(QuickInputListFocus.Last);
+                            this.ui.list.focus(QuickInputListFocus.Previous);
                         }
                         if (this.canSelectMany) {
                             this.ui.list.domFocus();
@@ -774,6 +791,7 @@ export class QuickPick extends QuickInput {
         this.ui.list.sortByLabel = this.sortByLabel;
         if (this.itemsUpdated) {
             this.itemsUpdated = false;
+            const currentActiveItems = this._activeItems;
             this.ui.list.setElements(this.items);
             this.ui.list.filter(this.filterValue(this.ui.inputBox.value));
             this.ui.checkAll.checked = this.ui.list.getAllVisibleChecked();
@@ -781,6 +799,15 @@ export class QuickPick extends QuickInput {
             this.ui.count.setCount(this.ui.list.getCheckedCount());
             switch (this._itemActivation) {
                 case ItemActivation.NONE:
+                    // Handle the case where we had active items (i.e. someone chose an item)
+                    // but the initial item activation is set to none. Calling clearFocus will
+                    // not trigger the onDidFocus event because when the tree receives new elements,
+                    // it sets the focus to no elements. So we need to set & fire the active items
+                    // accordingly to reflect the state change after setting the items.
+                    if (currentActiveItems.length > 0) {
+                        this._activeItems = [];
+                        this.onDidChangeActiveEmitter.fire(this._activeItems);
+                    }
                     this._itemActivation = ItemActivation.FIRST; // only valid once, then unset
                     break;
                 case ItemActivation.SECOND:

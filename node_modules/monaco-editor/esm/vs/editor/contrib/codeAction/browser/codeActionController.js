@@ -36,8 +36,9 @@ import { IEditorProgressService } from '../../../../platform/progress/common/pro
 import { editorFindMatchHighlight, editorFindMatchHighlightBorder } from '../../../../platform/theme/common/colorRegistry.js';
 import { isHighContrast } from '../../../../platform/theme/common/theme.js';
 import { registerThemingParticipant } from '../../../../platform/theme/common/themeService.js';
-import { CodeActionTriggerSource } from '../common/types.js';
+import { CodeActionKind, CodeActionTriggerSource } from '../common/types.js';
 import { CodeActionModel } from './codeActionModel.js';
+import { HierarchicalKind } from '../../../../base/common/hierarchicalKind.js';
 const DECORATION_CLASS_NAME = 'quickfix-edit-highlight';
 let CodeActionController = CodeActionController_1 = class CodeActionController extends Disposable {
     static get(editor) {
@@ -220,7 +221,18 @@ let CodeActionController = CodeActionController_1 = class CodeActionController e
                 if (token.isCancellationRequested) {
                     return;
                 }
-                return { canPreview: !!((_a = action.action.edit) === null || _a === void 0 ? void 0 : _a.edits.length) };
+                let canPreview = false;
+                const actionKind = action.action.kind;
+                if (actionKind) {
+                    const hierarchicalKind = new HierarchicalKind(actionKind);
+                    const refactorKinds = [
+                        CodeActionKind.RefactorExtract,
+                        CodeActionKind.RefactorInline,
+                        CodeActionKind.RefactorRewrite
+                    ];
+                    canPreview = refactorKinds.some(refactorKind => refactorKind.contains(hierarchicalKind));
+                }
+                return { canPreview: canPreview || !!((_a = action.action.edit) === null || _a === void 0 ? void 0 : _a.edits.length) };
             },
             onFocus: (action) => {
                 var _a, _b;

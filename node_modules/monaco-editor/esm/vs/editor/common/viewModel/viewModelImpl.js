@@ -50,9 +50,9 @@ export class ViewModel extends Disposable {
         else {
             const options = this._configuration.options;
             const fontInfo = options.get(50 /* EditorOption.fontInfo */);
-            const wrappingStrategy = options.get(138 /* EditorOption.wrappingStrategy */);
-            const wrappingInfo = options.get(145 /* EditorOption.wrappingInfo */);
-            const wrappingIndent = options.get(137 /* EditorOption.wrappingIndent */);
+            const wrappingStrategy = options.get(139 /* EditorOption.wrappingStrategy */);
+            const wrappingInfo = options.get(146 /* EditorOption.wrappingInfo */);
+            const wrappingIndent = options.get(138 /* EditorOption.wrappingIndent */);
             const wordBreak = options.get(129 /* EditorOption.wordBreak */);
             this._lines = new ViewModelLinesFromProjectedModel(this._editorId, this.model, domLineBreaksComputerFactory, monospaceLineBreaksComputerFactory, fontInfo, this.model.getOptions().tabSize, wrappingStrategy, wrappingInfo.wrappingColumn, wrappingIndent, wordBreak);
         }
@@ -153,9 +153,9 @@ export class ViewModel extends Disposable {
         const stableViewport = this._captureStableViewport();
         const options = this._configuration.options;
         const fontInfo = options.get(50 /* EditorOption.fontInfo */);
-        const wrappingStrategy = options.get(138 /* EditorOption.wrappingStrategy */);
-        const wrappingInfo = options.get(145 /* EditorOption.wrappingInfo */);
-        const wrappingIndent = options.get(137 /* EditorOption.wrappingIndent */);
+        const wrappingStrategy = options.get(139 /* EditorOption.wrappingStrategy */);
+        const wrappingInfo = options.get(146 /* EditorOption.wrappingInfo */);
+        const wrappingIndent = options.get(138 /* EditorOption.wrappingIndent */);
         const wordBreak = options.get(129 /* EditorOption.wordBreak */);
         if (this._lines.setWrappingSettings(fontInfo, wrappingStrategy, wrappingInfo.wrappingColumn, wrappingIndent, wordBreak)) {
             eventsCollector.emitViewEvent(new viewEvents.ViewFlushedEvent());
@@ -399,7 +399,7 @@ export class ViewModel extends Disposable {
         }
     }
     getVisibleRangesPlusViewportAboveBelow() {
-        const layoutInfo = this._configuration.options.get(144 /* EditorOption.layoutInfo */);
+        const layoutInfo = this._configuration.options.get(145 /* EditorOption.layoutInfo */);
         const lineHeight = this._configuration.options.get(67 /* EditorOption.lineHeight */);
         const linesAround = Math.max(20, Math.round(layoutInfo.height / lineHeight));
         const partialData = this.viewLayout.getLinesViewportData();
@@ -850,6 +850,9 @@ export class ViewModel extends Disposable {
     }
     executeCommands(commands, source) {
         this._executeCursorEdit(eventsCollector => this._cursor.executeCommands(eventsCollector, commands, source));
+    }
+    revealAllCursors(source, revealHorizontal, minimalReveal = false) {
+        this._withViewEventsCollector(eventsCollector => this._cursor.revealAll(eventsCollector, source, minimalReveal, 0 /* viewEvents.VerticalRevealType.Simple */, revealHorizontal, 0 /* ScrollType.Smooth */));
     }
     revealPrimaryCursor(source, revealHorizontal, minimalReveal = false) {
         this._withViewEventsCollector(eventsCollector => this._cursor.revealPrimary(eventsCollector, source, minimalReveal, 0 /* viewEvents.VerticalRevealType.Simple */, revealHorizontal, 0 /* ScrollType.Smooth */));

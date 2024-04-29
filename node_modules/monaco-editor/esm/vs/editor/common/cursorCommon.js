@@ -13,8 +13,8 @@ const autoCloseNever = () => false;
 const autoCloseBeforeWhitespace = (chr) => (chr === ' ' || chr === '\t');
 export class CursorConfiguration {
     static shouldRecreate(e) {
-        return (e.hasChanged(144 /* EditorOption.layoutInfo */)
-            || e.hasChanged(130 /* EditorOption.wordSeparators */)
+        return (e.hasChanged(145 /* EditorOption.layoutInfo */)
+            || e.hasChanged(131 /* EditorOption.wordSeparators */)
             || e.hasChanged(37 /* EditorOption.emptySelectionClipboard */)
             || e.hasChanged(77 /* EditorOption.multiCursorMergeOverlapping */)
             || e.hasChanged(79 /* EditorOption.multiCursorPaste */)
@@ -27,7 +27,8 @@ export class CursorConfiguration {
             || e.hasChanged(14 /* EditorOption.autoSurround */)
             || e.hasChanged(128 /* EditorOption.useTabStops */)
             || e.hasChanged(50 /* EditorOption.fontInfo */)
-            || e.hasChanged(91 /* EditorOption.readOnly */));
+            || e.hasChanged(91 /* EditorOption.readOnly */)
+            || e.hasChanged(130 /* EditorOption.wordSegmenterLocales */));
     }
     constructor(languageId, modelOptions, configuration, languageConfigurationService) {
         var _a;
@@ -35,7 +36,7 @@ export class CursorConfiguration {
         this._cursorMoveConfigurationBrand = undefined;
         this._languageId = languageId;
         const options = configuration.options;
-        const layoutInfo = options.get(144 /* EditorOption.layoutInfo */);
+        const layoutInfo = options.get(145 /* EditorOption.layoutInfo */);
         const fontInfo = options.get(50 /* EditorOption.fontInfo */);
         this.readOnly = options.get(91 /* EditorOption.readOnly */);
         this.tabSize = modelOptions.tabSize;
@@ -46,7 +47,7 @@ export class CursorConfiguration {
         this.typicalHalfwidthCharacterWidth = fontInfo.typicalHalfwidthCharacterWidth;
         this.pageSize = Math.max(1, Math.floor(layoutInfo.height / this.lineHeight) - 2);
         this.useTabStops = options.get(128 /* EditorOption.useTabStops */);
-        this.wordSeparators = options.get(130 /* EditorOption.wordSeparators */);
+        this.wordSeparators = options.get(131 /* EditorOption.wordSeparators */);
         this.emptySelectionClipboard = options.get(37 /* EditorOption.emptySelectionClipboard */);
         this.copyWithSyntaxHighlighting = options.get(25 /* EditorOption.copyWithSyntaxHighlighting */);
         this.multiCursorMergeOverlapping = options.get(77 /* EditorOption.multiCursorMergeOverlapping */);
@@ -59,6 +60,7 @@ export class CursorConfiguration {
         this.autoClosingOvertype = options.get(10 /* EditorOption.autoClosingOvertype */);
         this.autoSurround = options.get(14 /* EditorOption.autoSurround */);
         this.autoIndent = options.get(12 /* EditorOption.autoIndent */);
+        this.wordSegmenterLocales = options.get(130 /* EditorOption.wordSegmenterLocales */);
         this.surroundingPairs = {};
         this._electricChars = null;
         this.shouldAutoCloseBefore = {

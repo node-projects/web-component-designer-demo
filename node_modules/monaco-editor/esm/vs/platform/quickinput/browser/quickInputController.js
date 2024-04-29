@@ -2,6 +2,16 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var QuickInputController_1;
 import * as dom from '../../../base/browser/dom.js';
 import { ActionBar } from '../../../base/browser/ui/actionbar/actionbar.js';
 import { Button } from '../../../base/browser/ui/button/button.js';
@@ -14,17 +24,19 @@ import Severity from '../../../base/common/severity.js';
 import { localize } from '../../../nls.js';
 import { QuickInputHideReason } from '../common/quickInput.js';
 import { QuickInputBox } from './quickInputBox.js';
-import { QuickInputList } from './quickInputList.js';
 import { QuickPick, backButton, InputBox } from './quickInput.js';
+import { ILayoutService } from '../../layout/browser/layoutService.js';
 import { mainWindow } from '../../../base/browser/window.js';
+import { IInstantiationService } from '../../instantiation/common/instantiation.js';
+import { QuickInputTree } from './quickInputTree.js';
 const $ = dom.$;
-export class QuickInputController extends Disposable {
+let QuickInputController = QuickInputController_1 = class QuickInputController extends Disposable {
     get container() { return this._container; }
-    constructor(options, themeService, layoutService) {
+    constructor(options, layoutService, instantiationService) {
         super();
         this.options = options;
-        this.themeService = themeService;
         this.layoutService = layoutService;
+        this.instantiationService = instantiationService;
         this.enabled = true;
         this.onDidAcceptEmitter = this._register(new Emitter());
         this.onDidCustomEmitter = this._register(new Emitter());
@@ -125,7 +137,7 @@ export class QuickInputController extends Disposable {
         widget.tabIndex = -1;
         const description1 = dom.append(container, $('.quick-input-description'));
         const listId = this.idPrefix + 'list';
-        const list = this._register(new QuickInputList(container, listId, this.options, this.themeService));
+        const list = this._register(this.instantiationService.createInstance(QuickInputTree, container, this.options.hoverDelegate, this.options.linkOpenerDelegate, listId));
         inputBox.setAttribute('aria-controls', listId);
         this._register(list.onDidChangeFocus(() => {
             var _a;
@@ -172,6 +184,7 @@ export class QuickInputController extends Disposable {
             inputBox.setFocus();
         }));
         // TODO: Turn into commands instead of handling KEY_DOWN
+        // Keybindings for the quickinput widget as a whole
         this._register(dom.addStandardDisposableListener(container, dom.EventType.KEY_DOWN, (event) => {
             if (dom.isAncestor(event.target, widget)) {
                 return; // Ignore event if target is inside widget to allow the widget to handle the event.
@@ -474,6 +487,7 @@ export class QuickInputController extends Disposable {
         if (!controller) {
             return;
         }
+        controller.willHide(reason);
         const container = (_a = this.ui) === null || _a === void 0 ? void 0 : _a.container;
         const focusChanged = container && !dom.isAncestorOfActiveElement(container);
         this.controller = null;
@@ -505,7 +519,7 @@ export class QuickInputController extends Disposable {
         if (this.ui && this.isVisible()) {
             this.ui.container.style.top = `${this.titleBarOffset}px`;
             const style = this.ui.container.style;
-            const width = Math.min(this.dimension.width * 0.62 /* golden cut */, QuickInputController.MAX_WIDTH);
+            const width = Math.min(this.dimension.width * 0.62 /* golden cut */, QuickInputController_1.MAX_WIDTH);
             style.width = width + 'px';
             style.marginLeft = '-' + (width / 2) + 'px';
             this.ui.inputBox.layout();
@@ -565,5 +579,10 @@ export class QuickInputController extends Disposable {
             }
         }
     }
-}
+};
 QuickInputController.MAX_WIDTH = 600; // Max total width of quick input widget
+QuickInputController = QuickInputController_1 = __decorate([
+    __param(1, ILayoutService),
+    __param(2, IInstantiationService)
+], QuickInputController);
+export { QuickInputController };

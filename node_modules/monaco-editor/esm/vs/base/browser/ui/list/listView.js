@@ -9,7 +9,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { DataTransfers } from '../../dnd.js';
-import { $, addDisposableListener, animate, getContentHeight, getContentWidth, getTopLeftOffset, getWindow, scheduleAtNextAnimationFrame } from '../../dom.js';
+import { $, addDisposableListener, animate, getContentHeight, getContentWidth, getTopLeftOffset, getWindow, isAncestor, scheduleAtNextAnimationFrame } from '../../dom.js';
 import { DomEmitter } from '../../event.js';
 import { EventType as TouchEventType, Gesture } from '../../touch.js';
 import { SmoothScrollableElement } from '../scrollbar/scrollableElement.js';
@@ -1005,6 +1005,9 @@ export class ListView {
         if (item.row) {
             item.row.domNode.style.height = '';
             item.size = item.row.domNode.offsetHeight;
+            if (item.size === 0 && !isAncestor(item.row.domNode, getWindow(item.row.domNode).document.body)) {
+                console.warn('Measuring item node that is not in DOM! Add ListView to the DOM before measuring row height!');
+            }
             item.lastDynamicHeightWidth = this.renderWidth;
             return item.size - size;
         }

@@ -18,7 +18,7 @@ import { addStandardDisposableListener } from '../../../base/browser/dom.js';
 export const IHoverService = createDecorator('hoverService');
 let WorkbenchHoverDelegate = class WorkbenchHoverDelegate extends Disposable {
     get delay() {
-        if (this.instantHover && Date.now() - this.lastHoverHideTime < this.timeLimit) {
+        if (this.isInstantlyHovering()) {
             return 0; // show instantly when a hover was recently shown
         }
         return this._delay;
@@ -30,7 +30,7 @@ let WorkbenchHoverDelegate = class WorkbenchHoverDelegate extends Disposable {
         this.overrideOptions = overrideOptions;
         this.configurationService = configurationService;
         this.hoverService = hoverService;
-        this.lastHoverHideTime = Number.MAX_VALUE;
+        this.lastHoverHideTime = 0;
         this.timeLimit = 200;
         this.hoverDisposables = this._register(new DisposableStore());
         this._delay = this.configurationService.getValue('workbench.hover.delay');
@@ -52,13 +52,25 @@ let WorkbenchHoverDelegate = class WorkbenchHoverDelegate extends Disposable {
                 }
             }));
         }
+        const id = options.content instanceof HTMLElement ? undefined : options.content.toString();
         return this.hoverService.showHover({
             ...options,
+            ...overrideOptions,
             persistence: {
-                hideOnHover: true
+                hideOnKeyDown: true,
+                ...overrideOptions.persistence
             },
-            ...overrideOptions
+            id,
+            appearance: {
+                ...options.appearance,
+                compact: true,
+                skipFadeInAnimation: this.isInstantlyHovering(),
+                ...overrideOptions.appearance
+            }
         }, focus);
+    }
+    isInstantlyHovering() {
+        return this.instantHover && Date.now() - this.lastHoverHideTime < this.timeLimit;
     }
     onDidHideHover() {
         this.hoverDisposables.clear();

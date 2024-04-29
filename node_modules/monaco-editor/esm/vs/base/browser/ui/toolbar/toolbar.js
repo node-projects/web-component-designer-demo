@@ -11,7 +11,7 @@ import { EventMultiplexer } from '../../../common/event.js';
 import { Disposable, DisposableStore } from '../../../common/lifecycle.js';
 import './toolbar.css';
 import * as nls from '../../../../nls.js';
-import { getDefaultHoverDelegate } from '../hover/hoverDelegate.js';
+import { createInstantHoverDelegate } from '../hover/hoverDelegateFactory.js';
 /**
  * A widget that combines an action bar for primary actions and a dropdown for secondary actions.
  */
@@ -24,7 +24,7 @@ export class ToolBar extends Disposable {
         this._onDidChangeDropdownVisibility = this._register(new EventMultiplexer());
         this.onDidChangeDropdownVisibility = this._onDidChangeDropdownVisibility.event;
         this.disposables = this._register(new DisposableStore());
-        options.hoverDelegate = (_a = options.hoverDelegate) !== null && _a !== void 0 ? _a : this._register(getDefaultHoverDelegate('element', true));
+        options.hoverDelegate = (_a = options.hoverDelegate) !== null && _a !== void 0 ? _a : this._register(createInstantHoverDelegate());
         this.options = options;
         this.lookupKeybindings = typeof this.options.getKeyBinding === 'function';
         this.toggleMenuAction = this._register(new ToggleMenuAction(() => { var _a; return (_a = this.toggleMenuActionViewItem) === null || _a === void 0 ? void 0 : _a.show(); }, options.toggleMenuTitle));

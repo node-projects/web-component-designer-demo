@@ -1,12 +1,12 @@
 /*!-----------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
- * Version: 0.47.0(69991d66135e4a1fc1cf0b1ac4ad25d429866a0d)
+ * Version: 0.48.0(0037b13fb5d186fdf1e7df51a9416a2de2b8c670)
  * Released under the MIT license
  * https://github.com/microsoft/vscode/blob/main/LICENSE.txt
  *-----------------------------------------------------------*/
 
 (function() {
-var __m = ["require","exports","vs/editor/common/core/range","vs/editor/common/core/offsetRange","vs/editor/common/core/position","vs/base/common/errors","vs/base/common/strings","vs/base/common/arrays","vs/editor/common/diff/defaultLinesDiffComputer/algorithms/diffAlgorithm","vs/base/common/event","vs/editor/common/core/lineRange","vs/base/common/arraysFind","vs/base/common/assert","vs/base/common/lifecycle","vs/base/common/objects","vs/editor/common/diff/defaultLinesDiffComputer/utils","vs/editor/common/diff/rangeMapping","vs/base/common/platform","vs/base/common/uri","vs/nls","vs/base/common/functional","vs/base/common/iterator","vs/base/common/linkedList","vs/base/common/stopwatch","vs/base/common/diff/diff","vs/base/common/types","vs/base/common/uint","vs/editor/common/core/characterClassifier","vs/editor/common/core/wordHelper","vs/editor/common/diff/defaultLinesDiffComputer/algorithms/myersDiffAlgorithm","vs/editor/common/diff/defaultLinesDiffComputer/linesSliceCharSequence","vs/editor/common/diff/linesDiffComputer","vs/base/common/cache","vs/base/common/color","vs/base/common/diff/diffChange","vs/base/common/keyCodes","vs/base/common/lazy","vs/base/common/map","vs/base/common/cancellation","vs/base/common/hash","vs/base/common/codicons","vs/editor/common/core/selection","vs/editor/common/core/wordCharacterClassifier","vs/editor/common/diff/defaultLinesDiffComputer/heuristicSequenceOptimizations","vs/editor/common/diff/defaultLinesDiffComputer/lineSequence","vs/editor/common/diff/defaultLinesDiffComputer/algorithms/dynamicProgrammingDiffing","vs/editor/common/diff/defaultLinesDiffComputer/computeMovedLines","vs/editor/common/diff/defaultLinesDiffComputer/defaultLinesDiffComputer","vs/editor/common/diff/legacyLinesDiffComputer","vs/editor/common/diff/linesDiffComputers","vs/editor/common/languages/defaultDocumentColorsComputer","vs/editor/common/languages/linkComputer","vs/editor/common/languages/supports/inplaceReplaceSupport","vs/editor/common/model","vs/editor/common/model/prefixSumComputer","vs/editor/common/model/mirrorTextModel","vs/editor/common/model/textModelSearch","vs/editor/common/services/unicodeTextModelHighlighter","vs/editor/common/standalone/standaloneEnums","vs/editor/common/tokenizationRegistry","vs/nls!vs/base/common/platform","vs/nls!vs/base/common/worker/simpleWorker","vs/base/common/process","vs/base/common/path","vs/nls!vs/editor/common/languages","vs/editor/common/languages","vs/editor/common/services/editorBaseApi","vs/base/common/worker/simpleWorker","vs/editor/common/services/editorSimpleWorker"];
+var __m = ["require","exports","vs/editor/common/core/range","vs/editor/common/core/offsetRange","vs/editor/common/core/position","vs/base/common/errors","vs/base/common/strings","vs/base/common/arrays","vs/editor/common/diff/defaultLinesDiffComputer/algorithms/diffAlgorithm","vs/base/common/event","vs/editor/common/core/lineRange","vs/base/common/arraysFind","vs/base/common/assert","vs/base/common/lifecycle","vs/base/common/objects","vs/editor/common/diff/defaultLinesDiffComputer/utils","vs/editor/common/diff/rangeMapping","vs/base/common/platform","vs/base/common/uri","vs/nls","vs/base/common/functional","vs/base/common/iterator","vs/base/common/linkedList","vs/base/common/map","vs/base/common/stopwatch","vs/base/common/diff/diff","vs/base/common/types","vs/base/common/codiconsUtil","vs/base/common/uint","vs/editor/common/core/characterClassifier","vs/editor/common/core/wordHelper","vs/editor/common/diff/defaultLinesDiffComputer/algorithms/myersDiffAlgorithm","vs/editor/common/diff/defaultLinesDiffComputer/linesSliceCharSequence","vs/editor/common/diff/linesDiffComputer","vs/base/common/cache","vs/base/common/color","vs/base/common/diff/diffChange","vs/base/common/keyCodes","vs/base/common/lazy","vs/base/common/cancellation","vs/base/common/hash","vs/base/common/codiconsLibrary","vs/base/common/codicons","vs/editor/common/core/selection","vs/editor/common/core/wordCharacterClassifier","vs/editor/common/diff/defaultLinesDiffComputer/heuristicSequenceOptimizations","vs/editor/common/diff/defaultLinesDiffComputer/lineSequence","vs/editor/common/diff/defaultLinesDiffComputer/algorithms/dynamicProgrammingDiffing","vs/editor/common/diff/defaultLinesDiffComputer/computeMovedLines","vs/editor/common/diff/defaultLinesDiffComputer/defaultLinesDiffComputer","vs/editor/common/diff/legacyLinesDiffComputer","vs/editor/common/diff/linesDiffComputers","vs/editor/common/languages/defaultDocumentColorsComputer","vs/editor/common/languages/linkComputer","vs/editor/common/languages/supports/inplaceReplaceSupport","vs/editor/common/model","vs/editor/common/model/prefixSumComputer","vs/editor/common/model/mirrorTextModel","vs/editor/common/model/textModelSearch","vs/editor/common/services/findSectionHeaders","vs/editor/common/services/unicodeTextModelHighlighter","vs/editor/common/standalone/standaloneEnums","vs/editor/common/tokenizationRegistry","vs/nls!vs/base/common/platform","vs/nls!vs/base/common/worker/simpleWorker","vs/base/common/process","vs/base/common/path","vs/nls!vs/editor/common/languages","vs/editor/common/languages","vs/editor/common/services/editorBaseApi","vs/base/common/worker/simpleWorker","vs/editor/common/services/editorSimpleWorker"];
 var __M = function(deps) {
   var result = [];
   for (var i = 0, len = deps.length; i < len; i++) {
@@ -1913,7 +1913,12 @@ var AMDLoader;
 define(__m[19/*vs/nls*/], __M([0/*require*/,1/*exports*/]), function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.load = exports.create = exports.setPseudoTranslation = exports.getConfiguredDefaultLocale = exports.localize2 = exports.localize = void 0;
+    exports.localize = localize;
+    exports.localize2 = localize2;
+    exports.getConfiguredDefaultLocale = getConfiguredDefaultLocale;
+    exports.setPseudoTranslation = setPseudoTranslation;
+    exports.create = create;
+    exports.load = load;
     let isPseudo = (typeof document !== 'undefined' && document.location && document.location.hash.indexOf('pseudo=true') >= 0);
     const DEFAULT_TAG = 'i-default';
     function _format(message, args) {
@@ -1985,7 +1990,6 @@ define(__m[19/*vs/nls*/], __M([0/*require*/,1/*exports*/]), function (require, e
     function localize(data, message, ...args) {
         return _format(message, args);
     }
-    exports.localize = localize;
     /**
      * @skipMangle
      */
@@ -1996,7 +2000,6 @@ define(__m[19/*vs/nls*/], __M([0/*require*/,1/*exports*/]), function (require, e
             original
         };
     }
-    exports.localize2 = localize2;
     /**
      * @skipMangle
      */
@@ -2005,14 +2008,12 @@ define(__m[19/*vs/nls*/], __M([0/*require*/,1/*exports*/]), function (require, e
         // when loaded.
         return undefined;
     }
-    exports.getConfiguredDefaultLocale = getConfiguredDefaultLocale;
     /**
      * @skipMangle
      */
     function setPseudoTranslation(value) {
         isPseudo = value;
     }
-    exports.setPseudoTranslation = setPseudoTranslation;
     /**
      * Invoked in a built product at run-time
      * @skipMangle
@@ -2025,7 +2026,6 @@ define(__m[19/*vs/nls*/], __M([0/*require*/,1/*exports*/]), function (require, e
             getConfiguredDefaultLocale: (_a = data.getConfiguredDefaultLocale) !== null && _a !== void 0 ? _a : ((_) => undefined)
         };
     }
-    exports.create = create;
     /**
      * Invoked by the loader at run-time
      * @skipMangle
@@ -2112,7 +2112,6 @@ define(__m[19/*vs/nls*/], __M([0/*require*/,1/*exports*/]), function (require, e
             });
         }
     }
-    exports.load = load;
 });
 
 "use strict";
@@ -2248,7 +2247,35 @@ define(__m[19/*vs/nls*/], __M([0/*require*/,1/*exports*/]), function (require, e
 define(__m[7/*vs/base/common/arrays*/], __M([0/*require*/,1/*exports*/]), function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.CallbackIterable = exports.ArrayQueue = exports.reverseOrder = exports.booleanComparator = exports.numberComparator = exports.tieBreakComparators = exports.compareBy = exports.CompareResult = exports.splice = exports.insertInto = exports.asArray = exports.pushMany = exports.pushToEnd = exports.pushToStart = exports.arrayInsert = exports.range = exports.firstOrDefault = exports.distinct = exports.isNonEmptyArray = exports.isFalsyOrEmpty = exports.coalesceInPlace = exports.coalesce = exports.forEachWithNeighbors = exports.forEachAdjacent = exports.groupAdjacentBy = exports.groupBy = exports.quickSelect = exports.binarySearch2 = exports.binarySearch = exports.removeFastWithoutKeepingOrder = exports.equals = exports.tail2 = exports.tail = void 0;
+    exports.Permutation = exports.CallbackIterable = exports.ArrayQueue = exports.booleanComparator = exports.numberComparator = exports.CompareResult = void 0;
+    exports.tail = tail;
+    exports.tail2 = tail2;
+    exports.equals = equals;
+    exports.removeFastWithoutKeepingOrder = removeFastWithoutKeepingOrder;
+    exports.binarySearch = binarySearch;
+    exports.binarySearch2 = binarySearch2;
+    exports.quickSelect = quickSelect;
+    exports.groupBy = groupBy;
+    exports.groupAdjacentBy = groupAdjacentBy;
+    exports.forEachAdjacent = forEachAdjacent;
+    exports.forEachWithNeighbors = forEachWithNeighbors;
+    exports.coalesce = coalesce;
+    exports.coalesceInPlace = coalesceInPlace;
+    exports.isFalsyOrEmpty = isFalsyOrEmpty;
+    exports.isNonEmptyArray = isNonEmptyArray;
+    exports.distinct = distinct;
+    exports.firstOrDefault = firstOrDefault;
+    exports.range = range;
+    exports.arrayInsert = arrayInsert;
+    exports.pushToStart = pushToStart;
+    exports.pushToEnd = pushToEnd;
+    exports.pushMany = pushMany;
+    exports.asArray = asArray;
+    exports.insertInto = insertInto;
+    exports.splice = splice;
+    exports.compareBy = compareBy;
+    exports.tieBreakComparators = tieBreakComparators;
+    exports.reverseOrder = reverseOrder;
     /**
      * Returns the last element of an array.
      * @param array The array.
@@ -2257,14 +2284,12 @@ define(__m[7/*vs/base/common/arrays*/], __M([0/*require*/,1/*exports*/]), functi
     function tail(array, n = 0) {
         return array[array.length - (1 + n)];
     }
-    exports.tail = tail;
     function tail2(arr) {
         if (arr.length === 0) {
             throw new Error('Invalid tail call');
         }
         return [arr.slice(0, arr.length - 1), arr[arr.length - 1]];
     }
-    exports.tail2 = tail2;
     function equals(one, other, itemEquals = (a, b) => a === b) {
         if (one === other) {
             return true;
@@ -2282,7 +2307,6 @@ define(__m[7/*vs/base/common/arrays*/], __M([0/*require*/,1/*exports*/]), functi
         }
         return true;
     }
-    exports.equals = equals;
     /**
      * Remove the element at `index` by replacing it with the last element. This is faster than `splice`
      * but changes the order of the array
@@ -2294,7 +2318,6 @@ define(__m[7/*vs/base/common/arrays*/], __M([0/*require*/,1/*exports*/]), functi
         }
         array.pop();
     }
-    exports.removeFastWithoutKeepingOrder = removeFastWithoutKeepingOrder;
     /**
      * Performs a binary search algorithm over a sorted array.
      *
@@ -2309,7 +2332,6 @@ define(__m[7/*vs/base/common/arrays*/], __M([0/*require*/,1/*exports*/]), functi
     function binarySearch(array, key, comparator) {
         return binarySearch2(array.length, i => comparator(array[i], key));
     }
-    exports.binarySearch = binarySearch;
     /**
      * Performs a binary search algorithm over a sorted collection. Useful for cases
      * when we need to perform a binary search over something that isn't actually an
@@ -2342,7 +2364,6 @@ define(__m[7/*vs/base/common/arrays*/], __M([0/*require*/,1/*exports*/]), functi
         }
         return -(low + 1);
     }
-    exports.binarySearch2 = binarySearch2;
     function quickSelect(nth, data, compare) {
         nth = nth | 0;
         if (nth >= data.length) {
@@ -2374,7 +2395,6 @@ define(__m[7/*vs/base/common/arrays*/], __M([0/*require*/,1/*exports*/]), functi
             return quickSelect(nth - (lower.length + pivots.length), higher, compare);
         }
     }
-    exports.quickSelect = quickSelect;
     function groupBy(data, compare) {
         const result = [];
         let currentGroup = undefined;
@@ -2389,7 +2409,6 @@ define(__m[7/*vs/base/common/arrays*/], __M([0/*require*/,1/*exports*/]), functi
         }
         return result;
     }
-    exports.groupBy = groupBy;
     /**
      * Splits the given items into a list of (non-empty) groups.
      * `shouldBeGrouped` is used to decide if two consecutive items should be in the same group.
@@ -2414,26 +2433,22 @@ define(__m[7/*vs/base/common/arrays*/], __M([0/*require*/,1/*exports*/]), functi
             yield currentGroup;
         }
     }
-    exports.groupAdjacentBy = groupAdjacentBy;
     function forEachAdjacent(arr, f) {
         for (let i = 0; i <= arr.length; i++) {
             f(i === 0 ? undefined : arr[i - 1], i === arr.length ? undefined : arr[i]);
         }
     }
-    exports.forEachAdjacent = forEachAdjacent;
     function forEachWithNeighbors(arr, f) {
         for (let i = 0; i < arr.length; i++) {
             f(i === 0 ? undefined : arr[i - 1], arr[i], i + 1 === arr.length ? undefined : arr[i + 1]);
         }
     }
-    exports.forEachWithNeighbors = forEachWithNeighbors;
     /**
      * @returns New array with all falsy values removed. The original array IS NOT modified.
      */
     function coalesce(array) {
         return array.filter(e => !!e);
     }
-    exports.coalesce = coalesce;
     /**
      * Remove all falsy values from `array`. The original array IS modified.
      */
@@ -2447,18 +2462,15 @@ define(__m[7/*vs/base/common/arrays*/], __M([0/*require*/,1/*exports*/]), functi
         }
         array.length = to;
     }
-    exports.coalesceInPlace = coalesceInPlace;
     /**
      * @returns false if the provided object is an array and not empty.
      */
     function isFalsyOrEmpty(obj) {
         return !Array.isArray(obj) || obj.length === 0;
     }
-    exports.isFalsyOrEmpty = isFalsyOrEmpty;
     function isNonEmptyArray(obj) {
         return Array.isArray(obj) && obj.length > 0;
     }
-    exports.isNonEmptyArray = isNonEmptyArray;
     /**
      * Removes duplicates from the given array. The optional keyFn allows to specify
      * how elements are checked for equality by returning an alternate value for each.
@@ -2474,11 +2486,9 @@ define(__m[7/*vs/base/common/arrays*/], __M([0/*require*/,1/*exports*/]), functi
             return true;
         });
     }
-    exports.distinct = distinct;
     function firstOrDefault(array, notFoundValue) {
         return array.length > 0 ? array[0] : notFoundValue;
     }
-    exports.firstOrDefault = firstOrDefault;
     function range(arg, to) {
         let from = typeof to === 'number' ? arg : 0;
         if (typeof to === 'number') {
@@ -2501,7 +2511,6 @@ define(__m[7/*vs/base/common/arrays*/], __M([0/*require*/,1/*exports*/]), functi
         }
         return result;
     }
-    exports.range = range;
     /**
      * Insert `insertArr` inside `target` at `insertIndex`.
      * Please don't touch unless you understand https://jsperf.com/inserting-an-array-within-an-array
@@ -2511,7 +2520,6 @@ define(__m[7/*vs/base/common/arrays*/], __M([0/*require*/,1/*exports*/]), functi
         const after = target.slice(insertIndex);
         return before.concat(insertArr, after);
     }
-    exports.arrayInsert = arrayInsert;
     /**
      * Pushes an element to the start of the array, if found.
      */
@@ -2522,7 +2530,6 @@ define(__m[7/*vs/base/common/arrays*/], __M([0/*require*/,1/*exports*/]), functi
             arr.unshift(value);
         }
     }
-    exports.pushToStart = pushToStart;
     /**
      * Pushes an element to the end of the array, if found.
      */
@@ -2533,17 +2540,14 @@ define(__m[7/*vs/base/common/arrays*/], __M([0/*require*/,1/*exports*/]), functi
             arr.push(value);
         }
     }
-    exports.pushToEnd = pushToEnd;
     function pushMany(arr, items) {
         for (const item of items) {
             arr.push(item);
         }
     }
-    exports.pushMany = pushMany;
     function asArray(x) {
         return Array.isArray(x) ? x : [x];
     }
-    exports.asArray = asArray;
     /**
      * Insert the new items in the array.
      * @param array The original array.
@@ -2563,7 +2567,6 @@ define(__m[7/*vs/base/common/arrays*/], __M([0/*require*/,1/*exports*/]), functi
             array[i + startIdx] = newItems[i];
         }
     }
-    exports.insertInto = insertInto;
     /**
      * Removes elements from an array and inserts new elements in their place, returning the deleted elements. Alternative to the native Array.splice method, it
      * can only support limited number of items due to the maximum call stack size limit.
@@ -2582,7 +2585,6 @@ define(__m[7/*vs/base/common/arrays*/], __M([0/*require*/,1/*exports*/]), functi
         insertInto(array, index, newItems);
         return result;
     }
-    exports.splice = splice;
     /**
      * Determine the actual start index (same logic as the native splice() or slice())
      * If greater than the length of the array, start will be set to the length of the array. In this case, no element will be deleted but the method will behave as an adding function, adding as many element as item[n*] provided.
@@ -2618,7 +2620,6 @@ define(__m[7/*vs/base/common/arrays*/], __M([0/*require*/,1/*exports*/]), functi
     function compareBy(selector, comparator) {
         return (a, b) => comparator(selector(a), selector(b));
     }
-    exports.compareBy = compareBy;
     function tieBreakComparators(...comparators) {
         return (item1, item2) => {
             for (const comparator of comparators) {
@@ -2630,7 +2631,6 @@ define(__m[7/*vs/base/common/arrays*/], __M([0/*require*/,1/*exports*/]), functi
             return CompareResult.neitherLessOrGreaterThan;
         };
     }
-    exports.tieBreakComparators = tieBreakComparators;
     /**
      * The natural order on numbers.
     */
@@ -2641,7 +2641,6 @@ define(__m[7/*vs/base/common/arrays*/], __M([0/*require*/,1/*exports*/]), functi
     function reverseOrder(comparator) {
         return (a, b) => -comparator(a, b);
     }
-    exports.reverseOrder = reverseOrder;
     class ArrayQueue {
         /**
          * Constructs a queue that is backed by the given array. Runtime is O(1).
@@ -2751,6 +2750,38 @@ define(__m[7/*vs/base/common/arrays*/], __M([0/*require*/,1/*exports*/]), functi
     }
     exports.CallbackIterable = CallbackIterable;
     CallbackIterable.empty = new CallbackIterable(_callback => { });
+    /**
+     * Represents a re-arrangement of items in an array.
+     */
+    class Permutation {
+        constructor(_indexMap) {
+            this._indexMap = _indexMap;
+        }
+        /**
+         * Returns a permutation that sorts the given array according to the given compare function.
+         */
+        static createSortPermutation(arr, compareFn) {
+            const sortIndices = Array.from(arr.keys()).sort((index1, index2) => compareFn(arr[index1], arr[index2]));
+            return new Permutation(sortIndices);
+        }
+        /**
+         * Returns a new array with the elements of the given array re-arranged according to this permutation.
+         */
+        apply(arr) {
+            return arr.map((_, index) => arr[this._indexMap[index]]);
+        }
+        /**
+         * Returns a new permutation that undoes the re-arrangement of this permutation.
+        */
+        inverse() {
+            const inverseIndexMap = this._indexMap.slice();
+            for (let i = 0; i < this._indexMap.length; i++) {
+                inverseIndexMap[this._indexMap[i]] = i;
+            }
+            return new Permutation(inverseIndexMap);
+        }
+    }
+    exports.Permutation = Permutation;
 });
 
 /*---------------------------------------------------------------------------------------------
@@ -2760,7 +2791,18 @@ define(__m[7/*vs/base/common/arrays*/], __M([0/*require*/,1/*exports*/]), functi
 define(__m[11/*vs/base/common/arraysFind*/], __M([0/*require*/,1/*exports*/]), function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.mapFindFirst = exports.findMaxIdxBy = exports.findFirstMinBy = exports.findLastMaxBy = exports.findFirstMaxBy = exports.MonotonousArray = exports.findFirstIdxMonotonousOrArrLen = exports.findFirstMonotonous = exports.findLastIdxMonotonous = exports.findLastMonotonous = exports.findLastIdx = exports.findLast = void 0;
+    exports.MonotonousArray = void 0;
+    exports.findLast = findLast;
+    exports.findLastIdx = findLastIdx;
+    exports.findLastMonotonous = findLastMonotonous;
+    exports.findLastIdxMonotonous = findLastIdxMonotonous;
+    exports.findFirstMonotonous = findFirstMonotonous;
+    exports.findFirstIdxMonotonousOrArrLen = findFirstIdxMonotonousOrArrLen;
+    exports.findFirstMaxBy = findFirstMaxBy;
+    exports.findLastMaxBy = findLastMaxBy;
+    exports.findFirstMinBy = findFirstMinBy;
+    exports.findMaxIdxBy = findMaxIdxBy;
+    exports.mapFindFirst = mapFindFirst;
     function findLast(array, predicate, fromIdx) {
         const idx = findLastIdx(array, predicate);
         if (idx === -1) {
@@ -2768,7 +2810,6 @@ define(__m[11/*vs/base/common/arraysFind*/], __M([0/*require*/,1/*exports*/]), f
         }
         return array[idx];
     }
-    exports.findLast = findLast;
     function findLastIdx(array, predicate, fromIndex = array.length - 1) {
         for (let i = fromIndex; i >= 0; i--) {
             const element = array[i];
@@ -2778,7 +2819,6 @@ define(__m[11/*vs/base/common/arraysFind*/], __M([0/*require*/,1/*exports*/]), f
         }
         return -1;
     }
-    exports.findLastIdx = findLastIdx;
     /**
      * Finds the last item where predicate is true using binary search.
      * `predicate` must be monotonous, i.e. `arr.map(predicate)` must be like `[true, ..., true, false, ..., false]`!
@@ -2789,7 +2829,6 @@ define(__m[11/*vs/base/common/arraysFind*/], __M([0/*require*/,1/*exports*/]), f
         const idx = findLastIdxMonotonous(array, predicate);
         return idx === -1 ? undefined : array[idx];
     }
-    exports.findLastMonotonous = findLastMonotonous;
     /**
      * Finds the last item where predicate is true using binary search.
      * `predicate` must be monotonous, i.e. `arr.map(predicate)` must be like `[true, ..., true, false, ..., false]`!
@@ -2810,7 +2849,6 @@ define(__m[11/*vs/base/common/arraysFind*/], __M([0/*require*/,1/*exports*/]), f
         }
         return i - 1;
     }
-    exports.findLastIdxMonotonous = findLastIdxMonotonous;
     /**
      * Finds the first item where predicate is true using binary search.
      * `predicate` must be monotonous, i.e. `arr.map(predicate)` must be like `[false, ..., false, true, ..., true]`!
@@ -2821,7 +2859,6 @@ define(__m[11/*vs/base/common/arraysFind*/], __M([0/*require*/,1/*exports*/]), f
         const idx = findFirstIdxMonotonousOrArrLen(array, predicate);
         return idx === array.length ? undefined : array[idx];
     }
-    exports.findFirstMonotonous = findFirstMonotonous;
     /**
      * Finds the first item where predicate is true using binary search.
      * `predicate` must be monotonous, i.e. `arr.map(predicate)` must be like `[false, ..., false, true, ..., true]`!
@@ -2842,7 +2879,6 @@ define(__m[11/*vs/base/common/arraysFind*/], __M([0/*require*/,1/*exports*/]), f
         }
         return i;
     }
-    exports.findFirstIdxMonotonousOrArrLen = findFirstIdxMonotonousOrArrLen;
     /**
      * Use this when
      * * You have a sorted array
@@ -2892,7 +2928,6 @@ define(__m[11/*vs/base/common/arraysFind*/], __M([0/*require*/,1/*exports*/]), f
         }
         return max;
     }
-    exports.findFirstMaxBy = findFirstMaxBy;
     /**
      * Returns the last item that is equal to or greater than every other item.
     */
@@ -2909,14 +2944,12 @@ define(__m[11/*vs/base/common/arraysFind*/], __M([0/*require*/,1/*exports*/]), f
         }
         return max;
     }
-    exports.findLastMaxBy = findLastMaxBy;
     /**
      * Returns the first item that is equal to or less than every other item.
     */
     function findFirstMinBy(array, comparator) {
         return findFirstMaxBy(array, (a, b) => -comparator(a, b));
     }
-    exports.findFirstMinBy = findFirstMinBy;
     function findMaxIdxBy(array, comparator) {
         if (array.length === 0) {
             return -1;
@@ -2930,7 +2963,6 @@ define(__m[11/*vs/base/common/arraysFind*/], __M([0/*require*/,1/*exports*/]), f
         }
         return maxIdx;
     }
-    exports.findMaxIdxBy = findMaxIdxBy;
     /**
      * Returns the first mapped value of the array which is not undefined.
      */
@@ -2943,26 +2975,25 @@ define(__m[11/*vs/base/common/arraysFind*/], __M([0/*require*/,1/*exports*/]), f
         }
         return undefined;
     }
-    exports.mapFindFirst = mapFindFirst;
 });
 
-define(__m[32/*vs/base/common/cache*/], __M([0/*require*/,1/*exports*/]), function (require, exports) {
+define(__m[34/*vs/base/common/cache*/], __M([0/*require*/,1/*exports*/]), function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.CachedFunction = exports.LRUCachedFunction = void 0;
     /**
      * Uses a LRU cache to make a given parametrized function cached.
      * Caches just the last value.
-     * The key must be JSON serializable.
     */
     class LRUCachedFunction {
-        constructor(fn) {
+        constructor(fn, _computeKey = JSON.stringify) {
             this.fn = fn;
+            this._computeKey = _computeKey;
             this.lastCache = undefined;
             this.lastArgKey = undefined;
         }
         get(arg) {
-            const key = JSON.stringify(arg);
+            const key = this._computeKey(arg);
             if (this.lastArgKey !== key) {
                 this.lastArgKey = key;
                 this.lastCache = this.fn(arg);
@@ -2998,7 +3029,7 @@ define(__m[32/*vs/base/common/cache*/], __M([0/*require*/,1/*exports*/]), functi
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-define(__m[33/*vs/base/common/color*/], __M([0/*require*/,1/*exports*/]), function (require, exports) {
+define(__m[35/*vs/base/common/color*/], __M([0/*require*/,1/*exports*/]), function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Color = exports.HSVA = exports.HSLA = exports.RGBA = void 0;
@@ -3470,7 +3501,7 @@ define(__m[33/*vs/base/common/color*/], __M([0/*require*/,1/*exports*/]), functi
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-define(__m[34/*vs/base/common/diff/diffChange*/], __M([0/*require*/,1/*exports*/]), function (require, exports) {
+define(__m[36/*vs/base/common/diff/diffChange*/], __M([0/*require*/,1/*exports*/]), function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.DiffChange = void 0;
@@ -3512,7 +3543,14 @@ define(__m[34/*vs/base/common/diff/diffChange*/], __M([0/*require*/,1/*exports*/
 define(__m[5/*vs/base/common/errors*/], __M([0/*require*/,1/*exports*/]), function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.BugIndicatingError = exports.ErrorNoTelemetry = exports.NotSupportedError = exports.illegalState = exports.illegalArgument = exports.canceled = exports.CancellationError = exports.isCancellationError = exports.transformErrorForSerialization = exports.onUnexpectedExternalError = exports.onUnexpectedError = exports.errorHandler = exports.ErrorHandler = void 0;
+    exports.BugIndicatingError = exports.ErrorNoTelemetry = exports.NotSupportedError = exports.CancellationError = exports.errorHandler = exports.ErrorHandler = void 0;
+    exports.onUnexpectedError = onUnexpectedError;
+    exports.onUnexpectedExternalError = onUnexpectedExternalError;
+    exports.transformErrorForSerialization = transformErrorForSerialization;
+    exports.isCancellationError = isCancellationError;
+    exports.canceled = canceled;
+    exports.illegalArgument = illegalArgument;
+    exports.illegalState = illegalState;
     // Avoid circular dependency on EventEmitter by implementing a subset of the interface.
     class ErrorHandler {
         constructor() {
@@ -3552,7 +3590,6 @@ define(__m[5/*vs/base/common/errors*/], __M([0/*require*/,1/*exports*/]), functi
         }
         return undefined;
     }
-    exports.onUnexpectedError = onUnexpectedError;
     function onUnexpectedExternalError(e) {
         // ignore errors from cancelled promises
         if (!isCancellationError(e)) {
@@ -3560,7 +3597,6 @@ define(__m[5/*vs/base/common/errors*/], __M([0/*require*/,1/*exports*/]), functi
         }
         return undefined;
     }
-    exports.onUnexpectedExternalError = onUnexpectedExternalError;
     function transformErrorForSerialization(error) {
         if (error instanceof Error) {
             const { name, message } = error;
@@ -3576,7 +3612,6 @@ define(__m[5/*vs/base/common/errors*/], __M([0/*require*/,1/*exports*/]), functi
         // return as is
         return error;
     }
-    exports.transformErrorForSerialization = transformErrorForSerialization;
     const canceledName = 'Canceled';
     /**
      * Checks if the given error is a promise in canceled state
@@ -3587,7 +3622,6 @@ define(__m[5/*vs/base/common/errors*/], __M([0/*require*/,1/*exports*/]), functi
         }
         return error instanceof Error && error.name === canceledName && error.message === canceledName;
     }
-    exports.isCancellationError = isCancellationError;
     // !!!IMPORTANT!!!
     // Do NOT change this class because it is also used as an API-type.
     class CancellationError extends Error {
@@ -3605,7 +3639,6 @@ define(__m[5/*vs/base/common/errors*/], __M([0/*require*/,1/*exports*/]), functi
         error.name = error.message;
         return error;
     }
-    exports.canceled = canceled;
     function illegalArgument(name) {
         if (name) {
             return new Error(`Illegal argument: ${name}`);
@@ -3614,7 +3647,6 @@ define(__m[5/*vs/base/common/errors*/], __M([0/*require*/,1/*exports*/]), functi
             return new Error('Illegal argument');
         }
     }
-    exports.illegalArgument = illegalArgument;
     function illegalState(name) {
         if (name) {
             return new Error(`Illegal state: ${name}`);
@@ -3623,7 +3655,6 @@ define(__m[5/*vs/base/common/errors*/], __M([0/*require*/,1/*exports*/]), functi
             return new Error('Illegal state');
         }
     }
-    exports.illegalState = illegalState;
     class NotSupportedError extends Error {
         constructor(message) {
             super('NotSupported');
@@ -3680,7 +3711,11 @@ define(__m[5/*vs/base/common/errors*/], __M([0/*require*/,1/*exports*/]), functi
 define(__m[12/*vs/base/common/assert*/], __M([0/*require*/,1/*exports*/,5/*vs/base/common/errors*/]), function (require, exports, errors_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.checkAdjacentItems = exports.assertFn = exports.softAssert = exports.assertNever = exports.ok = void 0;
+    exports.ok = ok;
+    exports.assertNever = assertNever;
+    exports.softAssert = softAssert;
+    exports.assertFn = assertFn;
+    exports.checkAdjacentItems = checkAdjacentItems;
     /**
      * Throws an error with the provided message if the provided value does not evaluate to a true Javascript value.
      *
@@ -3700,11 +3735,9 @@ define(__m[12/*vs/base/common/assert*/], __M([0/*require*/,1/*exports*/,5/*vs/ba
             throw new Error(message ? `Assertion failed (${message})` : 'Assertion Failed');
         }
     }
-    exports.ok = ok;
     function assertNever(value, message = 'Unreachable') {
         throw new Error(message);
     }
-    exports.assertNever = assertNever;
     /**
      * Like assert, but doesn't throw.
      */
@@ -3713,7 +3746,6 @@ define(__m[12/*vs/base/common/assert*/], __M([0/*require*/,1/*exports*/,5/*vs/ba
             (0, errors_1.onUnexpectedError)(new errors_1.BugIndicatingError('Soft Assertion Failed'));
         }
     }
-    exports.softAssert = softAssert;
     /**
      * condition must be side-effect free!
      */
@@ -3726,7 +3758,6 @@ define(__m[12/*vs/base/common/assert*/], __M([0/*require*/,1/*exports*/,5/*vs/ba
             (0, errors_1.onUnexpectedError)(new errors_1.BugIndicatingError('Assertion Failed'));
         }
     }
-    exports.assertFn = assertFn;
     function checkAdjacentItems(items, predicate) {
         let i = 0;
         while (i < items.length - 1) {
@@ -3739,7 +3770,6 @@ define(__m[12/*vs/base/common/assert*/], __M([0/*require*/,1/*exports*/,5/*vs/ba
         }
         return true;
     }
-    exports.checkAdjacentItems = checkAdjacentItems;
 });
 
 /*---------------------------------------------------------------------------------------------
@@ -3749,7 +3779,7 @@ define(__m[12/*vs/base/common/assert*/], __M([0/*require*/,1/*exports*/,5/*vs/ba
 define(__m[20/*vs/base/common/functional*/], __M([0/*require*/,1/*exports*/]), function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.createSingleCallFunction = void 0;
+    exports.createSingleCallFunction = createSingleCallFunction;
     /**
      * Given a function, returns a function that is only calling that function once.
      */
@@ -3776,7 +3806,6 @@ define(__m[20/*vs/base/common/functional*/], __M([0/*require*/,1/*exports*/]), f
             return result;
         };
     }
-    exports.createSingleCallFunction = createSingleCallFunction;
 });
 
 /*---------------------------------------------------------------------------------------------
@@ -3929,10 +3958,11 @@ define(__m[21/*vs/base/common/iterator*/], __M([0/*require*/,1/*exports*/]), fun
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-define(__m[35/*vs/base/common/keyCodes*/], __M([0/*require*/,1/*exports*/]), function (require, exports) {
+define(__m[37/*vs/base/common/keyCodes*/], __M([0/*require*/,1/*exports*/]), function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.KeyChord = exports.KeyCodeUtils = exports.IMMUTABLE_KEY_CODE_TO_CODE = exports.IMMUTABLE_CODE_TO_KEY_CODE = exports.NATIVE_WINDOWS_KEY_CODE_TO_KEY_CODE = exports.EVENT_KEY_CODE_MAP = void 0;
+    exports.KeyCodeUtils = exports.IMMUTABLE_KEY_CODE_TO_CODE = exports.IMMUTABLE_CODE_TO_KEY_CODE = exports.NATIVE_WINDOWS_KEY_CODE_TO_KEY_CODE = exports.EVENT_KEY_CODE_MAP = void 0;
+    exports.KeyChord = KeyChord;
     class KeyCodeStrMap {
         constructor() {
             this._keyCodeToStr = [];
@@ -4301,14 +4331,13 @@ define(__m[35/*vs/base/common/keyCodes*/], __M([0/*require*/,1/*exports*/]), fun
         const chordPart = ((secondPart & 0x0000FFFF) << 16) >>> 0;
         return (firstPart | chordPart) >>> 0;
     }
-    exports.KeyChord = KeyChord;
 });
 
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-define(__m[36/*vs/base/common/lazy*/], __M([0/*require*/,1/*exports*/]), function (require, exports) {
+define(__m[38/*vs/base/common/lazy*/], __M([0/*require*/,1/*exports*/]), function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Lazy = void 0;
@@ -4351,7 +4380,15 @@ define(__m[36/*vs/base/common/lazy*/], __M([0/*require*/,1/*exports*/]), functio
 define(__m[13/*vs/base/common/lifecycle*/], __M([0/*require*/,1/*exports*/,20/*vs/base/common/functional*/,21/*vs/base/common/iterator*/]), function (require, exports, functional_1, iterator_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.DisposableMap = exports.ImmortalReference = exports.RefCountedDisposable = exports.MutableDisposable = exports.Disposable = exports.DisposableStore = exports.toDisposable = exports.combinedDisposable = exports.dispose = exports.isDisposable = exports.markAsSingleton = exports.markAsDisposed = exports.trackDisposable = exports.setDisposableTracker = void 0;
+    exports.DisposableMap = exports.ImmortalReference = exports.RefCountedDisposable = exports.MutableDisposable = exports.Disposable = exports.DisposableStore = void 0;
+    exports.setDisposableTracker = setDisposableTracker;
+    exports.trackDisposable = trackDisposable;
+    exports.markAsDisposed = markAsDisposed;
+    exports.markAsSingleton = markAsSingleton;
+    exports.isDisposable = isDisposable;
+    exports.dispose = dispose;
+    exports.combinedDisposable = combinedDisposable;
+    exports.toDisposable = toDisposable;
     // #region Disposable Tracking
     /**
      * Enables logging of potentially leaked disposables.
@@ -4365,7 +4402,6 @@ define(__m[13/*vs/base/common/lifecycle*/], __M([0/*require*/,1/*exports*/,20/*v
     function setDisposableTracker(tracker) {
         disposableTracker = tracker;
     }
-    exports.setDisposableTracker = setDisposableTracker;
     if (TRACK_DISPOSABLES) {
         const __is_disposable_tracked__ = '__is_disposable_tracked__';
         setDisposableTracker(new class {
@@ -4404,11 +4440,9 @@ define(__m[13/*vs/base/common/lifecycle*/], __M([0/*require*/,1/*exports*/,20/*v
         disposableTracker === null || disposableTracker === void 0 ? void 0 : disposableTracker.trackDisposable(x);
         return x;
     }
-    exports.trackDisposable = trackDisposable;
     function markAsDisposed(disposable) {
         disposableTracker === null || disposableTracker === void 0 ? void 0 : disposableTracker.markAsDisposed(disposable);
     }
-    exports.markAsDisposed = markAsDisposed;
     function setParentOfDisposable(child, parent) {
         disposableTracker === null || disposableTracker === void 0 ? void 0 : disposableTracker.setParent(child, parent);
     }
@@ -4427,14 +4461,12 @@ define(__m[13/*vs/base/common/lifecycle*/], __M([0/*require*/,1/*exports*/,20/*v
         disposableTracker === null || disposableTracker === void 0 ? void 0 : disposableTracker.markAsSingleton(singleton);
         return singleton;
     }
-    exports.markAsSingleton = markAsSingleton;
     /**
      * Check if `thing` is {@link IDisposable disposable}.
      */
     function isDisposable(thing) {
         return typeof thing.dispose === 'function' && thing.dispose.length === 0;
     }
-    exports.isDisposable = isDisposable;
     function dispose(arg) {
         if (iterator_1.Iterable.is(arg)) {
             const errors = [];
@@ -4461,7 +4493,6 @@ define(__m[13/*vs/base/common/lifecycle*/], __M([0/*require*/,1/*exports*/,20/*v
             return arg;
         }
     }
-    exports.dispose = dispose;
     /**
      * Combine multiple disposable values into a single {@link IDisposable}.
      */
@@ -4470,7 +4501,6 @@ define(__m[13/*vs/base/common/lifecycle*/], __M([0/*require*/,1/*exports*/,20/*v
         setParentOfDisposables(disposables, parent);
         return parent;
     }
-    exports.combinedDisposable = combinedDisposable;
     /**
      * Turn a function that implements dispose into an {@link IDisposable}.
      *
@@ -4485,7 +4515,6 @@ define(__m[13/*vs/base/common/lifecycle*/], __M([0/*require*/,1/*exports*/,20/*v
         });
         return self;
     }
-    exports.toDisposable = toDisposable;
     /**
      * Manages a collection of disposable values.
      *
@@ -4860,7 +4889,7 @@ define(__m[22/*vs/base/common/linkedList*/], __M([0/*require*/,1/*exports*/]), f
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-define(__m[37/*vs/base/common/map*/], __M([0/*require*/,1/*exports*/]), function (require, exports) {
+define(__m[23/*vs/base/common/map*/], __M([0/*require*/,1/*exports*/]), function (require, exports) {
     "use strict";
     var _a, _b;
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -5413,7 +5442,7 @@ define(__m[37/*vs/base/common/map*/], __M([0/*require*/,1/*exports*/]), function
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-define(__m[23/*vs/base/common/stopwatch*/], __M([0/*require*/,1/*exports*/]), function (require, exports) {
+define(__m[24/*vs/base/common/stopwatch*/], __M([0/*require*/,1/*exports*/]), function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.StopWatch = void 0;
@@ -5430,6 +5459,10 @@ define(__m[23/*vs/base/common/stopwatch*/], __M([0/*require*/,1/*exports*/]), fu
         stop() {
             this._stopTime = this._now();
         }
+        reset() {
+            this._startTime = this._now();
+            this._stopTime = -1;
+        }
         elapsed() {
             if (this._stopTime !== -1) {
                 return this._stopTime - this._startTime;
@@ -5440,15 +5473,18 @@ define(__m[23/*vs/base/common/stopwatch*/], __M([0/*require*/,1/*exports*/]), fu
     exports.StopWatch = StopWatch;
 });
 
-define(__m[9/*vs/base/common/event*/], __M([0/*require*/,1/*exports*/,5/*vs/base/common/errors*/,20/*vs/base/common/functional*/,13/*vs/base/common/lifecycle*/,22/*vs/base/common/linkedList*/,23/*vs/base/common/stopwatch*/]), function (require, exports, errors_1, functional_1, lifecycle_1, linkedList_1, stopwatch_1) {
+define(__m[9/*vs/base/common/event*/], __M([0/*require*/,1/*exports*/,5/*vs/base/common/errors*/,20/*vs/base/common/functional*/,13/*vs/base/common/lifecycle*/,22/*vs/base/common/linkedList*/,24/*vs/base/common/stopwatch*/]), function (require, exports, errors_1, functional_1, lifecycle_1, linkedList_1, stopwatch_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Relay = exports.EventBufferer = exports.EventMultiplexer = exports.MicrotaskEmitter = exports.DebounceEmitter = exports.PauseableEmitter = exports.createEventDeliveryQueue = exports.Emitter = exports.EventProfiling = exports.Event = void 0;
     // -----------------------------------------------------------------------------------------------------------------------
+    // Uncomment the next line to print warnings whenever a listener is GC'ed without having been disposed. This is a LEAK.
+    // -----------------------------------------------------------------------------------------------------------------------
+    const _enableListenerGCedWarning = false;
+    // -----------------------------------------------------------------------------------------------------------------------
     // Uncomment the next line to print warnings whenever an emitter with listeners is disposed. That is a sign of code smell.
     // -----------------------------------------------------------------------------------------------------------------------
     const _enableDisposeWithListenerWarning = false;
-    // _enableDisposeWithListenerWarning = Boolean("TRUE"); // causes a linter warning so that it cannot be pushed
     // -----------------------------------------------------------------------------------------------------------------------
     // Uncomment the next line to print warnings whenever a snapshotted event is used repeatedly without cleanup.
     // See https://github.com/microsoft/vscode/issues/142851
@@ -6136,6 +6172,14 @@ define(__m[9/*vs/base/common/event*/], __M([0/*require*/,1/*exports*/,5/*vs/base
             }
         }
     };
+    const _listenerFinalizers = _enableListenerGCedWarning
+        ? new FinalizationRegistry(heldValue => {
+            if (typeof heldValue === 'string') {
+                console.warn('[LEAKING LISTENER] GC\'ed a listener that was NOT yet disposed. This is where is was created:');
+                console.warn(heldValue);
+            }
+        })
+        : undefined;
     /**
      * The Emitter can be used to expose an Event to the public
      * to fire it from the insides.
@@ -6239,12 +6283,20 @@ define(__m[9/*vs/base/common/event*/], __M([0/*require*/,1/*exports*/,5/*vs/base
                     this._listeners.push(contained);
                 }
                 this._size++;
-                const result = (0, lifecycle_1.toDisposable)(() => { removeMonitor === null || removeMonitor === void 0 ? void 0 : removeMonitor(); this._removeListener(contained); });
+                const result = (0, lifecycle_1.toDisposable)(() => {
+                    _listenerFinalizers === null || _listenerFinalizers === void 0 ? void 0 : _listenerFinalizers.unregister(result);
+                    removeMonitor === null || removeMonitor === void 0 ? void 0 : removeMonitor();
+                    this._removeListener(contained);
+                });
                 if (disposables instanceof lifecycle_1.DisposableStore) {
                     disposables.add(result);
                 }
                 else if (Array.isArray(disposables)) {
                     disposables.push(result);
+                }
+                if (_listenerFinalizers) {
+                    const stack = new Error().stack.split('\n').slice(2).join('\n').trim();
+                    _listenerFinalizers.register(result, stack, result);
                 }
                 return result;
             });
@@ -6624,7 +6676,7 @@ define(__m[9/*vs/base/common/event*/], __M([0/*require*/,1/*exports*/,5/*vs/base
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-define(__m[38/*vs/base/common/cancellation*/], __M([0/*require*/,1/*exports*/,9/*vs/base/common/event*/]), function (require, exports, event_1) {
+define(__m[39/*vs/base/common/cancellation*/], __M([0/*require*/,1/*exports*/,9/*vs/base/common/event*/]), function (require, exports, event_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.CancellationTokenSource = exports.CancellationToken = void 0;
@@ -6739,18 +6791,61 @@ define(__m[38/*vs/base/common/cancellation*/], __M([0/*require*/,1/*exports*/,9/
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-define(__m[6/*vs/base/common/strings*/], __M([0/*require*/,1/*exports*/,32/*vs/base/common/cache*/,36/*vs/base/common/lazy*/]), function (require, exports, cache_1, lazy_1) {
+define(__m[6/*vs/base/common/strings*/], __M([0/*require*/,1/*exports*/,34/*vs/base/common/cache*/,38/*vs/base/common/lazy*/]), function (require, exports, cache_1, lazy_1) {
     "use strict";
     var _a;
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.InvisibleCharacters = exports.AmbiguousCharacters = exports.noBreakWhitespace = exports.getLeftDeleteOffset = exports.singleLetterHash = exports.containsUppercaseCharacter = exports.startsWithUTF8BOM = exports.UTF8_BOM_CHARACTER = exports.isEmojiImprecise = exports.isFullWidthCharacter = exports.containsUnusualLineTerminators = exports.UNUSUAL_LINE_TERMINATORS = exports.isBasicASCII = exports.containsRTL = exports.getCharContainingOffset = exports.prevCharLength = exports.nextCharLength = exports.GraphemeIterator = exports.CodePointIterator = exports.getNextCodePoint = exports.computeCodePoint = exports.isLowSurrogate = exports.isHighSurrogate = exports.commonSuffixLength = exports.commonPrefixLength = exports.startsWithIgnoreCase = exports.equalsIgnoreCase = exports.isUpperAsciiLetter = exports.isLowerAsciiLetter = exports.isAsciiDigit = exports.compareSubstringIgnoreCase = exports.compareIgnoreCase = exports.compareSubstring = exports.compare = exports.lastNonWhitespaceIndex = exports.getLeadingWhitespace = exports.firstNonWhitespaceIndex = exports.splitLinesIncludeSeparators = exports.splitLines = exports.regExpLeadsToEndlessLoop = exports.createRegExp = exports.stripWildcards = exports.convertSimple2RegExpPattern = exports.rtrim = exports.ltrim = exports.trim = exports.escapeRegExpCharacters = exports.escape = exports.htmlAttributeEncodeValue = exports.format = exports.isFalsyOrWhitespace = void 0;
+    exports.InvisibleCharacters = exports.AmbiguousCharacters = exports.noBreakWhitespace = exports.UTF8_BOM_CHARACTER = exports.UNUSUAL_LINE_TERMINATORS = exports.GraphemeIterator = exports.CodePointIterator = void 0;
+    exports.isFalsyOrWhitespace = isFalsyOrWhitespace;
+    exports.format = format;
+    exports.htmlAttributeEncodeValue = htmlAttributeEncodeValue;
+    exports.escape = escape;
+    exports.escapeRegExpCharacters = escapeRegExpCharacters;
+    exports.trim = trim;
+    exports.ltrim = ltrim;
+    exports.rtrim = rtrim;
+    exports.convertSimple2RegExpPattern = convertSimple2RegExpPattern;
+    exports.stripWildcards = stripWildcards;
+    exports.createRegExp = createRegExp;
+    exports.regExpLeadsToEndlessLoop = regExpLeadsToEndlessLoop;
+    exports.splitLines = splitLines;
+    exports.splitLinesIncludeSeparators = splitLinesIncludeSeparators;
+    exports.firstNonWhitespaceIndex = firstNonWhitespaceIndex;
+    exports.getLeadingWhitespace = getLeadingWhitespace;
+    exports.lastNonWhitespaceIndex = lastNonWhitespaceIndex;
+    exports.compare = compare;
+    exports.compareSubstring = compareSubstring;
+    exports.compareIgnoreCase = compareIgnoreCase;
+    exports.compareSubstringIgnoreCase = compareSubstringIgnoreCase;
+    exports.isAsciiDigit = isAsciiDigit;
+    exports.isLowerAsciiLetter = isLowerAsciiLetter;
+    exports.isUpperAsciiLetter = isUpperAsciiLetter;
+    exports.equalsIgnoreCase = equalsIgnoreCase;
+    exports.startsWithIgnoreCase = startsWithIgnoreCase;
+    exports.commonPrefixLength = commonPrefixLength;
+    exports.commonSuffixLength = commonSuffixLength;
+    exports.isHighSurrogate = isHighSurrogate;
+    exports.isLowSurrogate = isLowSurrogate;
+    exports.computeCodePoint = computeCodePoint;
+    exports.getNextCodePoint = getNextCodePoint;
+    exports.nextCharLength = nextCharLength;
+    exports.prevCharLength = prevCharLength;
+    exports.getCharContainingOffset = getCharContainingOffset;
+    exports.containsRTL = containsRTL;
+    exports.isBasicASCII = isBasicASCII;
+    exports.containsUnusualLineTerminators = containsUnusualLineTerminators;
+    exports.isFullWidthCharacter = isFullWidthCharacter;
+    exports.isEmojiImprecise = isEmojiImprecise;
+    exports.startsWithUTF8BOM = startsWithUTF8BOM;
+    exports.containsUppercaseCharacter = containsUppercaseCharacter;
+    exports.singleLetterHash = singleLetterHash;
+    exports.getLeftDeleteOffset = getLeftDeleteOffset;
     function isFalsyOrWhitespace(str) {
         if (!str || typeof str !== 'string') {
             return true;
         }
         return str.trim().length === 0;
     }
-    exports.isFalsyOrWhitespace = isFalsyOrWhitespace;
     const _formatRegexp = /{(\d+)}/g;
     /**
      * Helper to produce a string with a variable number of arguments. Insert variable segments
@@ -6769,7 +6864,6 @@ define(__m[6/*vs/base/common/strings*/], __M([0/*require*/,1/*exports*/,32/*vs/b
                 args[idx];
         });
     }
-    exports.format = format;
     /**
      * Encodes the given value so that it can be used as literal value in html attributes.
      *
@@ -6788,7 +6882,6 @@ define(__m[6/*vs/base/common/strings*/], __M([0/*require*/,1/*exports*/,32/*vs/b
             return ch;
         });
     }
-    exports.htmlAttributeEncodeValue = htmlAttributeEncodeValue;
     /**
      * Converts HTML characters inside the string to use entities instead. Makes the string safe from
      * being used e.g. in HTMLElement.innerHTML.
@@ -6803,14 +6896,12 @@ define(__m[6/*vs/base/common/strings*/], __M([0/*require*/,1/*exports*/,32/*vs/b
             }
         });
     }
-    exports.escape = escape;
     /**
      * Escapes regular expression characters in a given string
      */
     function escapeRegExpCharacters(value) {
         return value.replace(/[\\\{\}\*\+\?\|\^\$\.\[\]\(\)]/g, '\\$&');
     }
-    exports.escapeRegExpCharacters = escapeRegExpCharacters;
     /**
      * Removes all occurrences of needle from the beginning and end of haystack.
      * @param haystack string to trim
@@ -6820,7 +6911,6 @@ define(__m[6/*vs/base/common/strings*/], __M([0/*require*/,1/*exports*/,32/*vs/b
         const trimmed = ltrim(haystack, needle);
         return rtrim(trimmed, needle);
     }
-    exports.trim = trim;
     /**
      * Removes all occurrences of needle from the beginning of haystack.
      * @param haystack string to trim
@@ -6840,7 +6930,6 @@ define(__m[6/*vs/base/common/strings*/], __M([0/*require*/,1/*exports*/,32/*vs/b
         }
         return haystack.substring(offset);
     }
-    exports.ltrim = ltrim;
     /**
      * Removes all occurrences of needle from the end of haystack.
      * @param haystack string to trim
@@ -6867,15 +6956,12 @@ define(__m[6/*vs/base/common/strings*/], __M([0/*require*/,1/*exports*/,32/*vs/b
         }
         return haystack.substring(0, offset);
     }
-    exports.rtrim = rtrim;
     function convertSimple2RegExpPattern(pattern) {
         return pattern.replace(/[\-\\\{\}\+\?\|\^\$\.\,\[\]\(\)\#\s]/g, '\\$&').replace(/[\*]/g, '.*');
     }
-    exports.convertSimple2RegExpPattern = convertSimple2RegExpPattern;
     function stripWildcards(pattern) {
         return pattern.replace(/\*/g, '');
     }
-    exports.stripWildcards = stripWildcards;
     function createRegExp(searchString, isRegex, options = {}) {
         if (!searchString) {
             throw new Error('Cannot create regex from empty string');
@@ -6906,7 +6992,6 @@ define(__m[6/*vs/base/common/strings*/], __M([0/*require*/,1/*exports*/,32/*vs/b
         }
         return new RegExp(searchString, modifiers);
     }
-    exports.createRegExp = createRegExp;
     function regExpLeadsToEndlessLoop(regexp) {
         // Exit early if it's one of these special cases which are meant to match
         // against an empty string
@@ -6918,11 +7003,9 @@ define(__m[6/*vs/base/common/strings*/], __M([0/*require*/,1/*exports*/,32/*vs/b
         const match = regexp.exec('');
         return !!(match && regexp.lastIndex === 0);
     }
-    exports.regExpLeadsToEndlessLoop = regExpLeadsToEndlessLoop;
     function splitLines(str) {
         return str.split(/\r\n|\r|\n/);
     }
-    exports.splitLines = splitLines;
     function splitLinesIncludeSeparators(str) {
         var _b;
         const linesWithSeparators = [];
@@ -6932,7 +7015,6 @@ define(__m[6/*vs/base/common/strings*/], __M([0/*require*/,1/*exports*/,32/*vs/b
         }
         return linesWithSeparators;
     }
-    exports.splitLinesIncludeSeparators = splitLinesIncludeSeparators;
     /**
      * Returns first index of the string that is not whitespace.
      * If string is empty or contains only whitespaces, returns -1
@@ -6946,7 +7028,6 @@ define(__m[6/*vs/base/common/strings*/], __M([0/*require*/,1/*exports*/,32/*vs/b
         }
         return -1;
     }
-    exports.firstNonWhitespaceIndex = firstNonWhitespaceIndex;
     /**
      * Returns the leading whitespace of the string.
      * If the string contains only whitespaces, returns entire string
@@ -6960,7 +7041,6 @@ define(__m[6/*vs/base/common/strings*/], __M([0/*require*/,1/*exports*/,32/*vs/b
         }
         return str.substring(start, end);
     }
-    exports.getLeadingWhitespace = getLeadingWhitespace;
     /**
      * Returns last index of the string that is not whitespace.
      * If string is empty or contains only whitespaces, returns -1
@@ -6974,7 +7054,6 @@ define(__m[6/*vs/base/common/strings*/], __M([0/*require*/,1/*exports*/,32/*vs/b
         }
         return -1;
     }
-    exports.lastNonWhitespaceIndex = lastNonWhitespaceIndex;
     function compare(a, b) {
         if (a < b) {
             return -1;
@@ -6986,7 +7065,6 @@ define(__m[6/*vs/base/common/strings*/], __M([0/*require*/,1/*exports*/,32/*vs/b
             return 0;
         }
     }
-    exports.compare = compare;
     function compareSubstring(a, b, aStart = 0, aEnd = a.length, bStart = 0, bEnd = b.length) {
         for (; aStart < aEnd && bStart < bEnd; aStart++, bStart++) {
             const codeA = a.charCodeAt(aStart);
@@ -7008,11 +7086,9 @@ define(__m[6/*vs/base/common/strings*/], __M([0/*require*/,1/*exports*/,32/*vs/b
         }
         return 0;
     }
-    exports.compareSubstring = compareSubstring;
     function compareIgnoreCase(a, b) {
         return compareSubstringIgnoreCase(a, b, 0, a.length, 0, b.length);
     }
-    exports.compareIgnoreCase = compareIgnoreCase;
     function compareSubstringIgnoreCase(a, b, aStart = 0, aEnd = a.length, bStart = 0, bEnd = b.length) {
         for (; aStart < aEnd && bStart < bEnd; aStart++, bStart++) {
             let codeA = a.charCodeAt(aStart);
@@ -7050,23 +7126,18 @@ define(__m[6/*vs/base/common/strings*/], __M([0/*require*/,1/*exports*/,32/*vs/b
         }
         return 0;
     }
-    exports.compareSubstringIgnoreCase = compareSubstringIgnoreCase;
     function isAsciiDigit(code) {
         return code >= 48 /* CharCode.Digit0 */ && code <= 57 /* CharCode.Digit9 */;
     }
-    exports.isAsciiDigit = isAsciiDigit;
     function isLowerAsciiLetter(code) {
         return code >= 97 /* CharCode.a */ && code <= 122 /* CharCode.z */;
     }
-    exports.isLowerAsciiLetter = isLowerAsciiLetter;
     function isUpperAsciiLetter(code) {
         return code >= 65 /* CharCode.A */ && code <= 90 /* CharCode.Z */;
     }
-    exports.isUpperAsciiLetter = isUpperAsciiLetter;
     function equalsIgnoreCase(a, b) {
         return a.length === b.length && compareSubstringIgnoreCase(a, b) === 0;
     }
-    exports.equalsIgnoreCase = equalsIgnoreCase;
     function startsWithIgnoreCase(str, candidate) {
         const candidateLength = candidate.length;
         if (candidate.length > str.length) {
@@ -7074,7 +7145,6 @@ define(__m[6/*vs/base/common/strings*/], __M([0/*require*/,1/*exports*/,32/*vs/b
         }
         return compareSubstringIgnoreCase(str, candidate, 0, candidateLength) === 0;
     }
-    exports.startsWithIgnoreCase = startsWithIgnoreCase;
     /**
      * @returns the length of the common prefix of the two strings.
      */
@@ -7088,7 +7158,6 @@ define(__m[6/*vs/base/common/strings*/], __M([0/*require*/,1/*exports*/,32/*vs/b
         }
         return len;
     }
-    exports.commonPrefixLength = commonPrefixLength;
     /**
      * @returns the length of the common suffix of the two strings.
      */
@@ -7104,28 +7173,24 @@ define(__m[6/*vs/base/common/strings*/], __M([0/*require*/,1/*exports*/,32/*vs/b
         }
         return len;
     }
-    exports.commonSuffixLength = commonSuffixLength;
     /**
      * See http://en.wikipedia.org/wiki/Surrogate_pair
      */
     function isHighSurrogate(charCode) {
         return (0xD800 <= charCode && charCode <= 0xDBFF);
     }
-    exports.isHighSurrogate = isHighSurrogate;
     /**
      * See http://en.wikipedia.org/wiki/Surrogate_pair
      */
     function isLowSurrogate(charCode) {
         return (0xDC00 <= charCode && charCode <= 0xDFFF);
     }
-    exports.isLowSurrogate = isLowSurrogate;
     /**
      * See http://en.wikipedia.org/wiki/Surrogate_pair
      */
     function computeCodePoint(highSurrogate, lowSurrogate) {
         return ((highSurrogate - 0xD800) << 10) + (lowSurrogate - 0xDC00) + 0x10000;
     }
-    exports.computeCodePoint = computeCodePoint;
     /**
      * get the code point that begins at offset `offset`
      */
@@ -7139,7 +7204,6 @@ define(__m[6/*vs/base/common/strings*/], __M([0/*require*/,1/*exports*/,32/*vs/b
         }
         return charCode;
     }
-    exports.getNextCodePoint = getNextCodePoint;
     /**
      * get the code point that ends right before offset `offset`
      */
@@ -7230,12 +7294,10 @@ define(__m[6/*vs/base/common/strings*/], __M([0/*require*/,1/*exports*/,32/*vs/b
         const iterator = new GraphemeIterator(str, initialOffset);
         return iterator.nextGraphemeLength();
     }
-    exports.nextCharLength = nextCharLength;
     function prevCharLength(str, initialOffset) {
         const iterator = new GraphemeIterator(str, initialOffset);
         return iterator.prevGraphemeLength();
     }
-    exports.prevCharLength = prevCharLength;
     function getCharContainingOffset(str, offset) {
         if (offset > 0 && isLowSurrogate(str.charCodeAt(offset))) {
             offset--;
@@ -7244,7 +7306,6 @@ define(__m[6/*vs/base/common/strings*/], __M([0/*require*/,1/*exports*/,32/*vs/b
         const startOffset = endOffset - prevCharLength(str, endOffset);
         return [startOffset, endOffset];
     }
-    exports.getCharContainingOffset = getCharContainingOffset;
     let CONTAINS_RTL = undefined;
     function makeContainsRtl() {
         // Generated using https://github.com/alexdima/unicode-utils/blob/main/rtl-test.js
@@ -7259,7 +7320,6 @@ define(__m[6/*vs/base/common/strings*/], __M([0/*require*/,1/*exports*/,32/*vs/b
         }
         return CONTAINS_RTL.test(str);
     }
-    exports.containsRTL = containsRTL;
     const IS_BASIC_ASCII = /^[\t\n\r\x20-\x7E]*$/;
     /**
      * Returns true if `str` contains only basic ASCII characters in the range 32 - 126 (including 32 and 126) or \n, \r, \t
@@ -7267,7 +7327,6 @@ define(__m[6/*vs/base/common/strings*/], __M([0/*require*/,1/*exports*/,32/*vs/b
     function isBasicASCII(str) {
         return IS_BASIC_ASCII.test(str);
     }
-    exports.isBasicASCII = isBasicASCII;
     exports.UNUSUAL_LINE_TERMINATORS = /[\u2028\u2029]/; // LINE SEPARATOR (LS) or PARAGRAPH SEPARATOR (PS)
     /**
      * Returns true if `str` contains unusual line terminators, like LS or PS
@@ -7275,7 +7334,6 @@ define(__m[6/*vs/base/common/strings*/], __M([0/*require*/,1/*exports*/,32/*vs/b
     function containsUnusualLineTerminators(str) {
         return exports.UNUSUAL_LINE_TERMINATORS.test(str);
     }
-    exports.containsUnusualLineTerminators = containsUnusualLineTerminators;
     function isFullWidthCharacter(charCode) {
         // Do a cheap trick to better support wrapping of wide characters, treat them as 2 columns
         // http://jrgraphix.net/research/unicode_blocks.php
@@ -7319,7 +7377,6 @@ define(__m[6/*vs/base/common/strings*/], __M([0/*require*/,1/*exports*/,32/*vs/b
             || (charCode >= 0xF900 && charCode <= 0xFAFF)
             || (charCode >= 0xFF01 && charCode <= 0xFF5E));
     }
-    exports.isFullWidthCharacter = isFullWidthCharacter;
     /**
      * A fast function (therefore imprecise) to check if code points are emojis.
      * Generated using https://github.com/alexdima/unicode-utils/blob/main/emoji-test.js
@@ -7331,13 +7388,11 @@ define(__m[6/*vs/base/common/strings*/], __M([0/*require*/,1/*exports*/,32/*vs/b
             || (x >= 128992 && x <= 129008) || (x >= 129280 && x <= 129535)
             || (x >= 129648 && x <= 129782));
     }
-    exports.isEmojiImprecise = isEmojiImprecise;
     // -- UTF-8 BOM
     exports.UTF8_BOM_CHARACTER = String.fromCharCode(65279 /* CharCode.UTF8_BOM */);
     function startsWithUTF8BOM(str) {
         return !!(str && str.length > 0 && str.charCodeAt(0) === 65279 /* CharCode.UTF8_BOM */);
     }
-    exports.startsWithUTF8BOM = startsWithUTF8BOM;
     function containsUppercaseCharacter(target, ignoreEscapedChars = false) {
         if (!target) {
             return false;
@@ -7347,7 +7402,6 @@ define(__m[6/*vs/base/common/strings*/], __M([0/*require*/,1/*exports*/,32/*vs/b
         }
         return target.toLowerCase() !== target;
     }
-    exports.containsUppercaseCharacter = containsUppercaseCharacter;
     /**
      * Produces 'a'-'z', followed by 'A'-'Z'... followed by 'a'-'z', etc.
      */
@@ -7359,7 +7413,6 @@ define(__m[6/*vs/base/common/strings*/], __M([0/*require*/,1/*exports*/,32/*vs/b
         }
         return String.fromCharCode(65 /* CharCode.A */ + n - LETTERS_CNT);
     }
-    exports.singleLetterHash = singleLetterHash;
     function breakBetweenGraphemeBreakType(breakTypeA, breakTypeB) {
         // http://www.unicode.org/reports/tr29/#Grapheme_Cluster_Boundary_Rules
         // !!! Let's make the common case a bit faster
@@ -7500,7 +7553,6 @@ define(__m[6/*vs/base/common/strings*/], __M([0/*require*/,1/*exports*/,32/*vs/b
         iterator.prevCodePoint();
         return iterator.offset;
     }
-    exports.getLeftDeleteOffset = getLeftDeleteOffset;
     function getOffsetBeforeLastEmojiComponent(initialOffset, str) {
         // See https://www.unicode.org/reports/tr51/tr51-14.html#EBNF_and_Regex for the
         // structure of emojis.
@@ -7634,17 +7686,21 @@ define(__m[6/*vs/base/common/strings*/], __M([0/*require*/,1/*exports*/,32/*vs/b
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-define(__m[39/*vs/base/common/hash*/], __M([0/*require*/,1/*exports*/,6/*vs/base/common/strings*/]), function (require, exports, strings) {
+define(__m[40/*vs/base/common/hash*/], __M([0/*require*/,1/*exports*/,6/*vs/base/common/strings*/]), function (require, exports, strings) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.StringSHA1 = exports.toHexString = exports.stringHash = exports.numberHash = exports.doHash = exports.hash = void 0;
+    exports.StringSHA1 = void 0;
+    exports.hash = hash;
+    exports.doHash = doHash;
+    exports.numberHash = numberHash;
+    exports.stringHash = stringHash;
+    exports.toHexString = toHexString;
     /**
      * Return a hash value for an object.
      */
     function hash(obj) {
         return doHash(obj, 0);
     }
-    exports.hash = hash;
     function doHash(obj, hashVal) {
         switch (typeof obj) {
             case 'object':
@@ -7667,11 +7723,9 @@ define(__m[39/*vs/base/common/hash*/], __M([0/*require*/,1/*exports*/,6/*vs/base
                 return numberHash(617, hashVal);
         }
     }
-    exports.doHash = doHash;
     function numberHash(val, initialHashVal) {
         return (((initialHashVal << 5) - initialHashVal) + val) | 0; // hashVal * 31 + ch, keep as int32
     }
-    exports.numberHash = numberHash;
     function booleanHash(b, initialHashVal) {
         return numberHash(b ? 433 : 863, initialHashVal);
     }
@@ -7682,7 +7736,6 @@ define(__m[39/*vs/base/common/hash*/], __M([0/*require*/,1/*exports*/,6/*vs/base
         }
         return hashVal;
     }
-    exports.stringHash = stringHash;
     function arrayHash(arr, initialHashVal) {
         initialHashVal = numberHash(104579, initialHashVal);
         return arr.reduce((hashVal, item) => doHash(item, hashVal), initialHashVal);
@@ -7719,7 +7772,6 @@ define(__m[39/*vs/base/common/hash*/], __M([0/*require*/,1/*exports*/,6/*vs/base
         }
         return leftPad((bufferOrValue >>> 0).toString(16), bitsize / 4);
     }
-    exports.toHexString = toHexString;
     /**
      * A SHA1 implementation that works with strings and does not allocate.
      */
@@ -7903,10 +7955,11 @@ define(__m[39/*vs/base/common/hash*/], __M([0/*require*/,1/*exports*/,6/*vs/base
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-define(__m[24/*vs/base/common/diff/diff*/], __M([0/*require*/,1/*exports*/,34/*vs/base/common/diff/diffChange*/,39/*vs/base/common/hash*/]), function (require, exports, diffChange_1, hash_1) {
+define(__m[25/*vs/base/common/diff/diff*/], __M([0/*require*/,1/*exports*/,36/*vs/base/common/diff/diffChange*/,40/*vs/base/common/hash*/]), function (require, exports, diffChange_1, hash_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.LcsDiff = exports.stringDiff = exports.StringDiffSequence = void 0;
+    exports.LcsDiff = exports.StringDiffSequence = void 0;
+    exports.stringDiff = stringDiff;
     class StringDiffSequence {
         constructor(source) {
             this.source = source;
@@ -7924,7 +7977,6 @@ define(__m[24/*vs/base/common/diff/diff*/], __M([0/*require*/,1/*exports*/,34/*v
     function stringDiff(original, modified, pretty) {
         return new LcsDiff(new StringDiffSequence(original), new StringDiffSequence(modified)).ComputeDiff(pretty).changes;
     }
-    exports.stringDiff = stringDiff;
     //
     // The code below has been ported from a C# implementation in VS
     //
@@ -8809,17 +8861,29 @@ define(__m[24/*vs/base/common/diff/diff*/], __M([0/*require*/,1/*exports*/,34/*v
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-define(__m[25/*vs/base/common/types*/], __M([0/*require*/,1/*exports*/]), function (require, exports) {
+define(__m[26/*vs/base/common/types*/], __M([0/*require*/,1/*exports*/]), function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.validateConstraint = exports.validateConstraints = exports.isFunction = exports.assertIsDefined = exports.assertType = exports.isUndefinedOrNull = exports.isDefined = exports.isUndefined = exports.isBoolean = exports.isIterable = exports.isNumber = exports.isTypedArray = exports.isObject = exports.isString = void 0;
+    exports.isString = isString;
+    exports.isObject = isObject;
+    exports.isTypedArray = isTypedArray;
+    exports.isNumber = isNumber;
+    exports.isIterable = isIterable;
+    exports.isBoolean = isBoolean;
+    exports.isUndefined = isUndefined;
+    exports.isDefined = isDefined;
+    exports.isUndefinedOrNull = isUndefinedOrNull;
+    exports.assertType = assertType;
+    exports.assertIsDefined = assertIsDefined;
+    exports.isFunction = isFunction;
+    exports.validateConstraints = validateConstraints;
+    exports.validateConstraint = validateConstraint;
     /**
      * @returns whether the provided parameter is a JavaScript String or not.
      */
     function isString(str) {
         return (typeof str === 'string');
     }
-    exports.isString = isString;
     /**
      * @returns whether the provided parameter is of type `object` but **not**
      *	`null`, an `array`, a `regexp`, nor a `date`.
@@ -8834,7 +8898,6 @@ define(__m[25/*vs/base/common/types*/], __M([0/*require*/,1/*exports*/]), functi
             && !(obj instanceof RegExp)
             && !(obj instanceof Date);
     }
-    exports.isObject = isObject;
     /**
      * @returns whether the provided parameter is of type `Buffer` or Uint8Array dervived type
      */
@@ -8843,7 +8906,6 @@ define(__m[25/*vs/base/common/types*/], __M([0/*require*/,1/*exports*/]), functi
         return typeof obj === 'object'
             && obj instanceof TypedArray;
     }
-    exports.isTypedArray = isTypedArray;
     /**
      * In **contrast** to just checking `typeof` this will return `false` for `NaN`.
      * @returns whether the provided parameter is a JavaScript Number or not.
@@ -8851,48 +8913,41 @@ define(__m[25/*vs/base/common/types*/], __M([0/*require*/,1/*exports*/]), functi
     function isNumber(obj) {
         return (typeof obj === 'number' && !isNaN(obj));
     }
-    exports.isNumber = isNumber;
     /**
      * @returns whether the provided parameter is an Iterable, casting to the given generic
      */
     function isIterable(obj) {
         return !!obj && typeof obj[Symbol.iterator] === 'function';
     }
-    exports.isIterable = isIterable;
     /**
      * @returns whether the provided parameter is a JavaScript Boolean or not.
      */
     function isBoolean(obj) {
         return (obj === true || obj === false);
     }
-    exports.isBoolean = isBoolean;
     /**
      * @returns whether the provided parameter is undefined.
      */
     function isUndefined(obj) {
         return (typeof obj === 'undefined');
     }
-    exports.isUndefined = isUndefined;
     /**
      * @returns whether the provided parameter is defined.
      */
     function isDefined(arg) {
         return !isUndefinedOrNull(arg);
     }
-    exports.isDefined = isDefined;
     /**
      * @returns whether the provided parameter is undefined or null.
      */
     function isUndefinedOrNull(obj) {
         return (isUndefined(obj) || obj === null);
     }
-    exports.isUndefinedOrNull = isUndefinedOrNull;
     function assertType(condition, type) {
         if (!condition) {
             throw new Error(type ? `Unexpected type, expected '${type}'` : 'Unexpected type');
         }
     }
-    exports.assertType = assertType;
     /**
      * Asserts that the argument passed in is neither undefined nor null.
      */
@@ -8902,21 +8957,18 @@ define(__m[25/*vs/base/common/types*/], __M([0/*require*/,1/*exports*/]), functi
         }
         return arg;
     }
-    exports.assertIsDefined = assertIsDefined;
     /**
      * @returns whether the provided parameter is a JavaScript Function or not.
      */
     function isFunction(obj) {
         return (typeof obj === 'function');
     }
-    exports.isFunction = isFunction;
     function validateConstraints(args, constraints) {
         const len = Math.min(args.length, constraints.length);
         for (let i = 0; i < len; i++) {
             validateConstraint(args[i], constraints[i]);
         }
     }
-    exports.validateConstraints = validateConstraints;
     function validateConstraint(arg, constraint) {
         if (isString(constraint)) {
             if (typeof arg !== constraint) {
@@ -8941,13 +8993,13 @@ define(__m[25/*vs/base/common/types*/], __M([0/*require*/,1/*exports*/]), functi
             throw new Error(`argument does not match one of these constraints: arg instanceof constraint, arg.constructor === constraint, nor constraint(arg) === true`);
         }
     }
-    exports.validateConstraint = validateConstraint;
 });
 
-define(__m[40/*vs/base/common/codicons*/], __M([0/*require*/,1/*exports*/,25/*vs/base/common/types*/]), function (require, exports, types_1) {
+define(__m[27/*vs/base/common/codiconsUtil*/], __M([0/*require*/,1/*exports*/,26/*vs/base/common/types*/]), function (require, exports, types_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.Codicon = exports.getCodiconFontCharacters = void 0;
+    exports.register = register;
+    exports.getCodiconFontCharacters = getCodiconFontCharacters;
     const _codiconFontCharacters = Object.create(null);
     function register(id, fontCharacter) {
         if ((0, types_1.isString)(fontCharacter)) {
@@ -8966,7 +9018,623 @@ define(__m[40/*vs/base/common/codicons*/], __M([0/*require*/,1/*exports*/,25/*vs
     function getCodiconFontCharacters() {
         return _codiconFontCharacters;
     }
-    exports.getCodiconFontCharacters = getCodiconFontCharacters;
+});
+
+define(__m[41/*vs/base/common/codiconsLibrary*/], __M([0/*require*/,1/*exports*/,27/*vs/base/common/codiconsUtil*/]), function (require, exports, codiconsUtil_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.codiconsLibrary = void 0;
+    // This file is automatically generated by (microsoft/vscode-codicons)/scripts/export-to-ts.js
+    // Please don't edit it, as your changes will be overwritten.
+    // Instead, add mappings to codiconsDerived in codicons.ts.
+    exports.codiconsLibrary = {
+        add: (0, codiconsUtil_1.register)('add', 0xea60),
+        plus: (0, codiconsUtil_1.register)('plus', 0xea60),
+        gistNew: (0, codiconsUtil_1.register)('gist-new', 0xea60),
+        repoCreate: (0, codiconsUtil_1.register)('repo-create', 0xea60),
+        lightbulb: (0, codiconsUtil_1.register)('lightbulb', 0xea61),
+        lightBulb: (0, codiconsUtil_1.register)('light-bulb', 0xea61),
+        repo: (0, codiconsUtil_1.register)('repo', 0xea62),
+        repoDelete: (0, codiconsUtil_1.register)('repo-delete', 0xea62),
+        gistFork: (0, codiconsUtil_1.register)('gist-fork', 0xea63),
+        repoForked: (0, codiconsUtil_1.register)('repo-forked', 0xea63),
+        gitPullRequest: (0, codiconsUtil_1.register)('git-pull-request', 0xea64),
+        gitPullRequestAbandoned: (0, codiconsUtil_1.register)('git-pull-request-abandoned', 0xea64),
+        recordKeys: (0, codiconsUtil_1.register)('record-keys', 0xea65),
+        keyboard: (0, codiconsUtil_1.register)('keyboard', 0xea65),
+        tag: (0, codiconsUtil_1.register)('tag', 0xea66),
+        gitPullRequestLabel: (0, codiconsUtil_1.register)('git-pull-request-label', 0xea66),
+        tagAdd: (0, codiconsUtil_1.register)('tag-add', 0xea66),
+        tagRemove: (0, codiconsUtil_1.register)('tag-remove', 0xea66),
+        person: (0, codiconsUtil_1.register)('person', 0xea67),
+        personFollow: (0, codiconsUtil_1.register)('person-follow', 0xea67),
+        personOutline: (0, codiconsUtil_1.register)('person-outline', 0xea67),
+        personFilled: (0, codiconsUtil_1.register)('person-filled', 0xea67),
+        gitBranch: (0, codiconsUtil_1.register)('git-branch', 0xea68),
+        gitBranchCreate: (0, codiconsUtil_1.register)('git-branch-create', 0xea68),
+        gitBranchDelete: (0, codiconsUtil_1.register)('git-branch-delete', 0xea68),
+        sourceControl: (0, codiconsUtil_1.register)('source-control', 0xea68),
+        mirror: (0, codiconsUtil_1.register)('mirror', 0xea69),
+        mirrorPublic: (0, codiconsUtil_1.register)('mirror-public', 0xea69),
+        star: (0, codiconsUtil_1.register)('star', 0xea6a),
+        starAdd: (0, codiconsUtil_1.register)('star-add', 0xea6a),
+        starDelete: (0, codiconsUtil_1.register)('star-delete', 0xea6a),
+        starEmpty: (0, codiconsUtil_1.register)('star-empty', 0xea6a),
+        comment: (0, codiconsUtil_1.register)('comment', 0xea6b),
+        commentAdd: (0, codiconsUtil_1.register)('comment-add', 0xea6b),
+        alert: (0, codiconsUtil_1.register)('alert', 0xea6c),
+        warning: (0, codiconsUtil_1.register)('warning', 0xea6c),
+        search: (0, codiconsUtil_1.register)('search', 0xea6d),
+        searchSave: (0, codiconsUtil_1.register)('search-save', 0xea6d),
+        logOut: (0, codiconsUtil_1.register)('log-out', 0xea6e),
+        signOut: (0, codiconsUtil_1.register)('sign-out', 0xea6e),
+        logIn: (0, codiconsUtil_1.register)('log-in', 0xea6f),
+        signIn: (0, codiconsUtil_1.register)('sign-in', 0xea6f),
+        eye: (0, codiconsUtil_1.register)('eye', 0xea70),
+        eyeUnwatch: (0, codiconsUtil_1.register)('eye-unwatch', 0xea70),
+        eyeWatch: (0, codiconsUtil_1.register)('eye-watch', 0xea70),
+        circleFilled: (0, codiconsUtil_1.register)('circle-filled', 0xea71),
+        primitiveDot: (0, codiconsUtil_1.register)('primitive-dot', 0xea71),
+        closeDirty: (0, codiconsUtil_1.register)('close-dirty', 0xea71),
+        debugBreakpoint: (0, codiconsUtil_1.register)('debug-breakpoint', 0xea71),
+        debugBreakpointDisabled: (0, codiconsUtil_1.register)('debug-breakpoint-disabled', 0xea71),
+        debugHint: (0, codiconsUtil_1.register)('debug-hint', 0xea71),
+        terminalDecorationSuccess: (0, codiconsUtil_1.register)('terminal-decoration-success', 0xea71),
+        primitiveSquare: (0, codiconsUtil_1.register)('primitive-square', 0xea72),
+        edit: (0, codiconsUtil_1.register)('edit', 0xea73),
+        pencil: (0, codiconsUtil_1.register)('pencil', 0xea73),
+        info: (0, codiconsUtil_1.register)('info', 0xea74),
+        issueOpened: (0, codiconsUtil_1.register)('issue-opened', 0xea74),
+        gistPrivate: (0, codiconsUtil_1.register)('gist-private', 0xea75),
+        gitForkPrivate: (0, codiconsUtil_1.register)('git-fork-private', 0xea75),
+        lock: (0, codiconsUtil_1.register)('lock', 0xea75),
+        mirrorPrivate: (0, codiconsUtil_1.register)('mirror-private', 0xea75),
+        close: (0, codiconsUtil_1.register)('close', 0xea76),
+        removeClose: (0, codiconsUtil_1.register)('remove-close', 0xea76),
+        x: (0, codiconsUtil_1.register)('x', 0xea76),
+        repoSync: (0, codiconsUtil_1.register)('repo-sync', 0xea77),
+        sync: (0, codiconsUtil_1.register)('sync', 0xea77),
+        clone: (0, codiconsUtil_1.register)('clone', 0xea78),
+        desktopDownload: (0, codiconsUtil_1.register)('desktop-download', 0xea78),
+        beaker: (0, codiconsUtil_1.register)('beaker', 0xea79),
+        microscope: (0, codiconsUtil_1.register)('microscope', 0xea79),
+        vm: (0, codiconsUtil_1.register)('vm', 0xea7a),
+        deviceDesktop: (0, codiconsUtil_1.register)('device-desktop', 0xea7a),
+        file: (0, codiconsUtil_1.register)('file', 0xea7b),
+        fileText: (0, codiconsUtil_1.register)('file-text', 0xea7b),
+        more: (0, codiconsUtil_1.register)('more', 0xea7c),
+        ellipsis: (0, codiconsUtil_1.register)('ellipsis', 0xea7c),
+        kebabHorizontal: (0, codiconsUtil_1.register)('kebab-horizontal', 0xea7c),
+        mailReply: (0, codiconsUtil_1.register)('mail-reply', 0xea7d),
+        reply: (0, codiconsUtil_1.register)('reply', 0xea7d),
+        organization: (0, codiconsUtil_1.register)('organization', 0xea7e),
+        organizationFilled: (0, codiconsUtil_1.register)('organization-filled', 0xea7e),
+        organizationOutline: (0, codiconsUtil_1.register)('organization-outline', 0xea7e),
+        newFile: (0, codiconsUtil_1.register)('new-file', 0xea7f),
+        fileAdd: (0, codiconsUtil_1.register)('file-add', 0xea7f),
+        newFolder: (0, codiconsUtil_1.register)('new-folder', 0xea80),
+        fileDirectoryCreate: (0, codiconsUtil_1.register)('file-directory-create', 0xea80),
+        trash: (0, codiconsUtil_1.register)('trash', 0xea81),
+        trashcan: (0, codiconsUtil_1.register)('trashcan', 0xea81),
+        history: (0, codiconsUtil_1.register)('history', 0xea82),
+        clock: (0, codiconsUtil_1.register)('clock', 0xea82),
+        folder: (0, codiconsUtil_1.register)('folder', 0xea83),
+        fileDirectory: (0, codiconsUtil_1.register)('file-directory', 0xea83),
+        symbolFolder: (0, codiconsUtil_1.register)('symbol-folder', 0xea83),
+        logoGithub: (0, codiconsUtil_1.register)('logo-github', 0xea84),
+        markGithub: (0, codiconsUtil_1.register)('mark-github', 0xea84),
+        github: (0, codiconsUtil_1.register)('github', 0xea84),
+        terminal: (0, codiconsUtil_1.register)('terminal', 0xea85),
+        console: (0, codiconsUtil_1.register)('console', 0xea85),
+        repl: (0, codiconsUtil_1.register)('repl', 0xea85),
+        zap: (0, codiconsUtil_1.register)('zap', 0xea86),
+        symbolEvent: (0, codiconsUtil_1.register)('symbol-event', 0xea86),
+        error: (0, codiconsUtil_1.register)('error', 0xea87),
+        stop: (0, codiconsUtil_1.register)('stop', 0xea87),
+        variable: (0, codiconsUtil_1.register)('variable', 0xea88),
+        symbolVariable: (0, codiconsUtil_1.register)('symbol-variable', 0xea88),
+        array: (0, codiconsUtil_1.register)('array', 0xea8a),
+        symbolArray: (0, codiconsUtil_1.register)('symbol-array', 0xea8a),
+        symbolModule: (0, codiconsUtil_1.register)('symbol-module', 0xea8b),
+        symbolPackage: (0, codiconsUtil_1.register)('symbol-package', 0xea8b),
+        symbolNamespace: (0, codiconsUtil_1.register)('symbol-namespace', 0xea8b),
+        symbolObject: (0, codiconsUtil_1.register)('symbol-object', 0xea8b),
+        symbolMethod: (0, codiconsUtil_1.register)('symbol-method', 0xea8c),
+        symbolFunction: (0, codiconsUtil_1.register)('symbol-function', 0xea8c),
+        symbolConstructor: (0, codiconsUtil_1.register)('symbol-constructor', 0xea8c),
+        symbolBoolean: (0, codiconsUtil_1.register)('symbol-boolean', 0xea8f),
+        symbolNull: (0, codiconsUtil_1.register)('symbol-null', 0xea8f),
+        symbolNumeric: (0, codiconsUtil_1.register)('symbol-numeric', 0xea90),
+        symbolNumber: (0, codiconsUtil_1.register)('symbol-number', 0xea90),
+        symbolStructure: (0, codiconsUtil_1.register)('symbol-structure', 0xea91),
+        symbolStruct: (0, codiconsUtil_1.register)('symbol-struct', 0xea91),
+        symbolParameter: (0, codiconsUtil_1.register)('symbol-parameter', 0xea92),
+        symbolTypeParameter: (0, codiconsUtil_1.register)('symbol-type-parameter', 0xea92),
+        symbolKey: (0, codiconsUtil_1.register)('symbol-key', 0xea93),
+        symbolText: (0, codiconsUtil_1.register)('symbol-text', 0xea93),
+        symbolReference: (0, codiconsUtil_1.register)('symbol-reference', 0xea94),
+        goToFile: (0, codiconsUtil_1.register)('go-to-file', 0xea94),
+        symbolEnum: (0, codiconsUtil_1.register)('symbol-enum', 0xea95),
+        symbolValue: (0, codiconsUtil_1.register)('symbol-value', 0xea95),
+        symbolRuler: (0, codiconsUtil_1.register)('symbol-ruler', 0xea96),
+        symbolUnit: (0, codiconsUtil_1.register)('symbol-unit', 0xea96),
+        activateBreakpoints: (0, codiconsUtil_1.register)('activate-breakpoints', 0xea97),
+        archive: (0, codiconsUtil_1.register)('archive', 0xea98),
+        arrowBoth: (0, codiconsUtil_1.register)('arrow-both', 0xea99),
+        arrowDown: (0, codiconsUtil_1.register)('arrow-down', 0xea9a),
+        arrowLeft: (0, codiconsUtil_1.register)('arrow-left', 0xea9b),
+        arrowRight: (0, codiconsUtil_1.register)('arrow-right', 0xea9c),
+        arrowSmallDown: (0, codiconsUtil_1.register)('arrow-small-down', 0xea9d),
+        arrowSmallLeft: (0, codiconsUtil_1.register)('arrow-small-left', 0xea9e),
+        arrowSmallRight: (0, codiconsUtil_1.register)('arrow-small-right', 0xea9f),
+        arrowSmallUp: (0, codiconsUtil_1.register)('arrow-small-up', 0xeaa0),
+        arrowUp: (0, codiconsUtil_1.register)('arrow-up', 0xeaa1),
+        bell: (0, codiconsUtil_1.register)('bell', 0xeaa2),
+        bold: (0, codiconsUtil_1.register)('bold', 0xeaa3),
+        book: (0, codiconsUtil_1.register)('book', 0xeaa4),
+        bookmark: (0, codiconsUtil_1.register)('bookmark', 0xeaa5),
+        debugBreakpointConditionalUnverified: (0, codiconsUtil_1.register)('debug-breakpoint-conditional-unverified', 0xeaa6),
+        debugBreakpointConditional: (0, codiconsUtil_1.register)('debug-breakpoint-conditional', 0xeaa7),
+        debugBreakpointConditionalDisabled: (0, codiconsUtil_1.register)('debug-breakpoint-conditional-disabled', 0xeaa7),
+        debugBreakpointDataUnverified: (0, codiconsUtil_1.register)('debug-breakpoint-data-unverified', 0xeaa8),
+        debugBreakpointData: (0, codiconsUtil_1.register)('debug-breakpoint-data', 0xeaa9),
+        debugBreakpointDataDisabled: (0, codiconsUtil_1.register)('debug-breakpoint-data-disabled', 0xeaa9),
+        debugBreakpointLogUnverified: (0, codiconsUtil_1.register)('debug-breakpoint-log-unverified', 0xeaaa),
+        debugBreakpointLog: (0, codiconsUtil_1.register)('debug-breakpoint-log', 0xeaab),
+        debugBreakpointLogDisabled: (0, codiconsUtil_1.register)('debug-breakpoint-log-disabled', 0xeaab),
+        briefcase: (0, codiconsUtil_1.register)('briefcase', 0xeaac),
+        broadcast: (0, codiconsUtil_1.register)('broadcast', 0xeaad),
+        browser: (0, codiconsUtil_1.register)('browser', 0xeaae),
+        bug: (0, codiconsUtil_1.register)('bug', 0xeaaf),
+        calendar: (0, codiconsUtil_1.register)('calendar', 0xeab0),
+        caseSensitive: (0, codiconsUtil_1.register)('case-sensitive', 0xeab1),
+        check: (0, codiconsUtil_1.register)('check', 0xeab2),
+        checklist: (0, codiconsUtil_1.register)('checklist', 0xeab3),
+        chevronDown: (0, codiconsUtil_1.register)('chevron-down', 0xeab4),
+        chevronLeft: (0, codiconsUtil_1.register)('chevron-left', 0xeab5),
+        chevronRight: (0, codiconsUtil_1.register)('chevron-right', 0xeab6),
+        chevronUp: (0, codiconsUtil_1.register)('chevron-up', 0xeab7),
+        chromeClose: (0, codiconsUtil_1.register)('chrome-close', 0xeab8),
+        chromeMaximize: (0, codiconsUtil_1.register)('chrome-maximize', 0xeab9),
+        chromeMinimize: (0, codiconsUtil_1.register)('chrome-minimize', 0xeaba),
+        chromeRestore: (0, codiconsUtil_1.register)('chrome-restore', 0xeabb),
+        circleOutline: (0, codiconsUtil_1.register)('circle-outline', 0xeabc),
+        circle: (0, codiconsUtil_1.register)('circle', 0xeabc),
+        debugBreakpointUnverified: (0, codiconsUtil_1.register)('debug-breakpoint-unverified', 0xeabc),
+        terminalDecorationIncomplete: (0, codiconsUtil_1.register)('terminal-decoration-incomplete', 0xeabc),
+        circleSlash: (0, codiconsUtil_1.register)('circle-slash', 0xeabd),
+        circuitBoard: (0, codiconsUtil_1.register)('circuit-board', 0xeabe),
+        clearAll: (0, codiconsUtil_1.register)('clear-all', 0xeabf),
+        clippy: (0, codiconsUtil_1.register)('clippy', 0xeac0),
+        closeAll: (0, codiconsUtil_1.register)('close-all', 0xeac1),
+        cloudDownload: (0, codiconsUtil_1.register)('cloud-download', 0xeac2),
+        cloudUpload: (0, codiconsUtil_1.register)('cloud-upload', 0xeac3),
+        code: (0, codiconsUtil_1.register)('code', 0xeac4),
+        collapseAll: (0, codiconsUtil_1.register)('collapse-all', 0xeac5),
+        colorMode: (0, codiconsUtil_1.register)('color-mode', 0xeac6),
+        commentDiscussion: (0, codiconsUtil_1.register)('comment-discussion', 0xeac7),
+        creditCard: (0, codiconsUtil_1.register)('credit-card', 0xeac9),
+        dash: (0, codiconsUtil_1.register)('dash', 0xeacc),
+        dashboard: (0, codiconsUtil_1.register)('dashboard', 0xeacd),
+        database: (0, codiconsUtil_1.register)('database', 0xeace),
+        debugContinue: (0, codiconsUtil_1.register)('debug-continue', 0xeacf),
+        debugDisconnect: (0, codiconsUtil_1.register)('debug-disconnect', 0xead0),
+        debugPause: (0, codiconsUtil_1.register)('debug-pause', 0xead1),
+        debugRestart: (0, codiconsUtil_1.register)('debug-restart', 0xead2),
+        debugStart: (0, codiconsUtil_1.register)('debug-start', 0xead3),
+        debugStepInto: (0, codiconsUtil_1.register)('debug-step-into', 0xead4),
+        debugStepOut: (0, codiconsUtil_1.register)('debug-step-out', 0xead5),
+        debugStepOver: (0, codiconsUtil_1.register)('debug-step-over', 0xead6),
+        debugStop: (0, codiconsUtil_1.register)('debug-stop', 0xead7),
+        debug: (0, codiconsUtil_1.register)('debug', 0xead8),
+        deviceCameraVideo: (0, codiconsUtil_1.register)('device-camera-video', 0xead9),
+        deviceCamera: (0, codiconsUtil_1.register)('device-camera', 0xeada),
+        deviceMobile: (0, codiconsUtil_1.register)('device-mobile', 0xeadb),
+        diffAdded: (0, codiconsUtil_1.register)('diff-added', 0xeadc),
+        diffIgnored: (0, codiconsUtil_1.register)('diff-ignored', 0xeadd),
+        diffModified: (0, codiconsUtil_1.register)('diff-modified', 0xeade),
+        diffRemoved: (0, codiconsUtil_1.register)('diff-removed', 0xeadf),
+        diffRenamed: (0, codiconsUtil_1.register)('diff-renamed', 0xeae0),
+        diff: (0, codiconsUtil_1.register)('diff', 0xeae1),
+        diffSidebyside: (0, codiconsUtil_1.register)('diff-sidebyside', 0xeae1),
+        discard: (0, codiconsUtil_1.register)('discard', 0xeae2),
+        editorLayout: (0, codiconsUtil_1.register)('editor-layout', 0xeae3),
+        emptyWindow: (0, codiconsUtil_1.register)('empty-window', 0xeae4),
+        exclude: (0, codiconsUtil_1.register)('exclude', 0xeae5),
+        extensions: (0, codiconsUtil_1.register)('extensions', 0xeae6),
+        eyeClosed: (0, codiconsUtil_1.register)('eye-closed', 0xeae7),
+        fileBinary: (0, codiconsUtil_1.register)('file-binary', 0xeae8),
+        fileCode: (0, codiconsUtil_1.register)('file-code', 0xeae9),
+        fileMedia: (0, codiconsUtil_1.register)('file-media', 0xeaea),
+        filePdf: (0, codiconsUtil_1.register)('file-pdf', 0xeaeb),
+        fileSubmodule: (0, codiconsUtil_1.register)('file-submodule', 0xeaec),
+        fileSymlinkDirectory: (0, codiconsUtil_1.register)('file-symlink-directory', 0xeaed),
+        fileSymlinkFile: (0, codiconsUtil_1.register)('file-symlink-file', 0xeaee),
+        fileZip: (0, codiconsUtil_1.register)('file-zip', 0xeaef),
+        files: (0, codiconsUtil_1.register)('files', 0xeaf0),
+        filter: (0, codiconsUtil_1.register)('filter', 0xeaf1),
+        flame: (0, codiconsUtil_1.register)('flame', 0xeaf2),
+        foldDown: (0, codiconsUtil_1.register)('fold-down', 0xeaf3),
+        foldUp: (0, codiconsUtil_1.register)('fold-up', 0xeaf4),
+        fold: (0, codiconsUtil_1.register)('fold', 0xeaf5),
+        folderActive: (0, codiconsUtil_1.register)('folder-active', 0xeaf6),
+        folderOpened: (0, codiconsUtil_1.register)('folder-opened', 0xeaf7),
+        gear: (0, codiconsUtil_1.register)('gear', 0xeaf8),
+        gift: (0, codiconsUtil_1.register)('gift', 0xeaf9),
+        gistSecret: (0, codiconsUtil_1.register)('gist-secret', 0xeafa),
+        gist: (0, codiconsUtil_1.register)('gist', 0xeafb),
+        gitCommit: (0, codiconsUtil_1.register)('git-commit', 0xeafc),
+        gitCompare: (0, codiconsUtil_1.register)('git-compare', 0xeafd),
+        compareChanges: (0, codiconsUtil_1.register)('compare-changes', 0xeafd),
+        gitMerge: (0, codiconsUtil_1.register)('git-merge', 0xeafe),
+        githubAction: (0, codiconsUtil_1.register)('github-action', 0xeaff),
+        githubAlt: (0, codiconsUtil_1.register)('github-alt', 0xeb00),
+        globe: (0, codiconsUtil_1.register)('globe', 0xeb01),
+        grabber: (0, codiconsUtil_1.register)('grabber', 0xeb02),
+        graph: (0, codiconsUtil_1.register)('graph', 0xeb03),
+        gripper: (0, codiconsUtil_1.register)('gripper', 0xeb04),
+        heart: (0, codiconsUtil_1.register)('heart', 0xeb05),
+        home: (0, codiconsUtil_1.register)('home', 0xeb06),
+        horizontalRule: (0, codiconsUtil_1.register)('horizontal-rule', 0xeb07),
+        hubot: (0, codiconsUtil_1.register)('hubot', 0xeb08),
+        inbox: (0, codiconsUtil_1.register)('inbox', 0xeb09),
+        issueReopened: (0, codiconsUtil_1.register)('issue-reopened', 0xeb0b),
+        issues: (0, codiconsUtil_1.register)('issues', 0xeb0c),
+        italic: (0, codiconsUtil_1.register)('italic', 0xeb0d),
+        jersey: (0, codiconsUtil_1.register)('jersey', 0xeb0e),
+        json: (0, codiconsUtil_1.register)('json', 0xeb0f),
+        kebabVertical: (0, codiconsUtil_1.register)('kebab-vertical', 0xeb10),
+        key: (0, codiconsUtil_1.register)('key', 0xeb11),
+        law: (0, codiconsUtil_1.register)('law', 0xeb12),
+        lightbulbAutofix: (0, codiconsUtil_1.register)('lightbulb-autofix', 0xeb13),
+        linkExternal: (0, codiconsUtil_1.register)('link-external', 0xeb14),
+        link: (0, codiconsUtil_1.register)('link', 0xeb15),
+        listOrdered: (0, codiconsUtil_1.register)('list-ordered', 0xeb16),
+        listUnordered: (0, codiconsUtil_1.register)('list-unordered', 0xeb17),
+        liveShare: (0, codiconsUtil_1.register)('live-share', 0xeb18),
+        loading: (0, codiconsUtil_1.register)('loading', 0xeb19),
+        location: (0, codiconsUtil_1.register)('location', 0xeb1a),
+        mailRead: (0, codiconsUtil_1.register)('mail-read', 0xeb1b),
+        mail: (0, codiconsUtil_1.register)('mail', 0xeb1c),
+        markdown: (0, codiconsUtil_1.register)('markdown', 0xeb1d),
+        megaphone: (0, codiconsUtil_1.register)('megaphone', 0xeb1e),
+        mention: (0, codiconsUtil_1.register)('mention', 0xeb1f),
+        milestone: (0, codiconsUtil_1.register)('milestone', 0xeb20),
+        gitPullRequestMilestone: (0, codiconsUtil_1.register)('git-pull-request-milestone', 0xeb20),
+        mortarBoard: (0, codiconsUtil_1.register)('mortar-board', 0xeb21),
+        move: (0, codiconsUtil_1.register)('move', 0xeb22),
+        multipleWindows: (0, codiconsUtil_1.register)('multiple-windows', 0xeb23),
+        mute: (0, codiconsUtil_1.register)('mute', 0xeb24),
+        noNewline: (0, codiconsUtil_1.register)('no-newline', 0xeb25),
+        note: (0, codiconsUtil_1.register)('note', 0xeb26),
+        octoface: (0, codiconsUtil_1.register)('octoface', 0xeb27),
+        openPreview: (0, codiconsUtil_1.register)('open-preview', 0xeb28),
+        package: (0, codiconsUtil_1.register)('package', 0xeb29),
+        paintcan: (0, codiconsUtil_1.register)('paintcan', 0xeb2a),
+        pin: (0, codiconsUtil_1.register)('pin', 0xeb2b),
+        play: (0, codiconsUtil_1.register)('play', 0xeb2c),
+        run: (0, codiconsUtil_1.register)('run', 0xeb2c),
+        plug: (0, codiconsUtil_1.register)('plug', 0xeb2d),
+        preserveCase: (0, codiconsUtil_1.register)('preserve-case', 0xeb2e),
+        preview: (0, codiconsUtil_1.register)('preview', 0xeb2f),
+        project: (0, codiconsUtil_1.register)('project', 0xeb30),
+        pulse: (0, codiconsUtil_1.register)('pulse', 0xeb31),
+        question: (0, codiconsUtil_1.register)('question', 0xeb32),
+        quote: (0, codiconsUtil_1.register)('quote', 0xeb33),
+        radioTower: (0, codiconsUtil_1.register)('radio-tower', 0xeb34),
+        reactions: (0, codiconsUtil_1.register)('reactions', 0xeb35),
+        references: (0, codiconsUtil_1.register)('references', 0xeb36),
+        refresh: (0, codiconsUtil_1.register)('refresh', 0xeb37),
+        regex: (0, codiconsUtil_1.register)('regex', 0xeb38),
+        remoteExplorer: (0, codiconsUtil_1.register)('remote-explorer', 0xeb39),
+        remote: (0, codiconsUtil_1.register)('remote', 0xeb3a),
+        remove: (0, codiconsUtil_1.register)('remove', 0xeb3b),
+        replaceAll: (0, codiconsUtil_1.register)('replace-all', 0xeb3c),
+        replace: (0, codiconsUtil_1.register)('replace', 0xeb3d),
+        repoClone: (0, codiconsUtil_1.register)('repo-clone', 0xeb3e),
+        repoForcePush: (0, codiconsUtil_1.register)('repo-force-push', 0xeb3f),
+        repoPull: (0, codiconsUtil_1.register)('repo-pull', 0xeb40),
+        repoPush: (0, codiconsUtil_1.register)('repo-push', 0xeb41),
+        report: (0, codiconsUtil_1.register)('report', 0xeb42),
+        requestChanges: (0, codiconsUtil_1.register)('request-changes', 0xeb43),
+        rocket: (0, codiconsUtil_1.register)('rocket', 0xeb44),
+        rootFolderOpened: (0, codiconsUtil_1.register)('root-folder-opened', 0xeb45),
+        rootFolder: (0, codiconsUtil_1.register)('root-folder', 0xeb46),
+        rss: (0, codiconsUtil_1.register)('rss', 0xeb47),
+        ruby: (0, codiconsUtil_1.register)('ruby', 0xeb48),
+        saveAll: (0, codiconsUtil_1.register)('save-all', 0xeb49),
+        saveAs: (0, codiconsUtil_1.register)('save-as', 0xeb4a),
+        save: (0, codiconsUtil_1.register)('save', 0xeb4b),
+        screenFull: (0, codiconsUtil_1.register)('screen-full', 0xeb4c),
+        screenNormal: (0, codiconsUtil_1.register)('screen-normal', 0xeb4d),
+        searchStop: (0, codiconsUtil_1.register)('search-stop', 0xeb4e),
+        server: (0, codiconsUtil_1.register)('server', 0xeb50),
+        settingsGear: (0, codiconsUtil_1.register)('settings-gear', 0xeb51),
+        settings: (0, codiconsUtil_1.register)('settings', 0xeb52),
+        shield: (0, codiconsUtil_1.register)('shield', 0xeb53),
+        smiley: (0, codiconsUtil_1.register)('smiley', 0xeb54),
+        sortPrecedence: (0, codiconsUtil_1.register)('sort-precedence', 0xeb55),
+        splitHorizontal: (0, codiconsUtil_1.register)('split-horizontal', 0xeb56),
+        splitVertical: (0, codiconsUtil_1.register)('split-vertical', 0xeb57),
+        squirrel: (0, codiconsUtil_1.register)('squirrel', 0xeb58),
+        starFull: (0, codiconsUtil_1.register)('star-full', 0xeb59),
+        starHalf: (0, codiconsUtil_1.register)('star-half', 0xeb5a),
+        symbolClass: (0, codiconsUtil_1.register)('symbol-class', 0xeb5b),
+        symbolColor: (0, codiconsUtil_1.register)('symbol-color', 0xeb5c),
+        symbolConstant: (0, codiconsUtil_1.register)('symbol-constant', 0xeb5d),
+        symbolEnumMember: (0, codiconsUtil_1.register)('symbol-enum-member', 0xeb5e),
+        symbolField: (0, codiconsUtil_1.register)('symbol-field', 0xeb5f),
+        symbolFile: (0, codiconsUtil_1.register)('symbol-file', 0xeb60),
+        symbolInterface: (0, codiconsUtil_1.register)('symbol-interface', 0xeb61),
+        symbolKeyword: (0, codiconsUtil_1.register)('symbol-keyword', 0xeb62),
+        symbolMisc: (0, codiconsUtil_1.register)('symbol-misc', 0xeb63),
+        symbolOperator: (0, codiconsUtil_1.register)('symbol-operator', 0xeb64),
+        symbolProperty: (0, codiconsUtil_1.register)('symbol-property', 0xeb65),
+        wrench: (0, codiconsUtil_1.register)('wrench', 0xeb65),
+        wrenchSubaction: (0, codiconsUtil_1.register)('wrench-subaction', 0xeb65),
+        symbolSnippet: (0, codiconsUtil_1.register)('symbol-snippet', 0xeb66),
+        tasklist: (0, codiconsUtil_1.register)('tasklist', 0xeb67),
+        telescope: (0, codiconsUtil_1.register)('telescope', 0xeb68),
+        textSize: (0, codiconsUtil_1.register)('text-size', 0xeb69),
+        threeBars: (0, codiconsUtil_1.register)('three-bars', 0xeb6a),
+        thumbsdown: (0, codiconsUtil_1.register)('thumbsdown', 0xeb6b),
+        thumbsup: (0, codiconsUtil_1.register)('thumbsup', 0xeb6c),
+        tools: (0, codiconsUtil_1.register)('tools', 0xeb6d),
+        triangleDown: (0, codiconsUtil_1.register)('triangle-down', 0xeb6e),
+        triangleLeft: (0, codiconsUtil_1.register)('triangle-left', 0xeb6f),
+        triangleRight: (0, codiconsUtil_1.register)('triangle-right', 0xeb70),
+        triangleUp: (0, codiconsUtil_1.register)('triangle-up', 0xeb71),
+        twitter: (0, codiconsUtil_1.register)('twitter', 0xeb72),
+        unfold: (0, codiconsUtil_1.register)('unfold', 0xeb73),
+        unlock: (0, codiconsUtil_1.register)('unlock', 0xeb74),
+        unmute: (0, codiconsUtil_1.register)('unmute', 0xeb75),
+        unverified: (0, codiconsUtil_1.register)('unverified', 0xeb76),
+        verified: (0, codiconsUtil_1.register)('verified', 0xeb77),
+        versions: (0, codiconsUtil_1.register)('versions', 0xeb78),
+        vmActive: (0, codiconsUtil_1.register)('vm-active', 0xeb79),
+        vmOutline: (0, codiconsUtil_1.register)('vm-outline', 0xeb7a),
+        vmRunning: (0, codiconsUtil_1.register)('vm-running', 0xeb7b),
+        watch: (0, codiconsUtil_1.register)('watch', 0xeb7c),
+        whitespace: (0, codiconsUtil_1.register)('whitespace', 0xeb7d),
+        wholeWord: (0, codiconsUtil_1.register)('whole-word', 0xeb7e),
+        window: (0, codiconsUtil_1.register)('window', 0xeb7f),
+        wordWrap: (0, codiconsUtil_1.register)('word-wrap', 0xeb80),
+        zoomIn: (0, codiconsUtil_1.register)('zoom-in', 0xeb81),
+        zoomOut: (0, codiconsUtil_1.register)('zoom-out', 0xeb82),
+        listFilter: (0, codiconsUtil_1.register)('list-filter', 0xeb83),
+        listFlat: (0, codiconsUtil_1.register)('list-flat', 0xeb84),
+        listSelection: (0, codiconsUtil_1.register)('list-selection', 0xeb85),
+        selection: (0, codiconsUtil_1.register)('selection', 0xeb85),
+        listTree: (0, codiconsUtil_1.register)('list-tree', 0xeb86),
+        debugBreakpointFunctionUnverified: (0, codiconsUtil_1.register)('debug-breakpoint-function-unverified', 0xeb87),
+        debugBreakpointFunction: (0, codiconsUtil_1.register)('debug-breakpoint-function', 0xeb88),
+        debugBreakpointFunctionDisabled: (0, codiconsUtil_1.register)('debug-breakpoint-function-disabled', 0xeb88),
+        debugStackframeActive: (0, codiconsUtil_1.register)('debug-stackframe-active', 0xeb89),
+        circleSmallFilled: (0, codiconsUtil_1.register)('circle-small-filled', 0xeb8a),
+        debugStackframeDot: (0, codiconsUtil_1.register)('debug-stackframe-dot', 0xeb8a),
+        terminalDecorationMark: (0, codiconsUtil_1.register)('terminal-decoration-mark', 0xeb8a),
+        debugStackframe: (0, codiconsUtil_1.register)('debug-stackframe', 0xeb8b),
+        debugStackframeFocused: (0, codiconsUtil_1.register)('debug-stackframe-focused', 0xeb8b),
+        debugBreakpointUnsupported: (0, codiconsUtil_1.register)('debug-breakpoint-unsupported', 0xeb8c),
+        symbolString: (0, codiconsUtil_1.register)('symbol-string', 0xeb8d),
+        debugReverseContinue: (0, codiconsUtil_1.register)('debug-reverse-continue', 0xeb8e),
+        debugStepBack: (0, codiconsUtil_1.register)('debug-step-back', 0xeb8f),
+        debugRestartFrame: (0, codiconsUtil_1.register)('debug-restart-frame', 0xeb90),
+        debugAlt: (0, codiconsUtil_1.register)('debug-alt', 0xeb91),
+        callIncoming: (0, codiconsUtil_1.register)('call-incoming', 0xeb92),
+        callOutgoing: (0, codiconsUtil_1.register)('call-outgoing', 0xeb93),
+        menu: (0, codiconsUtil_1.register)('menu', 0xeb94),
+        expandAll: (0, codiconsUtil_1.register)('expand-all', 0xeb95),
+        feedback: (0, codiconsUtil_1.register)('feedback', 0xeb96),
+        gitPullRequestReviewer: (0, codiconsUtil_1.register)('git-pull-request-reviewer', 0xeb96),
+        groupByRefType: (0, codiconsUtil_1.register)('group-by-ref-type', 0xeb97),
+        ungroupByRefType: (0, codiconsUtil_1.register)('ungroup-by-ref-type', 0xeb98),
+        account: (0, codiconsUtil_1.register)('account', 0xeb99),
+        gitPullRequestAssignee: (0, codiconsUtil_1.register)('git-pull-request-assignee', 0xeb99),
+        bellDot: (0, codiconsUtil_1.register)('bell-dot', 0xeb9a),
+        debugConsole: (0, codiconsUtil_1.register)('debug-console', 0xeb9b),
+        library: (0, codiconsUtil_1.register)('library', 0xeb9c),
+        output: (0, codiconsUtil_1.register)('output', 0xeb9d),
+        runAll: (0, codiconsUtil_1.register)('run-all', 0xeb9e),
+        syncIgnored: (0, codiconsUtil_1.register)('sync-ignored', 0xeb9f),
+        pinned: (0, codiconsUtil_1.register)('pinned', 0xeba0),
+        githubInverted: (0, codiconsUtil_1.register)('github-inverted', 0xeba1),
+        serverProcess: (0, codiconsUtil_1.register)('server-process', 0xeba2),
+        serverEnvironment: (0, codiconsUtil_1.register)('server-environment', 0xeba3),
+        pass: (0, codiconsUtil_1.register)('pass', 0xeba4),
+        issueClosed: (0, codiconsUtil_1.register)('issue-closed', 0xeba4),
+        stopCircle: (0, codiconsUtil_1.register)('stop-circle', 0xeba5),
+        playCircle: (0, codiconsUtil_1.register)('play-circle', 0xeba6),
+        record: (0, codiconsUtil_1.register)('record', 0xeba7),
+        debugAltSmall: (0, codiconsUtil_1.register)('debug-alt-small', 0xeba8),
+        vmConnect: (0, codiconsUtil_1.register)('vm-connect', 0xeba9),
+        cloud: (0, codiconsUtil_1.register)('cloud', 0xebaa),
+        merge: (0, codiconsUtil_1.register)('merge', 0xebab),
+        export: (0, codiconsUtil_1.register)('export', 0xebac),
+        graphLeft: (0, codiconsUtil_1.register)('graph-left', 0xebad),
+        magnet: (0, codiconsUtil_1.register)('magnet', 0xebae),
+        notebook: (0, codiconsUtil_1.register)('notebook', 0xebaf),
+        redo: (0, codiconsUtil_1.register)('redo', 0xebb0),
+        checkAll: (0, codiconsUtil_1.register)('check-all', 0xebb1),
+        pinnedDirty: (0, codiconsUtil_1.register)('pinned-dirty', 0xebb2),
+        passFilled: (0, codiconsUtil_1.register)('pass-filled', 0xebb3),
+        circleLargeFilled: (0, codiconsUtil_1.register)('circle-large-filled', 0xebb4),
+        circleLarge: (0, codiconsUtil_1.register)('circle-large', 0xebb5),
+        circleLargeOutline: (0, codiconsUtil_1.register)('circle-large-outline', 0xebb5),
+        combine: (0, codiconsUtil_1.register)('combine', 0xebb6),
+        gather: (0, codiconsUtil_1.register)('gather', 0xebb6),
+        table: (0, codiconsUtil_1.register)('table', 0xebb7),
+        variableGroup: (0, codiconsUtil_1.register)('variable-group', 0xebb8),
+        typeHierarchy: (0, codiconsUtil_1.register)('type-hierarchy', 0xebb9),
+        typeHierarchySub: (0, codiconsUtil_1.register)('type-hierarchy-sub', 0xebba),
+        typeHierarchySuper: (0, codiconsUtil_1.register)('type-hierarchy-super', 0xebbb),
+        gitPullRequestCreate: (0, codiconsUtil_1.register)('git-pull-request-create', 0xebbc),
+        runAbove: (0, codiconsUtil_1.register)('run-above', 0xebbd),
+        runBelow: (0, codiconsUtil_1.register)('run-below', 0xebbe),
+        notebookTemplate: (0, codiconsUtil_1.register)('notebook-template', 0xebbf),
+        debugRerun: (0, codiconsUtil_1.register)('debug-rerun', 0xebc0),
+        workspaceTrusted: (0, codiconsUtil_1.register)('workspace-trusted', 0xebc1),
+        workspaceUntrusted: (0, codiconsUtil_1.register)('workspace-untrusted', 0xebc2),
+        workspaceUnknown: (0, codiconsUtil_1.register)('workspace-unknown', 0xebc3),
+        terminalCmd: (0, codiconsUtil_1.register)('terminal-cmd', 0xebc4),
+        terminalDebian: (0, codiconsUtil_1.register)('terminal-debian', 0xebc5),
+        terminalLinux: (0, codiconsUtil_1.register)('terminal-linux', 0xebc6),
+        terminalPowershell: (0, codiconsUtil_1.register)('terminal-powershell', 0xebc7),
+        terminalTmux: (0, codiconsUtil_1.register)('terminal-tmux', 0xebc8),
+        terminalUbuntu: (0, codiconsUtil_1.register)('terminal-ubuntu', 0xebc9),
+        terminalBash: (0, codiconsUtil_1.register)('terminal-bash', 0xebca),
+        arrowSwap: (0, codiconsUtil_1.register)('arrow-swap', 0xebcb),
+        copy: (0, codiconsUtil_1.register)('copy', 0xebcc),
+        personAdd: (0, codiconsUtil_1.register)('person-add', 0xebcd),
+        filterFilled: (0, codiconsUtil_1.register)('filter-filled', 0xebce),
+        wand: (0, codiconsUtil_1.register)('wand', 0xebcf),
+        debugLineByLine: (0, codiconsUtil_1.register)('debug-line-by-line', 0xebd0),
+        inspect: (0, codiconsUtil_1.register)('inspect', 0xebd1),
+        layers: (0, codiconsUtil_1.register)('layers', 0xebd2),
+        layersDot: (0, codiconsUtil_1.register)('layers-dot', 0xebd3),
+        layersActive: (0, codiconsUtil_1.register)('layers-active', 0xebd4),
+        compass: (0, codiconsUtil_1.register)('compass', 0xebd5),
+        compassDot: (0, codiconsUtil_1.register)('compass-dot', 0xebd6),
+        compassActive: (0, codiconsUtil_1.register)('compass-active', 0xebd7),
+        azure: (0, codiconsUtil_1.register)('azure', 0xebd8),
+        issueDraft: (0, codiconsUtil_1.register)('issue-draft', 0xebd9),
+        gitPullRequestClosed: (0, codiconsUtil_1.register)('git-pull-request-closed', 0xebda),
+        gitPullRequestDraft: (0, codiconsUtil_1.register)('git-pull-request-draft', 0xebdb),
+        debugAll: (0, codiconsUtil_1.register)('debug-all', 0xebdc),
+        debugCoverage: (0, codiconsUtil_1.register)('debug-coverage', 0xebdd),
+        runErrors: (0, codiconsUtil_1.register)('run-errors', 0xebde),
+        folderLibrary: (0, codiconsUtil_1.register)('folder-library', 0xebdf),
+        debugContinueSmall: (0, codiconsUtil_1.register)('debug-continue-small', 0xebe0),
+        beakerStop: (0, codiconsUtil_1.register)('beaker-stop', 0xebe1),
+        graphLine: (0, codiconsUtil_1.register)('graph-line', 0xebe2),
+        graphScatter: (0, codiconsUtil_1.register)('graph-scatter', 0xebe3),
+        pieChart: (0, codiconsUtil_1.register)('pie-chart', 0xebe4),
+        bracket: (0, codiconsUtil_1.register)('bracket', 0xeb0f),
+        bracketDot: (0, codiconsUtil_1.register)('bracket-dot', 0xebe5),
+        bracketError: (0, codiconsUtil_1.register)('bracket-error', 0xebe6),
+        lockSmall: (0, codiconsUtil_1.register)('lock-small', 0xebe7),
+        azureDevops: (0, codiconsUtil_1.register)('azure-devops', 0xebe8),
+        verifiedFilled: (0, codiconsUtil_1.register)('verified-filled', 0xebe9),
+        newline: (0, codiconsUtil_1.register)('newline', 0xebea),
+        layout: (0, codiconsUtil_1.register)('layout', 0xebeb),
+        layoutActivitybarLeft: (0, codiconsUtil_1.register)('layout-activitybar-left', 0xebec),
+        layoutActivitybarRight: (0, codiconsUtil_1.register)('layout-activitybar-right', 0xebed),
+        layoutPanelLeft: (0, codiconsUtil_1.register)('layout-panel-left', 0xebee),
+        layoutPanelCenter: (0, codiconsUtil_1.register)('layout-panel-center', 0xebef),
+        layoutPanelJustify: (0, codiconsUtil_1.register)('layout-panel-justify', 0xebf0),
+        layoutPanelRight: (0, codiconsUtil_1.register)('layout-panel-right', 0xebf1),
+        layoutPanel: (0, codiconsUtil_1.register)('layout-panel', 0xebf2),
+        layoutSidebarLeft: (0, codiconsUtil_1.register)('layout-sidebar-left', 0xebf3),
+        layoutSidebarRight: (0, codiconsUtil_1.register)('layout-sidebar-right', 0xebf4),
+        layoutStatusbar: (0, codiconsUtil_1.register)('layout-statusbar', 0xebf5),
+        layoutMenubar: (0, codiconsUtil_1.register)('layout-menubar', 0xebf6),
+        layoutCentered: (0, codiconsUtil_1.register)('layout-centered', 0xebf7),
+        target: (0, codiconsUtil_1.register)('target', 0xebf8),
+        indent: (0, codiconsUtil_1.register)('indent', 0xebf9),
+        recordSmall: (0, codiconsUtil_1.register)('record-small', 0xebfa),
+        errorSmall: (0, codiconsUtil_1.register)('error-small', 0xebfb),
+        terminalDecorationError: (0, codiconsUtil_1.register)('terminal-decoration-error', 0xebfb),
+        arrowCircleDown: (0, codiconsUtil_1.register)('arrow-circle-down', 0xebfc),
+        arrowCircleLeft: (0, codiconsUtil_1.register)('arrow-circle-left', 0xebfd),
+        arrowCircleRight: (0, codiconsUtil_1.register)('arrow-circle-right', 0xebfe),
+        arrowCircleUp: (0, codiconsUtil_1.register)('arrow-circle-up', 0xebff),
+        layoutSidebarRightOff: (0, codiconsUtil_1.register)('layout-sidebar-right-off', 0xec00),
+        layoutPanelOff: (0, codiconsUtil_1.register)('layout-panel-off', 0xec01),
+        layoutSidebarLeftOff: (0, codiconsUtil_1.register)('layout-sidebar-left-off', 0xec02),
+        blank: (0, codiconsUtil_1.register)('blank', 0xec03),
+        heartFilled: (0, codiconsUtil_1.register)('heart-filled', 0xec04),
+        map: (0, codiconsUtil_1.register)('map', 0xec05),
+        mapHorizontal: (0, codiconsUtil_1.register)('map-horizontal', 0xec05),
+        foldHorizontal: (0, codiconsUtil_1.register)('fold-horizontal', 0xec05),
+        mapFilled: (0, codiconsUtil_1.register)('map-filled', 0xec06),
+        mapHorizontalFilled: (0, codiconsUtil_1.register)('map-horizontal-filled', 0xec06),
+        foldHorizontalFilled: (0, codiconsUtil_1.register)('fold-horizontal-filled', 0xec06),
+        circleSmall: (0, codiconsUtil_1.register)('circle-small', 0xec07),
+        bellSlash: (0, codiconsUtil_1.register)('bell-slash', 0xec08),
+        bellSlashDot: (0, codiconsUtil_1.register)('bell-slash-dot', 0xec09),
+        commentUnresolved: (0, codiconsUtil_1.register)('comment-unresolved', 0xec0a),
+        gitPullRequestGoToChanges: (0, codiconsUtil_1.register)('git-pull-request-go-to-changes', 0xec0b),
+        gitPullRequestNewChanges: (0, codiconsUtil_1.register)('git-pull-request-new-changes', 0xec0c),
+        searchFuzzy: (0, codiconsUtil_1.register)('search-fuzzy', 0xec0d),
+        commentDraft: (0, codiconsUtil_1.register)('comment-draft', 0xec0e),
+        send: (0, codiconsUtil_1.register)('send', 0xec0f),
+        sparkle: (0, codiconsUtil_1.register)('sparkle', 0xec10),
+        insert: (0, codiconsUtil_1.register)('insert', 0xec11),
+        mic: (0, codiconsUtil_1.register)('mic', 0xec12),
+        thumbsdownFilled: (0, codiconsUtil_1.register)('thumbsdown-filled', 0xec13),
+        thumbsupFilled: (0, codiconsUtil_1.register)('thumbsup-filled', 0xec14),
+        coffee: (0, codiconsUtil_1.register)('coffee', 0xec15),
+        snake: (0, codiconsUtil_1.register)('snake', 0xec16),
+        game: (0, codiconsUtil_1.register)('game', 0xec17),
+        vr: (0, codiconsUtil_1.register)('vr', 0xec18),
+        chip: (0, codiconsUtil_1.register)('chip', 0xec19),
+        piano: (0, codiconsUtil_1.register)('piano', 0xec1a),
+        music: (0, codiconsUtil_1.register)('music', 0xec1b),
+        micFilled: (0, codiconsUtil_1.register)('mic-filled', 0xec1c),
+        repoFetch: (0, codiconsUtil_1.register)('repo-fetch', 0xec1d),
+        copilot: (0, codiconsUtil_1.register)('copilot', 0xec1e),
+        lightbulbSparkle: (0, codiconsUtil_1.register)('lightbulb-sparkle', 0xec1f),
+        robot: (0, codiconsUtil_1.register)('robot', 0xec20),
+        sparkleFilled: (0, codiconsUtil_1.register)('sparkle-filled', 0xec21),
+        diffSingle: (0, codiconsUtil_1.register)('diff-single', 0xec22),
+        diffMultiple: (0, codiconsUtil_1.register)('diff-multiple', 0xec23),
+        surroundWith: (0, codiconsUtil_1.register)('surround-with', 0xec24),
+        share: (0, codiconsUtil_1.register)('share', 0xec25),
+        gitStash: (0, codiconsUtil_1.register)('git-stash', 0xec26),
+        gitStashApply: (0, codiconsUtil_1.register)('git-stash-apply', 0xec27),
+        gitStashPop: (0, codiconsUtil_1.register)('git-stash-pop', 0xec28),
+        vscode: (0, codiconsUtil_1.register)('vscode', 0xec29),
+        vscodeInsiders: (0, codiconsUtil_1.register)('vscode-insiders', 0xec2a),
+        codeOss: (0, codiconsUtil_1.register)('code-oss', 0xec2b),
+        runCoverage: (0, codiconsUtil_1.register)('run-coverage', 0xec2c),
+        runAllCoverage: (0, codiconsUtil_1.register)('run-all-coverage', 0xec2d),
+        coverage: (0, codiconsUtil_1.register)('coverage', 0xec2e),
+        githubProject: (0, codiconsUtil_1.register)('github-project', 0xec2f),
+        mapVertical: (0, codiconsUtil_1.register)('map-vertical', 0xec30),
+        foldVertical: (0, codiconsUtil_1.register)('fold-vertical', 0xec30),
+        mapVerticalFilled: (0, codiconsUtil_1.register)('map-vertical-filled', 0xec31),
+        foldVerticalFilled: (0, codiconsUtil_1.register)('fold-vertical-filled', 0xec31),
+    };
+});
+
+define(__m[42/*vs/base/common/codicons*/], __M([0/*require*/,1/*exports*/,27/*vs/base/common/codiconsUtil*/,41/*vs/base/common/codiconsLibrary*/]), function (require, exports, codiconsUtil_1, codiconsLibrary_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.Codicon = exports.codiconsDerived = void 0;
+    /**
+     * Derived icons, that could become separate icons.
+     * These mappings should be moved into the mapping file in the vscode-codicons repo at some point.
+     */
+    exports.codiconsDerived = {
+        dialogError: (0, codiconsUtil_1.register)('dialog-error', 'error'),
+        dialogWarning: (0, codiconsUtil_1.register)('dialog-warning', 'warning'),
+        dialogInfo: (0, codiconsUtil_1.register)('dialog-info', 'info'),
+        dialogClose: (0, codiconsUtil_1.register)('dialog-close', 'close'),
+        treeItemExpanded: (0, codiconsUtil_1.register)('tree-item-expanded', 'chevron-down'), // collapsed is done with rotation
+        treeFilterOnTypeOn: (0, codiconsUtil_1.register)('tree-filter-on-type-on', 'list-filter'),
+        treeFilterOnTypeOff: (0, codiconsUtil_1.register)('tree-filter-on-type-off', 'list-selection'),
+        treeFilterClear: (0, codiconsUtil_1.register)('tree-filter-clear', 'close'),
+        treeItemLoading: (0, codiconsUtil_1.register)('tree-item-loading', 'loading'),
+        menuSelection: (0, codiconsUtil_1.register)('menu-selection', 'check'),
+        menuSubmenu: (0, codiconsUtil_1.register)('menu-submenu', 'chevron-right'),
+        menuBarMore: (0, codiconsUtil_1.register)('menubar-more', 'more'),
+        scrollbarButtonLeft: (0, codiconsUtil_1.register)('scrollbar-button-left', 'triangle-left'),
+        scrollbarButtonRight: (0, codiconsUtil_1.register)('scrollbar-button-right', 'triangle-right'),
+        scrollbarButtonUp: (0, codiconsUtil_1.register)('scrollbar-button-up', 'triangle-up'),
+        scrollbarButtonDown: (0, codiconsUtil_1.register)('scrollbar-button-down', 'triangle-down'),
+        toolBarMore: (0, codiconsUtil_1.register)('toolbar-more', 'more'),
+        quickInputBack: (0, codiconsUtil_1.register)('quick-input-back', 'arrow-left'),
+        dropDownButton: (0, codiconsUtil_1.register)('drop-down-button', 0xeab4),
+        symbolCustomColor: (0, codiconsUtil_1.register)('symbol-customcolor', 0xeb5c),
+        exportIcon: (0, codiconsUtil_1.register)('export', 0xebac),
+        workspaceUnspecified: (0, codiconsUtil_1.register)('workspace-unspecified', 0xebc3),
+        newLine: (0, codiconsUtil_1.register)('newline', 0xebea),
+        thumbsDownFilled: (0, codiconsUtil_1.register)('thumbsdown-filled', 0xec13),
+        thumbsUpFilled: (0, codiconsUtil_1.register)('thumbsup-filled', 0xec14),
+        gitFetch: (0, codiconsUtil_1.register)('git-fetch', 0xec1d),
+        lightbulbSparkleAutofix: (0, codiconsUtil_1.register)('lightbulb-sparkle-autofix', 0xec1f),
+        debugBreakpointPending: (0, codiconsUtil_1.register)('debug-breakpoint-pending', 0xebd9),
+    };
     /**
      * The Codicon library is a set of default icons that are built-in in VS Code.
      *
@@ -8975,579 +9643,8 @@ define(__m[40/*vs/base/common/codicons*/], __M([0/*require*/,1/*exports*/,25/*vs
      * In that call a Codicon can be named as default.
      */
     exports.Codicon = {
-        // built-in icons, with image name
-        add: register('add', 0xea60),
-        plus: register('plus', 0xea60),
-        gistNew: register('gist-new', 0xea60),
-        repoCreate: register('repo-create', 0xea60),
-        lightbulb: register('lightbulb', 0xea61),
-        lightBulb: register('light-bulb', 0xea61),
-        repo: register('repo', 0xea62),
-        repoDelete: register('repo-delete', 0xea62),
-        gistFork: register('gist-fork', 0xea63),
-        repoForked: register('repo-forked', 0xea63),
-        gitPullRequest: register('git-pull-request', 0xea64),
-        gitPullRequestAbandoned: register('git-pull-request-abandoned', 0xea64),
-        recordKeys: register('record-keys', 0xea65),
-        keyboard: register('keyboard', 0xea65),
-        tag: register('tag', 0xea66),
-        tagAdd: register('tag-add', 0xea66),
-        tagRemove: register('tag-remove', 0xea66),
-        gitPullRequestLabel: register('git-pull-request-label', 0xea66),
-        person: register('person', 0xea67),
-        personFollow: register('person-follow', 0xea67),
-        personOutline: register('person-outline', 0xea67),
-        personFilled: register('person-filled', 0xea67),
-        gitBranch: register('git-branch', 0xea68),
-        gitBranchCreate: register('git-branch-create', 0xea68),
-        gitBranchDelete: register('git-branch-delete', 0xea68),
-        sourceControl: register('source-control', 0xea68),
-        mirror: register('mirror', 0xea69),
-        mirrorPublic: register('mirror-public', 0xea69),
-        star: register('star', 0xea6a),
-        starAdd: register('star-add', 0xea6a),
-        starDelete: register('star-delete', 0xea6a),
-        starEmpty: register('star-empty', 0xea6a),
-        comment: register('comment', 0xea6b),
-        commentAdd: register('comment-add', 0xea6b),
-        alert: register('alert', 0xea6c),
-        warning: register('warning', 0xea6c),
-        search: register('search', 0xea6d),
-        searchSave: register('search-save', 0xea6d),
-        logOut: register('log-out', 0xea6e),
-        signOut: register('sign-out', 0xea6e),
-        logIn: register('log-in', 0xea6f),
-        signIn: register('sign-in', 0xea6f),
-        eye: register('eye', 0xea70),
-        eyeUnwatch: register('eye-unwatch', 0xea70),
-        eyeWatch: register('eye-watch', 0xea70),
-        circleFilled: register('circle-filled', 0xea71),
-        primitiveDot: register('primitive-dot', 0xea71),
-        closeDirty: register('close-dirty', 0xea71),
-        debugBreakpoint: register('debug-breakpoint', 0xea71),
-        debugBreakpointDisabled: register('debug-breakpoint-disabled', 0xea71),
-        debugBreakpointPending: register('debug-breakpoint-pending', 0xebd9),
-        debugHint: register('debug-hint', 0xea71),
-        primitiveSquare: register('primitive-square', 0xea72),
-        edit: register('edit', 0xea73),
-        pencil: register('pencil', 0xea73),
-        info: register('info', 0xea74),
-        issueOpened: register('issue-opened', 0xea74),
-        gistPrivate: register('gist-private', 0xea75),
-        gitForkPrivate: register('git-fork-private', 0xea75),
-        lock: register('lock', 0xea75),
-        mirrorPrivate: register('mirror-private', 0xea75),
-        close: register('close', 0xea76),
-        removeClose: register('remove-close', 0xea76),
-        x: register('x', 0xea76),
-        repoSync: register('repo-sync', 0xea77),
-        sync: register('sync', 0xea77),
-        clone: register('clone', 0xea78),
-        desktopDownload: register('desktop-download', 0xea78),
-        beaker: register('beaker', 0xea79),
-        microscope: register('microscope', 0xea79),
-        vm: register('vm', 0xea7a),
-        deviceDesktop: register('device-desktop', 0xea7a),
-        file: register('file', 0xea7b),
-        fileText: register('file-text', 0xea7b),
-        more: register('more', 0xea7c),
-        ellipsis: register('ellipsis', 0xea7c),
-        kebabHorizontal: register('kebab-horizontal', 0xea7c),
-        mailReply: register('mail-reply', 0xea7d),
-        reply: register('reply', 0xea7d),
-        organization: register('organization', 0xea7e),
-        organizationFilled: register('organization-filled', 0xea7e),
-        organizationOutline: register('organization-outline', 0xea7e),
-        newFile: register('new-file', 0xea7f),
-        fileAdd: register('file-add', 0xea7f),
-        newFolder: register('new-folder', 0xea80),
-        fileDirectoryCreate: register('file-directory-create', 0xea80),
-        trash: register('trash', 0xea81),
-        trashcan: register('trashcan', 0xea81),
-        history: register('history', 0xea82),
-        clock: register('clock', 0xea82),
-        folder: register('folder', 0xea83),
-        fileDirectory: register('file-directory', 0xea83),
-        symbolFolder: register('symbol-folder', 0xea83),
-        logoGithub: register('logo-github', 0xea84),
-        markGithub: register('mark-github', 0xea84),
-        github: register('github', 0xea84),
-        terminal: register('terminal', 0xea85),
-        console: register('console', 0xea85),
-        repl: register('repl', 0xea85),
-        zap: register('zap', 0xea86),
-        symbolEvent: register('symbol-event', 0xea86),
-        error: register('error', 0xea87),
-        stop: register('stop', 0xea87),
-        variable: register('variable', 0xea88),
-        symbolVariable: register('symbol-variable', 0xea88),
-        array: register('array', 0xea8a),
-        symbolArray: register('symbol-array', 0xea8a),
-        symbolModule: register('symbol-module', 0xea8b),
-        symbolPackage: register('symbol-package', 0xea8b),
-        symbolNamespace: register('symbol-namespace', 0xea8b),
-        symbolObject: register('symbol-object', 0xea8b),
-        symbolMethod: register('symbol-method', 0xea8c),
-        symbolFunction: register('symbol-function', 0xea8c),
-        symbolConstructor: register('symbol-constructor', 0xea8c),
-        symbolBoolean: register('symbol-boolean', 0xea8f),
-        symbolNull: register('symbol-null', 0xea8f),
-        symbolNumeric: register('symbol-numeric', 0xea90),
-        symbolNumber: register('symbol-number', 0xea90),
-        symbolStructure: register('symbol-structure', 0xea91),
-        symbolStruct: register('symbol-struct', 0xea91),
-        symbolParameter: register('symbol-parameter', 0xea92),
-        symbolTypeParameter: register('symbol-type-parameter', 0xea92),
-        symbolKey: register('symbol-key', 0xea93),
-        symbolText: register('symbol-text', 0xea93),
-        symbolReference: register('symbol-reference', 0xea94),
-        goToFile: register('go-to-file', 0xea94),
-        symbolEnum: register('symbol-enum', 0xea95),
-        symbolValue: register('symbol-value', 0xea95),
-        symbolRuler: register('symbol-ruler', 0xea96),
-        symbolUnit: register('symbol-unit', 0xea96),
-        activateBreakpoints: register('activate-breakpoints', 0xea97),
-        archive: register('archive', 0xea98),
-        arrowBoth: register('arrow-both', 0xea99),
-        arrowDown: register('arrow-down', 0xea9a),
-        arrowLeft: register('arrow-left', 0xea9b),
-        arrowRight: register('arrow-right', 0xea9c),
-        arrowSmallDown: register('arrow-small-down', 0xea9d),
-        arrowSmallLeft: register('arrow-small-left', 0xea9e),
-        arrowSmallRight: register('arrow-small-right', 0xea9f),
-        arrowSmallUp: register('arrow-small-up', 0xeaa0),
-        arrowUp: register('arrow-up', 0xeaa1),
-        bell: register('bell', 0xeaa2),
-        bold: register('bold', 0xeaa3),
-        book: register('book', 0xeaa4),
-        bookmark: register('bookmark', 0xeaa5),
-        debugBreakpointConditionalUnverified: register('debug-breakpoint-conditional-unverified', 0xeaa6),
-        debugBreakpointConditional: register('debug-breakpoint-conditional', 0xeaa7),
-        debugBreakpointConditionalDisabled: register('debug-breakpoint-conditional-disabled', 0xeaa7),
-        debugBreakpointDataUnverified: register('debug-breakpoint-data-unverified', 0xeaa8),
-        debugBreakpointData: register('debug-breakpoint-data', 0xeaa9),
-        debugBreakpointDataDisabled: register('debug-breakpoint-data-disabled', 0xeaa9),
-        debugBreakpointLogUnverified: register('debug-breakpoint-log-unverified', 0xeaaa),
-        debugBreakpointLog: register('debug-breakpoint-log', 0xeaab),
-        debugBreakpointLogDisabled: register('debug-breakpoint-log-disabled', 0xeaab),
-        briefcase: register('briefcase', 0xeaac),
-        broadcast: register('broadcast', 0xeaad),
-        browser: register('browser', 0xeaae),
-        bug: register('bug', 0xeaaf),
-        calendar: register('calendar', 0xeab0),
-        caseSensitive: register('case-sensitive', 0xeab1),
-        check: register('check', 0xeab2),
-        checklist: register('checklist', 0xeab3),
-        chevronDown: register('chevron-down', 0xeab4),
-        dropDownButton: register('drop-down-button', 0xeab4),
-        chevronLeft: register('chevron-left', 0xeab5),
-        chevronRight: register('chevron-right', 0xeab6),
-        chevronUp: register('chevron-up', 0xeab7),
-        chromeClose: register('chrome-close', 0xeab8),
-        chromeMaximize: register('chrome-maximize', 0xeab9),
-        chromeMinimize: register('chrome-minimize', 0xeaba),
-        chromeRestore: register('chrome-restore', 0xeabb),
-        circle: register('circle', 0xeabc),
-        circleOutline: register('circle-outline', 0xeabc),
-        debugBreakpointUnverified: register('debug-breakpoint-unverified', 0xeabc),
-        circleSlash: register('circle-slash', 0xeabd),
-        circuitBoard: register('circuit-board', 0xeabe),
-        clearAll: register('clear-all', 0xeabf),
-        clippy: register('clippy', 0xeac0),
-        closeAll: register('close-all', 0xeac1),
-        cloudDownload: register('cloud-download', 0xeac2),
-        cloudUpload: register('cloud-upload', 0xeac3),
-        code: register('code', 0xeac4),
-        collapseAll: register('collapse-all', 0xeac5),
-        colorMode: register('color-mode', 0xeac6),
-        commentDiscussion: register('comment-discussion', 0xeac7),
-        compareChanges: register('compare-changes', 0xeafd),
-        creditCard: register('credit-card', 0xeac9),
-        dash: register('dash', 0xeacc),
-        dashboard: register('dashboard', 0xeacd),
-        database: register('database', 0xeace),
-        debugContinue: register('debug-continue', 0xeacf),
-        debugDisconnect: register('debug-disconnect', 0xead0),
-        debugPause: register('debug-pause', 0xead1),
-        debugRestart: register('debug-restart', 0xead2),
-        debugStart: register('debug-start', 0xead3),
-        debugStepInto: register('debug-step-into', 0xead4),
-        debugStepOut: register('debug-step-out', 0xead5),
-        debugStepOver: register('debug-step-over', 0xead6),
-        debugStop: register('debug-stop', 0xead7),
-        debug: register('debug', 0xead8),
-        deviceCameraVideo: register('device-camera-video', 0xead9),
-        deviceCamera: register('device-camera', 0xeada),
-        deviceMobile: register('device-mobile', 0xeadb),
-        diffAdded: register('diff-added', 0xeadc),
-        diffIgnored: register('diff-ignored', 0xeadd),
-        diffModified: register('diff-modified', 0xeade),
-        diffRemoved: register('diff-removed', 0xeadf),
-        diffRenamed: register('diff-renamed', 0xeae0),
-        diff: register('diff', 0xeae1),
-        discard: register('discard', 0xeae2),
-        editorLayout: register('editor-layout', 0xeae3),
-        emptyWindow: register('empty-window', 0xeae4),
-        exclude: register('exclude', 0xeae5),
-        extensions: register('extensions', 0xeae6),
-        eyeClosed: register('eye-closed', 0xeae7),
-        fileBinary: register('file-binary', 0xeae8),
-        fileCode: register('file-code', 0xeae9),
-        fileMedia: register('file-media', 0xeaea),
-        filePdf: register('file-pdf', 0xeaeb),
-        fileSubmodule: register('file-submodule', 0xeaec),
-        fileSymlinkDirectory: register('file-symlink-directory', 0xeaed),
-        fileSymlinkFile: register('file-symlink-file', 0xeaee),
-        fileZip: register('file-zip', 0xeaef),
-        files: register('files', 0xeaf0),
-        filter: register('filter', 0xeaf1),
-        flame: register('flame', 0xeaf2),
-        foldDown: register('fold-down', 0xeaf3),
-        foldUp: register('fold-up', 0xeaf4),
-        fold: register('fold', 0xeaf5),
-        folderActive: register('folder-active', 0xeaf6),
-        folderOpened: register('folder-opened', 0xeaf7),
-        gear: register('gear', 0xeaf8),
-        gift: register('gift', 0xeaf9),
-        gistSecret: register('gist-secret', 0xeafa),
-        gist: register('gist', 0xeafb),
-        gitCommit: register('git-commit', 0xeafc),
-        gitCompare: register('git-compare', 0xeafd),
-        gitMerge: register('git-merge', 0xeafe),
-        githubAction: register('github-action', 0xeaff),
-        githubAlt: register('github-alt', 0xeb00),
-        globe: register('globe', 0xeb01),
-        grabber: register('grabber', 0xeb02),
-        graph: register('graph', 0xeb03),
-        gripper: register('gripper', 0xeb04),
-        heart: register('heart', 0xeb05),
-        home: register('home', 0xeb06),
-        horizontalRule: register('horizontal-rule', 0xeb07),
-        hubot: register('hubot', 0xeb08),
-        inbox: register('inbox', 0xeb09),
-        issueClosed: register('issue-closed', 0xeba4),
-        issueReopened: register('issue-reopened', 0xeb0b),
-        issues: register('issues', 0xeb0c),
-        italic: register('italic', 0xeb0d),
-        jersey: register('jersey', 0xeb0e),
-        json: register('json', 0xeb0f),
-        bracket: register('bracket', 0xeb0f),
-        kebabVertical: register('kebab-vertical', 0xeb10),
-        key: register('key', 0xeb11),
-        law: register('law', 0xeb12),
-        lightbulbAutofix: register('lightbulb-autofix', 0xeb13),
-        linkExternal: register('link-external', 0xeb14),
-        link: register('link', 0xeb15),
-        listOrdered: register('list-ordered', 0xeb16),
-        listUnordered: register('list-unordered', 0xeb17),
-        liveShare: register('live-share', 0xeb18),
-        loading: register('loading', 0xeb19),
-        location: register('location', 0xeb1a),
-        mailRead: register('mail-read', 0xeb1b),
-        mail: register('mail', 0xeb1c),
-        markdown: register('markdown', 0xeb1d),
-        megaphone: register('megaphone', 0xeb1e),
-        mention: register('mention', 0xeb1f),
-        milestone: register('milestone', 0xeb20),
-        gitPullRequestMilestone: register('git-pull-request-milestone', 0xeb20),
-        mortarBoard: register('mortar-board', 0xeb21),
-        move: register('move', 0xeb22),
-        multipleWindows: register('multiple-windows', 0xeb23),
-        mute: register('mute', 0xeb24),
-        noNewline: register('no-newline', 0xeb25),
-        note: register('note', 0xeb26),
-        octoface: register('octoface', 0xeb27),
-        openPreview: register('open-preview', 0xeb28),
-        package: register('package', 0xeb29),
-        paintcan: register('paintcan', 0xeb2a),
-        pin: register('pin', 0xeb2b),
-        play: register('play', 0xeb2c),
-        run: register('run', 0xeb2c),
-        plug: register('plug', 0xeb2d),
-        preserveCase: register('preserve-case', 0xeb2e),
-        preview: register('preview', 0xeb2f),
-        project: register('project', 0xeb30),
-        pulse: register('pulse', 0xeb31),
-        question: register('question', 0xeb32),
-        quote: register('quote', 0xeb33),
-        radioTower: register('radio-tower', 0xeb34),
-        reactions: register('reactions', 0xeb35),
-        references: register('references', 0xeb36),
-        refresh: register('refresh', 0xeb37),
-        regex: register('regex', 0xeb38),
-        remoteExplorer: register('remote-explorer', 0xeb39),
-        remote: register('remote', 0xeb3a),
-        remove: register('remove', 0xeb3b),
-        replaceAll: register('replace-all', 0xeb3c),
-        replace: register('replace', 0xeb3d),
-        repoClone: register('repo-clone', 0xeb3e),
-        repoForcePush: register('repo-force-push', 0xeb3f),
-        repoPull: register('repo-pull', 0xeb40),
-        repoPush: register('repo-push', 0xeb41),
-        report: register('report', 0xeb42),
-        requestChanges: register('request-changes', 0xeb43),
-        rocket: register('rocket', 0xeb44),
-        rootFolderOpened: register('root-folder-opened', 0xeb45),
-        rootFolder: register('root-folder', 0xeb46),
-        rss: register('rss', 0xeb47),
-        ruby: register('ruby', 0xeb48),
-        saveAll: register('save-all', 0xeb49),
-        saveAs: register('save-as', 0xeb4a),
-        save: register('save', 0xeb4b),
-        screenFull: register('screen-full', 0xeb4c),
-        screenNormal: register('screen-normal', 0xeb4d),
-        searchStop: register('search-stop', 0xeb4e),
-        server: register('server', 0xeb50),
-        settingsGear: register('settings-gear', 0xeb51),
-        settings: register('settings', 0xeb52),
-        shield: register('shield', 0xeb53),
-        smiley: register('smiley', 0xeb54),
-        sortPrecedence: register('sort-precedence', 0xeb55),
-        splitHorizontal: register('split-horizontal', 0xeb56),
-        splitVertical: register('split-vertical', 0xeb57),
-        squirrel: register('squirrel', 0xeb58),
-        starFull: register('star-full', 0xeb59),
-        starHalf: register('star-half', 0xeb5a),
-        symbolClass: register('symbol-class', 0xeb5b),
-        symbolColor: register('symbol-color', 0xeb5c),
-        symbolCustomColor: register('symbol-customcolor', 0xeb5c),
-        symbolConstant: register('symbol-constant', 0xeb5d),
-        symbolEnumMember: register('symbol-enum-member', 0xeb5e),
-        symbolField: register('symbol-field', 0xeb5f),
-        symbolFile: register('symbol-file', 0xeb60),
-        symbolInterface: register('symbol-interface', 0xeb61),
-        symbolKeyword: register('symbol-keyword', 0xeb62),
-        symbolMisc: register('symbol-misc', 0xeb63),
-        symbolOperator: register('symbol-operator', 0xeb64),
-        symbolProperty: register('symbol-property', 0xeb65),
-        wrench: register('wrench', 0xeb65),
-        wrenchSubaction: register('wrench-subaction', 0xeb65),
-        symbolSnippet: register('symbol-snippet', 0xeb66),
-        tasklist: register('tasklist', 0xeb67),
-        telescope: register('telescope', 0xeb68),
-        textSize: register('text-size', 0xeb69),
-        threeBars: register('three-bars', 0xeb6a),
-        thumbsdown: register('thumbsdown', 0xeb6b),
-        thumbsup: register('thumbsup', 0xeb6c),
-        tools: register('tools', 0xeb6d),
-        triangleDown: register('triangle-down', 0xeb6e),
-        triangleLeft: register('triangle-left', 0xeb6f),
-        triangleRight: register('triangle-right', 0xeb70),
-        triangleUp: register('triangle-up', 0xeb71),
-        twitter: register('twitter', 0xeb72),
-        unfold: register('unfold', 0xeb73),
-        unlock: register('unlock', 0xeb74),
-        unmute: register('unmute', 0xeb75),
-        unverified: register('unverified', 0xeb76),
-        verified: register('verified', 0xeb77),
-        versions: register('versions', 0xeb78),
-        vmActive: register('vm-active', 0xeb79),
-        vmOutline: register('vm-outline', 0xeb7a),
-        vmRunning: register('vm-running', 0xeb7b),
-        watch: register('watch', 0xeb7c),
-        whitespace: register('whitespace', 0xeb7d),
-        wholeWord: register('whole-word', 0xeb7e),
-        window: register('window', 0xeb7f),
-        wordWrap: register('word-wrap', 0xeb80),
-        zoomIn: register('zoom-in', 0xeb81),
-        zoomOut: register('zoom-out', 0xeb82),
-        listFilter: register('list-filter', 0xeb83),
-        listFlat: register('list-flat', 0xeb84),
-        listSelection: register('list-selection', 0xeb85),
-        selection: register('selection', 0xeb85),
-        listTree: register('list-tree', 0xeb86),
-        debugBreakpointFunctionUnverified: register('debug-breakpoint-function-unverified', 0xeb87),
-        debugBreakpointFunction: register('debug-breakpoint-function', 0xeb88),
-        debugBreakpointFunctionDisabled: register('debug-breakpoint-function-disabled', 0xeb88),
-        debugStackframeActive: register('debug-stackframe-active', 0xeb89),
-        circleSmallFilled: register('circle-small-filled', 0xeb8a),
-        debugStackframeDot: register('debug-stackframe-dot', 0xeb8a),
-        debugStackframe: register('debug-stackframe', 0xeb8b),
-        debugStackframeFocused: register('debug-stackframe-focused', 0xeb8b),
-        debugBreakpointUnsupported: register('debug-breakpoint-unsupported', 0xeb8c),
-        symbolString: register('symbol-string', 0xeb8d),
-        debugReverseContinue: register('debug-reverse-continue', 0xeb8e),
-        debugStepBack: register('debug-step-back', 0xeb8f),
-        debugRestartFrame: register('debug-restart-frame', 0xeb90),
-        callIncoming: register('call-incoming', 0xeb92),
-        callOutgoing: register('call-outgoing', 0xeb93),
-        menu: register('menu', 0xeb94),
-        expandAll: register('expand-all', 0xeb95),
-        feedback: register('feedback', 0xeb96),
-        gitPullRequestReviewer: register('git-pull-request-reviewer', 0xeb96),
-        groupByRefType: register('group-by-ref-type', 0xeb97),
-        ungroupByRefType: register('ungroup-by-ref-type', 0xeb98),
-        account: register('account', 0xeb99),
-        gitPullRequestAssignee: register('git-pull-request-assignee', 0xeb99),
-        bellDot: register('bell-dot', 0xeb9a),
-        debugConsole: register('debug-console', 0xeb9b),
-        library: register('library', 0xeb9c),
-        output: register('output', 0xeb9d),
-        runAll: register('run-all', 0xeb9e),
-        syncIgnored: register('sync-ignored', 0xeb9f),
-        pinned: register('pinned', 0xeba0),
-        githubInverted: register('github-inverted', 0xeba1),
-        debugAlt: register('debug-alt', 0xeb91),
-        serverProcess: register('server-process', 0xeba2),
-        serverEnvironment: register('server-environment', 0xeba3),
-        pass: register('pass', 0xeba4),
-        stopCircle: register('stop-circle', 0xeba5),
-        playCircle: register('play-circle', 0xeba6),
-        record: register('record', 0xeba7),
-        debugAltSmall: register('debug-alt-small', 0xeba8),
-        vmConnect: register('vm-connect', 0xeba9),
-        cloud: register('cloud', 0xebaa),
-        merge: register('merge', 0xebab),
-        exportIcon: register('export', 0xebac),
-        graphLeft: register('graph-left', 0xebad),
-        magnet: register('magnet', 0xebae),
-        notebook: register('notebook', 0xebaf),
-        redo: register('redo', 0xebb0),
-        checkAll: register('check-all', 0xebb1),
-        pinnedDirty: register('pinned-dirty', 0xebb2),
-        passFilled: register('pass-filled', 0xebb3),
-        circleLargeFilled: register('circle-large-filled', 0xebb4),
-        circleLarge: register('circle-large', 0xebb5),
-        circleLargeOutline: register('circle-large-outline', 0xebb5),
-        combine: register('combine', 0xebb6),
-        gather: register('gather', 0xebb6),
-        table: register('table', 0xebb7),
-        variableGroup: register('variable-group', 0xebb8),
-        typeHierarchy: register('type-hierarchy', 0xebb9),
-        typeHierarchySub: register('type-hierarchy-sub', 0xebba),
-        typeHierarchySuper: register('type-hierarchy-super', 0xebbb),
-        gitPullRequestCreate: register('git-pull-request-create', 0xebbc),
-        runAbove: register('run-above', 0xebbd),
-        runBelow: register('run-below', 0xebbe),
-        notebookTemplate: register('notebook-template', 0xebbf),
-        debugRerun: register('debug-rerun', 0xebc0),
-        workspaceTrusted: register('workspace-trusted', 0xebc1),
-        workspaceUntrusted: register('workspace-untrusted', 0xebc2),
-        workspaceUnspecified: register('workspace-unspecified', 0xebc3),
-        terminalCmd: register('terminal-cmd', 0xebc4),
-        terminalDebian: register('terminal-debian', 0xebc5),
-        terminalLinux: register('terminal-linux', 0xebc6),
-        terminalPowershell: register('terminal-powershell', 0xebc7),
-        terminalTmux: register('terminal-tmux', 0xebc8),
-        terminalUbuntu: register('terminal-ubuntu', 0xebc9),
-        terminalBash: register('terminal-bash', 0xebca),
-        arrowSwap: register('arrow-swap', 0xebcb),
-        copy: register('copy', 0xebcc),
-        personAdd: register('person-add', 0xebcd),
-        filterFilled: register('filter-filled', 0xebce),
-        wand: register('wand', 0xebcf),
-        debugLineByLine: register('debug-line-by-line', 0xebd0),
-        inspect: register('inspect', 0xebd1),
-        layers: register('layers', 0xebd2),
-        layersDot: register('layers-dot', 0xebd3),
-        layersActive: register('layers-active', 0xebd4),
-        compass: register('compass', 0xebd5),
-        compassDot: register('compass-dot', 0xebd6),
-        compassActive: register('compass-active', 0xebd7),
-        azure: register('azure', 0xebd8),
-        issueDraft: register('issue-draft', 0xebd9),
-        gitPullRequestClosed: register('git-pull-request-closed', 0xebda),
-        gitPullRequestDraft: register('git-pull-request-draft', 0xebdb),
-        debugAll: register('debug-all', 0xebdc),
-        debugCoverage: register('debug-coverage', 0xebdd),
-        runErrors: register('run-errors', 0xebde),
-        folderLibrary: register('folder-library', 0xebdf),
-        debugContinueSmall: register('debug-continue-small', 0xebe0),
-        beakerStop: register('beaker-stop', 0xebe1),
-        graphLine: register('graph-line', 0xebe2),
-        graphScatter: register('graph-scatter', 0xebe3),
-        pieChart: register('pie-chart', 0xebe4),
-        bracketDot: register('bracket-dot', 0xebe5),
-        bracketError: register('bracket-error', 0xebe6),
-        lockSmall: register('lock-small', 0xebe7),
-        azureDevops: register('azure-devops', 0xebe8),
-        verifiedFilled: register('verified-filled', 0xebe9),
-        newLine: register('newline', 0xebea),
-        layout: register('layout', 0xebeb),
-        layoutActivitybarLeft: register('layout-activitybar-left', 0xebec),
-        layoutActivitybarRight: register('layout-activitybar-right', 0xebed),
-        layoutPanelLeft: register('layout-panel-left', 0xebee),
-        layoutPanelCenter: register('layout-panel-center', 0xebef),
-        layoutPanelJustify: register('layout-panel-justify', 0xebf0),
-        layoutPanelRight: register('layout-panel-right', 0xebf1),
-        layoutPanel: register('layout-panel', 0xebf2),
-        layoutSidebarLeft: register('layout-sidebar-left', 0xebf3),
-        layoutSidebarRight: register('layout-sidebar-right', 0xebf4),
-        layoutStatusbar: register('layout-statusbar', 0xebf5),
-        layoutMenubar: register('layout-menubar', 0xebf6),
-        layoutCentered: register('layout-centered', 0xebf7),
-        layoutSidebarRightOff: register('layout-sidebar-right-off', 0xec00),
-        layoutPanelOff: register('layout-panel-off', 0xec01),
-        layoutSidebarLeftOff: register('layout-sidebar-left-off', 0xec02),
-        target: register('target', 0xebf8),
-        indent: register('indent', 0xebf9),
-        recordSmall: register('record-small', 0xebfa),
-        errorSmall: register('error-small', 0xebfb),
-        arrowCircleDown: register('arrow-circle-down', 0xebfc),
-        arrowCircleLeft: register('arrow-circle-left', 0xebfd),
-        arrowCircleRight: register('arrow-circle-right', 0xebfe),
-        arrowCircleUp: register('arrow-circle-up', 0xebff),
-        heartFilled: register('heart-filled', 0xec04),
-        map: register('map', 0xec05),
-        mapFilled: register('map-filled', 0xec06),
-        circleSmall: register('circle-small', 0xec07),
-        bellSlash: register('bell-slash', 0xec08),
-        bellSlashDot: register('bell-slash-dot', 0xec09),
-        commentUnresolved: register('comment-unresolved', 0xec0a),
-        gitPullRequestGoToChanges: register('git-pull-request-go-to-changes', 0xec0b),
-        gitPullRequestNewChanges: register('git-pull-request-new-changes', 0xec0c),
-        searchFuzzy: register('search-fuzzy', 0xec0d),
-        commentDraft: register('comment-draft', 0xec0e),
-        send: register('send', 0xec0f),
-        sparkle: register('sparkle', 0xec10),
-        insert: register('insert', 0xec11),
-        mic: register('mic', 0xec12),
-        thumbsDownFilled: register('thumbsdown-filled', 0xec13),
-        thumbsUpFilled: register('thumbsup-filled', 0xec14),
-        coffee: register('coffee', 0xec15),
-        snake: register('snake', 0xec16),
-        game: register('game', 0xec17),
-        vr: register('vr', 0xec18),
-        chip: register('chip', 0xec19),
-        piano: register('piano', 0xec1a),
-        music: register('music', 0xec1b),
-        micFilled: register('mic-filled', 0xec1c),
-        gitFetch: register('git-fetch', 0xec1d),
-        copilot: register('copilot', 0xec1e),
-        lightbulbSparkle: register('lightbulb-sparkle', 0xec1f),
-        lightbulbSparkleAutofix: register('lightbulb-sparkle-autofix', 0xec1f),
-        robot: register('robot', 0xec20),
-        sparkleFilled: register('sparkle-filled', 0xec21),
-        diffSingle: register('diff-single', 0xec22),
-        diffMultiple: register('diff-multiple', 0xec23),
-        surroundWith: register('surround-with', 0xec24),
-        gitStash: register('git-stash', 0xec26),
-        gitStashApply: register('git-stash-apply', 0xec27),
-        gitStashPop: register('git-stash-pop', 0xec28),
-        runAllCoverage: register('run-all-coverage', 0xec2d),
-        runCoverage: register('run-all-coverage', 0xec2c),
-        coverage: register('coverage', 0xec2e),
-        githubProject: register('github-project', 0xec2f),
-        // derived icons, that could become separate icons
-        // TODO: These mappings should go in the vscode-codicons mapping file
-        dialogError: register('dialog-error', 'error'),
-        dialogWarning: register('dialog-warning', 'warning'),
-        dialogInfo: register('dialog-info', 'info'),
-        dialogClose: register('dialog-close', 'close'),
-        treeItemExpanded: register('tree-item-expanded', 'chevron-down'), // collapsed is done with rotation
-        treeFilterOnTypeOn: register('tree-filter-on-type-on', 'list-filter'),
-        treeFilterOnTypeOff: register('tree-filter-on-type-off', 'list-selection'),
-        treeFilterClear: register('tree-filter-clear', 'close'),
-        treeItemLoading: register('tree-item-loading', 'loading'),
-        menuSelection: register('menu-selection', 'check'),
-        menuSubmenu: register('menu-submenu', 'chevron-right'),
-        menuBarMore: register('menubar-more', 'more'),
-        scrollbarButtonLeft: register('scrollbar-button-left', 'triangle-left'),
-        scrollbarButtonRight: register('scrollbar-button-right', 'triangle-right'),
-        scrollbarButtonUp: register('scrollbar-button-up', 'triangle-up'),
-        scrollbarButtonDown: register('scrollbar-button-down', 'triangle-down'),
-        toolBarMore: register('toolbar-more', 'more'),
-        quickInputBack: register('quick-input-back', 'arrow-left')
+        ...codiconsLibrary_1.codiconsLibrary,
+        ...exports.codiconsDerived
     };
 });
 
@@ -9555,10 +9652,17 @@ define(__m[40/*vs/base/common/codicons*/], __M([0/*require*/,1/*exports*/,25/*vs
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-define(__m[14/*vs/base/common/objects*/], __M([0/*require*/,1/*exports*/,25/*vs/base/common/types*/]), function (require, exports, types_1) {
+define(__m[14/*vs/base/common/objects*/], __M([0/*require*/,1/*exports*/,26/*vs/base/common/types*/]), function (require, exports, types_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.createProxyObject = exports.getAllMethodNames = exports.getAllPropertyNames = exports.equals = exports.mixin = exports.cloneAndChange = exports.deepFreeze = exports.deepClone = void 0;
+    exports.deepClone = deepClone;
+    exports.deepFreeze = deepFreeze;
+    exports.cloneAndChange = cloneAndChange;
+    exports.mixin = mixin;
+    exports.equals = equals;
+    exports.getAllPropertyNames = getAllPropertyNames;
+    exports.getAllMethodNames = getAllMethodNames;
+    exports.createProxyObject = createProxyObject;
     function deepClone(obj) {
         if (!obj || typeof obj !== 'object') {
             return obj;
@@ -9572,7 +9676,6 @@ define(__m[14/*vs/base/common/objects*/], __M([0/*require*/,1/*exports*/,25/*vs/
         });
         return result;
     }
-    exports.deepClone = deepClone;
     function deepFreeze(obj) {
         if (!obj || typeof obj !== 'object') {
             return obj;
@@ -9592,12 +9695,10 @@ define(__m[14/*vs/base/common/objects*/], __M([0/*require*/,1/*exports*/,25/*vs/
         }
         return obj;
     }
-    exports.deepFreeze = deepFreeze;
     const _hasOwnProperty = Object.prototype.hasOwnProperty;
     function cloneAndChange(obj, changer) {
         return _cloneAndChange(obj, changer, new Set());
     }
-    exports.cloneAndChange = cloneAndChange;
     function _cloneAndChange(obj, changer, seen) {
         if ((0, types_1.isUndefinedOrNull)(obj)) {
             return obj;
@@ -9656,7 +9757,6 @@ define(__m[14/*vs/base/common/objects*/], __M([0/*require*/,1/*exports*/,25/*vs/
         }
         return destination;
     }
-    exports.mixin = mixin;
     function equals(one, other) {
         if (one === other) {
             return true;
@@ -9707,7 +9807,6 @@ define(__m[14/*vs/base/common/objects*/], __M([0/*require*/,1/*exports*/,25/*vs/
         }
         return true;
     }
-    exports.equals = equals;
     function getAllPropertyNames(obj) {
         let res = [];
         while (Object.prototype !== obj) {
@@ -9716,7 +9815,6 @@ define(__m[14/*vs/base/common/objects*/], __M([0/*require*/,1/*exports*/,25/*vs/
         }
         return res;
     }
-    exports.getAllPropertyNames = getAllPropertyNames;
     function getAllMethodNames(obj) {
         const methods = [];
         for (const prop of getAllPropertyNames(obj)) {
@@ -9726,7 +9824,6 @@ define(__m[14/*vs/base/common/objects*/], __M([0/*require*/,1/*exports*/,25/*vs/
         }
         return methods;
     }
-    exports.getAllMethodNames = getAllMethodNames;
     function createProxyObject(methodNames, invoke) {
         const createProxyMethod = (method) => {
             return function () {
@@ -9740,17 +9837,17 @@ define(__m[14/*vs/base/common/objects*/], __M([0/*require*/,1/*exports*/,25/*vs/
         }
         return result;
     }
-    exports.createProxyObject = createProxyObject;
 });
 
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-define(__m[26/*vs/base/common/uint*/], __M([0/*require*/,1/*exports*/]), function (require, exports) {
+define(__m[28/*vs/base/common/uint*/], __M([0/*require*/,1/*exports*/]), function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.toUint32 = exports.toUint8 = void 0;
+    exports.toUint8 = toUint8;
+    exports.toUint32 = toUint32;
     function toUint8(v) {
         if (v < 0) {
             return 0;
@@ -9760,7 +9857,6 @@ define(__m[26/*vs/base/common/uint*/], __M([0/*require*/,1/*exports*/]), functio
         }
         return v | 0;
     }
-    exports.toUint8 = toUint8;
     function toUint32(v) {
         if (v < 0) {
             return 0;
@@ -9770,14 +9866,13 @@ define(__m[26/*vs/base/common/uint*/], __M([0/*require*/,1/*exports*/]), functio
         }
         return v | 0;
     }
-    exports.toUint32 = toUint32;
 });
 
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-define(__m[27/*vs/editor/common/core/characterClassifier*/], __M([0/*require*/,1/*exports*/,26/*vs/base/common/uint*/]), function (require, exports, uint_1) {
+define(__m[29/*vs/editor/common/core/characterClassifier*/], __M([0/*require*/,1/*exports*/,28/*vs/base/common/uint*/]), function (require, exports, uint_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.CharacterSet = exports.CharacterClassifier = void 0;
@@ -9866,6 +9961,12 @@ define(__m[3/*vs/editor/common/core/offsetRange*/], __M([0/*require*/,1/*exports
                 sortedRanges.splice(i, j - i, new OffsetRange(start, end));
             }
         }
+        static tryCreate(start, endExclusive) {
+            if (start > endExclusive) {
+                return undefined;
+            }
+            return new OffsetRange(start, endExclusive);
+        }
         static ofLength(length) {
             return new OffsetRange(0, length);
         }
@@ -9934,6 +10035,9 @@ define(__m[3/*vs/editor/common/core/offsetRange*/], __M([0/*require*/,1/*exports
         }
         slice(arr) {
             return arr.slice(this.start, this.endExclusive);
+        }
+        substring(str) {
+            return str.substring(this.start, this.endExclusive);
         }
         /**
          * Returns the given value if it is contained in this instance, otherwise the closest value that is contained.
@@ -10608,6 +10712,18 @@ define(__m[10/*vs/editor/common/core/lineRange*/], __M([0/*require*/,1/*exports*
             }
             return result.ranges;
         }
+        static join(lineRanges) {
+            if (lineRanges.length === 0) {
+                throw new errors_1.BugIndicatingError('lineRanges cannot be empty');
+            }
+            let startLineNumber = lineRanges[0].startLineNumber;
+            let endLineNumberExclusive = lineRanges[0].endLineNumberExclusive;
+            for (let i = 1; i < lineRanges.length; i++) {
+                startLineNumber = Math.min(startLineNumber, lineRanges[i].startLineNumber);
+                endLineNumberExclusive = Math.max(endLineNumberExclusive, lineRanges[i].endLineNumberExclusive);
+            }
+            return new LineRange(startLineNumber, endLineNumberExclusive);
+        }
         static ofLength(startLineNumber, length) {
             return new LineRange(startLineNumber, startLineNumber + length);
         }
@@ -10877,7 +10993,7 @@ define(__m[10/*vs/editor/common/core/lineRange*/], __M([0/*require*/,1/*exports*
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-define(__m[41/*vs/editor/common/core/selection*/], __M([0/*require*/,1/*exports*/,4/*vs/editor/common/core/position*/,2/*vs/editor/common/core/range*/]), function (require, exports, position_1, range_1) {
+define(__m[43/*vs/editor/common/core/selection*/], __M([0/*require*/,1/*exports*/,4/*vs/editor/common/core/position*/,2/*vs/editor/common/core/range*/]), function (require, exports, position_1, range_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Selection = void 0;
@@ -11024,41 +11140,101 @@ define(__m[41/*vs/editor/common/core/selection*/], __M([0/*require*/,1/*exports*
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-define(__m[42/*vs/editor/common/core/wordCharacterClassifier*/], __M([0/*require*/,1/*exports*/,27/*vs/editor/common/core/characterClassifier*/]), function (require, exports, characterClassifier_1) {
+define(__m[44/*vs/editor/common/core/wordCharacterClassifier*/], __M([0/*require*/,1/*exports*/,23/*vs/base/common/map*/,29/*vs/editor/common/core/characterClassifier*/]), function (require, exports, map_1, characterClassifier_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.getMapForWordSeparators = exports.WordCharacterClassifier = void 0;
+    exports.WordCharacterClassifier = void 0;
+    exports.getMapForWordSeparators = getMapForWordSeparators;
     class WordCharacterClassifier extends characterClassifier_1.CharacterClassifier {
-        constructor(wordSeparators) {
+        constructor(wordSeparators, intlSegmenterLocales) {
             super(0 /* WordCharacterClass.Regular */);
+            this._segmenter = null;
+            this._cachedLine = null;
+            this._cachedSegments = [];
+            this.intlSegmenterLocales = intlSegmenterLocales;
+            if (this.intlSegmenterLocales.length > 0) {
+                this._segmenter = new Intl.Segmenter(this.intlSegmenterLocales, { granularity: 'word' });
+            }
+            else {
+                this._segmenter = null;
+            }
             for (let i = 0, len = wordSeparators.length; i < len; i++) {
                 this.set(wordSeparators.charCodeAt(i), 2 /* WordCharacterClass.WordSeparator */);
             }
             this.set(32 /* CharCode.Space */, 1 /* WordCharacterClass.Whitespace */);
             this.set(9 /* CharCode.Tab */, 1 /* WordCharacterClass.Whitespace */);
         }
+        findPrevIntlWordBeforeOrAtOffset(line, offset) {
+            let candidate = null;
+            for (const segment of this._getIntlSegmenterWordsOnLine(line)) {
+                if (segment.index > offset) {
+                    break;
+                }
+                candidate = segment;
+            }
+            return candidate;
+        }
+        findNextIntlWordAtOrAfterOffset(lineContent, offset) {
+            for (const segment of this._getIntlSegmenterWordsOnLine(lineContent)) {
+                if (segment.index < offset) {
+                    continue;
+                }
+                return segment;
+            }
+            return null;
+        }
+        _getIntlSegmenterWordsOnLine(line) {
+            if (!this._segmenter) {
+                return [];
+            }
+            // Check if the line has changed from the previous call
+            if (this._cachedLine === line) {
+                return this._cachedSegments;
+            }
+            // Update the cache with the new line
+            this._cachedLine = line;
+            this._cachedSegments = this._filterWordSegments(this._segmenter.segment(line));
+            return this._cachedSegments;
+        }
+        _filterWordSegments(segments) {
+            const result = [];
+            for (const segment of segments) {
+                if (this._isWordLike(segment)) {
+                    result.push(segment);
+                }
+            }
+            return result;
+        }
+        _isWordLike(segment) {
+            if (segment.isWordLike) {
+                return true;
+            }
+            return false;
+        }
     }
     exports.WordCharacterClassifier = WordCharacterClassifier;
-    function once(computeFn) {
-        const cache = {}; // TODO@Alex unbounded cache
-        return (input) => {
-            if (!cache.hasOwnProperty(input)) {
-                cache[input] = computeFn(input);
-            }
-            return cache[input];
-        };
+    const wordClassifierCache = new map_1.LRUCache(10);
+    function getMapForWordSeparators(wordSeparators, intlSegmenterLocales) {
+        const key = `${wordSeparators}/${intlSegmenterLocales.join(',')}`;
+        let result = wordClassifierCache.get(key);
+        if (!result) {
+            result = new WordCharacterClassifier(wordSeparators, intlSegmenterLocales);
+            wordClassifierCache.set(key, result);
+        }
+        return result;
     }
-    exports.getMapForWordSeparators = once((input) => new WordCharacterClassifier(input));
 });
 
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-define(__m[28/*vs/editor/common/core/wordHelper*/], __M([0/*require*/,1/*exports*/,21/*vs/base/common/iterator*/,22/*vs/base/common/linkedList*/]), function (require, exports, iterator_1, linkedList_1) {
+define(__m[30/*vs/editor/common/core/wordHelper*/], __M([0/*require*/,1/*exports*/,21/*vs/base/common/iterator*/,22/*vs/base/common/linkedList*/]), function (require, exports, iterator_1, linkedList_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.getWordAtText = exports.ensureValidWordDefinition = exports.DEFAULT_WORD_REGEXP = exports.USUAL_WORD_SEPARATORS = void 0;
+    exports.DEFAULT_WORD_REGEXP = exports.USUAL_WORD_SEPARATORS = void 0;
+    exports.ensureValidWordDefinition = ensureValidWordDefinition;
+    exports.getWordAtText = getWordAtText;
     exports.USUAL_WORD_SEPARATORS = '`~!@#$%^&*()-=+[{]}\\|;:\'",.<>/?';
     /**
      * Create a word definition regular expression based on default word separators.
@@ -11103,7 +11279,6 @@ define(__m[28/*vs/editor/common/core/wordHelper*/], __M([0/*require*/,1/*exports
         result.lastIndex = 0;
         return result;
     }
-    exports.ensureValidWordDefinition = ensureValidWordDefinition;
     const _defaultConfig = new linkedList_1.LinkedList();
     _defaultConfig.unshift({
         maxLen: 1000,
@@ -11165,7 +11340,6 @@ define(__m[28/*vs/editor/common/core/wordHelper*/], __M([0/*require*/,1/*exports
         }
         return null;
     }
-    exports.getWordAtText = getWordAtText;
     function _findRegexMatchEnclosingPosition(wordDefinition, text, pos, stopPos) {
         let match;
         while (match = wordDefinition.exec(text)) {
@@ -11320,7 +11494,7 @@ define(__m[8/*vs/editor/common/diff/defaultLinesDiffComputer/algorithms/diffAlgo
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-define(__m[29/*vs/editor/common/diff/defaultLinesDiffComputer/algorithms/myersDiffAlgorithm*/], __M([0/*require*/,1/*exports*/,3/*vs/editor/common/core/offsetRange*/,8/*vs/editor/common/diff/defaultLinesDiffComputer/algorithms/diffAlgorithm*/]), function (require, exports, offsetRange_1, diffAlgorithm_1) {
+define(__m[31/*vs/editor/common/diff/defaultLinesDiffComputer/algorithms/myersDiffAlgorithm*/], __M([0/*require*/,1/*exports*/,3/*vs/editor/common/core/offsetRange*/,8/*vs/editor/common/diff/defaultLinesDiffComputer/algorithms/diffAlgorithm*/]), function (require, exports, offsetRange_1, diffAlgorithm_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.MyersDiffAlgorithm = void 0;
@@ -11484,10 +11658,14 @@ define(__m[29/*vs/editor/common/diff/defaultLinesDiffComputer/algorithms/myersDi
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-define(__m[43/*vs/editor/common/diff/defaultLinesDiffComputer/heuristicSequenceOptimizations*/], __M([0/*require*/,1/*exports*/,7/*vs/base/common/arrays*/,3/*vs/editor/common/core/offsetRange*/,8/*vs/editor/common/diff/defaultLinesDiffComputer/algorithms/diffAlgorithm*/]), function (require, exports, arrays_1, offsetRange_1, diffAlgorithm_1) {
+define(__m[45/*vs/editor/common/diff/defaultLinesDiffComputer/heuristicSequenceOptimizations*/], __M([0/*require*/,1/*exports*/,7/*vs/base/common/arrays*/,3/*vs/editor/common/core/offsetRange*/,8/*vs/editor/common/diff/defaultLinesDiffComputer/algorithms/diffAlgorithm*/]), function (require, exports, arrays_1, offsetRange_1, diffAlgorithm_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.removeVeryShortMatchingTextBetweenLongDiffs = exports.removeVeryShortMatchingLinesBetweenDiffs = exports.extendDiffsToEntireWordIfAppropriate = exports.removeShortMatches = exports.optimizeSequenceDiffs = void 0;
+    exports.optimizeSequenceDiffs = optimizeSequenceDiffs;
+    exports.removeShortMatches = removeShortMatches;
+    exports.extendDiffsToEntireWordIfAppropriate = extendDiffsToEntireWordIfAppropriate;
+    exports.removeVeryShortMatchingLinesBetweenDiffs = removeVeryShortMatchingLinesBetweenDiffs;
+    exports.removeVeryShortMatchingTextBetweenLongDiffs = removeVeryShortMatchingTextBetweenLongDiffs;
     function optimizeSequenceDiffs(sequence1, sequence2, sequenceDiffs) {
         let result = sequenceDiffs;
         result = joinSequenceDiffsByShifting(sequence1, sequence2, result);
@@ -11497,7 +11675,6 @@ define(__m[43/*vs/editor/common/diff/defaultLinesDiffComputer/heuristicSequenceO
         result = shiftSequenceDiffs(sequence1, sequence2, result);
         return result;
     }
-    exports.optimizeSequenceDiffs = optimizeSequenceDiffs;
     /**
      * This function fixes issues like this:
      * ```
@@ -11654,7 +11831,6 @@ define(__m[43/*vs/editor/common/diff/defaultLinesDiffComputer/heuristicSequenceO
         }
         return result;
     }
-    exports.removeShortMatches = removeShortMatches;
     function extendDiffsToEntireWordIfAppropriate(sequence1, sequence2, sequenceDiffs) {
         const equalMappings = diffAlgorithm_1.SequenceDiff.invert(sequenceDiffs, sequence1.length);
         const additional = [];
@@ -11676,7 +11852,7 @@ define(__m[43/*vs/editor/common/diff/defaultLinesDiffComputer/heuristicSequenceO
             // But they might touch the next ones.
             while (equalMappings.length > 0) {
                 const next = equalMappings[0];
-                const intersects = next.seq1Range.intersects(w1) || next.seq2Range.intersects(w2);
+                const intersects = next.seq1Range.intersects(w.seq1Range) || next.seq2Range.intersects(w.seq2Range);
                 if (!intersects) {
                     break;
                 }
@@ -11713,7 +11889,6 @@ define(__m[43/*vs/editor/common/diff/defaultLinesDiffComputer/heuristicSequenceO
         const merged = mergeSequenceDiffs(sequenceDiffs, additional);
         return merged;
     }
-    exports.extendDiffsToEntireWordIfAppropriate = extendDiffsToEntireWordIfAppropriate;
     function mergeSequenceDiffs(sequenceDiffs1, sequenceDiffs2) {
         const result = [];
         while (sequenceDiffs1.length > 0 || sequenceDiffs2.length > 0) {
@@ -11773,7 +11948,6 @@ define(__m[43/*vs/editor/common/diff/defaultLinesDiffComputer/heuristicSequenceO
         } while (counter++ < 10 && shouldRepeat);
         return diffs;
     }
-    exports.removeVeryShortMatchingLinesBetweenDiffs = removeVeryShortMatchingLinesBetweenDiffs;
     function removeVeryShortMatchingTextBetweenLongDiffs(sequence1, sequence2, sequenceDiffs) {
         let diffs = sequenceDiffs;
         if (diffs.length === 0) {
@@ -11856,14 +12030,13 @@ define(__m[43/*vs/editor/common/diff/defaultLinesDiffComputer/heuristicSequenceO
         });
         return newDiffs;
     }
-    exports.removeVeryShortMatchingTextBetweenLongDiffs = removeVeryShortMatchingTextBetweenLongDiffs;
 });
 
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-define(__m[44/*vs/editor/common/diff/defaultLinesDiffComputer/lineSequence*/], __M([0/*require*/,1/*exports*/]), function (require, exports) {
+define(__m[46/*vs/editor/common/diff/defaultLinesDiffComputer/lineSequence*/], __M([0/*require*/,1/*exports*/]), function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.LineSequence = void 0;
@@ -11907,7 +12080,8 @@ define(__m[44/*vs/editor/common/diff/defaultLinesDiffComputer/lineSequence*/], _
 define(__m[15/*vs/editor/common/diff/defaultLinesDiffComputer/utils*/], __M([0/*require*/,1/*exports*/]), function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.LineRangeFragment = exports.isSpace = exports.Array2D = void 0;
+    exports.LineRangeFragment = exports.Array2D = void 0;
+    exports.isSpace = isSpace;
     class Array2D {
         constructor(width, height) {
             this.width = width;
@@ -11926,7 +12100,6 @@ define(__m[15/*vs/editor/common/diff/defaultLinesDiffComputer/utils*/], __M([0/*
     function isSpace(charCode) {
         return charCode === 32 /* CharCode.Space */ || charCode === 9 /* CharCode.Tab */;
     }
-    exports.isSpace = isSpace;
     class LineRangeFragment {
         static getKey(chr) {
             let key = this.chrKeys.get(chr);
@@ -11974,7 +12147,7 @@ define(__m[15/*vs/editor/common/diff/defaultLinesDiffComputer/utils*/], __M([0/*
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-define(__m[45/*vs/editor/common/diff/defaultLinesDiffComputer/algorithms/dynamicProgrammingDiffing*/], __M([0/*require*/,1/*exports*/,3/*vs/editor/common/core/offsetRange*/,8/*vs/editor/common/diff/defaultLinesDiffComputer/algorithms/diffAlgorithm*/,15/*vs/editor/common/diff/defaultLinesDiffComputer/utils*/]), function (require, exports, offsetRange_1, diffAlgorithm_1, utils_1) {
+define(__m[47/*vs/editor/common/diff/defaultLinesDiffComputer/algorithms/dynamicProgrammingDiffing*/], __M([0/*require*/,1/*exports*/,3/*vs/editor/common/core/offsetRange*/,8/*vs/editor/common/diff/defaultLinesDiffComputer/algorithms/diffAlgorithm*/,15/*vs/editor/common/diff/defaultLinesDiffComputer/utils*/]), function (require, exports, offsetRange_1, diffAlgorithm_1, utils_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.DynamicProgrammingDiffing = void 0;
@@ -12076,7 +12249,7 @@ define(__m[45/*vs/editor/common/diff/defaultLinesDiffComputer/algorithms/dynamic
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-define(__m[30/*vs/editor/common/diff/defaultLinesDiffComputer/linesSliceCharSequence*/], __M([0/*require*/,1/*exports*/,11/*vs/base/common/arraysFind*/,3/*vs/editor/common/core/offsetRange*/,4/*vs/editor/common/core/position*/,2/*vs/editor/common/core/range*/,15/*vs/editor/common/diff/defaultLinesDiffComputer/utils*/]), function (require, exports, arraysFind_1, offsetRange_1, position_1, range_1, utils_1) {
+define(__m[32/*vs/editor/common/diff/defaultLinesDiffComputer/linesSliceCharSequence*/], __M([0/*require*/,1/*exports*/,11/*vs/base/common/arraysFind*/,3/*vs/editor/common/core/offsetRange*/,4/*vs/editor/common/core/position*/,2/*vs/editor/common/core/range*/,15/*vs/editor/common/diff/defaultLinesDiffComputer/utils*/]), function (require, exports, arraysFind_1, offsetRange_1, position_1, range_1, utils_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.LinesSliceCharSequence = void 0;
@@ -12264,7 +12437,7 @@ define(__m[30/*vs/editor/common/diff/defaultLinesDiffComputer/linesSliceCharSequ
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-define(__m[31/*vs/editor/common/diff/linesDiffComputer*/], __M([0/*require*/,1/*exports*/]), function (require, exports) {
+define(__m[33/*vs/editor/common/diff/linesDiffComputer*/], __M([0/*require*/,1/*exports*/]), function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.MovedText = exports.LinesDiff = void 0;
@@ -12356,6 +12529,11 @@ define(__m[16/*vs/editor/common/diff/rangeMapping*/], __M([0/*require*/,1/*expor
      * Also contains inner range mappings.
      */
     class DetailedLineRangeMapping extends LineRangeMapping {
+        static fromRangeMappings(rangeMappings) {
+            const originalRange = lineRange_1.LineRange.join(rangeMappings.map(r => lineRange_1.LineRange.fromRangeInclusive(r.originalRange)));
+            const modifiedRange = lineRange_1.LineRange.join(rangeMappings.map(r => lineRange_1.LineRange.fromRangeInclusive(r.modifiedRange)));
+            return new DetailedLineRangeMapping(originalRange, modifiedRange, rangeMappings);
+        }
         constructor(originalRange, modifiedRange, innerChanges) {
             super(originalRange, modifiedRange);
             this.innerChanges = innerChanges;
@@ -12363,6 +12541,11 @@ define(__m[16/*vs/editor/common/diff/rangeMapping*/], __M([0/*require*/,1/*expor
         flip() {
             var _a;
             return new DetailedLineRangeMapping(this.modified, this.original, (_a = this.innerChanges) === null || _a === void 0 ? void 0 : _a.map(c => c.flip()));
+        }
+        withInnerChangesFromLineRanges() {
+            return new DetailedLineRangeMapping(this.original, this.modified, [
+                new RangeMapping(this.original.toExclusiveRange(), this.modified.toExclusiveRange()),
+            ]);
         }
     }
     exports.DetailedLineRangeMapping = DetailedLineRangeMapping;
@@ -12388,10 +12571,10 @@ define(__m[16/*vs/editor/common/diff/rangeMapping*/], __M([0/*require*/,1/*expor
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-define(__m[46/*vs/editor/common/diff/defaultLinesDiffComputer/computeMovedLines*/], __M([0/*require*/,1/*exports*/,8/*vs/editor/common/diff/defaultLinesDiffComputer/algorithms/diffAlgorithm*/,16/*vs/editor/common/diff/rangeMapping*/,7/*vs/base/common/arrays*/,11/*vs/base/common/arraysFind*/,37/*vs/base/common/map*/,10/*vs/editor/common/core/lineRange*/,3/*vs/editor/common/core/offsetRange*/,30/*vs/editor/common/diff/defaultLinesDiffComputer/linesSliceCharSequence*/,15/*vs/editor/common/diff/defaultLinesDiffComputer/utils*/,29/*vs/editor/common/diff/defaultLinesDiffComputer/algorithms/myersDiffAlgorithm*/]), function (require, exports, diffAlgorithm_1, rangeMapping_1, arrays_1, arraysFind_1, map_1, lineRange_1, offsetRange_1, linesSliceCharSequence_1, utils_1, myersDiffAlgorithm_1) {
+define(__m[48/*vs/editor/common/diff/defaultLinesDiffComputer/computeMovedLines*/], __M([0/*require*/,1/*exports*/,8/*vs/editor/common/diff/defaultLinesDiffComputer/algorithms/diffAlgorithm*/,16/*vs/editor/common/diff/rangeMapping*/,7/*vs/base/common/arrays*/,11/*vs/base/common/arraysFind*/,23/*vs/base/common/map*/,10/*vs/editor/common/core/lineRange*/,3/*vs/editor/common/core/offsetRange*/,32/*vs/editor/common/diff/defaultLinesDiffComputer/linesSliceCharSequence*/,15/*vs/editor/common/diff/defaultLinesDiffComputer/utils*/,31/*vs/editor/common/diff/defaultLinesDiffComputer/algorithms/myersDiffAlgorithm*/]), function (require, exports, diffAlgorithm_1, rangeMapping_1, arrays_1, arraysFind_1, map_1, lineRange_1, offsetRange_1, linesSliceCharSequence_1, utils_1, myersDiffAlgorithm_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.computeMovedLines = void 0;
+    exports.computeMovedLines = computeMovedLines;
     function computeMovedLines(changes, originalLines, modifiedLines, hashedOriginalLines, hashedModifiedLines, timeout) {
         let { moves, excludedChanges } = computeMovesFromSimpleDeletionsToSimpleInsertions(changes, originalLines, modifiedLines, timeout);
         if (!timeout.isValid()) {
@@ -12410,7 +12593,6 @@ define(__m[46/*vs/editor/common/diff/defaultLinesDiffComputer/computeMovedLines*
         moves = removeMovesInSameDiff(changes, moves);
         return moves;
     }
-    exports.computeMovedLines = computeMovedLines;
     function countWhere(arr, predicate) {
         let count = 0;
         for (const t of arr) {
@@ -12631,10 +12813,12 @@ define(__m[46/*vs/editor/common/diff/defaultLinesDiffComputer/computeMovedLines*
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-define(__m[47/*vs/editor/common/diff/defaultLinesDiffComputer/defaultLinesDiffComputer*/], __M([0/*require*/,1/*exports*/,7/*vs/base/common/arrays*/,12/*vs/base/common/assert*/,10/*vs/editor/common/core/lineRange*/,3/*vs/editor/common/core/offsetRange*/,2/*vs/editor/common/core/range*/,8/*vs/editor/common/diff/defaultLinesDiffComputer/algorithms/diffAlgorithm*/,45/*vs/editor/common/diff/defaultLinesDiffComputer/algorithms/dynamicProgrammingDiffing*/,29/*vs/editor/common/diff/defaultLinesDiffComputer/algorithms/myersDiffAlgorithm*/,46/*vs/editor/common/diff/defaultLinesDiffComputer/computeMovedLines*/,43/*vs/editor/common/diff/defaultLinesDiffComputer/heuristicSequenceOptimizations*/,31/*vs/editor/common/diff/linesDiffComputer*/,16/*vs/editor/common/diff/rangeMapping*/,30/*vs/editor/common/diff/defaultLinesDiffComputer/linesSliceCharSequence*/,44/*vs/editor/common/diff/defaultLinesDiffComputer/lineSequence*/]), function (require, exports, arrays_1, assert_1, lineRange_1, offsetRange_1, range_1, diffAlgorithm_1, dynamicProgrammingDiffing_1, myersDiffAlgorithm_1, computeMovedLines_1, heuristicSequenceOptimizations_1, linesDiffComputer_1, rangeMapping_1, linesSliceCharSequence_1, lineSequence_1) {
+define(__m[49/*vs/editor/common/diff/defaultLinesDiffComputer/defaultLinesDiffComputer*/], __M([0/*require*/,1/*exports*/,7/*vs/base/common/arrays*/,12/*vs/base/common/assert*/,10/*vs/editor/common/core/lineRange*/,3/*vs/editor/common/core/offsetRange*/,2/*vs/editor/common/core/range*/,8/*vs/editor/common/diff/defaultLinesDiffComputer/algorithms/diffAlgorithm*/,47/*vs/editor/common/diff/defaultLinesDiffComputer/algorithms/dynamicProgrammingDiffing*/,31/*vs/editor/common/diff/defaultLinesDiffComputer/algorithms/myersDiffAlgorithm*/,48/*vs/editor/common/diff/defaultLinesDiffComputer/computeMovedLines*/,45/*vs/editor/common/diff/defaultLinesDiffComputer/heuristicSequenceOptimizations*/,46/*vs/editor/common/diff/defaultLinesDiffComputer/lineSequence*/,32/*vs/editor/common/diff/defaultLinesDiffComputer/linesSliceCharSequence*/,33/*vs/editor/common/diff/linesDiffComputer*/,16/*vs/editor/common/diff/rangeMapping*/]), function (require, exports, arrays_1, assert_1, lineRange_1, offsetRange_1, range_1, diffAlgorithm_1, dynamicProgrammingDiffing_1, myersDiffAlgorithm_1, computeMovedLines_1, heuristicSequenceOptimizations_1, lineSequence_1, linesSliceCharSequence_1, linesDiffComputer_1, rangeMapping_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.getLineRangeMapping = exports.lineRangeMappingFromRangeMappings = exports.DefaultLinesDiffComputer = void 0;
+    exports.DefaultLinesDiffComputer = void 0;
+    exports.lineRangeMappingFromRangeMappings = lineRangeMappingFromRangeMappings;
+    exports.getLineRangeMapping = getLineRangeMapping;
     class DefaultLinesDiffComputer {
         constructor() {
             this.dynamicProgrammingDiffing = new dynamicProgrammingDiffing_1.DynamicProgrammingDiffing();
@@ -12801,8 +12985,11 @@ define(__m[47/*vs/editor/common/diff/defaultLinesDiffComputer/defaultLinesDiffCo
             changes.push(new rangeMapping_1.DetailedLineRangeMapping(first.original.join(last.original), first.modified.join(last.modified), g.map(a => a.innerChanges[0])));
         }
         (0, assert_1.assertFn)(() => {
-            if (!dontAssertStartLine) {
-                if (changes.length > 0 && changes[0].original.startLineNumber !== changes[0].modified.startLineNumber) {
+            if (!dontAssertStartLine && changes.length > 0) {
+                if (changes[0].modified.startLineNumber !== changes[0].original.startLineNumber) {
+                    return false;
+                }
+                if (modifiedLines.length - changes[changes.length - 1].modified.endLineNumberExclusive !== originalLines.length - changes[changes.length - 1].original.endLineNumberExclusive) {
                     return false;
                 }
             }
@@ -12813,7 +13000,6 @@ define(__m[47/*vs/editor/common/diff/defaultLinesDiffComputer/defaultLinesDiffCo
         });
         return changes;
     }
-    exports.lineRangeMappingFromRangeMappings = lineRangeMappingFromRangeMappings;
     function getLineRangeMapping(rangeMapping, originalLines, modifiedLines) {
         let lineStartDelta = 0;
         let lineEndDelta = 0;
@@ -12839,14 +13025,13 @@ define(__m[47/*vs/editor/common/diff/defaultLinesDiffComputer/defaultLinesDiffCo
         const modifiedLineRange = new lineRange_1.LineRange(rangeMapping.modifiedRange.startLineNumber + lineStartDelta, rangeMapping.modifiedRange.endLineNumber + 1 + lineEndDelta);
         return new rangeMapping_1.DetailedLineRangeMapping(originalLineRange, modifiedLineRange, [rangeMapping]);
     }
-    exports.getLineRangeMapping = getLineRangeMapping;
 });
 
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-define(__m[48/*vs/editor/common/diff/legacyLinesDiffComputer*/], __M([0/*require*/,1/*exports*/,24/*vs/base/common/diff/diff*/,31/*vs/editor/common/diff/linesDiffComputer*/,16/*vs/editor/common/diff/rangeMapping*/,6/*vs/base/common/strings*/,2/*vs/editor/common/core/range*/,12/*vs/base/common/assert*/,10/*vs/editor/common/core/lineRange*/]), function (require, exports, diff_1, linesDiffComputer_1, rangeMapping_1, strings, range_1, assert_1, lineRange_1) {
+define(__m[50/*vs/editor/common/diff/legacyLinesDiffComputer*/], __M([0/*require*/,1/*exports*/,25/*vs/base/common/diff/diff*/,33/*vs/editor/common/diff/linesDiffComputer*/,16/*vs/editor/common/diff/rangeMapping*/,6/*vs/base/common/strings*/,2/*vs/editor/common/core/range*/,12/*vs/base/common/assert*/,10/*vs/editor/common/core/lineRange*/]), function (require, exports, diff_1, linesDiffComputer_1, rangeMapping_1, strings, range_1, assert_1, lineRange_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.DiffComputer = exports.LegacyLinesDiffComputer = void 0;
@@ -13313,7 +13498,7 @@ define(__m[48/*vs/editor/common/diff/legacyLinesDiffComputer*/], __M([0/*require
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-define(__m[49/*vs/editor/common/diff/linesDiffComputers*/], __M([0/*require*/,1/*exports*/,48/*vs/editor/common/diff/legacyLinesDiffComputer*/,47/*vs/editor/common/diff/defaultLinesDiffComputer/defaultLinesDiffComputer*/]), function (require, exports, legacyLinesDiffComputer_1, defaultLinesDiffComputer_1) {
+define(__m[51/*vs/editor/common/diff/linesDiffComputers*/], __M([0/*require*/,1/*exports*/,50/*vs/editor/common/diff/legacyLinesDiffComputer*/,49/*vs/editor/common/diff/defaultLinesDiffComputer/defaultLinesDiffComputer*/]), function (require, exports, legacyLinesDiffComputer_1, defaultLinesDiffComputer_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.linesDiffComputers = void 0;
@@ -13323,10 +13508,10 @@ define(__m[49/*vs/editor/common/diff/linesDiffComputers*/], __M([0/*require*/,1/
     };
 });
 
-define(__m[50/*vs/editor/common/languages/defaultDocumentColorsComputer*/], __M([0/*require*/,1/*exports*/,33/*vs/base/common/color*/]), function (require, exports, color_1) {
+define(__m[52/*vs/editor/common/languages/defaultDocumentColorsComputer*/], __M([0/*require*/,1/*exports*/,35/*vs/base/common/color*/]), function (require, exports, color_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.computeDefaultDocumentColors = void 0;
+    exports.computeDefaultDocumentColors = computeDefaultDocumentColors;
     function _parseCaptureGroups(captureGroups) {
         const values = [];
         for (const captureGroup of captureGroups) {
@@ -13457,17 +13642,17 @@ define(__m[50/*vs/editor/common/languages/defaultDocumentColorsComputer*/], __M(
         }
         return computeColors(model);
     }
-    exports.computeDefaultDocumentColors = computeDefaultDocumentColors;
 });
 
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-define(__m[51/*vs/editor/common/languages/linkComputer*/], __M([0/*require*/,1/*exports*/,27/*vs/editor/common/core/characterClassifier*/]), function (require, exports, characterClassifier_1) {
+define(__m[53/*vs/editor/common/languages/linkComputer*/], __M([0/*require*/,1/*exports*/,29/*vs/editor/common/core/characterClassifier*/]), function (require, exports, characterClassifier_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.computeLinks = exports.LinkComputer = exports.StateMachine = void 0;
+    exports.LinkComputer = exports.StateMachine = void 0;
+    exports.computeLinks = computeLinks;
     class Uint8Matrix {
         constructor(rows, cols, defaultValue) {
             const data = new Uint8Array(rows * cols);
@@ -13735,14 +13920,13 @@ define(__m[51/*vs/editor/common/languages/linkComputer*/], __M([0/*require*/,1/*
         }
         return LinkComputer.computeLinks(model);
     }
-    exports.computeLinks = computeLinks;
 });
 
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-define(__m[52/*vs/editor/common/languages/supports/inplaceReplaceSupport*/], __M([0/*require*/,1/*exports*/]), function (require, exports) {
+define(__m[54/*vs/editor/common/languages/supports/inplaceReplaceSupport*/], __M([0/*require*/,1/*exports*/]), function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.BasicInplaceReplace = void 0;
@@ -13834,10 +14018,12 @@ define(__m[52/*vs/editor/common/languages/supports/inplaceReplaceSupport*/], __M
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-define(__m[53/*vs/editor/common/model*/], __M([0/*require*/,1/*exports*/,14/*vs/base/common/objects*/]), function (require, exports, objects_1) {
+define(__m[55/*vs/editor/common/model*/], __M([0/*require*/,1/*exports*/,14/*vs/base/common/objects*/]), function (require, exports, objects_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.shouldSynchronizeModel = exports.ApplyEditsResult = exports.SearchData = exports.ValidAnnotatedEditOperation = exports.isITextSnapshot = exports.FindMatch = exports.TextModelResolvedOptions = exports.InjectedTextCursorStops = exports.MinimapPosition = exports.GlyphMarginLane = exports.OverviewRulerLane = void 0;
+    exports.ApplyEditsResult = exports.SearchData = exports.ValidAnnotatedEditOperation = exports.FindMatch = exports.TextModelResolvedOptions = exports.InjectedTextCursorStops = exports.GlyphMarginLane = exports.OverviewRulerLane = void 0;
+    exports.isITextSnapshot = isITextSnapshot;
+    exports.shouldSynchronizeModel = shouldSynchronizeModel;
     /**
      * Vertical Lane in the overview ruler of the editor.
      */
@@ -13857,14 +14043,6 @@ define(__m[53/*vs/editor/common/model*/], __M([0/*require*/,1/*exports*/,14/*vs/
         GlyphMarginLane[GlyphMarginLane["Center"] = 2] = "Center";
         GlyphMarginLane[GlyphMarginLane["Right"] = 3] = "Right";
     })(GlyphMarginLane || (exports.GlyphMarginLane = GlyphMarginLane = {}));
-    /**
-     * Position in the minimap to render the decoration.
-     */
-    var MinimapPosition;
-    (function (MinimapPosition) {
-        MinimapPosition[MinimapPosition["Inline"] = 1] = "Inline";
-        MinimapPosition[MinimapPosition["Gutter"] = 2] = "Gutter";
-    })(MinimapPosition || (exports.MinimapPosition = MinimapPosition = {}));
     var InjectedTextCursorStops;
     (function (InjectedTextCursorStops) {
         InjectedTextCursorStops[InjectedTextCursorStops["Both"] = 0] = "Both";
@@ -13937,7 +14115,6 @@ define(__m[53/*vs/editor/common/model*/], __M([0/*require*/,1/*exports*/,14/*vs/
     function isITextSnapshot(obj) {
         return (obj && typeof obj.read === 'function');
     }
-    exports.isITextSnapshot = isITextSnapshot;
     /**
      * @internal
      */
@@ -13980,14 +14157,13 @@ define(__m[53/*vs/editor/common/model*/], __M([0/*require*/,1/*exports*/,14/*vs/
     function shouldSynchronizeModel(model) {
         return (!model.isTooLargeForSyncing() && !model.isForSimpleWidget);
     }
-    exports.shouldSynchronizeModel = shouldSynchronizeModel;
 });
 
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-define(__m[54/*vs/editor/common/model/prefixSumComputer*/], __M([0/*require*/,1/*exports*/,7/*vs/base/common/arrays*/,26/*vs/base/common/uint*/]), function (require, exports, arrays_1, uint_1) {
+define(__m[56/*vs/editor/common/model/prefixSumComputer*/], __M([0/*require*/,1/*exports*/,7/*vs/base/common/arrays*/,28/*vs/base/common/uint*/]), function (require, exports, arrays_1, uint_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.PrefixSumIndexOfResult = exports.ConstantTimePrefixSumComputer = exports.PrefixSumComputer = void 0;
@@ -14217,7 +14393,7 @@ define(__m[54/*vs/editor/common/model/prefixSumComputer*/], __M([0/*require*/,1/
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-define(__m[55/*vs/editor/common/model/mirrorTextModel*/], __M([0/*require*/,1/*exports*/,6/*vs/base/common/strings*/,4/*vs/editor/common/core/position*/,54/*vs/editor/common/model/prefixSumComputer*/]), function (require, exports, strings_1, position_1, prefixSumComputer_1) {
+define(__m[57/*vs/editor/common/model/mirrorTextModel*/], __M([0/*require*/,1/*exports*/,6/*vs/base/common/strings*/,4/*vs/editor/common/core/position*/,56/*vs/editor/common/model/prefixSumComputer*/]), function (require, exports, strings_1, position_1, prefixSumComputer_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.MirrorTextModel = void 0;
@@ -14335,10 +14511,13 @@ define(__m[55/*vs/editor/common/model/mirrorTextModel*/], __M([0/*require*/,1/*e
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-define(__m[56/*vs/editor/common/model/textModelSearch*/], __M([0/*require*/,1/*exports*/,6/*vs/base/common/strings*/,42/*vs/editor/common/core/wordCharacterClassifier*/,4/*vs/editor/common/core/position*/,2/*vs/editor/common/core/range*/,53/*vs/editor/common/model*/]), function (require, exports, strings, wordCharacterClassifier_1, position_1, range_1, model_1) {
+define(__m[58/*vs/editor/common/model/textModelSearch*/], __M([0/*require*/,1/*exports*/,6/*vs/base/common/strings*/,44/*vs/editor/common/core/wordCharacterClassifier*/,4/*vs/editor/common/core/position*/,2/*vs/editor/common/core/range*/,55/*vs/editor/common/model*/]), function (require, exports, strings, wordCharacterClassifier_1, position_1, range_1, model_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.Searcher = exports.isValidMatch = exports.TextModelSearch = exports.createFindMatch = exports.isMultilineRegexSource = exports.SearchParams = void 0;
+    exports.Searcher = exports.TextModelSearch = exports.SearchParams = void 0;
+    exports.isMultilineRegexSource = isMultilineRegexSource;
+    exports.createFindMatch = createFindMatch;
+    exports.isValidMatch = isValidMatch;
     const LIMIT_FIND_COUNT = 999;
     class SearchParams {
         constructor(searchString, isRegex, matchCase, wordSeparators) {
@@ -14380,7 +14559,7 @@ define(__m[56/*vs/editor/common/model/textModelSearch*/], __M([0/*require*/,1/*e
                 // casing might make a difference
                 canUseSimpleSearch = this.matchCase;
             }
-            return new model_1.SearchData(regex, this.wordSeparators ? (0, wordCharacterClassifier_1.getMapForWordSeparators)(this.wordSeparators) : null, canUseSimpleSearch ? this.searchString : null);
+            return new model_1.SearchData(regex, this.wordSeparators ? (0, wordCharacterClassifier_1.getMapForWordSeparators)(this.wordSeparators, []) : null, canUseSimpleSearch ? this.searchString : null);
         }
     }
     exports.SearchParams = SearchParams;
@@ -14408,7 +14587,6 @@ define(__m[56/*vs/editor/common/model/textModelSearch*/], __M([0/*require*/,1/*e
         }
         return false;
     }
-    exports.isMultilineRegexSource = isMultilineRegexSource;
     function createFindMatch(range, rawMatches, captureMatches) {
         if (!captureMatches) {
             return new model_1.FindMatch(range, null);
@@ -14419,7 +14597,6 @@ define(__m[56/*vs/editor/common/model/textModelSearch*/], __M([0/*require*/,1/*e
         }
         return new model_1.FindMatch(range, matches);
     }
-    exports.createFindMatch = createFindMatch;
     class LineFeedCounter {
         constructor(text) {
             const lineFeedsOffsets = [];
@@ -14736,7 +14913,6 @@ define(__m[56/*vs/editor/common/model/textModelSearch*/], __M([0/*require*/,1/*e
         return (leftIsWordBounday(wordSeparators, text, textLength, matchStartIndex, matchLength)
             && rightIsWordBounday(wordSeparators, text, textLength, matchStartIndex, matchLength));
     }
-    exports.isValidMatch = isValidMatch;
     class Searcher {
         constructor(wordSeparators, searchRegex) {
             this._wordSeparators = wordSeparators;
@@ -14794,7 +14970,95 @@ define(__m[56/*vs/editor/common/model/textModelSearch*/], __M([0/*require*/,1/*e
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-define(__m[57/*vs/editor/common/services/unicodeTextModelHighlighter*/], __M([0/*require*/,1/*exports*/,2/*vs/editor/common/core/range*/,56/*vs/editor/common/model/textModelSearch*/,6/*vs/base/common/strings*/,12/*vs/base/common/assert*/,28/*vs/editor/common/core/wordHelper*/]), function (require, exports, range_1, textModelSearch_1, strings, assert_1, wordHelper_1) {
+define(__m[59/*vs/editor/common/services/findSectionHeaders*/], __M([0/*require*/,1/*exports*/]), function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.findSectionHeaders = findSectionHeaders;
+    const markRegex = /\bMARK:\s*(.*)$/d;
+    const trimDashesRegex = /^-+|-+$/g;
+    /**
+     * Find section headers in the model.
+     *
+     * @param model the text model to search in
+     * @param options options to search with
+     * @returns an array of section headers
+     */
+    function findSectionHeaders(model, options) {
+        var _a;
+        let headers = [];
+        if (options.findRegionSectionHeaders && ((_a = options.foldingRules) === null || _a === void 0 ? void 0 : _a.markers)) {
+            const regionHeaders = collectRegionHeaders(model, options);
+            headers = headers.concat(regionHeaders);
+        }
+        if (options.findMarkSectionHeaders) {
+            const markHeaders = collectMarkHeaders(model);
+            headers = headers.concat(markHeaders);
+        }
+        return headers;
+    }
+    function collectRegionHeaders(model, options) {
+        const regionHeaders = [];
+        const endLineNumber = model.getLineCount();
+        for (let lineNumber = 1; lineNumber <= endLineNumber; lineNumber++) {
+            const lineContent = model.getLineContent(lineNumber);
+            const match = lineContent.match(options.foldingRules.markers.start);
+            if (match) {
+                const range = { startLineNumber: lineNumber, startColumn: match[0].length + 1, endLineNumber: lineNumber, endColumn: lineContent.length + 1 };
+                if (range.endColumn > range.startColumn) {
+                    const sectionHeader = {
+                        range,
+                        ...getHeaderText(lineContent.substring(match[0].length)),
+                        shouldBeInComments: false
+                    };
+                    if (sectionHeader.text || sectionHeader.hasSeparatorLine) {
+                        regionHeaders.push(sectionHeader);
+                    }
+                }
+            }
+        }
+        return regionHeaders;
+    }
+    function collectMarkHeaders(model) {
+        const markHeaders = [];
+        const endLineNumber = model.getLineCount();
+        for (let lineNumber = 1; lineNumber <= endLineNumber; lineNumber++) {
+            const lineContent = model.getLineContent(lineNumber);
+            addMarkHeaderIfFound(lineContent, lineNumber, markHeaders);
+        }
+        return markHeaders;
+    }
+    function addMarkHeaderIfFound(lineContent, lineNumber, sectionHeaders) {
+        markRegex.lastIndex = 0;
+        const match = markRegex.exec(lineContent);
+        if (match) {
+            const column = match.indices[1][0] + 1;
+            const endColumn = match.indices[1][1] + 1;
+            const range = { startLineNumber: lineNumber, startColumn: column, endLineNumber: lineNumber, endColumn: endColumn };
+            if (range.endColumn > range.startColumn) {
+                const sectionHeader = {
+                    range,
+                    ...getHeaderText(match[1]),
+                    shouldBeInComments: true
+                };
+                if (sectionHeader.text || sectionHeader.hasSeparatorLine) {
+                    sectionHeaders.push(sectionHeader);
+                }
+            }
+        }
+    }
+    function getHeaderText(text) {
+        text = text.trim();
+        const hasSeparatorLine = text.startsWith('-');
+        text = text.replace(trimDashesRegex, '');
+        return { text, hasSeparatorLine };
+    }
+});
+
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+define(__m[60/*vs/editor/common/services/unicodeTextModelHighlighter*/], __M([0/*require*/,1/*exports*/,2/*vs/editor/common/core/range*/,58/*vs/editor/common/model/textModelSearch*/,6/*vs/base/common/strings*/,12/*vs/base/common/assert*/,30/*vs/editor/common/core/wordHelper*/]), function (require, exports, range_1, textModelSearch_1, strings, assert_1, wordHelper_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.UnicodeTextModelHighlighter = void 0;
@@ -14981,10 +15245,10 @@ define(__m[57/*vs/editor/common/services/unicodeTextModelHighlighter*/], __M([0/
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-define(__m[58/*vs/editor/common/standalone/standaloneEnums*/], __M([0/*require*/,1/*exports*/]), function (require, exports) {
+define(__m[61/*vs/editor/common/standalone/standaloneEnums*/], __M([0/*require*/,1/*exports*/]), function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.WrappingIndent = exports.TrackedRangeStickiness = exports.TextEditorCursorStyle = exports.TextEditorCursorBlinkingStyle = exports.SymbolTag = exports.SymbolKind = exports.SignatureHelpTriggerKind = exports.ShowLightbulbIconMode = exports.SelectionDirection = exports.ScrollbarVisibility = exports.ScrollType = exports.RenderMinimap = exports.RenderLineNumbersType = exports.PositionAffinity = exports.OverviewRulerLane = exports.OverlayWidgetPositionPreference = exports.NewSymbolNameTag = exports.MouseTargetType = exports.MinimapPosition = exports.MarkerTag = exports.MarkerSeverity = exports.KeyCode = exports.InlineEditTriggerKind = exports.InlineCompletionTriggerKind = exports.InlayHintKind = exports.InjectedTextCursorStops = exports.IndentAction = exports.GlyphMarginLane = exports.EndOfLineSequence = exports.EndOfLinePreference = exports.EditorOption = exports.EditorAutoIndentStrategy = exports.DocumentHighlightKind = exports.DefaultEndOfLine = exports.CursorChangeReason = exports.ContentWidgetPositionPreference = exports.CompletionTriggerKind = exports.CompletionItemTag = exports.CompletionItemKind = exports.CompletionItemInsertTextRule = exports.CodeActionTriggerType = exports.AccessibilitySupport = void 0;
+    exports.WrappingIndent = exports.TrackedRangeStickiness = exports.TextEditorCursorStyle = exports.TextEditorCursorBlinkingStyle = exports.SymbolTag = exports.SymbolKind = exports.SignatureHelpTriggerKind = exports.ShowLightbulbIconMode = exports.SelectionDirection = exports.ScrollbarVisibility = exports.ScrollType = exports.RenderMinimap = exports.RenderLineNumbersType = exports.PositionAffinity = exports.PartialAcceptTriggerKind = exports.OverviewRulerLane = exports.OverlayWidgetPositionPreference = exports.NewSymbolNameTag = exports.MouseTargetType = exports.MinimapSectionHeaderStyle = exports.MinimapPosition = exports.MarkerTag = exports.MarkerSeverity = exports.KeyCode = exports.InlineEditTriggerKind = exports.InlineCompletionTriggerKind = exports.InlayHintKind = exports.InjectedTextCursorStops = exports.IndentAction = exports.GlyphMarginLane = exports.EndOfLineSequence = exports.EndOfLinePreference = exports.EditorOption = exports.EditorAutoIndentStrategy = exports.DocumentHighlightKind = exports.DefaultEndOfLine = exports.CursorChangeReason = exports.ContentWidgetPositionPreference = exports.CompletionTriggerKind = exports.CompletionItemTag = exports.CompletionItemKind = exports.CompletionItemInsertTextRule = exports.CodeActionTriggerType = exports.AccessibilitySupport = void 0;
     // THIS IS A GENERATED FILE. DO NOT EDIT DIRECTLY.
     var AccessibilitySupport;
     (function (AccessibilitySupport) {
@@ -15284,25 +15548,26 @@ define(__m[58/*vs/editor/common/standalone/standaloneEnums*/], __M([0/*require*/
         EditorOption[EditorOption["useShadowDOM"] = 127] = "useShadowDOM";
         EditorOption[EditorOption["useTabStops"] = 128] = "useTabStops";
         EditorOption[EditorOption["wordBreak"] = 129] = "wordBreak";
-        EditorOption[EditorOption["wordSeparators"] = 130] = "wordSeparators";
-        EditorOption[EditorOption["wordWrap"] = 131] = "wordWrap";
-        EditorOption[EditorOption["wordWrapBreakAfterCharacters"] = 132] = "wordWrapBreakAfterCharacters";
-        EditorOption[EditorOption["wordWrapBreakBeforeCharacters"] = 133] = "wordWrapBreakBeforeCharacters";
-        EditorOption[EditorOption["wordWrapColumn"] = 134] = "wordWrapColumn";
-        EditorOption[EditorOption["wordWrapOverride1"] = 135] = "wordWrapOverride1";
-        EditorOption[EditorOption["wordWrapOverride2"] = 136] = "wordWrapOverride2";
-        EditorOption[EditorOption["wrappingIndent"] = 137] = "wrappingIndent";
-        EditorOption[EditorOption["wrappingStrategy"] = 138] = "wrappingStrategy";
-        EditorOption[EditorOption["showDeprecated"] = 139] = "showDeprecated";
-        EditorOption[EditorOption["inlayHints"] = 140] = "inlayHints";
-        EditorOption[EditorOption["editorClassName"] = 141] = "editorClassName";
-        EditorOption[EditorOption["pixelRatio"] = 142] = "pixelRatio";
-        EditorOption[EditorOption["tabFocusMode"] = 143] = "tabFocusMode";
-        EditorOption[EditorOption["layoutInfo"] = 144] = "layoutInfo";
-        EditorOption[EditorOption["wrappingInfo"] = 145] = "wrappingInfo";
-        EditorOption[EditorOption["defaultColorDecorators"] = 146] = "defaultColorDecorators";
-        EditorOption[EditorOption["colorDecoratorsActivatedOn"] = 147] = "colorDecoratorsActivatedOn";
-        EditorOption[EditorOption["inlineCompletionsAccessibilityVerbose"] = 148] = "inlineCompletionsAccessibilityVerbose";
+        EditorOption[EditorOption["wordSegmenterLocales"] = 130] = "wordSegmenterLocales";
+        EditorOption[EditorOption["wordSeparators"] = 131] = "wordSeparators";
+        EditorOption[EditorOption["wordWrap"] = 132] = "wordWrap";
+        EditorOption[EditorOption["wordWrapBreakAfterCharacters"] = 133] = "wordWrapBreakAfterCharacters";
+        EditorOption[EditorOption["wordWrapBreakBeforeCharacters"] = 134] = "wordWrapBreakBeforeCharacters";
+        EditorOption[EditorOption["wordWrapColumn"] = 135] = "wordWrapColumn";
+        EditorOption[EditorOption["wordWrapOverride1"] = 136] = "wordWrapOverride1";
+        EditorOption[EditorOption["wordWrapOverride2"] = 137] = "wordWrapOverride2";
+        EditorOption[EditorOption["wrappingIndent"] = 138] = "wrappingIndent";
+        EditorOption[EditorOption["wrappingStrategy"] = 139] = "wrappingStrategy";
+        EditorOption[EditorOption["showDeprecated"] = 140] = "showDeprecated";
+        EditorOption[EditorOption["inlayHints"] = 141] = "inlayHints";
+        EditorOption[EditorOption["editorClassName"] = 142] = "editorClassName";
+        EditorOption[EditorOption["pixelRatio"] = 143] = "pixelRatio";
+        EditorOption[EditorOption["tabFocusMode"] = 144] = "tabFocusMode";
+        EditorOption[EditorOption["layoutInfo"] = 145] = "layoutInfo";
+        EditorOption[EditorOption["wrappingInfo"] = 146] = "wrappingInfo";
+        EditorOption[EditorOption["defaultColorDecorators"] = 147] = "defaultColorDecorators";
+        EditorOption[EditorOption["colorDecoratorsActivatedOn"] = 148] = "colorDecoratorsActivatedOn";
+        EditorOption[EditorOption["inlineCompletionsAccessibilityVerbose"] = 149] = "inlineCompletionsAccessibilityVerbose";
     })(EditorOption || (exports.EditorOption = EditorOption = {}));
     /**
      * End of line character preference.
@@ -15628,6 +15893,14 @@ define(__m[58/*vs/editor/common/standalone/standaloneEnums*/], __M([0/*require*/
         MinimapPosition[MinimapPosition["Gutter"] = 2] = "Gutter";
     })(MinimapPosition || (exports.MinimapPosition = MinimapPosition = {}));
     /**
+     * Section header style.
+     */
+    var MinimapSectionHeaderStyle;
+    (function (MinimapSectionHeaderStyle) {
+        MinimapSectionHeaderStyle[MinimapSectionHeaderStyle["Normal"] = 1] = "Normal";
+        MinimapSectionHeaderStyle[MinimapSectionHeaderStyle["Underlined"] = 2] = "Underlined";
+    })(MinimapSectionHeaderStyle || (exports.MinimapSectionHeaderStyle = MinimapSectionHeaderStyle = {}));
+    /**
      * Type of hit element with the mouse in the editor.
      */
     var MouseTargetType;
@@ -15721,6 +15994,15 @@ define(__m[58/*vs/editor/common/standalone/standaloneEnums*/], __M([0/*require*/
         OverviewRulerLane[OverviewRulerLane["Right"] = 4] = "Right";
         OverviewRulerLane[OverviewRulerLane["Full"] = 7] = "Full";
     })(OverviewRulerLane || (exports.OverviewRulerLane = OverviewRulerLane = {}));
+    /**
+     * How a partial acceptance was triggered.
+     */
+    var PartialAcceptTriggerKind;
+    (function (PartialAcceptTriggerKind) {
+        PartialAcceptTriggerKind[PartialAcceptTriggerKind["Word"] = 0] = "Word";
+        PartialAcceptTriggerKind[PartialAcceptTriggerKind["Line"] = 1] = "Line";
+        PartialAcceptTriggerKind[PartialAcceptTriggerKind["Suggest"] = 2] = "Suggest";
+    })(PartialAcceptTriggerKind || (exports.PartialAcceptTriggerKind = PartialAcceptTriggerKind = {}));
     var PositionAffinity;
     (function (PositionAffinity) {
         /**
@@ -15930,7 +16212,7 @@ define(__m[58/*vs/editor/common/standalone/standaloneEnums*/], __M([0/*require*/
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-define(__m[59/*vs/editor/common/tokenizationRegistry*/], __M([0/*require*/,1/*exports*/,9/*vs/base/common/event*/,13/*vs/base/common/lifecycle*/]), function (require, exports, event_1, lifecycle_1) {
+define(__m[62/*vs/editor/common/tokenizationRegistry*/], __M([0/*require*/,1/*exports*/,9/*vs/base/common/event*/,13/*vs/base/common/lifecycle*/]), function (require, exports, event_1, lifecycle_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.TokenizationRegistry = void 0;
@@ -16052,12 +16334,13 @@ define(__m[59/*vs/editor/common/tokenizationRegistry*/], __M([0/*require*/,1/*ex
     }
 });
 
-define(__m[60/*vs/nls!vs/base/common/platform*/], __M([19/*vs/nls*/,61/*vs/nls!vs/base/common/worker/simpleWorker*/]), function(nls, data) { return nls.create("vs/base/common/platform", data); });
-define(__m[17/*vs/base/common/platform*/], __M([0/*require*/,1/*exports*/,60/*vs/nls!vs/base/common/platform*/]), function (require, exports, nls) {
+define(__m[63/*vs/nls!vs/base/common/platform*/], __M([19/*vs/nls*/,64/*vs/nls!vs/base/common/worker/simpleWorker*/]), function(nls, data) { return nls.create("vs/base/common/platform", data); });
+define(__m[17/*vs/base/common/platform*/], __M([0/*require*/,1/*exports*/,63/*vs/nls!vs/base/common/platform*/]), function (require, exports, nls) {
     "use strict";
-    var _a;
+    var _a, _b;
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.isAndroid = exports.isEdge = exports.isSafari = exports.isFirefox = exports.isChrome = exports.isLittleEndian = exports.OS = exports.setTimeout0 = exports.setTimeout0IsFaster = exports.language = exports.userAgent = exports.isMobile = exports.isIOS = exports.webWorkerOrigin = exports.isWebWorker = exports.isWeb = exports.isNative = exports.isLinux = exports.isMacintosh = exports.isWindows = exports.LANGUAGE_DEFAULT = void 0;
+    exports.isAndroid = exports.isEdge = exports.isSafari = exports.isFirefox = exports.isChrome = exports.OS = exports.setTimeout0 = exports.setTimeout0IsFaster = exports.language = exports.userAgent = exports.isMobile = exports.isIOS = exports.webWorkerOrigin = exports.isWebWorker = exports.isWeb = exports.isNative = exports.isLinux = exports.isMacintosh = exports.isWindows = exports.LANGUAGE_DEFAULT = void 0;
+    exports.isLittleEndian = isLittleEndian;
     exports.LANGUAGE_DEFAULT = 'en';
     let _isWindows = false;
     let _isMacintosh = false;
@@ -16080,11 +16363,11 @@ define(__m[17/*vs/base/common/platform*/], __M([0/*require*/,1/*exports*/,60/*vs
         // Native environment (sandboxed)
         nodeProcess = $globalThis.vscode.process;
     }
-    else if (typeof process !== 'undefined') {
+    else if (typeof process !== 'undefined' && typeof ((_a = process === null || process === void 0 ? void 0 : process.versions) === null || _a === void 0 ? void 0 : _a.node) === 'string') {
         // Native environment (non-sandboxed)
         nodeProcess = process;
     }
-    const isElectronProcess = typeof ((_a = nodeProcess === null || nodeProcess === void 0 ? void 0 : nodeProcess.versions) === null || _a === void 0 ? void 0 : _a.electron) === 'string';
+    const isElectronProcess = typeof ((_b = nodeProcess === null || nodeProcess === void 0 ? void 0 : nodeProcess.versions) === null || _b === void 0 ? void 0 : _b.electron) === 'string';
     const isElectronRenderer = isElectronProcess && (nodeProcess === null || nodeProcess === void 0 ? void 0 : nodeProcess.type) === 'renderer';
     // Native environment
     if (typeof nodeProcess === 'object') {
@@ -16209,7 +16492,6 @@ define(__m[17/*vs/base/common/platform*/], __M([0/*require*/,1/*exports*/,60/*vs
         }
         return _isLittleEndian;
     }
-    exports.isLittleEndian = isLittleEndian;
     exports.isChrome = !!(exports.userAgent && exports.userAgent.indexOf('Chrome') >= 0);
     exports.isFirefox = !!(exports.userAgent && exports.userAgent.indexOf('Firefox') >= 0);
     exports.isSafari = !!(!exports.isChrome && (exports.userAgent && exports.userAgent.indexOf('Safari') >= 0));
@@ -16221,7 +16503,7 @@ define(__m[17/*vs/base/common/platform*/], __M([0/*require*/,1/*exports*/,60/*vs
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-define(__m[62/*vs/base/common/process*/], __M([0/*require*/,1/*exports*/,17/*vs/base/common/platform*/]), function (require, exports, platform_1) {
+define(__m[65/*vs/base/common/process*/], __M([0/*require*/,1/*exports*/,17/*vs/base/common/platform*/]), function (require, exports, platform_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.platform = exports.env = exports.cwd = void 0;
@@ -16284,7 +16566,7 @@ define(__m[62/*vs/base/common/process*/], __M([0/*require*/,1/*exports*/,17/*vs/
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-define(__m[63/*vs/base/common/path*/], __M([0/*require*/,1/*exports*/,62/*vs/base/common/process*/]), function (require, exports, process) {
+define(__m[66/*vs/base/common/path*/], __M([0/*require*/,1/*exports*/,65/*vs/base/common/process*/]), function (require, exports, process) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.sep = exports.extname = exports.basename = exports.dirname = exports.relative = exports.resolve = exports.normalize = exports.posix = exports.win32 = void 0;
@@ -17658,10 +17940,11 @@ define(__m[63/*vs/base/common/path*/], __M([0/*require*/,1/*exports*/,62/*vs/bas
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-define(__m[18/*vs/base/common/uri*/], __M([0/*require*/,1/*exports*/,63/*vs/base/common/path*/,17/*vs/base/common/platform*/]), function (require, exports, paths, platform_1) {
+define(__m[18/*vs/base/common/uri*/], __M([0/*require*/,1/*exports*/,66/*vs/base/common/path*/,17/*vs/base/common/platform*/]), function (require, exports, paths, platform_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.uriToFsPath = exports.URI = void 0;
+    exports.URI = void 0;
+    exports.uriToFsPath = uriToFsPath;
     const _schemePattern = /^\w[\w\d+.-]*$/;
     const _singleSlashStart = /^\//;
     const _doubleSlashStart = /^\/\//;
@@ -18166,7 +18449,6 @@ define(__m[18/*vs/base/common/uri*/], __M([0/*require*/,1/*exports*/,63/*vs/base
         }
         return value;
     }
-    exports.uriToFsPath = uriToFsPath;
     /**
      * Create the external version of a uri
      */
@@ -18267,10 +18549,12 @@ define(__m[18/*vs/base/common/uri*/], __M([0/*require*/,1/*exports*/,63/*vs/base
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-define(__m[67/*vs/base/common/worker/simpleWorker*/], __M([0/*require*/,1/*exports*/,5/*vs/base/common/errors*/,9/*vs/base/common/event*/,13/*vs/base/common/lifecycle*/,14/*vs/base/common/objects*/,17/*vs/base/common/platform*/,6/*vs/base/common/strings*/]), function (require, exports, errors_1, event_1, lifecycle_1, objects_1, platform_1, strings) {
+define(__m[70/*vs/base/common/worker/simpleWorker*/], __M([0/*require*/,1/*exports*/,5/*vs/base/common/errors*/,9/*vs/base/common/event*/,13/*vs/base/common/lifecycle*/,14/*vs/base/common/objects*/,17/*vs/base/common/platform*/,6/*vs/base/common/strings*/]), function (require, exports, errors_1, event_1, lifecycle_1, objects_1, platform_1, strings) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.create = exports.SimpleWorkerServer = exports.SimpleWorkerClient = exports.logOnceWebWorkerWarning = void 0;
+    exports.SimpleWorkerServer = exports.SimpleWorkerClient = void 0;
+    exports.logOnceWebWorkerWarning = logOnceWebWorkerWarning;
+    exports.create = create;
     const INITIALIZE = '$initialize';
     let webWorkerWarningLogged = false;
     function logOnceWebWorkerWarning(err) {
@@ -18284,7 +18568,6 @@ define(__m[67/*vs/base/common/worker/simpleWorker*/], __M([0/*require*/,1/*expor
         }
         console.warn(err.message);
     }
-    exports.logOnceWebWorkerWarning = logOnceWebWorkerWarning;
     class RequestMessage {
         constructor(vsWorker, req, method, args) {
             this.vsWorker = vsWorker;
@@ -18705,14 +18988,15 @@ define(__m[67/*vs/base/common/worker/simpleWorker*/], __M([0/*require*/,1/*expor
     function create(postMessage) {
         return new SimpleWorkerServer(postMessage, null);
     }
-    exports.create = create;
 });
 
-define(__m[64/*vs/nls!vs/editor/common/languages*/], __M([19/*vs/nls*/,61/*vs/nls!vs/base/common/worker/simpleWorker*/]), function(nls, data) { return nls.create("vs/editor/common/languages", data); });
-define(__m[65/*vs/editor/common/languages*/], __M([0/*require*/,1/*exports*/,40/*vs/base/common/codicons*/,18/*vs/base/common/uri*/,2/*vs/editor/common/core/range*/,59/*vs/editor/common/tokenizationRegistry*/,64/*vs/nls!vs/editor/common/languages*/]), function (require, exports, codicons_1, uri_1, range_1, tokenizationRegistry_1, nls_1) {
+define(__m[67/*vs/nls!vs/editor/common/languages*/], __M([19/*vs/nls*/,64/*vs/nls!vs/base/common/worker/simpleWorker*/]), function(nls, data) { return nls.create("vs/editor/common/languages", data); });
+define(__m[68/*vs/editor/common/languages*/], __M([0/*require*/,1/*exports*/,42/*vs/base/common/codicons*/,18/*vs/base/common/uri*/,2/*vs/editor/common/core/range*/,62/*vs/editor/common/tokenizationRegistry*/,67/*vs/nls!vs/editor/common/languages*/]), function (require, exports, codicons_1, uri_1, range_1, tokenizationRegistry_1, nls_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.InlineEditTriggerKind = exports.TokenizationRegistry = exports.LazyTokenizationSupport = exports.InlayHintKind = exports.Command = exports.NewSymbolNameTag = exports.FoldingRangeKind = exports.TextEdit = exports.SymbolKinds = exports.getAriaLabelForSymbol = exports.symbolKindNames = exports.isLocationLink = exports.DocumentHighlightKind = exports.SignatureHelpTriggerKind = exports.SelectedSuggestionInfo = exports.InlineCompletionTriggerKind = exports.CompletionItemKinds = exports.EncodedTokenizationResult = exports.TokenizationResult = exports.Token = void 0;
+    exports.InlineEditTriggerKind = exports.TokenizationRegistry = exports.LazyTokenizationSupport = exports.InlayHintKind = exports.Command = exports.NewSymbolNameTag = exports.FoldingRangeKind = exports.TextEdit = exports.SymbolKinds = exports.symbolKindNames = exports.DocumentHighlightKind = exports.SignatureHelpTriggerKind = exports.DocumentPasteTriggerKind = exports.SelectedSuggestionInfo = exports.InlineCompletionTriggerKind = exports.CompletionItemKinds = exports.EncodedTokenizationResult = exports.TokenizationResult = exports.Token = void 0;
+    exports.isLocationLink = isLocationLink;
+    exports.getAriaLabelForSymbol = getAriaLabelForSymbol;
     class Token {
         constructor(offset, type, language) {
             this.offset = offset;
@@ -18875,6 +19159,14 @@ define(__m[65/*vs/editor/common/languages*/], __M([0/*require*/,1/*exports*/,40/
         }
     }
     exports.SelectedSuggestionInfo = SelectedSuggestionInfo;
+    /**
+     * @internal
+     */
+    var DocumentPasteTriggerKind;
+    (function (DocumentPasteTriggerKind) {
+        DocumentPasteTriggerKind[DocumentPasteTriggerKind["Automatic"] = 0] = "Automatic";
+        DocumentPasteTriggerKind[DocumentPasteTriggerKind["PasteAs"] = 1] = "PasteAs";
+    })(DocumentPasteTriggerKind || (exports.DocumentPasteTriggerKind = DocumentPasteTriggerKind = {}));
     var SignatureHelpTriggerKind;
     (function (SignatureHelpTriggerKind) {
         SignatureHelpTriggerKind[SignatureHelpTriggerKind["Invoke"] = 1] = "Invoke";
@@ -18908,7 +19200,6 @@ define(__m[65/*vs/editor/common/languages*/], __M([0/*require*/,1/*exports*/,40/
             && range_1.Range.isIRange(thing.range)
             && (range_1.Range.isIRange(thing.originSelectionRange) || range_1.Range.isIRange(thing.targetSelectionRange));
     }
-    exports.isLocationLink = isLocationLink;
     /**
      * @internal
      */
@@ -18946,7 +19237,6 @@ define(__m[65/*vs/editor/common/languages*/], __M([0/*require*/,1/*exports*/,40/
     function getAriaLabelForSymbol(symbolName, kind) {
         return (0, nls_1.localize)(26, null, symbolName, exports.symbolKindNames[kind]);
     }
-    exports.getAriaLabelForSymbol = getAriaLabelForSymbol;
     /**
      * @internal
      */
@@ -19099,10 +19389,11 @@ define(__m[65/*vs/editor/common/languages*/], __M([0/*require*/,1/*exports*/,40/
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-define(__m[66/*vs/editor/common/services/editorBaseApi*/], __M([0/*require*/,1/*exports*/,38/*vs/base/common/cancellation*/,9/*vs/base/common/event*/,35/*vs/base/common/keyCodes*/,18/*vs/base/common/uri*/,4/*vs/editor/common/core/position*/,2/*vs/editor/common/core/range*/,41/*vs/editor/common/core/selection*/,65/*vs/editor/common/languages*/,58/*vs/editor/common/standalone/standaloneEnums*/]), function (require, exports, cancellation_1, event_1, keyCodes_1, uri_1, position_1, range_1, selection_1, languages_1, standaloneEnums) {
+define(__m[69/*vs/editor/common/services/editorBaseApi*/], __M([0/*require*/,1/*exports*/,39/*vs/base/common/cancellation*/,9/*vs/base/common/event*/,37/*vs/base/common/keyCodes*/,18/*vs/base/common/uri*/,4/*vs/editor/common/core/position*/,2/*vs/editor/common/core/range*/,43/*vs/editor/common/core/selection*/,68/*vs/editor/common/languages*/,61/*vs/editor/common/standalone/standaloneEnums*/]), function (require, exports, cancellation_1, event_1, keyCodes_1, uri_1, position_1, range_1, selection_1, languages_1, standaloneEnums) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.createMonacoBaseAPI = exports.KeyMod = void 0;
+    exports.KeyMod = void 0;
+    exports.createMonacoBaseAPI = createMonacoBaseAPI;
     class KeyMod {
         static chord(firstPart, secondPart) {
             return (0, keyCodes_1.KeyChord)(firstPart, secondPart);
@@ -19131,17 +19422,17 @@ define(__m[66/*vs/editor/common/services/editorBaseApi*/], __M([0/*require*/,1/*
             Token: languages_1.Token
         };
     }
-    exports.createMonacoBaseAPI = createMonacoBaseAPI;
 });
 
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-define(__m[68/*vs/editor/common/services/editorSimpleWorker*/], __M([0/*require*/,1/*exports*/,24/*vs/base/common/diff/diff*/,18/*vs/base/common/uri*/,4/*vs/editor/common/core/position*/,2/*vs/editor/common/core/range*/,55/*vs/editor/common/model/mirrorTextModel*/,28/*vs/editor/common/core/wordHelper*/,51/*vs/editor/common/languages/linkComputer*/,52/*vs/editor/common/languages/supports/inplaceReplaceSupport*/,66/*vs/editor/common/services/editorBaseApi*/,23/*vs/base/common/stopwatch*/,57/*vs/editor/common/services/unicodeTextModelHighlighter*/,49/*vs/editor/common/diff/linesDiffComputers*/,14/*vs/base/common/objects*/,50/*vs/editor/common/languages/defaultDocumentColorsComputer*/]), function (require, exports, diff_1, uri_1, position_1, range_1, mirrorTextModel_1, wordHelper_1, linkComputer_1, inplaceReplaceSupport_1, editorBaseApi_1, stopwatch_1, unicodeTextModelHighlighter_1, linesDiffComputers_1, objects_1, defaultDocumentColorsComputer_1) {
+define(__m[71/*vs/editor/common/services/editorSimpleWorker*/], __M([0/*require*/,1/*exports*/,25/*vs/base/common/diff/diff*/,18/*vs/base/common/uri*/,4/*vs/editor/common/core/position*/,2/*vs/editor/common/core/range*/,57/*vs/editor/common/model/mirrorTextModel*/,30/*vs/editor/common/core/wordHelper*/,53/*vs/editor/common/languages/linkComputer*/,54/*vs/editor/common/languages/supports/inplaceReplaceSupport*/,69/*vs/editor/common/services/editorBaseApi*/,24/*vs/base/common/stopwatch*/,60/*vs/editor/common/services/unicodeTextModelHighlighter*/,51/*vs/editor/common/diff/linesDiffComputers*/,14/*vs/base/common/objects*/,52/*vs/editor/common/languages/defaultDocumentColorsComputer*/,59/*vs/editor/common/services/findSectionHeaders*/]), function (require, exports, diff_1, uri_1, position_1, range_1, mirrorTextModel_1, wordHelper_1, linkComputer_1, inplaceReplaceSupport_1, editorBaseApi_1, stopwatch_1, unicodeTextModelHighlighter_1, linesDiffComputers_1, objects_1, defaultDocumentColorsComputer_1, findSectionHeaders_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.create = exports.EditorSimpleWorker = void 0;
+    exports.EditorSimpleWorker = void 0;
+    exports.create = create;
     /**
      * @internal
      */
@@ -19369,6 +19660,13 @@ define(__m[68/*vs/editor/common/services/editorSimpleWorker*/], __M([0/*require*
                 return { ranges: [], hasMore: false, ambiguousCharacterCount: 0, invisibleCharacterCount: 0, nonBasicAsciiCharacterCount: 0 };
             }
             return unicodeTextModelHighlighter_1.UnicodeTextModelHighlighter.computeUnicodeHighlights(model, options, range);
+        }
+        async findSectionHeaders(url, options) {
+            const model = this._getModel(url);
+            if (!model) {
+                return [];
+            }
+            return (0, findSectionHeaders_1.findSectionHeaders)(model, options);
         }
         // ---- BEGIN diff --------------------------------------------------------------------------
         async computeDiff(originalUrl, modifiedUrl, options, algorithm) {
@@ -19643,7 +19941,6 @@ define(__m[68/*vs/editor/common/services/editorSimpleWorker*/], __M([0/*require*
     function create(host) {
         return new EditorSimpleWorker(host, null);
     }
-    exports.create = create;
     if (typeof importScripts === 'function') {
         // Running in a web worker
         globalThis.monaco = (0, editorBaseApi_1.createMonacoBaseAPI)();

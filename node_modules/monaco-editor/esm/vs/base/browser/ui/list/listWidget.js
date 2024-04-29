@@ -8,7 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { asCssValueWithDefault, createStyleSheet, EventHelper, getActiveElement, getWindow, isActiveElement, isMouseEvent } from '../../dom.js';
+import { asCssValueWithDefault, createStyleSheet, EventHelper, getActiveElement, getWindow, isMouseEvent } from '../../dom.js';
 import { DomEmitter } from '../../event.js';
 import { StandardKeyboardEvent } from '../../keyboardEvent.js';
 import { Gesture } from '../../touch.js';
@@ -28,6 +28,7 @@ import './list.css';
 import { ListError } from './list.js';
 import { ListView } from './listView.js';
 import { StandardMouseEvent } from '../../mouseEvent.js';
+import { autorun, constObservable } from '../../../common/observable.js';
 class TraitRenderer {
     constructor(trait) {
         this.trait = trait;
@@ -420,8 +421,11 @@ class TypeNavigationController {
             // List: re-announce element on typing end since typed keys will interrupt aria label of focused element
             // Do not announce if there was a focus change at the end to prevent duplication https://github.com/microsoft/vscode/issues/95961
             const ariaLabel = (_a = this.list.options.accessibilityProvider) === null || _a === void 0 ? void 0 : _a.getAriaLabel(this.list.element(focus[0]));
-            if (ariaLabel) {
+            if (typeof ariaLabel === 'string') {
                 alert(ariaLabel);
+            }
+            else if (ariaLabel) {
+                alert(ariaLabel.get());
             }
         }
         this.previouslyFocused = -1;
@@ -959,26 +963,35 @@ class AccessibiltyRenderer {
         this.templateId = 'a18n';
     }
     renderTemplate(container) {
-        return container;
+        return { container, disposables: new DisposableStore() };
     }
-    renderElement(element, index, container) {
+    renderElement(element, index, data) {
         const ariaLabel = this.accessibilityProvider.getAriaLabel(element);
-        if (ariaLabel) {
-            container.setAttribute('aria-label', ariaLabel);
-        }
-        else {
-            container.removeAttribute('aria-label');
-        }
+        const observable = (ariaLabel && typeof ariaLabel !== 'string') ? ariaLabel : constObservable(ariaLabel);
+        data.disposables.add(autorun(reader => {
+            this.setAriaLabel(reader.readObservable(observable), data.container);
+        }));
         const ariaLevel = this.accessibilityProvider.getAriaLevel && this.accessibilityProvider.getAriaLevel(element);
         if (typeof ariaLevel === 'number') {
-            container.setAttribute('aria-level', `${ariaLevel}`);
+            data.container.setAttribute('aria-level', `${ariaLevel}`);
         }
         else {
-            container.removeAttribute('aria-level');
+            data.container.removeAttribute('aria-level');
         }
     }
+    setAriaLabel(ariaLabel, element) {
+        if (ariaLabel) {
+            element.setAttribute('aria-label', ariaLabel);
+        }
+        else {
+            element.removeAttribute('aria-label');
+        }
+    }
+    disposeElement(element, index, templateData, height) {
+        templateData.disposables.clear();
+    }
     disposeTemplate(templateData) {
-        // noop
+        templateData.disposables.dispose();
     }
 }
 class ListViewDragAndDrop {
@@ -1452,9 +1465,6 @@ export class List {
         // y = mx + b
         const m = elementHeight - this.view.renderHeight + paddingTop;
         return Math.abs((scrollTop + paddingTop - elementTop) / m);
-    }
-    isDOMFocused() {
-        return isActiveElement(this.view.domNode);
     }
     getHTMLElement() {
         return this.view.domNode;

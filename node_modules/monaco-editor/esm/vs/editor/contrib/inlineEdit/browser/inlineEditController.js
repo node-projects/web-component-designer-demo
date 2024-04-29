@@ -13,7 +13,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 var InlineEditController_1;
 import { Disposable } from '../../../../base/common/lifecycle.js';
-import { autorun, constObservable, disposableObservableValue, observableFromEvent, observableSignalFromEvent } from '../../../../base/common/observable.js';
+import { autorun, constObservable, disposableObservableValue, observableFromEvent, observableSignalFromEvent, observableValue, transaction } from '../../../../base/common/observable.js';
 import { EditOperation } from '../../../common/core/editOperation.js';
 import { Position } from '../../../common/core/position.js';
 import { Range } from '../../../common/core/range.js';
@@ -28,6 +28,7 @@ import { ICommandService } from '../../../../platform/commands/common/commands.j
 import { InlineEditHintsWidget } from './inlineEditHintsWidget.js';
 import { createStyleSheet2 } from '../../../../base/browser/dom.js';
 import { IConfigurationService } from '../../../../platform/configuration/common/configuration.js';
+import { onUnexpectedExternalError } from '../../../../base/common/errors.js';
 export class InlineEditWidget {
     constructor(widget, edit) {
         this.widget = widget;
@@ -52,7 +53,7 @@ let InlineEditController = InlineEditController_1 = class InlineEditController e
         this._isVisibleContext = InlineEditController_1.inlineEditVisibleContext.bindTo(this.contextKeyService);
         this._isCursorAtInlineEditContext = InlineEditController_1.cursorAtInlineEditContext.bindTo(this.contextKeyService);
         this._currentEdit = this._register(disposableObservableValue(this, undefined));
-        this._isAccepting = false;
+        this._isAccepting = observableValue(this, false);
         this._enabled = observableFromEvent(this.editor.onDidChangeConfiguration, () => this.editor.getOption(63 /* EditorOption.inlineEdit */).enabled);
         this._fontFamily = observableFromEvent(this.editor.onDidChangeConfiguration, () => this.editor.getOption(63 /* EditorOption.inlineEdit */).fontFamily);
         this._backgroundColoring = observableFromEvent(this.editor.onDidChangeConfiguration, () => this.editor.getOption(63 /* EditorOption.inlineEdit */).backgroundColoring);
@@ -66,6 +67,9 @@ let InlineEditController = InlineEditController_1 = class InlineEditController e
                 return;
             }
             modelChangedSignal.read(reader);
+            if (this._isAccepting.read(reader)) {
+                return;
+            }
             this.getInlineEdit(editor, true);
         }));
         //Check if the cursor is at the ghost text
@@ -97,7 +101,7 @@ let InlineEditController = InlineEditController_1 = class InlineEditController e
         }));
         //Clear suggestions on lost focus
         const editorBlurSingal = observableSignalFromEvent('InlineEditController.editorBlurSignal', editor.onDidBlurEditorWidget);
-        this._register(autorun(reader => {
+        this._register(autorun(async (reader) => {
             var _a;
             /** @description InlineEditController.editorBlur */
             if (!this._enabled.read(reader)) {
@@ -108,9 +112,9 @@ let InlineEditController = InlineEditController_1 = class InlineEditController e
             if (this._configurationService.getValue('editor.experimentalInlineEdit.keepOnBlur') || editor.getOption(63 /* EditorOption.inlineEdit */).keepOnBlur) {
                 return;
             }
-            (_a = this._currentRequestCts) === null || _a === void 0 ? void 0 : _a.dispose();
+            (_a = this._currentRequestCts) === null || _a === void 0 ? void 0 : _a.dispose(true);
             this._currentRequestCts = undefined;
-            this.clear(false);
+            await this.clear(false);
         }));
         //Invoke provider on focus
         const editorFocusSignal = observableSignalFromEvent('InlineEditController.editorFocusSignal', editor.onDidFocusEditorText);
@@ -204,8 +208,7 @@ let InlineEditController = InlineEditController_1 = class InlineEditController e
     async getInlineEdit(editor, auto) {
         var _a;
         this._isCursorAtInlineEditContext.set(false);
-        this.clear();
-        this._isAccepting = false;
+        await this.clear();
         const edit = await this.fetchInlineEdit(editor, auto);
         if (!edit) {
             return;
@@ -233,9 +236,9 @@ let InlineEditController = InlineEditController_1 = class InlineEditController e
         //if position is outside viewports, scroll to it
         this.editor.revealPositionInCenterIfOutsideViewport(this._jumpBackPosition);
     }
-    accept() {
+    async accept() {
         var _a;
-        this._isAccepting = true;
+        this._isAccepting.set(true, undefined);
         const data = (_a = this._currentEdit.get()) === null || _a === void 0 ? void 0 : _a.edit;
         if (!data) {
             return;
@@ -248,10 +251,15 @@ let InlineEditController = InlineEditController_1 = class InlineEditController e
         this.editor.pushUndoStop();
         this.editor.executeEdits('acceptCurrent', [EditOperation.replace(Range.lift(data.range), text)]);
         if (data.accepted) {
-            this._commandService.executeCommand(data.accepted.id, ...data.accepted.arguments || []);
+            await this._commandService
+                .executeCommand(data.accepted.id, ...(data.accepted.arguments || []))
+                .then(undefined, onUnexpectedExternalError);
         }
         this.freeEdit(data);
-        this._currentEdit.set(undefined, undefined);
+        transaction((tx) => {
+            this._currentEdit.set(undefined, tx);
+            this._isAccepting.set(false, tx);
+        });
     }
     jumpToCurrent() {
         var _a, _b;
@@ -265,11 +273,13 @@ let InlineEditController = InlineEditController_1 = class InlineEditController e
         //if position is outside viewports, scroll to it
         this.editor.revealPositionInCenterIfOutsideViewport(position);
     }
-    clear(sendRejection = true) {
+    async clear(sendRejection = true) {
         var _a;
         const edit = (_a = this._currentEdit.get()) === null || _a === void 0 ? void 0 : _a.edit;
-        if (edit && (edit === null || edit === void 0 ? void 0 : edit.rejected) && !this._isAccepting && sendRejection) {
-            this._commandService.executeCommand(edit.rejected.id, ...edit.rejected.arguments || []);
+        if (edit && (edit === null || edit === void 0 ? void 0 : edit.rejected) && sendRejection) {
+            await this._commandService
+                .executeCommand(edit.rejected.id, ...(edit.rejected.arguments || []))
+                .then(undefined, onUnexpectedExternalError);
         }
         if (edit) {
             this.freeEdit(edit);

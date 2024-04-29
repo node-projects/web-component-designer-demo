@@ -11,28 +11,30 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { registerSingleton } from '../../../platform/instantiation/common/extensions.js';
-import { registerThemingParticipant } from '../../../platform/theme/common/themeService.js';
-import { editorHoverBorder } from '../../../platform/theme/common/colorRegistry.js';
-import { IHoverService } from '../../../platform/hover/browser/hover.js';
-import { IContextMenuService, IContextViewService } from '../../../platform/contextview/browser/contextView.js';
-import { IInstantiationService } from '../../../platform/instantiation/common/instantiation.js';
-import { HoverWidget } from '../widget/hoverWidget/hoverWidget.js';
-import { DisposableStore, toDisposable } from '../../../base/common/lifecycle.js';
-import { addDisposableListener, EventType, getActiveElement, isAncestorOfActiveElement, isAncestor, getWindow } from '../../../base/browser/dom.js';
-import { IKeybindingService } from '../../../platform/keybinding/common/keybinding.js';
-import { StandardKeyboardEvent } from '../../../base/browser/keyboardEvent.js';
-import { IAccessibilityService } from '../../../platform/accessibility/common/accessibility.js';
-import { ILayoutService } from '../../../platform/layout/browser/layoutService.js';
-import { mainWindow } from '../../../base/browser/window.js';
-let HoverService = class HoverService {
-    constructor(_instantiationService, _contextViewService, contextMenuService, _keybindingService, _layoutService, _accessibilityService) {
+import { registerSingleton } from '../../../../platform/instantiation/common/extensions.js';
+import { registerThemingParticipant } from '../../../../platform/theme/common/themeService.js';
+import { editorHoverBorder } from '../../../../platform/theme/common/colorRegistry.js';
+import { IHoverService } from '../../../../platform/hover/browser/hover.js';
+import { IContextMenuService } from '../../../../platform/contextview/browser/contextView.js';
+import { IInstantiationService } from '../../../../platform/instantiation/common/instantiation.js';
+import { HoverWidget } from './hoverWidget.js';
+import { Disposable, DisposableStore, toDisposable } from '../../../../base/common/lifecycle.js';
+import { addDisposableListener, EventType, getActiveElement, isAncestorOfActiveElement, isAncestor, getWindow } from '../../../../base/browser/dom.js';
+import { IKeybindingService } from '../../../../platform/keybinding/common/keybinding.js';
+import { StandardKeyboardEvent } from '../../../../base/browser/keyboardEvent.js';
+import { IAccessibilityService } from '../../../../platform/accessibility/common/accessibility.js';
+import { ILayoutService } from '../../../../platform/layout/browser/layoutService.js';
+import { mainWindow } from '../../../../base/browser/window.js';
+import { ContextViewHandler } from '../../../../platform/contextview/browser/contextViewService.js';
+let HoverService = class HoverService extends Disposable {
+    constructor(_instantiationService, contextMenuService, _keybindingService, _layoutService, _accessibilityService) {
+        super();
         this._instantiationService = _instantiationService;
-        this._contextViewService = _contextViewService;
         this._keybindingService = _keybindingService;
         this._layoutService = _layoutService;
         this._accessibilityService = _accessibilityService;
         contextMenuService.onDidShowContextMenu(() => this.hideHover());
+        this._contextViewHandler = this._register(new ContextViewHandler(this._layoutService));
     }
     showHover(options, focus, skipLastFocusedUpdate) {
         var _a, _b, _c, _d;
@@ -79,9 +81,8 @@ let HoverService = class HoverService {
             const targetElement = options.target instanceof HTMLElement ? options.target : options.target.targetElements[0];
             options.container = this._layoutService.getContainer(getWindow(targetElement));
         }
-        const provider = this._contextViewService;
-        provider.showContextView(new HoverContextViewDelegate(hover, focus), options.container);
-        hover.onRequestLayout(() => provider.layout());
+        this._contextViewHandler.showContextView(new HoverContextViewDelegate(hover, focus), options.container);
+        hover.onRequestLayout(() => this._contextViewHandler.layout());
         if ((_d = options.persistence) === null || _d === void 0 ? void 0 : _d.sticky) {
             hoverDisposables.add(addDisposableListener(getWindow(options.container).document, EventType.MOUSE_DOWN, e => {
                 if (!isAncestor(e.target, hover.domNode)) {
@@ -126,7 +127,7 @@ let HoverService = class HoverService {
     doHideHover() {
         this._currentHover = undefined;
         this._currentHoverOptions = undefined;
-        this._contextViewService.hideContextView();
+        this._contextViewHandler.hideContextView();
     }
     _intersectionChange(entries, hover) {
         const entry = entries[entries.length - 1];
@@ -164,11 +165,10 @@ let HoverService = class HoverService {
 };
 HoverService = __decorate([
     __param(0, IInstantiationService),
-    __param(1, IContextViewService),
-    __param(2, IContextMenuService),
-    __param(3, IKeybindingService),
-    __param(4, ILayoutService),
-    __param(5, IAccessibilityService)
+    __param(1, IContextMenuService),
+    __param(2, IKeybindingService),
+    __param(3, ILayoutService),
+    __param(4, IAccessibilityService)
 ], HoverService);
 export { HoverService };
 function getHoverOptionsIdentity(options) {
@@ -185,6 +185,8 @@ class HoverContextViewDelegate {
     constructor(_hover, _focus = false) {
         this._hover = _hover;
         this._focus = _focus;
+        // Render over all other context views
+        this.layer = 1;
     }
     render(container) {
         this._hover.render(container);

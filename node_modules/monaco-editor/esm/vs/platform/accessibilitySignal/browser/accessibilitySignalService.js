@@ -33,6 +33,8 @@ Sound.chatResponseReceived4 = Sound.register({ fileName: 'chatResponseReceived4.
 Sound.clear = Sound.register({ fileName: 'clear.mp3' });
 Sound.save = Sound.register({ fileName: 'save.mp3' });
 Sound.format = Sound.register({ fileName: 'format.mp3' });
+Sound.voiceRecordingStarted = Sound.register({ fileName: 'voiceRecordingStarted.mp3' });
+Sound.voiceRecordingStopped = Sound.register({ fileName: 'voiceRecordingStopped.mp3' });
 export class SoundSource {
     constructor(randomOneOf) {
         this.randomOneOf = randomOneOf;
@@ -235,4 +237,16 @@ AccessibilitySignal.format = AccessibilitySignal.register({
     legacyAnnouncementSettingsKey: "accessibility.alert.format" /* AccessibilityAlertSettingId.Format */,
     announcementMessage: localize('accessibility.signals.format', 'Format'),
     settingsKey: 'accessibility.signals.format'
+});
+AccessibilitySignal.voiceRecordingStarted = AccessibilitySignal.register({
+    name: localize('accessibilitySignals.voiceRecordingStarted', 'Voice Recording Started'),
+    sound: Sound.voiceRecordingStarted,
+    legacySoundSettingsKey: 'audioCues.voiceRecordingStarted',
+    settingsKey: 'accessibility.signals.voiceRecordingStarted'
+});
+AccessibilitySignal.voiceRecordingStopped = AccessibilitySignal.register({
+    name: localize('accessibilitySignals.voiceRecordingStopped', 'Voice Recording Stopped'),
+    sound: Sound.voiceRecordingStopped,
+    legacySoundSettingsKey: 'audioCues.voiceRecordingStopped',
+    settingsKey: 'accessibility.signals.voiceRecordingStopped'
 });

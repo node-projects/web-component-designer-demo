@@ -23,7 +23,7 @@ export class MouseHandler extends ViewEventHandler {
         this.mouseTargetFactory = new MouseTargetFactory(this._context, viewHelper);
         this._mouseDownOperation = this._register(new MouseDownOperation(this._context, this.viewController, this.viewHelper, this.mouseTargetFactory, (e, testEventTarget) => this._createMouseTarget(e, testEventTarget), (e) => this._getMouseColumn(e)));
         this.lastMouseLeaveTime = -1;
-        this._height = this._context.configuration.options.get(144 /* EditorOption.layoutInfo */).height;
+        this._height = this._context.configuration.options.get(145 /* EditorOption.layoutInfo */).height;
         const mouseEvents = new EditorMouseEventFactory(this.viewHelper.viewDomNode);
         this._register(mouseEvents.onContextMenu(this.viewHelper.viewDomNode, (e) => this._onContextMenu(e, true)));
         this._register(mouseEvents.onMouseMove(this.viewHelper.viewDomNode, (e) => {
@@ -125,9 +125,9 @@ export class MouseHandler extends ViewEventHandler {
     }
     // --- begin event handlers
     onConfigurationChanged(e) {
-        if (e.hasChanged(144 /* EditorOption.layoutInfo */)) {
+        if (e.hasChanged(145 /* EditorOption.layoutInfo */)) {
             // layout change
-            const height = this._context.configuration.options.get(144 /* EditorOption.layoutInfo */).height;
+            const height = this._context.configuration.options.get(145 /* EditorOption.layoutInfo */).height;
             if (this._height !== height) {
                 this._height = height;
                 this._mouseDownOperation.onHeightChanged();
@@ -516,7 +516,7 @@ class TopBottomDragScrollingOperation extends Disposable {
      */
     _getScrollSpeed() {
         const lineHeight = this._context.configuration.options.get(67 /* EditorOption.lineHeight */);
-        const viewportInLines = this._context.configuration.options.get(144 /* EditorOption.layoutInfo */).height / lineHeight;
+        const viewportInLines = this._context.configuration.options.get(145 /* EditorOption.layoutInfo */).height / lineHeight;
         const outsideDistanceInLines = this._position.outsideDistance / lineHeight;
         if (outsideDistanceInLines <= 1.5) {
             return Math.max(30, viewportInLines * (1 + outsideDistanceInLines));
@@ -540,7 +540,7 @@ class TopBottomDragScrollingOperation extends Disposable {
         let mouseTarget;
         {
             const editorPos = createEditorPagePosition(this._viewHelper.viewDomNode);
-            const horizontalScrollbarHeight = this._context.configuration.options.get(144 /* EditorOption.layoutInfo */).horizontalScrollbarHeight;
+            const horizontalScrollbarHeight = this._context.configuration.options.get(145 /* EditorOption.layoutInfo */).horizontalScrollbarHeight;
             const pos = new PageCoordinates(this._mouseEvent.pos.x, editorPos.y + editorPos.height - horizontalScrollbarHeight - 0.1);
             const relativePos = createCoordinatesRelativeToEditor(this._viewHelper.viewDomNode, editorPos, pos);
             mouseTarget = this._mouseTargetFactory.createMouseTarget(this._viewHelper.getLastRenderData(), editorPos, pos, relativePos, null);

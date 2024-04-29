@@ -6,8 +6,8 @@ import { isFirefox } from '../../browser.js';
 import { DataTransfers } from '../../dnd.js';
 import { addDisposableListener, EventHelper, EventType } from '../../dom.js';
 import { EventType as TouchEventType, Gesture } from '../../touch.js';
-import { getDefaultHoverDelegate } from '../hover/hoverDelegate.js';
-import { setupCustomHover } from '../iconLabel/iconLabelHover.js';
+import { getDefaultHoverDelegate } from '../hover/hoverDelegateFactory.js';
+import { setupCustomHover } from '../hover/updatableHoverWidget.js';
 import { SelectBox } from '../selectBox/selectBox.js';
 import { Action, ActionRunner, Separator } from '../../../common/actions.js';
 import { Disposable } from '../../../common/lifecycle.js';
@@ -166,16 +166,15 @@ export class BaseActionViewItem extends Disposable {
         const title = (_a = this.getTooltip()) !== null && _a !== void 0 ? _a : '';
         this.updateAriaLabel();
         if ((_b = this.options.hoverDelegate) === null || _b === void 0 ? void 0 : _b.showNativeHover) {
-            /* While custom hover is not supported with context view */
+            /* While custom hover is not inside custom hover */
             this.element.title = title;
         }
         else {
-            if (!this.customHover) {
+            if (!this.customHover && title !== '') {
                 const hoverDelegate = (_c = this.options.hoverDelegate) !== null && _c !== void 0 ? _c : getDefaultHoverDelegate('element');
-                this.customHover = setupCustomHover(hoverDelegate, this.element, title);
-                this._store.add(this.customHover);
+                this.customHover = this._store.add(setupCustomHover(hoverDelegate, this.element, title));
             }
-            else {
+            else if (this.customHover) {
                 this.customHover.update(title);
             }
         }

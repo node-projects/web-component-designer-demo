@@ -161,6 +161,14 @@ export class SelectedSuggestionInfo {
             && this.isSnippetText === other.isSnippetText;
     }
 }
+/**
+ * @internal
+ */
+export var DocumentPasteTriggerKind;
+(function (DocumentPasteTriggerKind) {
+    DocumentPasteTriggerKind[DocumentPasteTriggerKind["Automatic"] = 0] = "Automatic";
+    DocumentPasteTriggerKind[DocumentPasteTriggerKind["PasteAs"] = 1] = "PasteAs";
+})(DocumentPasteTriggerKind || (DocumentPasteTriggerKind = {}));
 export var SignatureHelpTriggerKind;
 (function (SignatureHelpTriggerKind) {
     SignatureHelpTriggerKind[SignatureHelpTriggerKind["Invoke"] = 1] = "Invoke";

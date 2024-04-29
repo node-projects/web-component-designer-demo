@@ -206,6 +206,7 @@ let MenuWorkbenchToolBar = class MenuWorkbenchToolBar extends WorkbenchToolBar {
     constructor(container, menuId, options, menuService, contextKeyService, contextMenuService, keybindingService, telemetryService) {
         super(container, { resetMenu: menuId, ...options }, menuService, contextKeyService, contextMenuService, keybindingService, telemetryService);
         this._onDidChangeMenuItems = this._store.add(new Emitter());
+        this.onDidChangeMenuItems = this._onDidChangeMenuItems.event;
         // update logic
         const menu = this._store.add(menuService.createMenu(menuId, contextKeyService, { emitEventsForSubmenuChanges: true }));
         const updateToolbar = () => {

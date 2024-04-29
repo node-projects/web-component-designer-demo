@@ -94,6 +94,10 @@ export class TokenizationTextModelPart extends TextModelPart {
         this.validateLineNumber(lineNumber);
         this.grammarTokens.forceTokenization(lineNumber);
     }
+    hasAccurateTokensForLine(lineNumber) {
+        this.validateLineNumber(lineNumber);
+        return this.grammarTokens.hasAccurateTokensForLine(lineNumber);
+    }
     isCheapToTokenize(lineNumber) {
         this.validateLineNumber(lineNumber);
         return this.grammarTokens.isCheapToTokenize(lineNumber);
@@ -438,6 +442,12 @@ class GrammarTokens extends Disposable {
         (_a = this._tokenizer) === null || _a === void 0 ? void 0 : _a.updateTokensUntilLine(builder, lineNumber);
         this.setTokens(builder.finalize());
         (_b = this._defaultBackgroundTokenizer) === null || _b === void 0 ? void 0 : _b.checkFinished();
+    }
+    hasAccurateTokensForLine(lineNumber) {
+        if (!this._tokenizer) {
+            return true;
+        }
+        return this._tokenizer.hasAccurateTokensForLine(lineNumber);
     }
     isCheapToTokenize(lineNumber) {
         if (!this._tokenizer) {

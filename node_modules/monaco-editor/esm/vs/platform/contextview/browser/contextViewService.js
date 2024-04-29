@@ -12,14 +12,14 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 import { ContextView } from '../../../base/browser/ui/contextview/contextview.js';
-import { Disposable, toDisposable } from '../../../base/common/lifecycle.js';
+import { Disposable, MutableDisposable, toDisposable } from '../../../base/common/lifecycle.js';
 import { ILayoutService } from '../../layout/browser/layoutService.js';
 import { getWindow } from '../../../base/browser/dom.js';
-let ContextViewService = class ContextViewService extends Disposable {
+let ContextViewHandler = class ContextViewHandler extends Disposable {
     constructor(layoutService) {
         super();
         this.layoutService = layoutService;
-        this.currentViewDisposable = Disposable.None;
+        this.currentViewDisposable = this._register(new MutableDisposable());
         this.contextView = this._register(new ContextView(this.layoutService.mainContainer, 1 /* ContextViewDOMPosition.ABSOLUTE */));
         this.layout();
         this._register(layoutService.onDidLayoutContainer(() => this.layout()));
@@ -48,11 +48,8 @@ let ContextViewService = class ContextViewService extends Disposable {
                 this.hideContextView();
             }
         });
-        this.currentViewDisposable = disposable;
+        this.currentViewDisposable.value = disposable;
         return disposable;
-    }
-    getContextViewElement() {
-        return this.contextView.getViewElement();
     }
     layout() {
         this.contextView.layout();
@@ -60,13 +57,13 @@ let ContextViewService = class ContextViewService extends Disposable {
     hideContextView(data) {
         this.contextView.hide(data);
     }
-    dispose() {
-        super.dispose();
-        this.currentViewDisposable.dispose();
-        this.currentViewDisposable = Disposable.None;
-    }
 };
-ContextViewService = __decorate([
+ContextViewHandler = __decorate([
     __param(0, ILayoutService)
-], ContextViewService);
-export { ContextViewService };
+], ContextViewHandler);
+export { ContextViewHandler };
+export class ContextViewService extends ContextViewHandler {
+    getContextViewElement() {
+        return this.contextView.getViewElement();
+    }
+}

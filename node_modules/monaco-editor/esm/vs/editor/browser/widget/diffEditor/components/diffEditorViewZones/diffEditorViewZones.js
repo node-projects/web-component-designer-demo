@@ -67,12 +67,12 @@ let DiffEditorViewZones = class DiffEditorViewZones extends Disposable {
             updateImmediately.schedule();
         } }));
         this._register(this._editors.original.onDidChangeConfiguration((args) => {
-            if (args.hasChanged(145 /* EditorOption.wrappingInfo */) || args.hasChanged(67 /* EditorOption.lineHeight */)) {
+            if (args.hasChanged(146 /* EditorOption.wrappingInfo */) || args.hasChanged(67 /* EditorOption.lineHeight */)) {
                 updateImmediately.schedule();
             }
         }));
         this._register(this._editors.modified.onDidChangeConfiguration((args) => {
-            if (args.hasChanged(145 /* EditorOption.wrappingInfo */) || args.hasChanged(67 /* EditorOption.lineHeight */)) {
+            if (args.hasChanged(146 /* EditorOption.wrappingInfo */) || args.hasChanged(67 /* EditorOption.lineHeight */)) {
                 updateImmediately.schedule();
             }
         }));
@@ -254,7 +254,7 @@ let DiffEditorViewZones = class DiffEditorViewZones extends Disposable {
                             return $('div', {}, arrow);
                         }
                         let marginDomNode = undefined;
-                        if (a.diff && a.diff.modified.isEmpty && this._options.shouldRenderRevertArrows.read(reader)) {
+                        if (a.diff && a.diff.modified.isEmpty && this._options.shouldRenderOldRevertArrows.read(reader)) {
                             marginDomNode = createViewZoneMarginArrow();
                         }
                         modViewZones.push({
@@ -485,7 +485,7 @@ function computeRangeAlignment(originalEditor, modifiedEditor, diffs, originalEd
 function getAdditionalLineHeights(editor, viewZonesToIgnore) {
     const viewZoneHeights = [];
     const wrappingZoneHeights = [];
-    const hasWrapping = editor.getOption(145 /* EditorOption.wrappingInfo */).wrappingColumn !== -1;
+    const hasWrapping = editor.getOption(146 /* EditorOption.wrappingInfo */).wrappingColumn !== -1;
     const coordinatesConverter = editor._getViewModel().coordinatesConverter;
     const editorLineHeight = editor.getOption(67 /* EditorOption.lineHeight */);
     if (hasWrapping) {

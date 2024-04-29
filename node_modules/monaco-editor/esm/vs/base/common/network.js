@@ -6,6 +6,7 @@ import * as errors from './errors.js';
 import * as platform from './platform.js';
 import { equalsIgnoreCase, startsWithIgnoreCase } from './strings.js';
 import { URI } from './uri.js';
+import * as paths from './path.js';
 export var Schemas;
 (function (Schemas) {
     /**
@@ -85,10 +86,6 @@ export var Schemas;
      * Scheme used for special rendering of settings in the release notes
      */
     Schemas.codeSetting = 'code-setting';
-    /**
-     * Scheme used for special rendering of features in the release notes
-     */
-    Schemas.codeFeature = 'code-feature';
 })(Schemas || (Schemas = {}));
 export function matchesScheme(target, scheme) {
     if (URI.isUri(target)) {
@@ -109,10 +106,13 @@ class RemoteAuthoritiesImpl {
         this._connectionTokens = Object.create(null);
         this._preferredWebSchema = 'http';
         this._delegate = null;
-        this._remoteResourcesPath = `/${Schemas.vscodeRemoteResource}`;
+        this._serverRootPath = '/';
     }
     setPreferredWebSchema(schema) {
         this._preferredWebSchema = schema;
+    }
+    get _remoteResourcesPath() {
+        return paths.posix.join(this._serverRootPath, Schemas.vscodeRemoteResource);
     }
     rewrite(uri) {
         if (this._delegate) {

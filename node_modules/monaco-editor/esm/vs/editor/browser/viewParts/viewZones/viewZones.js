@@ -11,7 +11,7 @@ export class ViewZones extends ViewPart {
     constructor(context) {
         super(context);
         const options = this._context.configuration.options;
-        const layoutInfo = options.get(144 /* EditorOption.layoutInfo */);
+        const layoutInfo = options.get(145 /* EditorOption.layoutInfo */);
         this._lineHeight = options.get(67 /* EditorOption.lineHeight */);
         this._contentWidth = layoutInfo.contentWidth;
         this._contentLeft = layoutInfo.contentLeft;
@@ -58,7 +58,7 @@ export class ViewZones extends ViewPart {
     }
     onConfigurationChanged(e) {
         const options = this._context.configuration.options;
-        const layoutInfo = options.get(144 /* EditorOption.layoutInfo */);
+        const layoutInfo = options.get(145 /* EditorOption.layoutInfo */);
         this._lineHeight = options.get(67 /* EditorOption.lineHeight */);
         this._contentWidth = layoutInfo.contentWidth;
         this._contentLeft = layoutInfo.contentLeft;

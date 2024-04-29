@@ -20,7 +20,8 @@ import { InlineCompletionTriggerKind } from '../../../common/languages.js';
 import { ILanguageConfigurationService } from '../../../common/languages/languageConfigurationRegistry.js';
 import { ILanguageFeaturesService } from '../../../common/services/languageFeatures.js';
 import { provideInlineCompletions } from './provideInlineCompletions.js';
-import { SingleTextEdit } from './singleTextEdit.js';
+import { SingleTextEdit } from '../../../common/core/textEdit.js';
+import { singleTextRemoveCommonPrefix } from './singleTextEdit.js';
 let InlineCompletionsSource = class InlineCompletionsSource extends Disposable {
     constructor(textModel, versionId, _debounceValue, languageFeaturesService, languageConfigurationService) {
         super();
@@ -241,7 +242,7 @@ export class InlineCompletionWithUpdatedRange {
         return new SingleTextEdit(this._getUpdatedRange(reader), this.inlineCompletion.insertText);
     }
     isVisible(model, cursorPosition, reader) {
-        const minimizedReplacement = this._toFilterTextReplacement(reader).removeCommonPrefix(model);
+        const minimizedReplacement = singleTextRemoveCommonPrefix(this._toFilterTextReplacement(reader), model);
         if (!this._isValid
             || !this.inlineCompletion.range.getStartPosition().equals(this._getUpdatedRange(reader).getStartPosition())
             || cursorPosition.lineNumber !== minimizedReplacement.range.startLineNumber) {

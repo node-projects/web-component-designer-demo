@@ -5,11 +5,11 @@
 import './iconlabel.css';
 import * as dom from '../../dom.js';
 import { HighlightedLabel } from '../highlightedlabel/highlightedLabel.js';
-import { setupCustomHover, setupNativeHover } from './iconLabelHover.js';
+import { setupCustomHover, setupNativeHover } from '../hover/updatableHoverWidget.js';
 import { Disposable } from '../../../common/lifecycle.js';
 import { equals } from '../../../common/objects.js';
 import { Range } from '../../../common/range.js';
-import { getDefaultHoverDelegate } from '../hover/hoverDelegate.js';
+import { getDefaultHoverDelegate } from '../hover/hoverDelegateFactory.js';
 class FastLabelNode {
     constructor(_element) {
         this._element = _element;
@@ -52,7 +52,7 @@ export class IconLabel extends Disposable {
         this.labelContainer = dom.append(this.domNode.element, dom.$('.monaco-icon-label-container'));
         this.nameContainer = dom.append(this.labelContainer, dom.$('span.monaco-icon-name-container'));
         if ((options === null || options === void 0 ? void 0 : options.supportHighlights) || (options === null || options === void 0 ? void 0 : options.supportIcons)) {
-            this.nameNode = new LabelWithHighlights(this.nameContainer, !!options.supportIcons);
+            this.nameNode = this._register(new LabelWithHighlights(this.nameContainer, !!options.supportIcons));
         }
         else {
             this.nameNode = new Label(this.nameContainer);
@@ -150,7 +150,7 @@ export class IconLabel extends Disposable {
         if (!this.descriptionNode) {
             const descriptionContainer = this._register(new FastLabelNode(dom.append(this.labelContainer, dom.$('span.monaco-icon-description-container'))));
             if ((_a = this.creationOptions) === null || _a === void 0 ? void 0 : _a.supportDescriptionHighlights) {
-                this.descriptionNode = new HighlightedLabel(dom.append(descriptionContainer.element, dom.$('span.label-description')), { supportIcons: !!this.creationOptions.supportIcons });
+                this.descriptionNode = this._register(new HighlightedLabel(dom.append(descriptionContainer.element, dom.$('span.label-description')), { supportIcons: !!this.creationOptions.supportIcons }));
             }
             else {
                 this.descriptionNode = this._register(new FastLabelNode(dom.append(descriptionContainer.element, dom.$('span.label-description'))));
@@ -209,8 +209,9 @@ function splitMatches(labels, separator, matches) {
         return result;
     });
 }
-class LabelWithHighlights {
+class LabelWithHighlights extends Disposable {
     constructor(container, supportIcons) {
+        super();
         this.container = container;
         this.supportIcons = supportIcons;
         this.label = undefined;
@@ -226,7 +227,7 @@ class LabelWithHighlights {
             if (!this.singleLabel) {
                 this.container.innerText = '';
                 this.container.classList.remove('multiple');
-                this.singleLabel = new HighlightedLabel(dom.append(this.container, dom.$('a.label-name', { id: options === null || options === void 0 ? void 0 : options.domId })), { supportIcons: this.supportIcons });
+                this.singleLabel = this._register(new HighlightedLabel(dom.append(this.container, dom.$('a.label-name', { id: options === null || options === void 0 ? void 0 : options.domId })), { supportIcons: this.supportIcons }));
             }
             this.singleLabel.set(label, options === null || options === void 0 ? void 0 : options.matches, undefined, options === null || options === void 0 ? void 0 : options.labelEscapeNewLines);
         }
@@ -241,7 +242,7 @@ class LabelWithHighlights {
                 const m = matches ? matches[i] : undefined;
                 const id = (options === null || options === void 0 ? void 0 : options.domId) && `${options === null || options === void 0 ? void 0 : options.domId}_${i}`;
                 const name = dom.$('a.label-name', { id, 'data-icon-label-count': label.length, 'data-icon-label-index': i, 'role': 'treeitem' });
-                const highlightedLabel = new HighlightedLabel(dom.append(this.container, name), { supportIcons: this.supportIcons });
+                const highlightedLabel = this._register(new HighlightedLabel(dom.append(this.container, name), { supportIcons: this.supportIcons }));
                 highlightedLabel.set(l, m, undefined, options === null || options === void 0 ? void 0 : options.labelEscapeNewLines);
                 if (i < label.length - 1) {
                     dom.append(name, dom.$('span.label-separator', undefined, separator));

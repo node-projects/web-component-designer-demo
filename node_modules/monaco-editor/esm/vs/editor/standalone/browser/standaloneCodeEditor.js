@@ -14,7 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 import * as aria from '../../../base/browser/ui/aria/aria.js';
 import { Disposable, toDisposable, DisposableStore } from '../../../base/common/lifecycle.js';
 import { ICodeEditorService } from '../../browser/services/codeEditorService.js';
-import { CodeEditorWidget } from '../../browser/widget/codeEditorWidget.js';
+import { CodeEditorWidget } from '../../browser/widget/codeEditor/codeEditorWidget.js';
 import { InternalEditorAction } from '../../common/editorAction.js';
 import { StandaloneKeybindingService, updateConfigurationService } from './standaloneServices.js';
 import { IStandaloneThemeService } from '../common/standaloneTheme.js';
@@ -40,7 +40,7 @@ import { ILanguageFeaturesService } from '../../common/services/languageFeatures
 import { DiffEditorWidget } from '../../browser/widget/diffEditor/diffEditorWidget.js';
 import { IAccessibilitySignalService } from '../../../platform/accessibilitySignal/browser/accessibilitySignalService.js';
 import { mainWindow } from '../../../base/browser/window.js';
-import { setHoverDelegateFactory } from '../../../base/browser/ui/hover/hoverDelegate.js';
+import { setHoverDelegateFactory } from '../../../base/browser/ui/hover/hoverDelegateFactory.js';
 import { WorkbenchHoverDelegate } from '../../../platform/hover/browser/hover.js';
 let LAST_GENERATED_COMMAND_ID = 0;
 let ariaDomNodeCreated = false;

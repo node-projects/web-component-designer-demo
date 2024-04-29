@@ -579,10 +579,10 @@ let WordHighlighter = WordHighlighter_1 = class WordHighlighter {
     }
     computeWithModel(model, selection, word, otherModels) {
         if (!otherModels.length) {
-            return computeOccurencesAtPosition(this.providers, model, selection, word, this.editor.getOption(130 /* EditorOption.wordSeparators */));
+            return computeOccurencesAtPosition(this.providers, model, selection, word, this.editor.getOption(131 /* EditorOption.wordSeparators */));
         }
         else {
-            return computeOccurencesMultiModel(this.multiDocumentProviders, model, selection, word, this.editor.getOption(130 /* EditorOption.wordSeparators */), otherModels);
+            return computeOccurencesMultiModel(this.multiDocumentProviders, model, selection, word, this.editor.getOption(131 /* EditorOption.wordSeparators */), otherModels);
         }
     }
     _beginRenderDecorations() {

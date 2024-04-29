@@ -14,6 +14,7 @@ import { RawContextKey } from '../../../../platform/contextkey/common/contextkey
 import { Progress } from '../../../../platform/progress/common/progress.js';
 import { CodeActionKind, CodeActionTriggerSource } from '../common/types.js';
 import { getCodeActions } from './codeAction.js';
+import { HierarchicalKind } from '../../../../base/common/hierarchicalKind.js';
 export const SUPPORTED_CODE_ACTIONS = new RawContextKey('supportedCodeAction', '');
 export const APPLY_FIX_ALL_COMMAND_ID = '_typescript.applyFixAllCodeAction';
 class CodeActionOracle extends Disposable {
@@ -187,7 +188,7 @@ export class CodeActionModel extends Disposable {
                             return emptyCodeActionSet;
                         }
                         // Search for quickfixes in the curret code action set.
-                        const foundQuickfix = (_c = codeActionSet.validActions) === null || _c === void 0 ? void 0 : _c.some(action => action.action.kind ? CodeActionKind.QuickFix.contains(new CodeActionKind(action.action.kind)) : false);
+                        const foundQuickfix = (_c = codeActionSet.validActions) === null || _c === void 0 ? void 0 : _c.some(action => action.action.kind ? CodeActionKind.QuickFix.contains(new HierarchicalKind(action.action.kind)) : false);
                         const allMarkers = this._markerService.read({ resource: model.uri });
                         if (foundQuickfix) {
                             for (const action of codeActionSet.validActions) {
@@ -269,7 +270,19 @@ export class CodeActionModel extends Disposable {
                 if (trigger.trigger.type === 1 /* CodeActionTriggerType.Invoke */) {
                     (_a = this._progressService) === null || _a === void 0 ? void 0 : _a.showWhile(actions, 250);
                 }
-                this.setState(new CodeActionsState.Triggered(trigger.trigger, startPosition, actions));
+                const newState = new CodeActionsState.Triggered(trigger.trigger, startPosition, actions);
+                let isManualToAutoTransition = false;
+                if (this._state.type === 1 /* CodeActionsState.Type.Triggered */) {
+                    // Check if the current state is manual and the new state is automatic
+                    isManualToAutoTransition = this._state.trigger.type === 1 /* CodeActionTriggerType.Invoke */ &&
+                        newState.type === 1 /* CodeActionsState.Type.Triggered */ &&
+                        newState.trigger.type === 2 /* CodeActionTriggerType.Auto */ &&
+                        this._state.position !== newState.position;
+                }
+                // Do not trigger state if current state is manual and incoming state is automatic
+                if (!isManualToAutoTransition) {
+                    this.setState(newState);
+                }
             }, undefined);
             this._codeActionOracle.value.trigger({ type: 2 /* CodeActionTriggerType.Auto */, triggerAction: CodeActionTriggerSource.Default });
         }

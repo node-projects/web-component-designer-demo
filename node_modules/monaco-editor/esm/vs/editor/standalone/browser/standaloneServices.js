@@ -18,7 +18,7 @@ import '../../../platform/undoRedo/common/undoRedoService.js';
 import '../../common/services/languageFeatureDebounce.js';
 import '../../common/services/semanticTokensStylingService.js';
 import '../../common/services/languageFeaturesService.js';
-import '../../browser/services/hoverService.js';
+import '../../browser/services/hoverService/hoverService.js';
 import * as strings from '../../../base/common/strings.js';
 import * as dom from '../../../base/browser/dom.js';
 import { StandardKeyboardEvent } from '../../../base/browser/keyboardEvent.js';

@@ -15,7 +15,8 @@ var RenameController_1;
 import { alert } from '../../../../base/browser/ui/aria/aria.js';
 import { raceCancellation } from '../../../../base/common/async.js';
 import { CancellationToken, CancellationTokenSource } from '../../../../base/common/cancellation.js';
-import { onUnexpectedError } from '../../../../base/common/errors.js';
+import { CancellationError, onUnexpectedError } from '../../../../base/common/errors.js';
+import { isMarkdownString } from '../../../../base/common/htmlContent.js';
 import { DisposableStore } from '../../../../base/common/lifecycle.js';
 import { assertType } from '../../../../base/common/types.js';
 import { URI } from '../../../../base/common/uri.js';
@@ -39,7 +40,7 @@ import { INotificationService } from '../../../../platform/notification/common/n
 import { IEditorProgressService } from '../../../../platform/progress/common/progress.js';
 import { Registry } from '../../../../platform/registry/common/platform.js';
 import { ITelemetryService } from '../../../../platform/telemetry/common/telemetry.js';
-import { CONTEXT_RENAME_INPUT_FOCUSED, CONTEXT_RENAME_INPUT_VISIBLE, RenameInputField } from './renameInputField.js';
+import { CONTEXT_RENAME_INPUT_VISIBLE, RenameWidget } from './renameWidget.js';
 class RenameSkeleton {
     constructor(model, position, registry) {
         this.model = model;
@@ -130,7 +131,7 @@ let RenameController = RenameController_1 = class RenameController {
         this._telemetryService = _telemetryService;
         this._disposableStore = new DisposableStore();
         this._cts = new CancellationTokenSource();
-        this._renameInputField = this._disposableStore.add(this._instaService.createInstance(RenameInputField, this.editor, ['acceptRenameInput', 'acceptRenameInputWithPreview']));
+        this._renameWidget = this._disposableStore.add(this._instaService.createInstance(RenameWidget, this.editor, ['acceptRenameInput', 'acceptRenameInputWithPreview']));
     }
     dispose() {
         this._disposableStore.dispose();
@@ -164,8 +165,15 @@ let RenameController = RenameController_1 = class RenameController {
             trace('resolved rename location');
         }
         catch (e) {
-            trace('resolve rename location failed', JSON.stringify(e, null, '\t'));
-            (_a = MessageController.get(this.editor)) === null || _a === void 0 ? void 0 : _a.showMessage(e || nls.localize('resolveRenameLocationFailed', "An unknown error occurred while resolving rename location"), position);
+            if (e instanceof CancellationError) {
+                trace('resolve rename location cancelled', JSON.stringify(e, null, '\t'));
+            }
+            else {
+                trace('resolve rename location failed', e instanceof Error ? e : JSON.stringify(e, null, '\t'));
+                if (typeof e === 'string' || isMarkdownString(e)) {
+                    (_a = MessageController.get(this.editor)) === null || _a === void 0 ? void 0 : _a.showMessage(e || nls.localize('resolveRenameLocationFailed', "An unknown error occurred while resolving rename location"), position);
+                }
+            }
             return undefined;
         }
         finally {
@@ -187,21 +195,11 @@ let RenameController = RenameController_1 = class RenameController {
         // part 2 - do rename at location
         const cts2 = new EditorStateCancellationTokenSource(this.editor, 4 /* CodeEditorStateFlag.Position */ | 1 /* CodeEditorStateFlag.Value */, loc.range, this._cts.token);
         const model = this.editor.getModel(); // @ulugbekna: assumes editor still has a model, otherwise, cts1 should've been cancelled
-        const renameCandidatesCts = new CancellationTokenSource(cts2.token);
         const newSymbolNamesProviders = this._languageFeaturesService.newSymbolNamesProvider.all(model);
-        // TODO@ulugbekna: providers should get timeout token (use createTimeoutCancellation(x))
-        const newSymbolNameProvidersResults = newSymbolNamesProviders.map(p => p.provideNewSymbolNames(model, loc.range, renameCandidatesCts.token));
-        trace(`requested new symbol names from ${newSymbolNamesProviders.length} providers`);
-        const selection = this.editor.getSelection();
-        let selectionStart = 0;
-        let selectionEnd = loc.text.length;
-        if (!Range.isEmpty(selection) && !Range.spansMultipleLines(selection) && Range.containsRange(loc.range, selection)) {
-            selectionStart = Math.max(0, selection.startColumn - loc.range.startColumn);
-            selectionEnd = Math.min(loc.range.endColumn, selection.endColumn) - loc.range.startColumn;
-        }
+        const requestRenameSuggestions = (cts) => newSymbolNamesProviders.map(p => p.provideNewSymbolNames(model, loc.range, cts));
         trace('creating rename input field and awaiting its result');
         const supportPreview = this._bulkEditService.hasPreviewHandler() && this._configService.getValue(this.editor.getModel().uri, 'editor.rename.enablePreview');
-        const inputFieldResult = await this._renameInputField.getInput(loc.range, loc.text, selectionStart, selectionEnd, supportPreview, newSymbolNameProvidersResults, renameCandidatesCts);
+        const inputFieldResult = await this._renameWidget.getInput(loc.range, loc.text, supportPreview, requestRenameSuggestions, cts2);
         trace('received response from rename input field');
         if (newSymbolNamesProviders.length > 0) { // @ulugbekna: we're interested only in telemetry for rename suggestions currently
             this._reportTelemetry(newSymbolNamesProviders.length, model.getLanguageId(), inputFieldResult);
@@ -263,16 +261,16 @@ let RenameController = RenameController_1 = class RenameController {
         return renameOperation;
     }
     acceptRenameInput(wantsPreview) {
-        this._renameInputField.acceptInput(wantsPreview);
+        this._renameWidget.acceptInput(wantsPreview);
     }
     cancelRenameInput() {
-        this._renameInputField.cancelInput(true, 'cancelRenameInput command');
+        this._renameWidget.cancelInput(true, 'cancelRenameInput command');
     }
     focusNextRenameSuggestion() {
-        this._renameInputField.focusNextRenameSuggestion();
+        this._renameWidget.focusNextRenameSuggestion();
     }
     focusPreviousRenameSuggestion() {
-        this._renameInputField.focusPreviousRenameSuggestion();
+        this._renameWidget.focusPreviousRenameSuggestion();
     }
     _reportTelemetry(nRenameSuggestionProviders, languageId, inputFieldResult) {
         const value = typeof inputFieldResult === 'boolean'
@@ -285,8 +283,9 @@ let RenameController = RenameController_1 = class RenameController {
                 kind: 'accepted',
                 languageId,
                 nRenameSuggestionProviders,
-                source: inputFieldResult.source,
-                nRenameSuggestions: inputFieldResult.nRenameSuggestions,
+                source: inputFieldResult.stats.source.k,
+                nRenameSuggestions: inputFieldResult.stats.nRenameSuggestions,
+                timeBeforeFirstInputFieldEdit: inputFieldResult.stats.timeBeforeFirstInputFieldEdit,
                 wantsPreview: inputFieldResult.wantsPreview,
             };
         this._telemetryService.publicLog2('renameInvokedEvent', value);
@@ -370,7 +369,7 @@ registerEditorCommand(new RenameCommand({
     kbOpts: {
         weight: 100 /* KeybindingWeight.EditorContrib */ + 99,
         kbExpr: ContextKeyExpr.and(EditorContextKeys.focus, ContextKeyExpr.not('isComposing')),
-        primary: 1024 /* KeyMod.Shift */ + 3 /* KeyCode.Enter */
+        primary: 2048 /* KeyMod.CtrlCmd */ + 3 /* KeyCode.Enter */
     }
 }));
 registerEditorCommand(new RenameCommand({
@@ -423,12 +422,6 @@ registerAction2(class FocusPreviousRenameSuggestion extends Action2 {
             precondition: CONTEXT_RENAME_INPUT_VISIBLE,
             keybinding: [
                 {
-                    when: CONTEXT_RENAME_INPUT_FOCUSED,
-                    primary: 2 /* KeyCode.Tab */ | 4 /* KeyCode.Shift */,
-                    weight: 100 /* KeybindingWeight.EditorContrib */ + 99,
-                },
-                {
-                    when: CONTEXT_RENAME_INPUT_FOCUSED.toNegated(),
                     primary: 1024 /* KeyMod.Shift */ | 2 /* KeyCode.Tab */,
                     secondary: [16 /* KeyCode.UpArrow */],
                     weight: 100 /* KeybindingWeight.EditorContrib */ + 99,

@@ -89,7 +89,7 @@ let DiffEditorItemTemplate = class DiffEditorItemTemplate extends Disposable {
             ? this._register(this._workbenchUIElementFactory.createResourceLabel(this._elements.secondaryPath))
             : undefined;
         this._dataStore = new DisposableStore();
-        this._headerHeight = 48;
+        this._headerHeight = 40;
         this._lastScrollTop = -1;
         this._isSettingScrollTop = false;
         const btn = new Button(this._elements.collapseButton, {});
@@ -251,5 +251,5 @@ function isFocused(editor) {
         store.add(editor.onDidFocusEditorWidget(() => h(true)));
         store.add(editor.onDidBlurEditorWidget(() => h(false)));
         return store;
-    }, () => editor.hasWidgetFocus());
+    }, () => editor.hasTextFocus());
 }

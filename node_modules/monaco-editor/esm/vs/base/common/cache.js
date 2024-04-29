@@ -1,16 +1,16 @@
 /**
  * Uses a LRU cache to make a given parametrized function cached.
  * Caches just the last value.
- * The key must be JSON serializable.
 */
 export class LRUCachedFunction {
-    constructor(fn) {
+    constructor(fn, _computeKey = JSON.stringify) {
         this.fn = fn;
+        this._computeKey = _computeKey;
         this.lastCache = undefined;
         this.lastArgKey = undefined;
     }
     get(arg) {
-        const key = JSON.stringify(arg);
+        const key = this._computeKey(arg);
         if (this.lastArgKey !== key) {
             this.lastArgKey = key;
             this.lastCache = this.fn(arg);

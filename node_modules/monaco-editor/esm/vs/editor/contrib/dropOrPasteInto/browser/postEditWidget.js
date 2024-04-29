@@ -87,7 +87,7 @@ let PostEditWidget = PostEditWidget_1 = class PostEditWidget extends Disposable 
             getActions: () => {
                 return this.edits.allEdits.map((edit, i) => toAction({
                     id: '',
-                    label: edit.label,
+                    label: edit.title,
                     checked: i === this.edits.activeEditIndex,
                     run: () => {
                         if (i !== this.edits.activeEditIndex) {
@@ -117,16 +117,17 @@ let PostEditWidgetManager = class PostEditWidgetManager extends Disposable {
         this._currentWidget = this._register(new MutableDisposable());
         this._register(Event.any(_editor.onDidChangeModel, _editor.onDidChangeModelContent)(() => this.clear()));
     }
-    async applyEditAndShowIfNeeded(ranges, edits, canShowWidget, token) {
+    async applyEditAndShowIfNeeded(ranges, edits, canShowWidget, resolve, token) {
         const model = this._editor.getModel();
         if (!model || !ranges.length) {
             return;
         }
-        const edit = edits.allEdits[edits.activeEditIndex];
+        const edit = edits.allEdits.at(edits.activeEditIndex);
         if (!edit) {
             return;
         }
-        const combinedWorkspaceEdit = createCombinedWorkspaceEdit(model.uri, ranges, edit);
+        const resolvedEdit = await resolve(edit, token);
+        const combinedWorkspaceEdit = createCombinedWorkspaceEdit(model.uri, ranges, resolvedEdit);
         // Use a decoration to track edits around the trigger range
         const primaryRange = ranges[0];
         const editTrackingDecoration = model.deltaDecorations([], [{
@@ -149,14 +150,14 @@ let PostEditWidgetManager = class PostEditWidgetManager extends Disposable {
                     return;
                 }
                 await model.undo();
-                this.applyEditAndShowIfNeeded(ranges, { activeEditIndex: newEditIndex, allEdits: edits.allEdits }, canShowWidget, token);
+                this.applyEditAndShowIfNeeded(ranges, { activeEditIndex: newEditIndex, allEdits: edits.allEdits }, canShowWidget, resolve, token);
             });
         }
     }
     show(range, edits, onDidSelectEdit) {
         this.clear();
         if (this._editor.hasModel()) {
-            this._currentWidget.value = this._instantiationService.createInstance(PostEditWidget, this._id, this._editor, this._visibleContext, this._showCommand, range, edits, onDidSelectEdit);
+            this._currentWidget.value = this._instantiationService.createInstance((PostEditWidget), this._id, this._editor, this._visibleContext, this._showCommand, range, edits, onDidSelectEdit);
         }
     }
     clear() {

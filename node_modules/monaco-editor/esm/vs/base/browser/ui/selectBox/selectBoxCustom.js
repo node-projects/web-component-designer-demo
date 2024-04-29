@@ -6,8 +6,8 @@ import * as dom from '../../dom.js';
 import { DomEmitter } from '../../event.js';
 import { StandardKeyboardEvent } from '../../keyboardEvent.js';
 import { renderMarkdown } from '../../markdownRenderer.js';
-import { getDefaultHoverDelegate } from '../hover/hoverDelegate.js';
-import { setupCustomHover } from '../iconLabel/iconLabelHover.js';
+import { getDefaultHoverDelegate } from '../hover/hoverDelegateFactory.js';
+import { setupCustomHover } from '../hover/updatableHoverWidget.js';
 import { List } from '../list/listWidget.js';
 import * as arrays from '../../../common/arrays.js';
 import { Emitter, Event } from '../../../common/event.js';
@@ -76,7 +76,6 @@ export class SelectBoxList extends Disposable {
         if (typeof this.selectBoxOptions.ariaDescription === 'string') {
             this.selectElement.setAttribute('aria-description', this.selectBoxOptions.ariaDescription);
         }
-        this._hover = this._register(setupCustomHover(getDefaultHoverDelegate('mouse'), this.selectElement, ''));
         this._onDidSelect = new Emitter();
         this._register(this._onDidSelect);
         this.registerListeners();
@@ -86,6 +85,14 @@ export class SelectBoxList extends Disposable {
             this.setOptions(options, selected);
         }
         this.initStyleSheet();
+    }
+    setTitle(title) {
+        if (!this._hover && title) {
+            this._hover = this._register(setupCustomHover(getDefaultHoverDelegate('mouse'), this.selectElement, title));
+        }
+        else if (this._hover) {
+            this._hover.update(title);
+        }
     }
     // IDelegate - List renderer
     getHeight() {
@@ -127,7 +134,7 @@ export class SelectBoxList extends Disposable {
                 selected: e.target.value
             });
             if (!!this.options[this.selected] && !!this.options[this.selected].text) {
-                this._hover.update(this.options[this.selected].text);
+                this.setTitle(this.options[this.selected].text);
             }
         }));
         // Have to implement both keyboard and mouse controllers to handle disabled options
@@ -223,7 +230,7 @@ export class SelectBoxList extends Disposable {
         }
         this.selectElement.selectedIndex = this.selected;
         if (!!this.options[this.selected] && !!this.options[this.selected].text) {
-            this._hover.update(this.options[this.selected].text);
+            this.setTitle(this.options[this.selected].text);
         }
     }
     focus() {
@@ -641,7 +648,7 @@ export class SelectBoxList extends Disposable {
                     selected: this.options[this.selected].text
                 });
                 if (!!this.options[this.selected] && !!this.options[this.selected].text) {
-                    this._hover.update(this.options[this.selected].text);
+                    this.setTitle(this.options[this.selected].text);
                 }
             }
             this.hideSelectDropDown(true);
@@ -727,7 +734,7 @@ export class SelectBoxList extends Disposable {
                 selected: this.options[this.selected].text
             });
             if (!!this.options[this.selected] && !!this.options[this.selected].text) {
-                this._hover.update(this.options[this.selected].text);
+                this.setTitle(this.options[this.selected].text);
             }
         }
         this.hideSelectDropDown(true);

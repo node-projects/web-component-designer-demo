@@ -111,7 +111,7 @@ export class ContextView extends Disposable {
         }
     }
     show(delegate) {
-        var _a, _b;
+        var _a, _b, _c;
         if (this.isVisible()) {
             this.hide();
         }
@@ -120,7 +120,7 @@ export class ContextView extends Disposable {
         this.view.className = 'context-view';
         this.view.style.top = '0px';
         this.view.style.left = '0px';
-        this.view.style.zIndex = '2575';
+        this.view.style.zIndex = `${2575 + ((_a = delegate.layer) !== null && _a !== void 0 ? _a : 0)}`;
         this.view.style.position = this.useFixedPosition ? 'fixed' : 'absolute';
         DOM.show(this.view);
         // Render content
@@ -130,7 +130,7 @@ export class ContextView extends Disposable {
         // Layout
         this.doLayout();
         // Focus
-        (_b = (_a = this.delegate).focus) === null || _b === void 0 ? void 0 : _b.call(_a);
+        (_c = (_b = this.delegate).focus) === null || _c === void 0 ? void 0 : _c.call(_b);
     }
     getViewElement() {
         return this.view;

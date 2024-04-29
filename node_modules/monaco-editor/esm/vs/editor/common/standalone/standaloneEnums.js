@@ -301,25 +301,26 @@ export var EditorOption;
     EditorOption[EditorOption["useShadowDOM"] = 127] = "useShadowDOM";
     EditorOption[EditorOption["useTabStops"] = 128] = "useTabStops";
     EditorOption[EditorOption["wordBreak"] = 129] = "wordBreak";
-    EditorOption[EditorOption["wordSeparators"] = 130] = "wordSeparators";
-    EditorOption[EditorOption["wordWrap"] = 131] = "wordWrap";
-    EditorOption[EditorOption["wordWrapBreakAfterCharacters"] = 132] = "wordWrapBreakAfterCharacters";
-    EditorOption[EditorOption["wordWrapBreakBeforeCharacters"] = 133] = "wordWrapBreakBeforeCharacters";
-    EditorOption[EditorOption["wordWrapColumn"] = 134] = "wordWrapColumn";
-    EditorOption[EditorOption["wordWrapOverride1"] = 135] = "wordWrapOverride1";
-    EditorOption[EditorOption["wordWrapOverride2"] = 136] = "wordWrapOverride2";
-    EditorOption[EditorOption["wrappingIndent"] = 137] = "wrappingIndent";
-    EditorOption[EditorOption["wrappingStrategy"] = 138] = "wrappingStrategy";
-    EditorOption[EditorOption["showDeprecated"] = 139] = "showDeprecated";
-    EditorOption[EditorOption["inlayHints"] = 140] = "inlayHints";
-    EditorOption[EditorOption["editorClassName"] = 141] = "editorClassName";
-    EditorOption[EditorOption["pixelRatio"] = 142] = "pixelRatio";
-    EditorOption[EditorOption["tabFocusMode"] = 143] = "tabFocusMode";
-    EditorOption[EditorOption["layoutInfo"] = 144] = "layoutInfo";
-    EditorOption[EditorOption["wrappingInfo"] = 145] = "wrappingInfo";
-    EditorOption[EditorOption["defaultColorDecorators"] = 146] = "defaultColorDecorators";
-    EditorOption[EditorOption["colorDecoratorsActivatedOn"] = 147] = "colorDecoratorsActivatedOn";
-    EditorOption[EditorOption["inlineCompletionsAccessibilityVerbose"] = 148] = "inlineCompletionsAccessibilityVerbose";
+    EditorOption[EditorOption["wordSegmenterLocales"] = 130] = "wordSegmenterLocales";
+    EditorOption[EditorOption["wordSeparators"] = 131] = "wordSeparators";
+    EditorOption[EditorOption["wordWrap"] = 132] = "wordWrap";
+    EditorOption[EditorOption["wordWrapBreakAfterCharacters"] = 133] = "wordWrapBreakAfterCharacters";
+    EditorOption[EditorOption["wordWrapBreakBeforeCharacters"] = 134] = "wordWrapBreakBeforeCharacters";
+    EditorOption[EditorOption["wordWrapColumn"] = 135] = "wordWrapColumn";
+    EditorOption[EditorOption["wordWrapOverride1"] = 136] = "wordWrapOverride1";
+    EditorOption[EditorOption["wordWrapOverride2"] = 137] = "wordWrapOverride2";
+    EditorOption[EditorOption["wrappingIndent"] = 138] = "wrappingIndent";
+    EditorOption[EditorOption["wrappingStrategy"] = 139] = "wrappingStrategy";
+    EditorOption[EditorOption["showDeprecated"] = 140] = "showDeprecated";
+    EditorOption[EditorOption["inlayHints"] = 141] = "inlayHints";
+    EditorOption[EditorOption["editorClassName"] = 142] = "editorClassName";
+    EditorOption[EditorOption["pixelRatio"] = 143] = "pixelRatio";
+    EditorOption[EditorOption["tabFocusMode"] = 144] = "tabFocusMode";
+    EditorOption[EditorOption["layoutInfo"] = 145] = "layoutInfo";
+    EditorOption[EditorOption["wrappingInfo"] = 146] = "wrappingInfo";
+    EditorOption[EditorOption["defaultColorDecorators"] = 147] = "defaultColorDecorators";
+    EditorOption[EditorOption["colorDecoratorsActivatedOn"] = 148] = "colorDecoratorsActivatedOn";
+    EditorOption[EditorOption["inlineCompletionsAccessibilityVerbose"] = 149] = "inlineCompletionsAccessibilityVerbose";
 })(EditorOption || (EditorOption = {}));
 /**
  * End of line character preference.
@@ -645,6 +646,14 @@ export var MinimapPosition;
     MinimapPosition[MinimapPosition["Gutter"] = 2] = "Gutter";
 })(MinimapPosition || (MinimapPosition = {}));
 /**
+ * Section header style.
+ */
+export var MinimapSectionHeaderStyle;
+(function (MinimapSectionHeaderStyle) {
+    MinimapSectionHeaderStyle[MinimapSectionHeaderStyle["Normal"] = 1] = "Normal";
+    MinimapSectionHeaderStyle[MinimapSectionHeaderStyle["Underlined"] = 2] = "Underlined";
+})(MinimapSectionHeaderStyle || (MinimapSectionHeaderStyle = {}));
+/**
  * Type of hit element with the mouse in the editor.
  */
 export var MouseTargetType;
@@ -738,6 +747,15 @@ export var OverviewRulerLane;
     OverviewRulerLane[OverviewRulerLane["Right"] = 4] = "Right";
     OverviewRulerLane[OverviewRulerLane["Full"] = 7] = "Full";
 })(OverviewRulerLane || (OverviewRulerLane = {}));
+/**
+ * How a partial acceptance was triggered.
+ */
+export var PartialAcceptTriggerKind;
+(function (PartialAcceptTriggerKind) {
+    PartialAcceptTriggerKind[PartialAcceptTriggerKind["Word"] = 0] = "Word";
+    PartialAcceptTriggerKind[PartialAcceptTriggerKind["Line"] = 1] = "Line";
+    PartialAcceptTriggerKind[PartialAcceptTriggerKind["Suggest"] = 2] = "Suggest";
+})(PartialAcceptTriggerKind || (PartialAcceptTriggerKind = {}));
 export var PositionAffinity;
 (function (PositionAffinity) {
     /**

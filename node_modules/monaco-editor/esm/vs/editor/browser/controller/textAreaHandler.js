@@ -101,7 +101,7 @@ let TextAreaHandler = class TextAreaHandler extends ViewPart {
         this._scrollLeft = 0;
         this._scrollTop = 0;
         const options = this._context.configuration.options;
-        const layoutInfo = options.get(144 /* EditorOption.layoutInfo */);
+        const layoutInfo = options.get(145 /* EditorOption.layoutInfo */);
         this._setAccessibilityOptions(options);
         this._contentLeft = layoutInfo.contentLeft;
         this._contentWidth = layoutInfo.contentWidth;
@@ -372,7 +372,7 @@ let TextAreaHandler = class TextAreaHandler extends ViewPart {
     _getAndroidWordAtPosition(position) {
         const ANDROID_WORD_SEPARATORS = '`~!@#$%^&*()-=+[{]}\\|;:",.<>/?';
         const lineContent = this._context.viewModel.getLineContent(position.lineNumber);
-        const wordSeparators = getMapForWordSeparators(ANDROID_WORD_SEPARATORS);
+        const wordSeparators = getMapForWordSeparators(ANDROID_WORD_SEPARATORS, []);
         let goingLeft = true;
         let startColumn = position.column;
         let goingRight = true;
@@ -411,7 +411,7 @@ let TextAreaHandler = class TextAreaHandler extends ViewPart {
     }
     _getWordBeforePosition(position) {
         const lineContent = this._context.viewModel.getLineContent(position.lineNumber);
-        const wordSeparators = getMapForWordSeparators(this._context.configuration.options.get(130 /* EditorOption.wordSeparators */));
+        const wordSeparators = getMapForWordSeparators(this._context.configuration.options.get(131 /* EditorOption.wordSeparators */), []);
         let column = position.column;
         let distance = 0;
         while (column > 1) {
@@ -473,7 +473,7 @@ let TextAreaHandler = class TextAreaHandler extends ViewPart {
         // we will size the textarea to match the width used for wrapping points computation (see `domLineBreaksComputer.ts`).
         // This is because screen readers will read the text in the textarea and we'd like that the
         // wrapping points in the textarea match the wrapping points in the editor.
-        const layoutInfo = options.get(144 /* EditorOption.layoutInfo */);
+        const layoutInfo = options.get(145 /* EditorOption.layoutInfo */);
         const wrappingColumn = layoutInfo.wrappingColumn;
         if (wrappingColumn !== -1 && this._accessibilitySupport !== 1 /* AccessibilitySupport.Disabled */) {
             const fontInfo = options.get(50 /* EditorOption.fontInfo */);
@@ -488,7 +488,7 @@ let TextAreaHandler = class TextAreaHandler extends ViewPart {
     // --- begin event handlers
     onConfigurationChanged(e) {
         const options = this._context.configuration.options;
-        const layoutInfo = options.get(144 /* EditorOption.layoutInfo */);
+        const layoutInfo = options.get(145 /* EditorOption.layoutInfo */);
         this._setAccessibilityOptions(options);
         this._contentLeft = layoutInfo.contentLeft;
         this._contentWidth = layoutInfo.contentWidth;
