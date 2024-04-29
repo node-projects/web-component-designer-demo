@@ -210,6 +210,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
             if (p.startsWith('style='))
                 style = decodeURIComponent(p.substring(6));
         }
+        await customElements.whenDefined('dock-spawn-ts');
         const linkElement = document.createElement("link");
         linkElement.rel = "stylesheet";
         linkElement.href = "./assets/dockspawn.css";
