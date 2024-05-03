@@ -61,7 +61,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
       --canvas-background: white;
       --almost-black: #141720;
       --dark-grey: #232733;
-      --medium-grey: #2f3545;
+      --medium-grey: rgb(44, 46, 53);
       --light-grey: #383f52;
       --highlight-pink: #e91e63;
       --highlight-blue: #2196f3;

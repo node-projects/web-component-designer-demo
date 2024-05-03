@@ -70,7 +70,9 @@
   <script src="./node_modules/monaco-editor/min/vs/loader.js"></script>
   <script>
     require.config({ paths: { 'vs': 'node_modules/monaco-editor/min/vs', 'vs/css': { disabled: true } } });
-    require(['vs/editor/editor.main'], () => { });    
+    require(['vs/editor/editor.main'], () => {
+      monaco.editor.setTheme('vs-dark');
+    });    
   </script>
 
   <!-- if you use ACE Editor -->
@@ -173,6 +175,7 @@
       gap: 0;
       color: #98a1a8;
     }
+
     nav div {
       display: flex;
       align-items: center;
@@ -206,71 +209,29 @@
 
 <body style="height: 100%;">
   <nav>
-    <button data-command="new" title="new"><img src="./node_modules/@node-projects/web-component-designer/assets/icons/file.svg"></button>
-    <button data-command="save" title="save" disabled><img src="./node_modules/@node-projects/web-component-designer/assets/icons/save.svg"></button>
+    <button data-command="new" title="new"><img
+        src="./node_modules/@node-projects/web-component-designer/assets/icons/file.svg"></button>
+    <button data-command="save" title="save" disabled><img
+        src="./node_modules/@node-projects/web-component-designer/assets/icons/save.svg"></button>
     <div style="margin-left: 30px;">
       web-component-designer
     </div>
     <button style="margin-left: 30px;" data-command="paste" title="paste" disabled><img
         src="./node_modules/@node-projects/web-component-designer/assets/icons/paste.svg"></button>
-    <button data-command="cut" title="cut" disabled><img src="./node_modules/@node-projects/web-component-designer/assets/icons/cut.svg"></button>
-    <button data-command="copy" title="copy" disabled><img src="./node_modules/@node-projects/web-component-designer/assets/icons/copy.svg"></button>
-    <button data-command="delete" title="delete" disabled><img src="./node_modules/@node-projects/web-component-designer/assets/icons/delete.svg"></button>
-    <button style="margin-left: 10px;" data-command="undo" disabled title="click and hold to see the undo list"><img
+    <button data-command="cut" title="cut" disabled><img
+        src="./node_modules/@node-projects/web-component-designer/assets/icons/cut.svg"></button>
+    <button data-command="copy" title="copy" disabled><img
+        src="./node_modules/@node-projects/web-component-designer/assets/icons/copy.svg"></button>
+    <button data-command="delete" title="delete" disabled><img
+        src="./node_modules/@node-projects/web-component-designer/assets/icons/delete.svg"></button>
+    <button ondragstart="return false;" style="margin-left: 10px;" data-command="undo" disabled title="click and hold to see the undo list"><img
         src="./node_modules/@node-projects/web-component-designer/assets/icons/undo.svg"></button>
-    <button data-command="redo" disabled title="click and hold to see the redo list"><img
+    <button ondragstart="return false;" data-command="redo" disabled title="click and hold to see the redo list"><img
         src="./node_modules/@node-projects/web-component-designer/assets/icons/redo.svg"></button>
-    <!--
-        <div class="group flex-column">
-          <div class="group" style="display: grid; grid-template-columns: auto auto auto auto auto auto auto;">
-            <button class="tool-button" data-command="arrangeLeft" title="align left"
-              style="background-image: url('./assets/images/layout/AlignLeft.svg'); background-size: cover; background-size: 80%;background-repeat: no-repeat;background-position: center;"
-              disabled></button>
-            <button class="tool-button" data-command="arrangeCenter" title="align center vertically"
-              style="background-image: url('./assets/images/layout/AlignCenter.svg'); background-size: cover; background-size: 80%;background-repeat: no-repeat;background-position: center;"
-              disabled></button>
-            <button class="tool-button" data-command="arrangeRight" title="align right"
-              style="background-image: url('./assets/images/layout/AlignRight.svg'); background-size: cover; background-size: 80%;background-repeat: no-repeat;background-position: center;"
-              disabled></button>
-            <button class="tool-button" data-command="arrangeTop" title="align top"
-              style="background-image: url('./assets/images/layout/AlignTop.svg'); background-size: cover; background-size: 80%;background-repeat: no-repeat;background-position: center;"
-              disabled></button>
-            <button class="tool-button" data-command="arrangeMiddle" title="align center horizontally"
-              style="background-image: url('./assets/images/layout/AlignCenterHorizontal.svg'); background-size: cover; background-size: 80%;background-repeat: no-repeat;background-position: center;"
-              disabled></button>
-            <button class="tool-button" data-command="arrangeBottom" title="align bottom"
-              style="background-image: url('./assets/images/layout/AlignBot.svg'); background-size: cover; background-size: 80%;background-repeat: no-repeat;background-position: center;"
-              disabled></button>
-            <button class="tool-button" data-command="rotateClockwise" title="rotate clockwise"
-              style="background-image: url('./assets/images/layout/RotatClockwise.svg'); background-size: cover; background-size: 80%;background-repeat: no-repeat;background-position: center;"
-              disabled></button>
-
-            <button class="tool-button" data-command="mirrorHorizontal" title="mirror horizontal"
-              style="background-image: url('./assets/images/layout/MirrowHorizontal.svg'); background-size: cover; background-size: 80%;background-repeat: no-repeat;background-position: center;"
-              disabled></button>
-            <button class="tool-button" data-command="mirrotVertical" title="mirror vertical"
-              style="background-image: url('./assets/images/layout/MirrowVertical.svg'); background-size: cover; background-size: 80%;background-repeat: no-repeat;background-position: center;"
-              disabled></button>
-            <button class="tool-button" data-command="moveToBack" title="bring to back"
-              style="background-image: url('./assets/images/layout/BringToBack.svg'); background-size: cover; background-size: 80%;background-repeat: no-repeat;background-position: center;"
-              disabled></button>
-            <button class="tool-button" data-command="moveToFront" title="bring to front"
-              style="background-image: url('./assets/images/layout/BringToFront.svg'); background-size: cover; background-size: 80%;background-repeat: no-repeat;background-position: center;"
-              disabled></button>
-            <button class="tool-button" data-command="moveBackward" title="bring one to back"
-              style="background-image: url('./assets/images/layout/BringOneToBack.svg'); background-size: cover; background-size: 80%;background-repeat: no-repeat;background-position: center;"
-              disabled></button>
-            <button class="tool-button" data-command="moveForward" title="bring one to front"
-              style="background-image: url('./assets/images/layout/BringOneToFront.svg'); background-size: cover; background-size: 80%;background-repeat: no-repeat;background-position: center;"
-              disabled></button>
-            <button class="tool-button" data-command="rotateCounterClockwise" title="rotate counter clockwise"
-              style="background-image: url('./assets/images/layout/RotatCounterClockwise.svg'); background-size: cover; background-size: 80%;background-repeat: no-repeat;background-position: center;"
-              disabled></button>
-          </div>
-          <span class="title">layout</span>
-        </div>-->
-    <button style="margin-left: 10px;" data-command="screenshot"><img src="./node_modules/@node-projects/web-component-designer/assets/icons/screenshot.svg"></button>
-    <button style="margin-left: 10px;" data-command="github"><img src="./node_modules/@node-projects/web-component-designer/assets/icons/github.svg"></button>
+    <button style="margin-left: 10px;" data-command="screenshot"><img
+        src="./node_modules/@node-projects/web-component-designer/assets/icons/screenshot.svg"></button>
+    <button style="margin-left: 10px;" data-command="github"><img
+        src="./node_modules/@node-projects/web-component-designer/assets/icons/github.svg"></button>
   </nav>
   <node-projects-app-shell id="shell" style="height: calc(100% - 38px); width: 100%; position: absolute;">
   </node-projects-app-shell>
