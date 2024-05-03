@@ -38,18 +38,6 @@ export class StyleEditor extends BaseCustomWebComponentConstructorAppend {
         super();
         this._restoreCachedInititalValues();
     }
-    static _initPromise;
-    static initMonacoEditor() {
-        this._initPromise = new Promise(async (resolve) => {
-            //@ts-ignore
-            require.config({ paths: { 'vs': 'node_modules/monaco-editor/min/vs', 'vs/css': { disabled: true } } });
-            //@ts-ignore
-            require(['vs/editor/editor.main'], () => {
-                resolve(undefined);
-            });
-        });
-        return StyleEditor._initPromise;
-    }
     async ready() {
         this._parseAttributesToProperties();
         //@ts-ignore
@@ -57,7 +45,6 @@ export class StyleEditor extends BaseCustomWebComponentConstructorAppend {
         //@ts-ignore
         this.shadowRoot.adoptedStyleSheets = [style.default, this.constructor.style];
         this._container = this._getDomElement('container');
-        await StyleEditor.initMonacoEditor();
         //@ts-ignore
         this._editor = monaco.editor.create(this._container, {
             automaticLayout: true,
