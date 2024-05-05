@@ -5,3 +5,37 @@
 .dockspan-tab-handle-text {
   margin-top: 0;
 }
+
+.splitbar-vertical {
+  background-color: #23252a !important;
+}
+
+.panel-titlebar {
+  display: flex;
+  align-items: end;
+}
+
+.dockspan-tab-handle-list-container {
+  background-color: rgb(44, 46, 53) !important;
+}
+
+.dockspan-tab-content {
+  background-color: rgb(44, 46, 53) !important;
+}
+
+.dockspan-tab-host {
+  background-color: rgb(44, 46, 53) !important;
+}
+
+.dockspan-tab-handle-active {
+  background-color: #434651 !important;
+}
+
+.dockspan-tab-handle {
+  display: flex;
+  align-items: center;
+}
+
+.dockspan-tab-handle-close-button::after {
+  top: 0;
+}

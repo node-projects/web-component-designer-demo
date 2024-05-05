@@ -48,22 +48,6 @@ export class StyleEditor extends BaseCustomWebComponentConstructorAppend {
         this._restoreCachedInititalValues();
     }
 
-    static _initPromise: Promise<void>
-
-    static initMonacoEditor() {
-        this._initPromise = new Promise(async resolve => {
-            //@ts-ignore
-            require.config({ paths: { 'vs': 'node_modules/monaco-editor/min/vs', 'vs/css': { disabled: true } } });
-
-            //@ts-ignore
-            require(['vs/editor/editor.main'], () => {
-                resolve(undefined);
-            });
-        });
-
-        return StyleEditor._initPromise;
-    }
-
     async ready() {
         this._parseAttributesToProperties();
         //@ts-ignore
@@ -72,8 +56,6 @@ export class StyleEditor extends BaseCustomWebComponentConstructorAppend {
         this.shadowRoot.adoptedStyleSheets = [style.default, this.constructor.style];
 
         this._container = this._getDomElement<HTMLDivElement>('container')
-
-        await StyleEditor.initMonacoEditor();
 
         //@ts-ignore
         this._editor = monaco.editor.create(this._container, {
@@ -111,6 +93,12 @@ export class StyleEditor extends BaseCustomWebComponentConstructorAppend {
 
     delete() {
         this._editor.trigger('', 'editor.action.clipboardDeleteAction', null)
+    }
+
+    public showLine(line: number, column: number, lineEnd: number, columnEnd: number) {
+        this._editor.setSelection({ startLineNumber: line, startColumn: column, endLineNumber: lineEnd, endColumn: columnEnd });
+        //@ts-ignore
+        this._editor.revealRangeAtTop(new monaco.Range(line, column, lineEnd, columnEnd), 1);
     }
 }
 

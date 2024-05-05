@@ -1,9 +1,9 @@
-import { IProperty, IPropertiesService, IDesignItem, PropertyType, IBinding } from '@node-projects/web-component-designer';
+import { IProperty, IDesignItem, PropertyType, IBinding, AbstractPropertiesService } from '@node-projects/web-component-designer';
 import { BindingTarget } from '@node-projects/web-component-designer/dist/elements/item/BindingTarget';
 import { RefreshMode } from '@node-projects/web-component-designer/dist/elements/services/propertiesService/IPropertiesService';
 import { ValueType } from '@node-projects/web-component-designer/dist/elements/services/propertiesService/ValueType';
 
-export class CustomPropertiesService implements IPropertiesService {
+export class CustomPropertiesService extends AbstractPropertiesService {
   getRefreshMode(designItem: IDesignItem) {
     return RefreshMode.full;
   }
@@ -31,6 +31,7 @@ export class CustomPropertiesService implements IPropertiesService {
   }
   getValue(designItems: IDesignItem[], property: IProperty) {
     // throw new Error("Method not implemented.");
+    return null;
   }
 
   name: string = "custom";
