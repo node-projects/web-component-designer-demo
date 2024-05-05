@@ -94,6 +94,12 @@ export class StyleEditor extends BaseCustomWebComponentConstructorAppend {
     delete() {
         this._editor.trigger('', 'editor.action.clipboardDeleteAction', null)
     }
+
+    public showLine(line: number, column: number, lineEnd: number, columnEnd: number) {
+        this._editor.setSelection({ startLineNumber: line, startColumn: column, endLineNumber: lineEnd, endColumn: columnEnd });
+        //@ts-ignore
+        this._editor.revealRangeAtTop(new monaco.Range(line, column, lineEnd, columnEnd), 1);
+    }
 }
 
 customElements.define('node-projects-style-editor', StyleEditor);
