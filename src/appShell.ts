@@ -6,7 +6,7 @@ import { CodeViewMonaco } from '@node-projects/web-component-designer-codeview-m
 import { CssToolsStylesheetService } from '@node-projects/web-component-designer-stylesheetservice-css-tools';
 
 import '@node-projects/web-component-designer-widgets-wunderbaum';
-import { PaletteTreeView, BindableObjectsBrowser, TreeViewExtended } from '@node-projects/web-component-designer-widgets-wunderbaum/';
+import { PaletteTreeView, BindableObjectsBrowser, TreeViewExtended, ExpandCollapseContextMenu } from '@node-projects/web-component-designer-widgets-wunderbaum';
 
 let serviceContainer = createDefaultServiceContainer();
 serviceContainer.register("bindingService", new BaseCustomWebcomponentBindingsService());
@@ -21,6 +21,8 @@ serviceContainer.register("refactorService", new BindingsRefactorService());
 serviceContainer.register("refactorService", new TextRefactorService());
 
 serviceContainer.config.codeViewWidget = CodeViewMonaco;
+
+serviceContainer.designerContextMenuExtensions.push(new ExpandCollapseContextMenu());
 
 serviceContainer.designerContextMenuExtensions.push(new SeperatorContextMenu(), new EditTemplateContextMenu());
 
