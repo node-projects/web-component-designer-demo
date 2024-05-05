@@ -1,4 +1,4 @@
-import { NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, DocumentContainer, CopyPasteAsJsonService, UnkownElementsPropertiesService, sleep, BindingsRefactorService, TextRefactorService, SeperatorContextMenu, DomConverter } from '@node-projects/web-component-designer';
+import { NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, DocumentContainer, CopyPasteAsJsonService, UnkownElementsPropertiesService, sleep, BindingsRefactorService, TextRefactorService, SeperatorContextMenu, DomConverter, ValueType } from '@node-projects/web-component-designer';
 import createDefaultServiceContainer from '@node-projects/web-component-designer/dist/elements/services/DefaultServiceBootstrap.js';
 import { NodeHtmlParserService } from '@node-projects/web-component-designer-htmlparserservice-nodehtmlparser';
 import { CodeViewMonaco } from '@node-projects/web-component-designer-codeview-monaco';
@@ -247,9 +247,79 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         });
         await this._setupServiceContainer();
         this._bindableObjectsBrowser.initialize(serviceContainer);
+        //@ts-ignore
+        this._propertyGrid.propertyGrid.propertyGroupHover = (group) => group.properties?.[0]?.styleDeclaration;
+        this._propertyGrid.propertyGrid.propertyContextMenuProvider = (designItems, property) => {
+            const ctxMenuItems = property.service.getContextMenu(designItems, property);
+            if (property.service.isSet(designItems, property) == ValueType.fromStylesheet) {
+                ctxMenuItems.push(...[
+                    { title: '-' },
+                    {
+                        title: 'jump to declaration', action: () => {
+                            //@ts-ignore
+                            let styleDeclaration = property.styleDeclaration;
+                            if (!styleDeclaration)
+                                styleDeclaration = designItems[0].getAllStyles().filter(x => x.selector != null).flatMap(x => x.declarations).find(x => x.name == property.name);
+                            if (styleDeclaration)
+                                //@ts-ignore
+                                this.jumpToCss(styleDeclaration.ast, styleDeclaration.stylesheet);
+                        }
+                    }
+                ]);
+            }
+            ;
+            return ctxMenuItems;
+        };
+        this._propertyGrid.propertyGrid.propertyGroupClick = (group, mode) => {
+            //@ts-ignore
+            if (group.properties?.[0]?.styleDeclaration?.ast?.parent)
+                //@ts-ignore
+                this.jumpToCss(group.properties?.[0]?.styleDeclaration?.ast?.parent, group.properties?.[0]?.styleDeclaration?.stylesheet);
+            //}
+        };
         this.newDocument(false, code, style);
         await sleep(200);
         this.activateDockById('treeUpper');
+    }
+    jumpToCss(styleDeclaration, stylesheet) {
+        //@ts-ignore
+        const line = styleDeclaration.position?.start?.line;
+        //@ts-ignore
+        const column = styleDeclaration.position?.start?.column;
+        //@ts-ignore
+        const lineEnd = styleDeclaration.position?.end?.line;
+        //@ts-ignore
+        const columnEnd = styleDeclaration.position?.end?.column;
+        //@ts-ignore
+        if (stylesheet?.designItem) {
+            //@ts-ignore
+            const di = stylesheet?.designItem;
+            let switched = false;
+            if (di.instanceServiceContainer.documentContainer.currentView != 'code' &&
+                di.instanceServiceContainer.documentContainer.currentView != 'split') {
+                switched = true;
+                di.instanceServiceContainer.documentContainer.currentView = 'split';
+            }
+            setTimeout(() => {
+                let startPos = column;
+                let endPos = columnEnd;
+                //@ts-ignore
+                const cssCode = stylesheet?.content;
+                const lines = cssCode.split('\n');
+                for (let n = 0; n < lineEnd - 1; n++) {
+                    if (n < line - 1)
+                        startPos += lines[n].length + 1;
+                    endPos += lines[n].length + 1;
+                }
+                const selectionPosition = di.instanceServiceContainer.designItemDocumentPositionService.getPosition(di);
+                //TODO: style tag could contain attributes
+                const styleLength = '<style>'.length;
+                di.instanceServiceContainer.documentContainer.codeView.setSelection({ start: startPos + styleLength + selectionPosition.start - 1, length: endPos - startPos });
+            }, switched ? 250 : 0);
+        }
+        else {
+            this._styleEditor.showLine(line, column, lineEnd, columnEnd);
+        }
     }
     async _setupServiceContainer() {
         serviceContainer.register('elementsService', new JsonFileElementsService('demo', './dist/elements-demo.json'));

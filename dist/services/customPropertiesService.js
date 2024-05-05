@@ -1,7 +1,7 @@
-import { PropertyType } from '@node-projects/web-component-designer';
+import { PropertyType, AbstractPropertiesService } from '@node-projects/web-component-designer';
 import { BindingTarget } from '@node-projects/web-component-designer/dist/elements/item/BindingTarget';
 import { RefreshMode } from '@node-projects/web-component-designer/dist/elements/services/propertiesService/IPropertiesService';
-export class CustomPropertiesService {
+export class CustomPropertiesService extends AbstractPropertiesService {
     getRefreshMode(designItem) {
         return RefreshMode.full;
     }
@@ -25,6 +25,7 @@ export class CustomPropertiesService {
     }
     getValue(designItems, property) {
         // throw new Error("Method not implemented.");
+        return null;
     }
     name = "custom";
     isHandledElement(designItem) {
