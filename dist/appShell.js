@@ -4,6 +4,7 @@ import { NodeHtmlParserService } from '@node-projects/web-component-designer-htm
 import { CodeViewMonaco } from '@node-projects/web-component-designer-codeview-monaco';
 import { CssToolsStylesheetService } from '@node-projects/web-component-designer-stylesheetservice-css-tools';
 import '@node-projects/web-component-designer-widgets-wunderbaum';
+import { ExpandCollapseContextMenu } from '@node-projects/web-component-designer-widgets-wunderbaum';
 let serviceContainer = createDefaultServiceContainer();
 serviceContainer.register("bindingService", new BaseCustomWebcomponentBindingsService());
 let rootDir = "/web-component-designer-demo";
@@ -16,6 +17,7 @@ serviceContainer.registerLast("propertyService", new UnkownElementsPropertiesSer
 serviceContainer.register("refactorService", new BindingsRefactorService());
 serviceContainer.register("refactorService", new TextRefactorService());
 serviceContainer.config.codeViewWidget = CodeViewMonaco;
+serviceContainer.designerContextMenuExtensions.push(new ExpandCollapseContextMenu());
 serviceContainer.designerContextMenuExtensions.push(new SeperatorContextMenu(), new EditTemplateContextMenu());
 //Instance Service Container Factories
 serviceContainer.register("stylesheetService", designerCanvas => new CssToolsStylesheetService(designerCanvas));
