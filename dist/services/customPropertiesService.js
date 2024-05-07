@@ -20,7 +20,7 @@ export class CustomPropertiesService extends AbstractPropertiesService {
     getUnsetValue(designItems, property) {
         throw new Error("Method not implemented.");
     }
-    setValue(designItems, property, value) {
+    async setValue(designItems, property, value) {
         // throw new Error("Method not implemented.");
     }
     getValue(designItems, property) {
