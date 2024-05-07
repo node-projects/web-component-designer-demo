@@ -26,7 +26,7 @@ export class CustomPropertiesService extends AbstractPropertiesService {
     throw new Error("Method not implemented.");
   }
 
-  setValue(designItems: IDesignItem[], property: IProperty, value: any) {
+  async setValue(designItems: IDesignItem[], property: IProperty, value: any) {
     // throw new Error("Method not implemented.");
   }
   getValue(designItems: IDesignItem[], property: IProperty) {
