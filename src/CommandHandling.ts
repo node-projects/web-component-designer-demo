@@ -103,6 +103,8 @@ export class CommandHandling {
       let commandParameter = b.dataset['commandParameter'];
       if (command === 'new')
         b.removeAttribute('disabled');
+      else if (command === 'newIframe')
+        b.removeAttribute('disabled');
       else if (command === 'github')
         b.removeAttribute('disabled');
       else
