@@ -21,7 +21,9 @@ export class CommandHandling {
     let commandParameter = button.dataset['commandParameter'];
 
     if (commandName === 'new')
-      this.appShell.newDocument();
+      this.appShell.newDocument(null, null, false);
+    if (commandName === 'newIframe')
+      this.appShell.newDocument(null, null, true);
     else if (commandName === 'github')
       window.location.href = 'https://github.com/node-projects/web-component-designer';
     else if (this.dockManager.activeDocument) {
