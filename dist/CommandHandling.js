@@ -1,4 +1,3 @@
-import { ContextMenu } from '@node-projects/web-component-designer';
 //Command Handling..
 // Setup commands
 export class CommandHandling {
@@ -14,9 +13,9 @@ export class CommandHandling {
         let commandName = button.dataset['command'];
         let commandParameter = button.dataset['commandParameter'];
         if (commandName === 'new')
-            this.appShell.newDocument(false);
-        else if (commandName === 'newFixedWidth')
-            this.appShell.newDocument(true);
+            this.appShell.newDocument(null, null, false);
+        if (commandName === 'newIframe')
+            this.appShell.newDocument(null, null, true);
         else if (commandName === 'github')
             window.location.href = 'https://github.com/node-projects/web-component-designer';
         else if (this.dockManager.activeDocument) {
@@ -46,63 +45,24 @@ export class CommandHandling {
     init(serviceContainer) {
         let buttons = Array.from(document.querySelectorAll('[data-command]'));
         buttons.forEach(b => {
-            if (b instanceof HTMLButtonElement) {
-                b.onclick = (e) => this.handleCommandButtonClick(e);
-                let mouseDownTimer = null;
-                b.onmousedown = (e) => {
-                    mouseDownTimer = setTimeout(() => {
-                        this.handleCommandButtonMouseHold(b, e);
-                    }, 300);
-                };
-                b.onmouseup = (e) => {
-                    if (mouseDownTimer) {
-                        clearTimeout(mouseDownTimer);
-                        mouseDownTimer = null;
-                    }
-                };
-            }
-            else {
-                b.onchange = (e) => this.handleInputValueChanged(e);
-                let commandName = b.dataset['command'];
-                if (commandName == 'setStrokeColor')
-                    serviceContainer.globalContext.onStrokeColorChanged.on(e => b.value = e.newValue);
-                if (commandName == 'setFillBrush')
-                    serviceContainer.globalContext.onFillBrushChanged.on(e => b.value = e.newValue);
-            }
+            let mouseDownTimer = null;
+            b.addEventListener('mousedown', (e) => {
+                mouseDownTimer = setTimeout(() => {
+                    this.handleCommandButtonMouseHold(b, e);
+                    mouseDownTimer = false;
+                }, 300);
+            });
+            b.addEventListener('click', (e) => {
+                if (mouseDownTimer !== false)
+                    this.handleCommandButtonClick(e);
+            });
+            b.addEventListener('mouseup', (e) => {
+                if (mouseDownTimer) {
+                    clearTimeout(mouseDownTimer);
+                    mouseDownTimer = null;
+                }
+            });
         });
-        let undoButton = document.querySelector('[data-command="undo"]');
-        let mouseDownTimer = null;
-        undoButton.onmousedown = (e) => {
-            mouseDownTimer = setTimeout(() => {
-                let target = this.dockManager.activeDocument.resolvedElementContent;
-                let entries = target.instanceServiceContainer.undoService.getUndoEntries(20);
-                let mnu = Array.from(entries).map((x, idx) => ({ title: 'undo: ' + x, action: () => { for (let i = 0; i <= idx; i++)
-                        target.instanceServiceContainer.undoService.undo(); } }));
-                ContextMenu.show(mnu, e, { mode: 'undo' });
-            }, 300);
-        };
-        undoButton.onmouseup = (e) => {
-            if (mouseDownTimer) {
-                clearTimeout(mouseDownTimer);
-                mouseDownTimer = null;
-            }
-        };
-        let redoButton = document.querySelector('[data-command="redo"]');
-        redoButton.onmousedown = (e) => {
-            mouseDownTimer = setTimeout(() => {
-                let target = this.dockManager.activeDocument.resolvedElementContent;
-                let entries = target.instanceServiceContainer.undoService.getRedoEntries(20);
-                let mnu = Array.from(entries).map((x, idx) => ({ title: 'redo: ' + x, action: () => { for (let i = 0; i <= idx; i++)
-                        target.instanceServiceContainer.undoService.redo(); } }));
-                ContextMenu.show(mnu, e, { mode: 'undo' });
-            }, 300);
-        };
-        redoButton.onmouseup = (e) => {
-            if (mouseDownTimer) {
-                clearTimeout(mouseDownTimer);
-                mouseDownTimer = null;
-            }
-        };
         setInterval(() => {
             if (this.dockManager.activeDocument) {
                 let target = this.dockManager.activeDocument.resolvedElementContent;
@@ -116,6 +76,13 @@ export class CommandHandling {
             else {
                 this.handleCommand(buttons, null);
             }
+            const target = this.dockManager.activeDocument.resolvedElementContent;
+            if (target) {
+                const undoCount = target.instanceServiceContainer.undoService.undoCount;
+                const redoCount = target.instanceServiceContainer.undoService.redoCount;
+                document.getElementById('undoCount').innerText = '(' + undoCount + '/' + (undoCount + redoCount) + ')';
+                document.getElementById('redoCount').innerText = '(' + redoCount + '/' + (undoCount + redoCount) + ')';
+            }
         }, 100);
     }
     handleCommand(buttons, target) {
@@ -123,13 +90,13 @@ export class CommandHandling {
             let command = b.dataset['command'];
             let commandParameter = b.dataset['commandParameter'];
             if (command === 'new')
-                b.disabled = false;
-            else if (command === 'newFixedWidth')
-                b.disabled = false;
+                b.removeAttribute('disabled');
             else if (command === 'github')
-                b.disabled = false;
+                b.removeAttribute('disabled');
+            else if (!target ? true : !target.canExecuteCommand({ type: command, parameter: commandParameter }))
+                b.setAttribute('disabled', '');
             else
-                b.disabled = !target ? true : !target.canExecuteCommand({ type: command, parameter: commandParameter });
+                b.removeAttribute('disabled');
         });
     }
 }

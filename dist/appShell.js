@@ -279,7 +279,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
                 this.jumpToCss(group.properties?.[0]?.styleDeclaration?.ast?.parent, group.properties?.[0]?.styleDeclaration?.stylesheet);
             //}
         };
-        this.newDocument(false, code, style);
+        this.newDocument(code, style, false);
         await sleep(200);
         this.activateDockById('treeUpper');
     }
@@ -331,9 +331,9 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         this._paletteTree.loadControls(serviceContainer, serviceContainer.elementsServices);
         this._propertyGrid.serviceContainer = serviceContainer;
     }
-    newDocument(fixedWidth, code, style) {
+    newDocument(code, style, useIframe) {
         this._documentNumber++;
-        let sampleDocument = new DocumentContainer(serviceContainer);
+        let sampleDocument = new DocumentContainer(serviceContainer, null, useIframe);
         sampleDocument.setAttribute('dock-spawn-panel-type', 'document');
         sampleDocument.title = "document-" + this._documentNumber;
         sampleDocument.additionalStylesheets = [
@@ -376,10 +376,6 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
             }
         }, true);
         this._dock.appendChild(sampleDocument);
-        if (fixedWidth) {
-            sampleDocument.designerView.designerWidth = '400px';
-            sampleDocument.designerView.designerHeight = '400px';
-        }
         if (code) {
             sampleDocument.content = code;
         }

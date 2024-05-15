@@ -174,6 +174,7 @@
       padding: 5px;
       gap: 0;
       color: #98a1a8;
+      user-select: none;
     }
 
     nav div {
@@ -211,6 +212,12 @@
   <nav>
     <button data-command="new" title="new"><img
         src="./node_modules/@node-projects/web-component-designer/assets/icons/file.svg"></button>
+    <div style="margin-left: 10px; flex-direction: column;">
+      <button data-command="newIframe" title="new with iframe"><img
+          src="./node_modules/@node-projects/web-component-designer/assets/icons/file.svg"></button>
+      <span data-command="newIframe" disabled
+        style="font-family: monospace; font-size: 6px; position: relative; top: -7px; left: 3px; color: lightgreen; cursor: pointer;">iframe</span>
+    </div>
     <button data-command="save" title="save" disabled><img
         src="./node_modules/@node-projects/web-component-designer/assets/icons/save.svg"></button>
     <div style="margin-left: 30px;">
@@ -224,10 +231,18 @@
         src="./node_modules/@node-projects/web-component-designer/assets/icons/copy.svg"></button>
     <button data-command="delete" title="delete" disabled><img
         src="./node_modules/@node-projects/web-component-designer/assets/icons/delete.svg"></button>
-    <button ondragstart="return false;" style="margin-left: 10px;" data-command="undo" disabled title="click and hold to see the undo list"><img
-        src="./node_modules/@node-projects/web-component-designer/assets/icons/undo.svg"></button>
-    <button ondragstart="return false;" data-command="redo" disabled title="click and hold to see the redo list"><img
-        src="./node_modules/@node-projects/web-component-designer/assets/icons/redo.svg"></button>
+    <div style="margin-left: 10px; flex-direction: column;">
+      <button ondragstart="return false;" data-command="undo" disabled title="click and hold to see the undo list"><img
+          src="./node_modules/@node-projects/web-component-designer/assets/icons/undo.svg"></button>
+      <span id="undoCount" data-command="undo" disabled
+        style="font-family: monospace; font-size: 8px; position: relative; top: -8px; cursor: pointer;">(0/0)</span>
+    </div>
+    <div style="margin-left: 10px; flex-direction: column;">
+      <button ondragstart="return false;" data-command="redo" disabled title="click and hold to see the redo list"><img
+          src="./node_modules/@node-projects/web-component-designer/assets/icons/redo.svg"></button>
+      <span id="redoCount" data-command="redo" disabled
+        style="font-family: monospace; font-size: 8px; position: relative; top: -8px; cursor: pointer;">(0/0)</span>
+    </div>
     <button style="margin-left: 10px;" data-command="screenshot"><img
         src="./node_modules/@node-projects/web-component-designer/assets/icons/screenshot.svg"></button>
     <button style="margin-left: 10px;" data-command="github"><img
