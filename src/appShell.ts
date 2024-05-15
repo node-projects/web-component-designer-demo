@@ -304,7 +304,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
       //}
     };
 
-    this.newDocument(false, code, style);
+    this.newDocument(code, style);
 
     await sleep(200)
     this.activateDockById('treeUpper');
@@ -361,7 +361,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     this._propertyGrid.serviceContainer = serviceContainer;
   }
 
-  public newDocument(fixedWidth: boolean, code?: string, style?: string) {
+  public newDocument(code?: string, style?: string) {
     this._documentNumber++;
     let sampleDocument = new DocumentContainer(serviceContainer);
     sampleDocument.setAttribute('dock-spawn-panel-type', 'document');
@@ -408,10 +408,6 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
       }
     }, true);
     this._dock.appendChild(sampleDocument);
-    if (fixedWidth) {
-      sampleDocument.designerView.designerWidth = '400px';
-      sampleDocument.designerView.designerHeight = '400px';
-    }
 
     if (code) {
       sampleDocument.content = code;
