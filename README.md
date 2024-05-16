@@ -8,24 +8,9 @@ https://node-projects.github.io/web-component-designer-demo/index.html
 
 ## Developing
 
-  * Install dependencies
-```
-  $ npm install
-```
+  * This will install all required packages, link all the npm packages and build the demo once and launch the webserver.
+  * you need to have run the "develop" script of the designer git repo before.
 
-  * Compile typescript after doing changes
 ```
-  $ npm run build (if you use Visual Studio Code, you can also run the build task via Ctrl + Shift + B > tsc:build - tsconfig.json)
+  $ npm run develop
 ```
-
-  * *Link web component designer node module*<br/>
-    See https://github.com/node-projects/web-component-designer#readme first
-```
-  $ npm link "@node-projects/web-component-designer" 
-```
-
-  * Run the app in a local server
-```
-  $ npm start
-```
-
