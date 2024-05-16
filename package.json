@@ -6,7 +6,8 @@
   "scripts": {
     "tsc": "tsc",
     "start": "web-dev-server --open",
-    "build": "tsc"
+    "build": "tsc",
+    "develop": "npm i && npm link @node-projects/web-component-designer @node-projects/web-component-designer-codeview-monaco @node-projects/web-component-designer-htmlparserservice-nodehtmlparser @node-projects/web-component-designer-stylesheetservice-css-tools @node-projects/web-component-designer-widgets-wunderbaum && npm run build && npm run start"
   },
   "repository": {
     "type": "git",
