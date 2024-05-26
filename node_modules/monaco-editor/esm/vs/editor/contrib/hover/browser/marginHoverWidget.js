@@ -3,13 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import * as dom from '../../../../base/browser/dom.js';
-import { asArray } from '../../../../base/common/arrays.js';
-import { isEmptyMarkdownString } from '../../../../base/common/htmlContent.js';
 import { Disposable, DisposableStore } from '../../../../base/common/lifecycle.js';
 import { MarkdownRenderer } from '../../../browser/widget/markdownRenderer/browser/markdownRenderer.js';
 import { HoverOperation } from './hoverOperation.js';
 import { HoverWidget } from '../../../../base/browser/ui/hover/hoverWidget.js';
-import { GlyphMarginLane } from '../../../common/model.js';
+import { MarginHoverComputer } from './marginHoverComputer.js';
 const $ = dom.$;
 export class MarginHoverWidget extends Disposable {
     constructor(editor, languageService, openerService) {
@@ -59,7 +57,19 @@ export class MarginHoverWidget extends Disposable {
             this._hoverOperation.start(0 /* HoverStartMode.Delayed */);
         }
     }
-    startShowingAt(lineNumber, laneOrLine) {
+    showsOrWillShow(mouseEvent) {
+        const target = mouseEvent.target;
+        if (target.type === 2 /* MouseTargetType.GUTTER_GLYPH_MARGIN */ && target.detail.glyphMarginLane) {
+            this._startShowingAt(target.position.lineNumber, target.detail.glyphMarginLane);
+            return true;
+        }
+        if (target.type === 3 /* MouseTargetType.GUTTER_LINE_NUMBERS */) {
+            this._startShowingAt(target.position.lineNumber, 'lineNo');
+            return true;
+        }
+        return false;
+    }
+    _startShowingAt(lineNumber, laneOrLine) {
         if (this._computer.lineNumber === lineNumber && this._computer.lane === laneOrLine) {
             // We have to show the widget at the exact same line number as before, so no work is needed
             return;
@@ -123,48 +133,3 @@ export class MarginHoverWidget extends Disposable {
     }
 }
 MarginHoverWidget.ID = 'editor.contrib.modesGlyphHoverWidget';
-class MarginHoverComputer {
-    get lineNumber() {
-        return this._lineNumber;
-    }
-    set lineNumber(value) {
-        this._lineNumber = value;
-    }
-    get lane() {
-        return this._laneOrLine;
-    }
-    set lane(value) {
-        this._laneOrLine = value;
-    }
-    constructor(_editor) {
-        this._editor = _editor;
-        this._lineNumber = -1;
-        this._laneOrLine = GlyphMarginLane.Center;
-    }
-    computeSync() {
-        var _a, _b;
-        const toHoverMessage = (contents) => {
-            return {
-                value: contents
-            };
-        };
-        const lineDecorations = this._editor.getLineDecorations(this._lineNumber);
-        const result = [];
-        const isLineHover = this._laneOrLine === 'lineNo';
-        if (!lineDecorations) {
-            return result;
-        }
-        for (const d of lineDecorations) {
-            const lane = (_b = (_a = d.options.glyphMargin) === null || _a === void 0 ? void 0 : _a.position) !== null && _b !== void 0 ? _b : GlyphMarginLane.Center;
-            if (!isLineHover && lane !== this._laneOrLine) {
-                continue;
-            }
-            const hoverMessage = isLineHover ? d.options.lineNumberHoverMessage : d.options.glyphMarginHoverMessage;
-            if (!hoverMessage || isEmptyMarkdownString(hoverMessage)) {
-                continue;
-            }
-            result.push(...asArray(hoverMessage).map(toHoverMessage));
-        }
-        return result;
-    }
-}

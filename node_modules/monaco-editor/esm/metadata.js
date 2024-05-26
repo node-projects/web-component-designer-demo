@@ -110,7 +110,7 @@ exports.features = [
   },
   {
     "label": "hover",
-    "entry": "vs/editor/contrib/hover/browser/hover"
+    "entry": "vs/editor/contrib/hover/browser/hoverContribution"
   },
   {
     "label": "iPadShowKeyboard",
@@ -592,6 +592,10 @@ exports.languages = [
       "id": "vs/language/typescript/tsWorker",
       "entry": "vs/language/typescript/ts.worker"
     }
+  },
+  {
+    "label": "typespec",
+    "entry": "vs/basic-languages/typespec/typespec.contribution"
   },
   {
     "label": "vb",
