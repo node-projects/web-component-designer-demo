@@ -37,7 +37,7 @@ export class CommandHandling {
   handleCommandButtonMouseHold(button, e) {
     let commandName = <string>button.dataset['command'];
     let commandParameter = button.dataset['commandParameter'];
-    let target: any = this.dockManager.activeDocument.resolvedElementContent;
+    let target: any = this.dockManager.activeDocument?.resolvedElementContent;
     target.executeCommand({ type: <any>('hold' + commandName[0].toUpperCase() + commandName.substring(1)), parameter: commandParameter, event: e });
   }
 
