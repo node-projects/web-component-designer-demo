@@ -12,5 +12,5 @@ https://node-projects.github.io/web-component-designer-demo/index.html
   * you need to have run the "develop" script of the designer git repo before.
 
 ```
-  $ npm run develop
+  npm run develop
 ```
