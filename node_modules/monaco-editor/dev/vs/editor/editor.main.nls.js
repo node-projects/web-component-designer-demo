@@ -1,6 +1,6 @@
 /*!-----------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
- * Version: 0.49.0(383fdf3fc0e1e1a024068b8d0fd4f3dcbae74d04)
+ * Version: 0.50.0(c321d0fbecb50ab8a5365fa1965476b0ae63fc87)
  * Released under the MIT license
  * https://github.com/microsoft/vscode/blob/main/LICENSE.txt
  *-----------------------------------------------------------*/
@@ -199,6 +199,9 @@ define("vs/editor/editor.main.nls", {
 		"The background color of the multi file diff editor",
 		"The border color of the multi file diff editor"
 	],
+	"vs/editor/browser/widget/multiDiffEditor/multiDiffEditorWidgetImpl": [
+		"No Changed Files"
+	],
 	"vs/editor/common/config/editorConfigurationSchema": [
 		"Editor",
 		"The number of spaces a tab is equal to. This setting is overridden based on the file contents when {0} is on.",
@@ -331,6 +334,7 @@ define("vs/editor/editor.main.nls", {
 		"Controls whether named regions are shown as section headers in the minimap.",
 		"Controls whether MARK: comments are shown as section headers in the minimap.",
 		"Controls the font size of section headers in the minimap.",
+		"Controls the amount of space (in pixels) between characters of section header. This helps the readability of the header in small font sizes.",
 		"Controls the amount of space between the top edge of the editor and the first line.",
 		"Controls the amount of space between the bottom edge of the editor and the last line.",
 		"Enables a pop-up that shows parameter documentation and type information as you type.",
@@ -833,7 +837,6 @@ define("vs/editor/editor.main.nls", {
 		"Copy As",
 		"Copy As",
 		"Share",
-		"Share",
 		"Share"
 	],
 	"vs/editor/contrib/codeAction/browser/codeAction": [
@@ -966,6 +969,10 @@ define("vs/editor/editor.main.nls", {
 		"Show drop options...",
 		"Running drop handlers. Click to cancel"
 	],
+	"vs/editor/contrib/dropOrPasteInto/browser/postEditWidget": [
+		"Error resolving edit '{0}':\n{1}",
+		"Error applying edit '{0}':\n{1}"
+	],
 	"vs/editor/contrib/editorState/browser/keybindingCancellation": [
 		"Whether the editor runs a cancellable operation, e.g. like 'Peek References'"
 	],
@@ -988,9 +995,9 @@ define("vs/editor/editor.main.nls", {
 		"&&Replace"
 	],
 	"vs/editor/contrib/find/browser/findWidget": [
-		"Icon for 'Find in Selection' in the editor find widget.",
 		"Icon to indicate that the editor find widget is collapsed.",
 		"Icon to indicate that the editor find widget is expanded.",
+		"Icon for 'Find in Selection' in the editor find widget.",
 		"Icon for 'Replace' in the editor find widget.",
 		"Icon for 'Replace All' in the editor find widget.",
 		"Icon for 'Find Previous' in the editor find widget.",
@@ -1155,6 +1162,16 @@ define("vs/editor/editor.main.nls", {
 		"Symbol {0} of {1}, {2} for next",
 		"Symbol {0} of {1}"
 	],
+	"vs/editor/contrib/hover/browser/hoverAccessibleViews": [
+		"Focus on the hover widget to cycle through the hover parts with the Tab key.",
+		"- The focused hover part verbosity level can be increased with the Increase Hover Verbosity command<keybinding:{0}>.",
+		"- The focused hover part verbosity level can be decreased with the Decrease Hover Verbosity command<keybinding:{0}>.",
+		"The last focused hover content is the following."
+	],
+	"vs/editor/contrib/hover/browser/hoverActionIds": [
+		"Increase Hover Verbosity Level",
+		"Decrease Hover Verbosity Level"
+	],
 	"vs/editor/contrib/hover/browser/hoverActions": [
 		"Show or Focus Hover",
 		"The hover will not automatically take focus.",
@@ -1169,8 +1186,6 @@ define("vs/editor/editor.main.nls", {
 		"Page Down Hover",
 		"Go To Top Hover",
 		"Go To Bottom Hover",
-		"Increase Hover Verbosity Level",
-		"Decrease Hover Verbosity Level",
 		"Show or focus the editor hover which shows documentation, references, and other content for a symbol at the current cursor position.",
 		"Show the definition preview hover in the editor.",
 		"Scroll up the editor hover.",
@@ -1188,10 +1203,10 @@ define("vs/editor/editor.main.nls", {
 		"Loading...",
 		"Rendering paused for long line for performance reasons. This can be configured via `editor.stopRenderingLineAfter`.",
 		"Tokenization is skipped for long lines for performance reasons. This can be configured via `editor.maxTokenizationLineLength`.",
-		"Increase Verbosity ({0})",
-		"Increase Verbosity",
-		"Decrease Verbosity ({0})",
-		"Decrease Verbosity"
+		"Increase Hover Verbosity ({0})",
+		"Increase Hover Verbosity",
+		"Decrease Hover Verbosity ({0})",
+		"Decrease Hover Verbosity"
 	],
 	"vs/editor/contrib/hover/browser/markerHoverParticipant": [
 		"View Problem",
@@ -1681,6 +1696,8 @@ define("vs/editor/editor.main.nls", {
 		"Task Failed",
 		"Terminal Command Failed",
 		"Command Failed",
+		"Terminal Command Succeeded",
+		"Command Succeeded",
 		"Terminal Bell",
 		"Terminal Bell",
 		"Notebook Cell Completed",
@@ -1840,10 +1857,18 @@ define("vs/editor/editor.main.nls", {
 		"{0}, {1}"
 	],
 	"vs/platform/quickinput/browser/quickInput": [
+		"Whether keyboard focus is inside the quick input control",
+		"The type of the currently visible quick input",
+		"Whether the cursor in the quick input is at the end of the input box",
 		"Back",
 		"Press 'Enter' to confirm your input or 'Escape' to cancel",
 		"{0}/{1}",
 		"Type to narrow down results."
+	],
+	"vs/platform/quickinput/browser/quickInputActions": [
+		"Used while in the context of the quick pick. If you change one keybinding for this command, you should change all of the other keybindings (modifier variants) of this command as well.",
+		"If we're in quick access mode, this will navigate to the next item. If we are not in quick access mode, this will navigate to the next separator.",
+		"If we're in quick access mode, this will navigate to the previous item. If we are not in quick access mode, this will navigate to the previous separator."
 	],
 	"vs/platform/quickinput/browser/quickInputController": [
 		"Toggle all checkboxes",
@@ -1918,7 +1943,9 @@ define("vs/editor/editor.main.nls", {
 		"Color for regions with the same content as the selection. The color must not be opaque so as not to hide underlying decorations.",
 		"Border color for regions with the same content as the selection.",
 		"Color of the current search match.",
+		"Text color of the current search match.",
 		"Color of the other search matches. The color must not be opaque so as not to hide underlying decorations.",
+		"Foreground color of the other search matches.",
 		"Color of the range limiting the search. The color must not be opaque so as not to hide underlying decorations.",
 		"Border color of the current search match.",
 		"Border color of the other search matches.",

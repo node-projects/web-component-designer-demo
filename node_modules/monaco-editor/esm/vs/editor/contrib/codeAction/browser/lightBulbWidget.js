@@ -149,6 +149,12 @@ let LightBulbWidget = LightBulbWidget_1 = class LightBulbWidget extends Disposab
             position: { lineNumber: effectiveLineNumber, column: effectiveColumnNumber },
             preference: LightBulbWidget_1._posPref
         });
+        const validActions = actions.validActions;
+        const actionKind = actions.validActions[0].action.kind;
+        if (validActions.length !== 1 || !actionKind) {
+            this._editor.layoutContentWidget(this);
+            return;
+        }
         this._editor.layoutContentWidget(this);
     }
     hide() {

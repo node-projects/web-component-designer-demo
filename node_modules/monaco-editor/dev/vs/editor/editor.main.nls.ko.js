@@ -1,6 +1,6 @@
 /*!-----------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
- * Version: 0.49.0(383fdf3fc0e1e1a024068b8d0fd4f3dcbae74d04)
+ * Version: 0.50.0(c321d0fbecb50ab8a5365fa1965476b0ae63fc87)
  * Released under the MIT license
  * https://github.com/microsoft/vscode/blob/main/LICENSE.txt
  *-----------------------------------------------------------*/
@@ -196,6 +196,9 @@ define("vs/editor/editor.main.nls.ko", {
 		"다중 파일 diff 편집기 배경색입니다.",
 		"다중 파일 차이 편집기의 테두리 색",
 	],
+	"vs/editor/browser/widget/multiDiffEditor/multiDiffEditorWidgetImpl": [
+		"변경된 파일 없음",
+	],
 	"vs/editor/common/config/editorConfigurationSchema": [
 		"편집기",
 		"탭이 같은 공백의 수입니다. 이 설정은 {0}이(가) 켜져 있을 때 파일 내용을 기반으로 재정의됩니다.",
@@ -328,6 +331,7 @@ define("vs/editor/editor.main.nls.ko", {
 		"명명된 영역을 미니맵에 섹션 머리글로 표시할지 여부를 제어합니다.",
 		"MARK: 주석이 미니맵에 섹션 머리글로 표시되는지 여부를 제어합니다.",
 		"미니맵에서 섹션 머리글의 글꼴 크기를 제어합니다.",
+		"구역 머리글 문자 사이의 간격(픽셀)을 제어합니다. 이렇게 하면 작은 글꼴 크기의 머리글 가독성을 높이는 데 도움이 됩니다.",
 		"편집기의 위쪽 가장자리와 첫 번째 줄 사이의 공백을 제어합니다.",
 		"편집기의 아래쪽 가장자리와 마지막 줄 사이의 공백을 제어합니다.",
 		"입력과 동시에 매개변수 문서와 유형 정보를 표시하는 팝업을 사용하도록 설정합니다.",
@@ -338,7 +342,7 @@ define("vs/editor/editor.main.nls.ko", {
 		"문자열 내에서 빠른 제안을 사용합니다.",
 		"주석 내에서 빠른 제안을 사용합니다.",
 		"문자열 및 주석 외부에서 빠른 제안을 사용합니다.",
-		"입력하는 동안 제안을 자동으로 표시할지 여부를 제어합니다. 이것은 주석, 문자열 및 기타 코드를 입력하기 위해 제어할 수 있습니다. 빠른 제안은 고스트 텍스트 또는 제안 위젯으로 표시하도록 구성할 수 있습니다. 또한 제안이 특수 문자에 의해 실행되는지 여부를 제어하는 \'{0}\'-설정에 유의하세요.",
+		"Controls whether suggestions should automatically show up while typing. This can be controlled for typing in comments, strings, and other code. Quick suggestion can be configured to show as ghost text or with the suggest widget. Also be aware of the {0}-setting which controls if suggestions are triggered by special characters.",
 		"줄 번호는 렌더링되지 않습니다.",
 		"줄 번호는 절대값으로 렌더링 됩니다.",
 		"줄 번호는 커서 위치에서 줄 간격 거리로 렌더링 됩니다.",
@@ -406,7 +410,7 @@ define("vs/editor/editor.main.nls.ko", {
 		"IntelliSense를 자동으로 트리거할 때 제안을 선택하지 마세요.",
 		"트리거 문자에서 IntelliSense를 트리거할 때만 제안을 선택합니다.",
 		"입력할 때 IntelliSense를 트리거할 때만 제안을 선택합니다.",
-		"위젯이 표시될 때 제안을 선택할지 여부를 제어합니다. 이는 자동으로 트리거된 제안(\'#editor.quickSuggestions#\' 및 \'#editor.suggestOnTriggerCharacters#\')에만 적용되며, 제안이 명시적으로 호출될 때 항상 선택됩니다(예: \'Ctrl+Space\'를 통해).",
+		"Controls whether a suggestion is selected when the widget shows. Note that this only applies to automatically triggered suggestions ({0} and {1}) and that a suggestion is always selected when explicitly invoked, e.g via `Ctrl+Space`.",
 		"활성 코드 조각이 빠른 제안을 방지하는지 여부를 제어합니다.",
 		"제안의 아이콘을 표시할지 여부를 제어합니다.",
 		"제안 위젯 하단의 상태 표시줄 가시성을 제어합니다.",
@@ -831,7 +835,6 @@ define("vs/editor/editor.main.nls.ko", {
 		"다음으로 복사",
 		"공유",
 		"공유",
-		"공유",
 	],
 	"vs/editor/contrib/codeAction/browser/codeAction": [
 		"코드 작업을 적용하는 중 알 수 없는 오류가 발생했습니다.",
@@ -941,7 +944,7 @@ define("vs/editor/editor.main.nls.ko", {
 		"붙여넣기 위젯이 표시되는지 여부",
 		"붙여넣기 옵션 표시...",
 		"\'{0}\'에 대한 붙여넣기 편집을 찾을 수 없습니다.",
-		"붙여넣기 처리기를 실행하는 중입니다. 취소하려면 클릭하세요.",
+		"Running paste handlers. Click to cancel and do basic paste",
 		"붙여넣기 작업 선택",
 		"붙여넣기 처리기를 실행하는 중",
 	],
@@ -962,6 +965,10 @@ define("vs/editor/editor.main.nls.ko", {
 		"드롭 위젯이 표시되는지 여부",
 		"드롭 옵션 표시...",
 		"드롭 처리기를 실행하는 중입니다. 취소하려면 클릭하세요.",
+	],
+	"vs/editor/contrib/dropOrPasteInto/browser/postEditWidget": [
+		"\'{0}\' 편집을 확인하는 동안 오류 발생:\r\n{1}",
+		"\'{0}\' 편집을 적용하는 동안 오류 발생:\r\n{1}",
 	],
 	"vs/editor/contrib/editorState/browser/keybindingCancellation": [
 		"편집기에서 취소 가능한 작업(예: \'참조 피킹\')을 실행하는지 여부",
@@ -985,9 +992,9 @@ define("vs/editor/editor.main.nls.ko", {
 		"바꾸기(&&R)",
 	],
 	"vs/editor/contrib/find/browser/findWidget": [
-		"편집기 찾기 위젯에서 \'선택 영역에서 찾기\'의 아이콘입니다.",
 		"편집기 찾기 위젯이 축소되었음을 나타내는 아이콘입니다.",
 		"편집기 찾기 위젯이 확장되었음을 나타내는 아이콘입니다.",
+		"편집기 찾기 위젯에서 \'선택 영역에서 찾기\'의 아이콘입니다.",
 		"편집기 찾기 위젯에서 \'바꾸기\'의 아이콘입니다.",
 		"편집기 찾기 위젯에서 \'모두 바꾸기\'의 아이콘입니다.",
 		"편집기 찾기 위젯에서 \'이전 찾기\'의 아이콘입니다.",
@@ -1152,6 +1159,16 @@ define("vs/editor/editor.main.nls.ko", {
 		"{1}의 {0} 기호, 다음의 경우 {2}",
 		"{1}의 기호 {0}",
 	],
+	"vs/editor/contrib/hover/browser/hoverAccessibleViews": [
+		"가리킨 항목 위젯에 포커스를 두어 Tab 키를 사용하여 가리킨 부분을 순환합니다.",
+		"- 포커스된 가리킨 부분의 세부 정보 표시 수준은 가리키기 세부 정보 표시 늘리기 명령<keybinding:{0}>을 사용하여 늘릴 수 있습니다.",
+		"- 포커스된 가리킨 부분의 세부 정보 표시 수준은 가리키기 세부 정보 표시 줄이기 명령<keybinding:{0}>을 사용하여 줄일 수 있습니다.",
+		"마지막으로 포커스된 가리킨 콘텐츠는 다음과 같습니다.",
+	],
+	"vs/editor/contrib/hover/browser/hoverActionIds": [
+		"가리키기 세부 정보 표시 수준 늘리기",
+		"가리키기 세부 정보 표시 수준 감소",
+	],
 	"vs/editor/contrib/hover/browser/hoverActions": [
 		"가리키기 또는 포커스 표시",
 		"마우스로 가리켜도 포커스가 옮겨 가지 않습니다.",
@@ -1166,8 +1183,6 @@ define("vs/editor/editor.main.nls.ko", {
 		"페이지 아래쪽 가리키기",
 		"위쪽 가리키기로 이동",
 		"아래쪽 가리키기로 이동",
-		"가리키기 세부 정보 표시 수준 늘리기",
-		"가리키기 세부 정보 표시 수준 감소",
 		"현재 커서 위치에 있는 기호에 대한 설명서, 참조 및 기타 콘텐츠를 표시하는 편집기 가리키기를 표시하거나 포커스를 지정합니다.",
 		"편집기에서 정의 미리 보기 가리키기 표시.",
 		"편집기 가리키기를 위로 스크롤.",
@@ -1185,10 +1200,10 @@ define("vs/editor/editor.main.nls.ko", {
 		"로드 중...",
 		"성능상의 이유로 긴 줄로 인해 렌더링이 일시 중지되었습니다. `editor.stopRenderingLineAfter`를 통해 구성할 수 있습니다.",
 		"성능상의 이유로 긴 줄의 경우 토큰화를 건너뜁니다. 이 항목은 \'editor.maxTokenizationLineLength\'를 통해 구성할 수 있습니다.",
-		"자세한 정도 증가({0})",
-		"세부 정보 표시 늘리기",
-		"세부 정보 표시 감소({0})",
-		"세부 정보 표시 감소",
+		"가리키기 세부 정보 표시 증가({0})",
+		"가리키기 세부 정보 표시 증가",
+		"가리키기 세부 정보 표시 감소({0})",
+		"가리키기 세부 정보 표시 감소",
 	],
 	"vs/editor/contrib/hover/browser/markerHoverParticipant": [
 		"문제 보기",
@@ -1554,7 +1569,7 @@ define("vs/editor/editor.main.nls.ko", {
 		"자세한 정보",
 	],
 	"vs/editor/contrib/suggest/browser/suggestWidgetStatus": [
-		"{0}({1})",
+		"{0} ({1})",
 	],
 	"vs/editor/contrib/symbolIcons/browser/symbolIcons": [
 		"배열 기호의 전경색입니다. 이러한 기호는 개요, 이동 경로 및 제안 위젯에 나타납니다.",
@@ -1678,6 +1693,8 @@ define("vs/editor/editor.main.nls.ko", {
 		"작업 실패",
 		"터미널 명령 실패",
 		"명령이 실패했습니다.",
+		"터미널 명령 성공",
+		"명령 성공",
 		"터미널 벨",
 		"터미널 벨",
 		"Notebook 셀 완료됨",
@@ -1837,10 +1854,18 @@ define("vs/editor/editor.main.nls.ko", {
 		"{0}, {1}",
 	],
 	"vs/platform/quickinput/browser/quickInput": [
+		"키보드 포커스가 빠른 입력 컨트롤 내에 있는지 여부",
+		"현재 표시되는 빠른 입력 형식임",
+		"빠른 입력의 커서가 입력 상자의 끝에 있는지 여부",
 		"뒤로",
 		"입력을 확인하려면 \'Enter\' 키를 누르고, 취소하려면 \'Esc\' 키를 누르세요.",
 		"{0} / {1}",
 		"결과의 범위를 축소하려면 입력하세요.",
+	],
+	"vs/platform/quickinput/browser/quickInputActions": [
+		"빠른 선택 컨텍스트에서 사용됩니다. 이 명령에 대한 하나의 키 바인딩을 변경하는 경우 이 명령의 다른 모든 키 바인딩(한정자 변형)도 변경해야 합니다.",
+		"빠른 액세스 모드에 있는 경우 다음 항목으로 이동합니다. 빠른 액세스 모드가 아닌 경우 다음 구분 기호로 이동합니다.",
+		"빠른 액세스 모드인 경우 이전 항목으로 이동합니다. 빠른 액세스 모드가 아닌 경우 이전 구분 기호로 이동합니다.",
 	],
 	"vs/platform/quickinput/browser/quickInputController": [
 		"모든 확인란 선택/해제",
@@ -1915,7 +1940,9 @@ define("vs/editor/editor.main.nls.ko", {
 		"선택 영역과 동일한 콘텐츠가 있는 영역의 색입니다. 기본 장식을 숨기지 않도록 색은 불투명하지 않아야 합니다.",
 		"선택 영역과 동일한 콘텐츠가 있는 영역의 테두리 색입니다.",
 		"현재 검색 일치 항목의 색입니다.",
+		"현재 검색 일치 항목의 텍스트 색입니다.",
 		"기타 검색 일치 항목의 색입니다. 기본 장식을 숨기지 않도록 색은 불투명하지 않아야 합니다.",
+		"다른 검색 일치 항목의 전경색입니다.",
 		"검색을 제한하는 범위의 색입니다. 기본 장식을 숨기지 않도록 색은 불투명하지 않아야 합니다.",
 		"현재 검색과 일치하는 테두리 색입니다.",
 		"다른 검색과 일치하는 테두리 색입니다.",

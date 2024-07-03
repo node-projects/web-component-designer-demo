@@ -1,5 +1,6 @@
-//Command Handling..
-// Setup commands
+import { WebRtcMultiplayerServer } from '@node-projects/web-component-designer-webrtc-multiplayer';
+let multiplayer = null;
+;
 export class CommandHandling {
     dockManager;
     appShell;
@@ -14,10 +15,24 @@ export class CommandHandling {
         let commandParameter = button.dataset['commandParameter'];
         if (commandName === 'new')
             this.appShell.newDocument(null, null, false);
-        if (commandName === 'newIframe')
+        else if (commandName === 'newIframe')
             this.appShell.newDocument(null, null, true);
         else if (commandName === 'github')
             window.location.href = 'https://github.com/node-projects/web-component-designer';
+        else if (commandName === 'startServer') {
+            if (!multiplayer) {
+                multiplayer = new WebRtcMultiplayerServer();
+                multiplayer.useBroadcast();
+                multiplayer.startServer();
+            }
+        }
+        else if (commandName === 'connectClient') {
+            if (!multiplayer) {
+                multiplayer = new WebRtcMultiplayerServer();
+                multiplayer.useBroadcast();
+                //multiplayer.startClient();
+            }
+        }
         else if (this.dockManager.activeDocument) {
             let target = this.dockManager.activeDocument.resolvedElementContent;
             if (target.executeCommand) {
@@ -28,7 +43,7 @@ export class CommandHandling {
     handleCommandButtonMouseHold(button, e) {
         let commandName = button.dataset['command'];
         let commandParameter = button.dataset['commandParameter'];
-        let target = this.dockManager.activeDocument.resolvedElementContent;
+        let target = this.dockManager.activeDocument?.resolvedElementContent;
         target.executeCommand({ type: ('hold' + commandName[0].toUpperCase() + commandName.substring(1)), parameter: commandParameter, event: e });
     }
     handleInputValueChanged(e) {
@@ -95,6 +110,16 @@ export class CommandHandling {
                 b.removeAttribute('disabled');
             else if (command === 'github')
                 b.removeAttribute('disabled');
+            else if (command === 'startServer')
+                if (!multiplayer)
+                    b.removeAttribute('disabled');
+                else
+                    b.setAttribute('disabled', '');
+            else if (command === 'connectClient')
+                if (!multiplayer)
+                    b.removeAttribute('disabled');
+                else
+                    b.setAttribute('disabled', '');
             else if (!target ? true : !target.canExecuteCommand({ type: command, parameter: commandParameter }))
                 b.setAttribute('disabled', '');
             else

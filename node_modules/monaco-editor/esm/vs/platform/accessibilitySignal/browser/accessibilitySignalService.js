@@ -17,6 +17,7 @@ export class Sound {
 }
 Sound.error = Sound.register({ fileName: 'error.mp3' });
 Sound.warning = Sound.register({ fileName: 'warning.mp3' });
+Sound.success = Sound.register({ fileName: 'success.mp3' });
 Sound.foldedArea = Sound.register({ fileName: 'foldedAreas.mp3' });
 Sound.break = Sound.register({ fileName: 'break.mp3' });
 Sound.quickFixes = Sound.register({ fileName: 'quickFixes.mp3' });
@@ -43,17 +44,18 @@ export class SoundSource {
     }
 }
 export class AccessibilitySignal {
-    constructor(sound, name, legacySoundSettingsKey, settingsKey, legacyAnnouncementSettingsKey, announcementMessage) {
+    constructor(sound, name, legacySoundSettingsKey, settingsKey, legacyAnnouncementSettingsKey, announcementMessage, delaySettingsKey) {
         this.sound = sound;
         this.name = name;
         this.legacySoundSettingsKey = legacySoundSettingsKey;
         this.settingsKey = settingsKey;
         this.legacyAnnouncementSettingsKey = legacyAnnouncementSettingsKey;
         this.announcementMessage = announcementMessage;
+        this.delaySettingsKey = delaySettingsKey;
     }
     static register(options) {
         const soundSource = new SoundSource('randomOneOf' in options.sound ? options.sound.randomOneOf : [options.sound]);
-        const signal = new AccessibilitySignal(soundSource, options.name, options.legacySoundSettingsKey, options.settingsKey, options.legacyAnnouncementSettingsKey, options.announcementMessage);
+        const signal = new AccessibilitySignal(soundSource, options.name, options.legacySoundSettingsKey, options.settingsKey, options.legacyAnnouncementSettingsKey, options.announcementMessage, options.delaySettingsKey);
         AccessibilitySignal._signals.add(signal);
         return signal;
     }
@@ -64,18 +66,20 @@ AccessibilitySignal.errorAtPosition = AccessibilitySignal.register({
     sound: Sound.error,
     announcementMessage: localize('accessibility.signals.positionHasError', 'Error'),
     settingsKey: 'accessibility.signals.positionHasError',
+    delaySettingsKey: 'accessibility.signalOptions.delays.errorAtPosition'
 });
 AccessibilitySignal.warningAtPosition = AccessibilitySignal.register({
     name: localize('accessibilitySignals.positionHasWarning.name', 'Warning at Position'),
     sound: Sound.warning,
     announcementMessage: localize('accessibility.signals.positionHasWarning', 'Warning'),
     settingsKey: 'accessibility.signals.positionHasWarning',
+    delaySettingsKey: 'accessibility.signalOptions.delays.warningAtPosition'
 });
 AccessibilitySignal.errorOnLine = AccessibilitySignal.register({
     name: localize('accessibilitySignals.lineHasError.name', 'Error on Line'),
     sound: Sound.error,
     legacySoundSettingsKey: 'audioCues.lineHasError',
-    legacyAnnouncementSettingsKey: "accessibility.alert.error" /* AccessibilityAlertSettingId.Error */,
+    legacyAnnouncementSettingsKey: 'accessibility.alert.error',
     announcementMessage: localize('accessibility.signals.lineHasError', 'Error on Line'),
     settingsKey: 'accessibility.signals.lineHasError',
 });
@@ -83,7 +87,7 @@ AccessibilitySignal.warningOnLine = AccessibilitySignal.register({
     name: localize('accessibilitySignals.lineHasWarning.name', 'Warning on Line'),
     sound: Sound.warning,
     legacySoundSettingsKey: 'audioCues.lineHasWarning',
-    legacyAnnouncementSettingsKey: "accessibility.alert.warning" /* AccessibilityAlertSettingId.Warning */,
+    legacyAnnouncementSettingsKey: 'accessibility.alert.warning',
     announcementMessage: localize('accessibility.signals.lineHasWarning', 'Warning on Line'),
     settingsKey: 'accessibility.signals.lineHasWarning',
 });
@@ -91,7 +95,7 @@ AccessibilitySignal.foldedArea = AccessibilitySignal.register({
     name: localize('accessibilitySignals.lineHasFoldedArea.name', 'Folded Area on Line'),
     sound: Sound.foldedArea,
     legacySoundSettingsKey: 'audioCues.lineHasFoldedArea',
-    legacyAnnouncementSettingsKey: "accessibility.alert.foldedArea" /* AccessibilityAlertSettingId.FoldedArea */,
+    legacyAnnouncementSettingsKey: 'accessibility.alert.foldedArea',
     announcementMessage: localize('accessibility.signals.lineHasFoldedArea', 'Folded'),
     settingsKey: 'accessibility.signals.lineHasFoldedArea',
 });
@@ -99,7 +103,7 @@ AccessibilitySignal.break = AccessibilitySignal.register({
     name: localize('accessibilitySignals.lineHasBreakpoint.name', 'Breakpoint on Line'),
     sound: Sound.break,
     legacySoundSettingsKey: 'audioCues.lineHasBreakpoint',
-    legacyAnnouncementSettingsKey: "accessibility.alert.breakpoint" /* AccessibilityAlertSettingId.Breakpoint */,
+    legacyAnnouncementSettingsKey: 'accessibility.alert.breakpoint',
     announcementMessage: localize('accessibility.signals.lineHasBreakpoint', 'Breakpoint'),
     settingsKey: 'accessibility.signals.lineHasBreakpoint',
 });
@@ -113,7 +117,7 @@ AccessibilitySignal.terminalQuickFix = AccessibilitySignal.register({
     name: localize('accessibilitySignals.terminalQuickFix.name', 'Terminal Quick Fix'),
     sound: Sound.quickFixes,
     legacySoundSettingsKey: 'audioCues.terminalQuickFix',
-    legacyAnnouncementSettingsKey: "accessibility.alert.terminalQuickFix" /* AccessibilityAlertSettingId.TerminalQuickFix */,
+    legacyAnnouncementSettingsKey: 'accessibility.alert.terminalQuickFix',
     announcementMessage: localize('accessibility.signals.terminalQuickFix', 'Quick Fix'),
     settingsKey: 'accessibility.signals.terminalQuickFix',
 });
@@ -121,7 +125,7 @@ AccessibilitySignal.onDebugBreak = AccessibilitySignal.register({
     name: localize('accessibilitySignals.onDebugBreak.name', 'Debugger Stopped on Breakpoint'),
     sound: Sound.break,
     legacySoundSettingsKey: 'audioCues.onDebugBreak',
-    legacyAnnouncementSettingsKey: "accessibility.alert.onDebugBreak" /* AccessibilityAlertSettingId.OnDebugBreak */,
+    legacyAnnouncementSettingsKey: 'accessibility.alert.onDebugBreak',
     announcementMessage: localize('accessibility.signals.onDebugBreak', 'Breakpoint'),
     settingsKey: 'accessibility.signals.onDebugBreak',
 });
@@ -129,7 +133,7 @@ AccessibilitySignal.noInlayHints = AccessibilitySignal.register({
     name: localize('accessibilitySignals.noInlayHints', 'No Inlay Hints on Line'),
     sound: Sound.error,
     legacySoundSettingsKey: 'audioCues.noInlayHints',
-    legacyAnnouncementSettingsKey: "accessibility.alert.noInlayHints" /* AccessibilityAlertSettingId.NoInlayHints */,
+    legacyAnnouncementSettingsKey: 'accessibility.alert.noInlayHints',
     announcementMessage: localize('accessibility.signals.noInlayHints', 'No Inlay Hints'),
     settingsKey: 'accessibility.signals.noInlayHints',
 });
@@ -137,7 +141,7 @@ AccessibilitySignal.taskCompleted = AccessibilitySignal.register({
     name: localize('accessibilitySignals.taskCompleted', 'Task Completed'),
     sound: Sound.taskCompleted,
     legacySoundSettingsKey: 'audioCues.taskCompleted',
-    legacyAnnouncementSettingsKey: "accessibility.alert.taskCompleted" /* AccessibilityAlertSettingId.TaskCompleted */,
+    legacyAnnouncementSettingsKey: 'accessibility.alert.taskCompleted',
     announcementMessage: localize('accessibility.signals.taskCompleted', 'Task Completed'),
     settingsKey: 'accessibility.signals.taskCompleted',
 });
@@ -145,7 +149,7 @@ AccessibilitySignal.taskFailed = AccessibilitySignal.register({
     name: localize('accessibilitySignals.taskFailed', 'Task Failed'),
     sound: Sound.taskFailed,
     legacySoundSettingsKey: 'audioCues.taskFailed',
-    legacyAnnouncementSettingsKey: "accessibility.alert.taskFailed" /* AccessibilityAlertSettingId.TaskFailed */,
+    legacyAnnouncementSettingsKey: 'accessibility.alert.taskFailed',
     announcementMessage: localize('accessibility.signals.taskFailed', 'Task Failed'),
     settingsKey: 'accessibility.signals.taskFailed',
 });
@@ -153,15 +157,21 @@ AccessibilitySignal.terminalCommandFailed = AccessibilitySignal.register({
     name: localize('accessibilitySignals.terminalCommandFailed', 'Terminal Command Failed'),
     sound: Sound.error,
     legacySoundSettingsKey: 'audioCues.terminalCommandFailed',
-    legacyAnnouncementSettingsKey: "accessibility.alert.terminalCommandFailed" /* AccessibilityAlertSettingId.TerminalCommandFailed */,
+    legacyAnnouncementSettingsKey: 'accessibility.alert.terminalCommandFailed',
     announcementMessage: localize('accessibility.signals.terminalCommandFailed', 'Command Failed'),
     settingsKey: 'accessibility.signals.terminalCommandFailed',
+});
+AccessibilitySignal.terminalCommandSucceeded = AccessibilitySignal.register({
+    name: localize('accessibilitySignals.terminalCommandSucceeded', 'Terminal Command Succeeded'),
+    sound: Sound.success,
+    announcementMessage: localize('accessibility.signals.terminalCommandSucceeded', 'Command Succeeded'),
+    settingsKey: 'accessibility.signals.terminalCommandSucceeded',
 });
 AccessibilitySignal.terminalBell = AccessibilitySignal.register({
     name: localize('accessibilitySignals.terminalBell', 'Terminal Bell'),
     sound: Sound.terminalBell,
     legacySoundSettingsKey: 'audioCues.terminalBell',
-    legacyAnnouncementSettingsKey: "accessibility.alert.terminalBell" /* AccessibilityAlertSettingId.TerminalBell */,
+    legacyAnnouncementSettingsKey: 'accessibility.alert.terminalBell',
     announcementMessage: localize('accessibility.signals.terminalBell', 'Terminal Bell'),
     settingsKey: 'accessibility.signals.terminalBell',
 });
@@ -169,7 +179,7 @@ AccessibilitySignal.notebookCellCompleted = AccessibilitySignal.register({
     name: localize('accessibilitySignals.notebookCellCompleted', 'Notebook Cell Completed'),
     sound: Sound.taskCompleted,
     legacySoundSettingsKey: 'audioCues.notebookCellCompleted',
-    legacyAnnouncementSettingsKey: "accessibility.alert.notebookCellCompleted" /* AccessibilityAlertSettingId.NotebookCellCompleted */,
+    legacyAnnouncementSettingsKey: 'accessibility.alert.notebookCellCompleted',
     announcementMessage: localize('accessibility.signals.notebookCellCompleted', 'Notebook Cell Completed'),
     settingsKey: 'accessibility.signals.notebookCellCompleted',
 });
@@ -177,7 +187,7 @@ AccessibilitySignal.notebookCellFailed = AccessibilitySignal.register({
     name: localize('accessibilitySignals.notebookCellFailed', 'Notebook Cell Failed'),
     sound: Sound.taskFailed,
     legacySoundSettingsKey: 'audioCues.notebookCellFailed',
-    legacyAnnouncementSettingsKey: "accessibility.alert.notebookCellFailed" /* AccessibilityAlertSettingId.NotebookCellFailed */,
+    legacyAnnouncementSettingsKey: 'accessibility.alert.notebookCellFailed',
     announcementMessage: localize('accessibility.signals.notebookCellFailed', 'Notebook Cell Failed'),
     settingsKey: 'accessibility.signals.notebookCellFailed',
 });
@@ -203,7 +213,7 @@ AccessibilitySignal.chatRequestSent = AccessibilitySignal.register({
     name: localize('accessibilitySignals.chatRequestSent', 'Chat Request Sent'),
     sound: Sound.chatRequestSent,
     legacySoundSettingsKey: 'audioCues.chatRequestSent',
-    legacyAnnouncementSettingsKey: "accessibility.alert.chatRequestSent" /* AccessibilityAlertSettingId.ChatRequestSent */,
+    legacyAnnouncementSettingsKey: 'accessibility.alert.chatRequestSent',
     announcementMessage: localize('accessibility.signals.chatRequestSent', 'Chat Request Sent'),
     settingsKey: 'accessibility.signals.chatRequestSent',
 });
@@ -224,7 +234,7 @@ AccessibilitySignal.progress = AccessibilitySignal.register({
     name: localize('accessibilitySignals.progress', 'Progress'),
     sound: Sound.progress,
     legacySoundSettingsKey: 'audioCues.chatResponsePending',
-    legacyAnnouncementSettingsKey: "accessibility.alert.chatResponseProgress" /* AccessibilityAlertSettingId.Progress */,
+    legacyAnnouncementSettingsKey: 'accessibility.alert.progress',
     announcementMessage: localize('accessibility.signals.progress', 'Progress'),
     settingsKey: 'accessibility.signals.progress'
 });
@@ -232,7 +242,7 @@ AccessibilitySignal.clear = AccessibilitySignal.register({
     name: localize('accessibilitySignals.clear', 'Clear'),
     sound: Sound.clear,
     legacySoundSettingsKey: 'audioCues.clear',
-    legacyAnnouncementSettingsKey: "accessibility.alert.clear" /* AccessibilityAlertSettingId.Clear */,
+    legacyAnnouncementSettingsKey: 'accessibility.alert.clear',
     announcementMessage: localize('accessibility.signals.clear', 'Clear'),
     settingsKey: 'accessibility.signals.clear'
 });
@@ -240,7 +250,7 @@ AccessibilitySignal.save = AccessibilitySignal.register({
     name: localize('accessibilitySignals.save', 'Save'),
     sound: Sound.save,
     legacySoundSettingsKey: 'audioCues.save',
-    legacyAnnouncementSettingsKey: "accessibility.alert.save" /* AccessibilityAlertSettingId.Save */,
+    legacyAnnouncementSettingsKey: 'accessibility.alert.save',
     announcementMessage: localize('accessibility.signals.save', 'Save'),
     settingsKey: 'accessibility.signals.save'
 });
@@ -248,7 +258,7 @@ AccessibilitySignal.format = AccessibilitySignal.register({
     name: localize('accessibilitySignals.format', 'Format'),
     sound: Sound.format,
     legacySoundSettingsKey: 'audioCues.format',
-    legacyAnnouncementSettingsKey: "accessibility.alert.format" /* AccessibilityAlertSettingId.Format */,
+    legacyAnnouncementSettingsKey: 'accessibility.alert.format',
     announcementMessage: localize('accessibility.signals.format', 'Format'),
     settingsKey: 'accessibility.signals.format'
 });

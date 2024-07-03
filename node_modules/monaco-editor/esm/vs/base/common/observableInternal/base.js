@@ -198,7 +198,7 @@ export class ObservableValue extends BaseObservable {
     }
     set(value, tx, change) {
         var _a;
-        if (this._equalityComparator(this._value, value)) {
+        if (change === undefined && this._equalityComparator(this._value, value)) {
             return;
         }
         let _tx;

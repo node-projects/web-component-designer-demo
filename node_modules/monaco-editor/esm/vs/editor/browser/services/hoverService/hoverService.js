@@ -19,7 +19,7 @@ import { IContextMenuService } from '../../../../platform/contextview/browser/co
 import { IInstantiationService } from '../../../../platform/instantiation/common/instantiation.js';
 import { HoverWidget } from './hoverWidget.js';
 import { Disposable, DisposableStore, toDisposable } from '../../../../base/common/lifecycle.js';
-import { addDisposableListener, EventType, getActiveElement, isAncestorOfActiveElement, isAncestor, getWindow } from '../../../../base/browser/dom.js';
+import { addDisposableListener, EventType, getActiveElement, isAncestorOfActiveElement, isAncestor, getWindow, isHTMLElement } from '../../../../base/browser/dom.js';
 import { IKeybindingService } from '../../../../platform/keybinding/common/keybinding.js';
 import { StandardKeyboardEvent } from '../../../../base/browser/keyboardEvent.js';
 import { IAccessibilityService } from '../../../../platform/accessibility/common/accessibility.js';
@@ -35,6 +35,7 @@ let HoverService = class HoverService extends Disposable {
         this._keybindingService = _keybindingService;
         this._layoutService = _layoutService;
         this._accessibilityService = _accessibilityService;
+        this._existingHovers = new Map();
         contextMenuService.onDidShowContextMenu(() => this.hideHover());
         this._contextViewHandler = this._register(new ContextViewHandler(this._layoutService));
     }
@@ -53,7 +54,9 @@ let HoverService = class HoverService extends Disposable {
         // HACK, remove this check when #189076 is fixed
         if (!skipLastFocusedUpdate) {
             if (trapFocus && activeElement) {
-                this._lastFocusedElementBeforeOpen = activeElement;
+                if (!activeElement.classList.contains('monaco-hover')) {
+                    this._lastFocusedElementBeforeOpen = activeElement;
+                }
             }
             else {
                 this._lastFocusedElementBeforeOpen = undefined;
@@ -80,7 +83,7 @@ let HoverService = class HoverService extends Disposable {
         }, undefined, hoverDisposables);
         // Set the container explicitly to enable aux window support
         if (!options.container) {
-            const targetElement = options.target instanceof HTMLElement ? options.target : options.target.targetElements[0];
+            const targetElement = isHTMLElement(options.target) ? options.target : options.target.targetElements[0];
             options.container = this._layoutService.getContainer(getWindow(targetElement));
         }
         this._contextViewHandler.showContextView(new HoverContextViewDelegate(hover, focus), options.container);
@@ -197,11 +200,11 @@ let HoverService = class HoverService extends Disposable {
                 hoverWidget = undefined;
             }
         };
-        const triggerShowHover = (delay, focus, target) => {
+        const triggerShowHover = (delay, focus, target, trapFocus) => {
             return new TimeoutTimer(async () => {
                 if (!hoverWidget || hoverWidget.isDisposed) {
                     hoverWidget = new UpdatableHoverWidget(hoverDelegate, target || htmlElement, delay > 0);
-                    await hoverWidget.update(typeof content === 'function' ? content() : content, focus, options);
+                    await hoverWidget.update(typeof content === 'function' ? content() : content, focus, { ...options, trapFocus });
                 }
             }, delay);
         };
@@ -230,14 +233,14 @@ let HoverService = class HoverService extends Disposable {
                 // track the mouse position
                 const onMouseMove = (e) => {
                     target.x = e.x + 10;
-                    if ((e.target instanceof HTMLElement) && getHoverTargetElement(e.target, htmlElement) !== htmlElement) {
+                    if ((isHTMLElement(e.target)) && getHoverTargetElement(e.target, htmlElement) !== htmlElement) {
                         hideHover(true, true);
                     }
                 };
                 toDispose.add(addDisposableListener(htmlElement, EventType.MOUSE_MOVE, onMouseMove, true));
             }
             hoverPreparation = toDispose;
-            if ((e.target instanceof HTMLElement) && getHoverTargetElement(e.target, htmlElement) !== htmlElement) {
+            if ((isHTMLElement(e.target)) && getHoverTargetElement(e.target, htmlElement) !== htmlElement) {
                 return; // Do not show hover when the mouse is over another hover target
             }
             toDispose.add(triggerShowHover(hoverDelegate.delay, false, target));
@@ -266,7 +269,7 @@ let HoverService = class HoverService extends Disposable {
         const hover = {
             show: focus => {
                 hideHover(false, true); // terminate a ongoing mouse over preparation
-                triggerShowHover(0, focus); // show hover immediately
+                triggerShowHover(0, focus, undefined, focus); // show hover immediately
             },
             hide: () => {
                 hideHover(true, true);
@@ -276,6 +279,7 @@ let HoverService = class HoverService extends Disposable {
                 await (hoverWidget === null || hoverWidget === void 0 ? void 0 : hoverWidget.update(content, undefined, hoverOptions));
             },
             dispose: () => {
+                this._existingHovers.delete(htmlElement);
                 mouseOverDomEmitter.dispose();
                 mouseLeaveEmitter.dispose();
                 mouseDownEmitter.dispose();
@@ -284,7 +288,18 @@ let HoverService = class HoverService extends Disposable {
                 hideHover(true, true);
             }
         };
+        this._existingHovers.set(htmlElement, hover);
         return hover;
+    }
+    triggerUpdatableHover(target) {
+        const hover = this._existingHovers.get(target);
+        if (hover) {
+            hover.show(true);
+        }
+    }
+    dispose() {
+        this._existingHovers.forEach(hover => hover.dispose());
+        super.dispose();
     }
 };
 HoverService = __decorate([

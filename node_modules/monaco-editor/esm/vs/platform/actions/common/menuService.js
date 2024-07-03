@@ -217,7 +217,7 @@ let MenuInfo = MenuInfo_1 = class MenuInfo {
         const result = [];
         for (const group of this._menuGroups) {
             const [id, items] = group;
-            const activeActions = [];
+            let activeActions;
             for (const item of items) {
                 if (this._contextKeyService.contextMatchesRules(item.when)) {
                     const isMenuItem = isIMenuItem(item);
@@ -228,19 +228,19 @@ let MenuInfo = MenuInfo_1 = class MenuInfo {
                     if (isMenuItem) {
                         // MenuItemAction
                         const menuKeybinding = createConfigureKeybindingAction(item.command.id, item.when, this._commandService, this._keybindingService);
-                        activeActions.push(new MenuItemAction(item.command, item.alt, options, menuHide, menuKeybinding, this._contextKeyService, this._commandService));
+                        (activeActions !== null && activeActions !== void 0 ? activeActions : (activeActions = [])).push(new MenuItemAction(item.command, item.alt, options, menuHide, menuKeybinding, this._contextKeyService, this._commandService));
                     }
                     else {
                         // SubmenuItemAction
                         const groups = new MenuInfo_1(item.submenu, this._hiddenStates, this._collectContextKeysForSubmenus, this._commandService, this._keybindingService, this._contextKeyService).createActionGroups(options);
                         const submenuActions = Separator.join(...groups.map(g => g[1]));
                         if (submenuActions.length > 0) {
-                            activeActions.push(new SubmenuItemAction(item, menuHide, submenuActions));
+                            (activeActions !== null && activeActions !== void 0 ? activeActions : (activeActions = [])).push(new SubmenuItemAction(item, menuHide, submenuActions));
                         }
                     }
                 }
             }
-            if (activeActions.length > 0) {
+            if (activeActions && activeActions.length > 0) {
                 result.push([id, activeActions]);
             }
         }

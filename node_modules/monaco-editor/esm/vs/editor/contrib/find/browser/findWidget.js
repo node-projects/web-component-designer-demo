@@ -19,7 +19,7 @@ import { CONTEXT_FIND_INPUT_FOCUSED, CONTEXT_REPLACE_INPUT_FOCUSED, FIND_IDS, MA
 import * as nls from '../../../../nls.js';
 import { ContextScopedFindInput, ContextScopedReplaceInput } from '../../../../platform/history/browser/contextScopedHistoryWidget.js';
 import { showHistoryKeybindingHint } from '../../../../platform/history/browser/historyWidgetKeybindingHint.js';
-import { asCssVariable, contrastBorder, editorFindMatchHighlightBorder, editorFindRangeHighlightBorder, inputActiveOptionBackground, inputActiveOptionBorder, inputActiveOptionForeground } from '../../../../platform/theme/common/colorRegistry.js';
+import { asCssVariable, contrastBorder, editorFindMatchForeground, editorFindMatchHighlightBorder, editorFindMatchHighlightForeground, editorFindRangeHighlightBorder, inputActiveOptionBackground, inputActiveOptionBorder, inputActiveOptionForeground } from '../../../../platform/theme/common/colorRegistry.js';
 import { registerIcon, widgetClose } from '../../../../platform/theme/common/iconRegistry.js';
 import { registerThemingParticipant } from '../../../../platform/theme/common/themeService.js';
 import { ThemeIcon } from '../../../../base/common/themables.js';
@@ -27,9 +27,9 @@ import { isHighContrast } from '../../../../platform/theme/common/theme.js';
 import { assertIsDefined } from '../../../../base/common/types.js';
 import { defaultInputBoxStyles, defaultToggleStyles } from '../../../../platform/theme/browser/defaultStyles.js';
 import { createInstantHoverDelegate, getDefaultHoverDelegate } from '../../../../base/browser/ui/hover/hoverDelegateFactory.js';
-const findSelectionIcon = registerIcon('find-selection', Codicon.selection, nls.localize('findSelectionIcon', 'Icon for \'Find in Selection\' in the editor find widget.'));
 const findCollapsedIcon = registerIcon('find-collapsed', Codicon.chevronRight, nls.localize('findCollapsedIcon', 'Icon to indicate that the editor find widget is collapsed.'));
 const findExpandedIcon = registerIcon('find-expanded', Codicon.chevronDown, nls.localize('findExpandedIcon', 'Icon to indicate that the editor find widget is expanded.'));
+export const findSelectionIcon = registerIcon('find-selection', Codicon.selection, nls.localize('findSelectionIcon', 'Icon for \'Find in Selection\' in the editor find widget.'));
 export const findReplaceIcon = registerIcon('find-replace', Codicon.replace, nls.localize('findReplaceIcon', 'Icon for \'Replace\' in the editor find widget.'));
 export const findReplaceAllIcon = registerIcon('find-replace-all', Codicon.replaceAll, nls.localize('findReplaceAllIcon', 'Icon for \'Replace All\' in the editor find widget.'));
 export const findPreviousMatchIcon = registerIcon('find-previous-match', Codicon.arrowUp, nls.localize('findPreviousMatchIcon', 'Icon for \'Find Previous\' in the editor find widget.'));
@@ -1131,5 +1131,13 @@ registerThemingParticipant((theme, collector) => {
     const hcBorder = theme.getColor(contrastBorder);
     if (hcBorder) {
         collector.addRule(`.monaco-editor .find-widget { border: 1px solid ${hcBorder}; }`);
+    }
+    const findMatchForeground = theme.getColor(editorFindMatchForeground);
+    if (findMatchForeground) {
+        collector.addRule(`.monaco-editor .findMatchInline { color: ${findMatchForeground}; }`);
+    }
+    const findMatchHighlightForeground = theme.getColor(editorFindMatchHighlightForeground);
+    if (findMatchHighlightForeground) {
+        collector.addRule(`.monaco-editor .currentFindMatchInline { color: ${findMatchHighlightForeground}; }`);
     }
 });

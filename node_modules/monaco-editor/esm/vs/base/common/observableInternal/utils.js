@@ -239,6 +239,14 @@ export class KeepAliveObserver {
         // NO OP
     }
 }
+export function derivedObservableWithCache(owner, computeFn) {
+    let lastValue = undefined;
+    const observable = derived(owner, reader => {
+        lastValue = computeFn(reader, lastValue);
+        return lastValue;
+    });
+    return observable;
+}
 export function derivedObservableWithWritableCache(owner, computeFn) {
     let lastValue = undefined;
     const onChange = observableSignal('derivedObservableWithWritableCache');

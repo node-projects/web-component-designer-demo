@@ -410,6 +410,7 @@ let InlineCompletionsModel = class InlineCompletionsModel extends Disposable {
                 const selections = getEndPositionsAfterApplying(edits).map(p => Selection.fromPositions(p));
                 editor.executeEdits('inlineSuggestion.accept', edits.map(edit => EditOperation.replace(edit.range, edit.text)));
                 editor.setSelections(selections, 'inlineCompletionPartialAccept');
+                editor.revealPositionInCenterIfOutsideViewport(editor.getPosition(), 1 /* ScrollType.Immediate */);
             }
             finally {
                 this._isAcceptingPartially = false;

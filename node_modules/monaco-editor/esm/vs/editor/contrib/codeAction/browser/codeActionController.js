@@ -227,6 +227,7 @@ let CodeActionController = CodeActionController_1 = class CodeActionController e
                     this._telemetryService.publicLog2('codeAction.showCodeActionList.onHide', {
                         codeActionListLength: actions.validActions.length,
                         didCancel: didCancel,
+                        codeActions: actions.validActions.map(action => action.action.title),
                     });
                 }
             },

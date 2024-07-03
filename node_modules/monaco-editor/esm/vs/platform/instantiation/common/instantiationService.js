@@ -53,15 +53,17 @@ export class InstantiationService {
             throw new Error('InstantiationService has been disposed');
         }
     }
-    createChild(services) {
+    createChild(services, store) {
         this._throwIfDisposed();
+        const that = this;
         const result = new class extends InstantiationService {
             dispose() {
-                this._children.delete(result);
+                that._children.delete(result);
                 super.dispose();
             }
         }(services, this._strict, this, this._enableTracing);
         this._children.add(result);
+        store === null || store === void 0 ? void 0 : store.add(result);
         return result;
     }
     invokeFunction(fn, ...args) {

@@ -1,6 +1,6 @@
 /*!-----------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
- * Version: 0.49.0(383fdf3fc0e1e1a024068b8d0fd4f3dcbae74d04)
+ * Version: 0.50.0(c321d0fbecb50ab8a5365fa1965476b0ae63fc87)
  * Released under the MIT license
  * https://github.com/microsoft/vscode/blob/main/LICENSE.txt
  *-----------------------------------------------------------*/
@@ -196,6 +196,9 @@ define("vs/editor/editor.main.nls.es", {
 		"Color de fondo del editor de diferencias de varios archivos",
 		"Color de borde del editor de diferencias de varios archivos",
 	],
+	"vs/editor/browser/widget/multiDiffEditor/multiDiffEditorWidgetImpl": [
+		"No hay archivos modificados",
+	],
 	"vs/editor/common/config/editorConfigurationSchema": [
 		"Editor",
 		"El número de espacios a los que equivale una tabulación. Este valor se invalida en función del contenido del archivo cuando {0} está activado.",
@@ -328,6 +331,7 @@ define("vs/editor/editor.main.nls.es", {
 		"Controla si las regiones con nombre se muestran como encabezados de sección en el minimapa.",
 		"Controla si los comentarios MARK: se muestran como encabezados de sección en el minimapa.",
 		"Controla el tamaño de fuente de los encabezados de sección en el minimapa.",
+		"Controla la cantidad de espacio (en píxeles) entre los caracteres del encabezado de sección. Esto aumenta la legibilidad del encabezado en tamaños de fuente pequeños.",
 		"Controla la cantidad de espacio entre el borde superior del editor y la primera línea.",
 		"Controla el espacio entre el borde inferior del editor y la última línea.",
 		"Habilita un elemento emergente que muestra documentación de los parámetros e información de los tipos mientras escribe.",
@@ -338,7 +342,7 @@ define("vs/editor/editor.main.nls.es", {
 		"Habilita sugerencias rápidas en las cadenas.",
 		"Habilita sugerencias rápidas en los comentarios.",
 		"Habilita sugerencias rápidas fuera de las cadenas y los comentarios.",
-		"Controla si las sugerencias deben mostrarse automáticamente al escribir. Puede controlarse para la escritura en comentarios, cadenas y otro código. Las sugerencias rápidas pueden configurarse para mostrarse como texto fantasma o con el widget de sugerencias. Tenga también en cuenta la configuración \'{0}\' que controla si las sugerencias son desencadenadas por caracteres especiales.",
+		"Controls whether suggestions should automatically show up while typing. This can be controlled for typing in comments, strings, and other code. Quick suggestion can be configured to show as ghost text or with the suggest widget. Also be aware of the {0}-setting which controls if suggestions are triggered by special characters.",
 		"Los números de línea no se muestran.",
 		"Los números de línea se muestran como un número absoluto.",
 		"Los números de línea se muestran como distancia en líneas a la posición del cursor.",
@@ -406,7 +410,7 @@ define("vs/editor/editor.main.nls.es", {
 		"Nunca seleccione una sugerencia cuando desencadene IntelliSense automáticamente.",
 		"Seleccione una sugerencia solo cuando desencadene IntelliSense desde un carácter de desencadenador.",
 		"Seleccione una sugerencia solo cuando desencadene IntelliSense mientras escribe.",
-		"Controla si se selecciona una sugerencia cuando se muestra el widget. Tenga en cuenta que esto solo se aplica a las sugerencias desencadenadas automáticamente (`#editor.quickSuggestions#` y `#editor.suggestOnTriggerCharacters#`) y que siempre se selecciona una sugerencia cuando se invoca explícitamente, por ejemplo, a través de \'Ctrl+Espacio\'.",
+		"Controls whether a suggestion is selected when the widget shows. Note that this only applies to automatically triggered suggestions ({0} and {1}) and that a suggestion is always selected when explicitly invoked, e.g via `Ctrl+Space`.",
 		"Controla si un fragmento de código activo impide sugerencias rápidas.",
 		"Controla si mostrar u ocultar iconos en sugerencias.",
 		"Controla la visibilidad de la barra de estado en la parte inferior del widget de sugerencias.",
@@ -831,7 +835,6 @@ define("vs/editor/editor.main.nls.es", {
 		"Copiar como",
 		"Compartir",
 		"Compartir",
-		"Compartir",
 	],
 	"vs/editor/contrib/codeAction/browser/codeAction": [
 		"Se ha producido un error desconocido al aplicar la acción de código",
@@ -941,7 +944,7 @@ define("vs/editor/editor.main.nls.es", {
 		"Si se muestra el widget de pegado",
 		"Mostrar opciones de pegado...",
 		"No se encontraron ediciones de pegado para \'{0}\'",
-		"Ejecutando controladores de pegado. Haga clic para cancelar.",
+		"Running paste handlers. Click to cancel and do basic paste",
 		"Seleccionar acción pegar",
 		"Ejecutando controladores de pegado",
 	],
@@ -962,6 +965,10 @@ define("vs/editor/editor.main.nls.es", {
 		"Si se muestra el widget de colocación",
 		"Mostrar opciones de colocación...",
 		"Ejecutando controladores de colocación. Haga clic para cancelar.",
+	],
+	"vs/editor/contrib/dropOrPasteInto/browser/postEditWidget": [
+		"Error al resolver la edición \"{0}\":\r\n{1}",
+		"Error al aplicar la edición \'\'{0}:\r\n{1}",
 	],
 	"vs/editor/contrib/editorState/browser/keybindingCancellation": [
 		"Indica si el editor ejecuta una operación que se puede cancelar como, por ejemplo, \"Inspeccionar referencias\"",
@@ -985,9 +992,9 @@ define("vs/editor/editor.main.nls.es", {
 		"&&Reemplazar",
 	],
 	"vs/editor/contrib/find/browser/findWidget": [
-		"Icono para \"Buscar en selección\" en el widget de búsqueda del editor.",
 		"Icono para indicar que el widget de búsqueda del editor está contraído.",
 		"Icono para indicar que el widget de búsqueda del editor está expandido.",
+		"Icono para \"Buscar en selección\" en el widget de búsqueda del editor.",
 		"Icono para \"Reemplazar\" en el widget de búsqueda del editor.",
 		"Icono para \"Reemplazar todo\" en el widget de búsqueda del editor.",
 		"Icono para \"Buscar anterior\" en el widget de búsqueda del editor.",
@@ -1152,6 +1159,16 @@ define("vs/editor/editor.main.nls.es", {
 		"Símbolo {0} de {1}, {2} para el siguiente",
 		"Símbolo {0} de {1}",
 	],
+	"vs/editor/contrib/hover/browser/hoverAccessibleViews": [
+		"Céntrese en el widget al mantener el puntero para desplazarse por las partes al mantener el puntero con la tecla Tab.",
+		"- El nivel de detalle de la parte prioritaria al mantener se puede aumentar con el comando Aumentar nivel de detalle al mantener<keybinding:{0}>.",
+		"- El nivel de detalle de la parte prioritaria al mantener se puede disminuir con el comando Disminuir nivel de detalle al mantener<keybinding:{0}>.",
+		"El último contenido prioritario al mantener es el siguiente.",
+	],
+	"vs/editor/contrib/hover/browser/hoverActionIds": [
+		"Aumentar nivel de detalle al mantener el puntero sobre el editor",
+		"Disminuir nivel de detalle al mantener el puntero",
+	],
 	"vs/editor/contrib/hover/browser/hoverActions": [
 		"Mostrar o centrarse al mantener el puntero",
 		"El cuadro del elemento sobre el que se ha pasado el ratón se enfocará automáticamente.",
@@ -1166,8 +1183,6 @@ define("vs/editor/editor.main.nls.es", {
 		"Desplazamiento de página hacia abajo",
 		"Ir al puntero superior",
 		"Ir a la parte inferior al mantener el puntero",
-		"Aumentar nivel de detalle al mantener el puntero sobre el editor",
-		"Disminuir nivel de detalle al mantener el puntero",
 		"Mostrar o centrar al mantener el puntero sobre el editor, que muestra documentación, referencias y otro contenido para un símbolo en la posición actual del cursor.",
 		"Muestre la vista previa de la definición al mantener el puntero sobre el editor.",
 		"Desplácese hacia arriba al mantener el puntero sobre el editor.",
@@ -1185,10 +1200,10 @@ define("vs/editor/editor.main.nls.es", {
 		"Cargando...",
 		"Representación en pausa durante una línea larga por motivos de rendimiento. Esto se puede configurar mediante \"editor.stopRenderingLineAfter\".",
 		"Por motivos de rendimiento, la tokenización se omite con filas largas. Esta opción se puede configurar con \"editor.maxTokenizationLineLength\".",
-		"Aumentar nivel de detalle ({0})",
-		"Aumentar el nivel de detalle",
-		"Disminuir el nivel de detalle ({0})",
-		"Disminuir el nivel de detalle",
+		"Aumentar nivel de detalle al mantener el puntero ({0})",
+		"Aumentar nivel de detalle al mantener el puntero",
+		"Disminuir nivel de detalle al mantener el puntero ({0})",
+		"Disminuir nivel de detalle al mantener el puntero",
 	],
 	"vs/editor/contrib/hover/browser/markerHoverParticipant": [
 		"Ver el problema",
@@ -1678,6 +1693,8 @@ define("vs/editor/editor.main.nls.es", {
 		"Error en la tarea",
 		"Error del comando de terminal",
 		"Error del comando",
+		"Comando de terminal correcto",
+		"Comando correcto",
 		"Campana de terminal",
 		"Campana de terminal",
 		"Celda del bloc de notas completada",
@@ -1837,10 +1854,18 @@ define("vs/editor/editor.main.nls.es", {
 		"{0}, {1}",
 	],
 	"vs/platform/quickinput/browser/quickInput": [
+		"Si el foco del teclado está dentro del control de entrada rápida",
+		"El tipo de la entrada rápida visible actualmente",
+		"Si el cursor de la entrada rápida está al final del cuadro de entrada",
 		"Atrás",
 		"Presione \"Entrar\" para confirmar su entrada o \"Esc\" para cancelar",
 		"{0}/{1}",
 		"Escriba para restringir los resultados.",
+	],
+	"vs/platform/quickinput/browser/quickInputActions": [
+		"Se usa en el contexto de la selección rápida. Si cambia un enlace de teclado para este comando, también debe cambiar todos los demás enlaces de teclado (variantes modificadoras) de este comando.",
+		"Si estamos en modo de acceso rápido, se desplazará al siguiente elemento. Si no estamos en modo de acceso rápido, se desplazará al separador siguiente.",
+		"Si estamos en modo de acceso rápido, se navegará al elemento anterior. Si no estamos en modo de acceso rápido, se navegará al separador anterior.",
 	],
 	"vs/platform/quickinput/browser/quickInputController": [
 		"Activar o desactivar todas las casillas",
@@ -1915,7 +1940,9 @@ define("vs/editor/editor.main.nls.es", {
 		"Color en las regiones con el mismo contenido que la selección. El color no debe ser opaco para no ocultar decoraciones subyacentes.",
 		"Color de borde de las regiones con el mismo contenido que la selección.",
 		"Color de la coincidencia de búsqueda actual.",
+		"Color de texto de la coincidencia de búsqueda actual.",
 		"Color de los otros resultados de la búsqueda. El color no debe ser opaco para no ocultar las decoraciones subyacentes.",
+		"Color de primer plano de las otras coincidencias de búsqueda.",
 		"Color de la gama que limita la búsqueda. El color no debe ser opaco para no ocultar decoraciones subyacentes.",
 		"Color de borde de la coincidencia de búsqueda actual.",
 		"Color de borde de otra búsqueda que coincide.",

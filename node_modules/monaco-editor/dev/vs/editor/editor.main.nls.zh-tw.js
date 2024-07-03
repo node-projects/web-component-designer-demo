@@ -1,6 +1,6 @@
 /*!-----------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
- * Version: 0.49.0(383fdf3fc0e1e1a024068b8d0fd4f3dcbae74d04)
+ * Version: 0.50.0(c321d0fbecb50ab8a5365fa1965476b0ae63fc87)
  * Released under the MIT license
  * https://github.com/microsoft/vscode/blob/main/LICENSE.txt
  *-----------------------------------------------------------*/
@@ -196,6 +196,9 @@ define("vs/editor/editor.main.nls.zh-tw", {
 		"多重檔案 Diff 編輯器的背景色彩",
 		"多重檔案 Diff 編輯器的框線色彩",
 	],
+	"vs/editor/browser/widget/multiDiffEditor/multiDiffEditorWidgetImpl": [
+		"沒有變更的檔案",
+	],
 	"vs/editor/common/config/editorConfigurationSchema": [
 		"編輯器",
 		"與 Tab 相等的空格數量。當 {0} 已開啟時，會根據檔案內容覆寫此設定。",
@@ -328,6 +331,7 @@ define("vs/editor/editor.main.nls.zh-tw", {
 		"控制指定的區域是否在縮圖中顯示為區段標頭。",
 		"控制是否將 MARK: 註解顯示為縮圖中的區段標頭。",
 		"控制縮圖中區段標頭的字型大小。",
+		"控制區段標頭字元之間 (像素) 的空間量。這有助於小字型的標頭可讀性。",
 		"控制編輯器上邊緣與第一行之間的空格數。",
 		"控制編輯器下邊緣與最後一行之間的空格數。",
 		"啟用快顯，在您鍵入的同時顯示參數文件和類型資訊。",
@@ -338,7 +342,7 @@ define("vs/editor/editor.main.nls.zh-tw", {
 		"允許在字串內顯示即時建議。",
 		"允許在註解中顯示即時建議。",
 		"允許在字串與註解以外之處顯示即時建議。",
-		"控制輸入時是否應自動顯示建議。這可控制在註解、字串及其他程式碼中的輸入。可設定快速建議以隱形浮出文字或建議小工具顯示。另外也請注意 \'{0}\'-設定，其會控制建議是否由特殊字元所觸發。",
+		"Controls whether suggestions should automatically show up while typing. This can be controlled for typing in comments, strings, and other code. Quick suggestion can be configured to show as ghost text or with the suggest widget. Also be aware of the {0}-setting which controls if suggestions are triggered by special characters.",
 		"不顯示行號。",
 		"行號以絕對值顯示。",
 		"行號以目前游標的相對值顯示。",
@@ -406,7 +410,7 @@ define("vs/editor/editor.main.nls.zh-tw", {
 		"自動觸發 IntelliSense 時永不選取建議。",
 		"只有在從觸發字元觸發 IntelliSense 時，才選取建議。",
 		"只有在您輸入時觸發 IntelliSense 時，才選取建議。",
-		"控制小工具顯示時是否選取建議。請注意，這只適用於(\'#editor.quickSuggestions#\' 和 \'#editor.suggestOnTriggerCharacters#\') 自動觸發的建議，而且一律會在明確叫用時選取建議，例如透過 \'Ctrl+Space\'。",
+		"Controls whether a suggestion is selected when the widget shows. Note that this only applies to automatically triggered suggestions ({0} and {1}) and that a suggestion is always selected when explicitly invoked, e.g via `Ctrl+Space`.",
 		"控制正在使用的程式碼片段是否會避免快速建議。",
 		"控制要在建議中顯示或隱藏圖示。",
 		"控制建議小工具底下的狀態列可見度。",
@@ -831,7 +835,6 @@ define("vs/editor/editor.main.nls.zh-tw", {
 		"複製為",
 		"共用",
 		"共用",
-		"共用",
 	],
 	"vs/editor/contrib/codeAction/browser/codeAction": [
 		"套用程式碼動作時發生未知的錯誤",
@@ -941,7 +944,7 @@ define("vs/editor/editor.main.nls.zh-tw", {
 		"是否顯示貼上小工具",
 		"顯示貼上選項...",
 		"找不到 \'{0}\' 的貼上編輯",
-		"正在執行貼上處理常式。按一下以取消",
+		"Running paste handlers. Click to cancel and do basic paste",
 		"選取貼上動作",
 		"執行貼上處理常式",
 	],
@@ -962,6 +965,10 @@ define("vs/editor/editor.main.nls.zh-tw", {
 		"是否顯示卸除小工具",
 		"顯示卸除選項...",
 		"正在執行置放處理常式。按一下以取消",
+	],
+	"vs/editor/contrib/dropOrPasteInto/browser/postEditWidget": [
+		"解析編輯 \'{0}\' 時發生錯誤:\r\n{1}",
+		"套用編輯 \'{0}\' 時發生錯誤:\r\n{1}",
 	],
 	"vs/editor/contrib/editorState/browser/keybindingCancellation": [
 		"編輯器是否執行可取消的作業，例如「預覽參考」",
@@ -985,9 +992,9 @@ define("vs/editor/editor.main.nls.zh-tw", {
 		"取代(&&R)",
 	],
 	"vs/editor/contrib/find/browser/findWidget": [
-		"編輯器尋找小工具中 [在選取範圍中尋找] 的圖示。",
 		"表示編輯器尋找小工具已摺疊的圖示。",
 		"表示編輯器尋找小工具已展開的圖示。",
+		"編輯器尋找小工具中 [在選取範圍中尋找] 的圖示。",
 		"編輯器尋找小工具中 [取代] 的圖示。",
 		"編輯器尋找小工具中 [全部取代] 的圖示。",
 		"編輯器尋找小工具中 [尋找上一個] 的圖示。",
@@ -1152,6 +1159,16 @@ define("vs/editor/editor.main.nls.zh-tw", {
 		"{1} 的符號 {0}，{2} 為下一個",
 		"{1} 的符號 {0}",
 	],
+	"vs/editor/contrib/hover/browser/hoverAccessibleViews": [
+		"將焦點放在暫留小工具上，以使用 Tab 鍵循環瀏覽暫留部分。",
+		"- 您可以使用 Increase Hover Verbosity 命令<按鍵繫結關係:{0}> 來增加焦點暫留部分詳細程度等級。",
+		"- 您可以使用 Decrease Hover Verbosity 命令<按鍵繫結關係:{0}> 來減少焦點暫留部分詳細程度等級。",
+		"最後一個焦點暫留內容如下。",
+	],
+	"vs/editor/contrib/hover/browser/hoverActionIds": [
+		"提高暫留詳細程度層級",
+		"降低暫留詳細程度層級",
+	],
 	"vs/editor/contrib/hover/browser/hoverActions": [
 		"顯示或聚焦暫留",
 		"游標暫留將不會自動聚焦。",
@@ -1166,8 +1183,6 @@ define("vs/editor/editor.main.nls.zh-tw", {
 		"下一頁暫留",
 		"移至上方暫留",
 		"移至下方暫留",
-		"提高暫留詳細程度層級",
-		"降低暫留詳細程度層級",
 		"顯示或聚焦編輯器暫留，這會顯示目前游標位置符號的文件、參考及其他內容。",
 		"在編輯器中顯示定義預覽暫留。",
 		"向上捲動編輯器暫留。",
@@ -1185,10 +1200,10 @@ define("vs/editor/editor.main.nls.zh-tw", {
 		"正在載入...",
 		"由於效能原因，已暫停轉譯。這可透過 `editor.stopRenderingLineAfter` 進行設定。",
 		"因效能的緣故，已跳過將長的行 Token 化。您可透過 `editor.maxTokenizationLineLength` 設定。",
-		"提高詳細程度 ({0})",
-		"提高詳細程度",
-		"降低詳細程度 ({0})",
-		"降低詳細程度",
+		"提高暫留詳細程度 ({0})",
+		"提高暫留詳細程度",
+		"降低暫留詳細程度 ({0})",
+		"降低暫留詳細程度",
 	],
 	"vs/editor/contrib/hover/browser/markerHoverParticipant": [
 		"檢視問題",
@@ -1678,6 +1693,8 @@ define("vs/editor/editor.main.nls.zh-tw", {
 		"工作失敗",
 		"終端機命令失敗",
 		"命令失敗",
+		"終端機命令已成功",
+		"命令已成功",
 		"終端鈴聲",
 		"終端鈴",
 		"Notebook 儲存格已完成",
@@ -1837,10 +1854,18 @@ define("vs/editor/editor.main.nls.zh-tw", {
 		"{0}, {1}",
 	],
 	"vs/platform/quickinput/browser/quickInput": [
+		"鍵盤焦點是否位於快速輸入控制項內",
+		"目前可見的快速輸入類型",
+		"快速輸入中的游標是否位於輸入方塊的尾端",
 		"上一頁",
 		"按 \'Enter\' 鍵確認您的輸入或按 \'Esc\' 鍵取消",
 		"{0}/{1}",
 		"輸入以縮小結果範圍。",
+	],
+	"vs/platform/quickinput/browser/quickInputActions": [
+		"快速挑選內容時使用。如果您變更此命令的一個按鍵繫結關係，則也應該變更此命令的所有其他按鍵繫結關係 (修飾元變體)。",
+		"如果我們在快速存取模式中，這會瀏覽到下一個項目。如果我們不在快速存取模式中，這會瀏覽到下一個分隔線。",
+		"如果我們在快速存取模式中，這會瀏覽到上一個項目。如果我們不在快速存取模式中，這會瀏覽到上一個分隔線。",
 	],
 	"vs/platform/quickinput/browser/quickInputController": [
 		"切換所有核取方塊",
@@ -1915,7 +1940,9 @@ define("vs/editor/editor.main.nls.zh-tw", {
 		"與選取項目內容相同之區域的色彩。其不得為不透明色彩，以免隱藏底層裝飾。",
 		"選取時，內容相同之區域的框線色彩。",
 		"符合目前搜尋的色彩。",
+		"符合目前搜尋的文字色彩。",
 		"其他搜尋相符項目的色彩。其不得為不透明色彩，以免隱藏底層裝飾。",
+		"符合其他搜尋的前景色彩。",
 		"限制搜尋之範圍的色彩。其不得為不透明色彩，以免隱藏底層裝飾。",
 		"符合目前搜尋的框線色彩。",
 		"符合其他搜尋的框線色彩。",

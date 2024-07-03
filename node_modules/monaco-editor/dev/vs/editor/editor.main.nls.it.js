@@ -1,6 +1,6 @@
 /*!-----------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
- * Version: 0.49.0(383fdf3fc0e1e1a024068b8d0fd4f3dcbae74d04)
+ * Version: 0.50.0(c321d0fbecb50ab8a5365fa1965476b0ae63fc87)
  * Released under the MIT license
  * https://github.com/microsoft/vscode/blob/main/LICENSE.txt
  *-----------------------------------------------------------*/
@@ -196,6 +196,9 @@ define("vs/editor/editor.main.nls.it", {
 		"Colore di sfondo dell\'editor diff a più file",
 		"Colore del bordo dell’editor diff multi file",
 	],
+	"vs/editor/browser/widget/multiDiffEditor/multiDiffEditorWidgetImpl": [
+		"Nessun file modificato",
+	],
 	"vs/editor/common/config/editorConfigurationSchema": [
 		"Editor",
 		"Numero di spazi a cui è uguale una scheda. Questa impostazione viene sottoposta a override in base al contenuto del file quando {0} è attivo.",
@@ -328,6 +331,7 @@ define("vs/editor/editor.main.nls.it", {
 		"Controlla se le aree denominate vengono visualizzate come intestazioni di sezione nella minimappa.",
 		"Controlla se i commenti MARK: vengono visualizzati come intestazioni di sezione nella minimappa.",
 		"Controlla le dimensioni del carattere delle intestazioni di sezione nella minimappa.",
+		"Controllare la quantità di spazio (in pixel) tra i caratteri dell’intestazione di sezione. Ciò contribuisce alla leggibilità dell’intestazione in caratteri di piccole dimensioni.",
 		"Controlla la quantità di spazio tra il bordo superiore dell\'editor e la prima riga.",
 		"Controlla la quantità di spazio tra il bordo inferiore dell\'editor e l\'ultima riga.",
 		"Abilita un popup che mostra documentazione sui parametri e informazioni sui tipi mentre si digita.",
@@ -338,7 +342,7 @@ define("vs/editor/editor.main.nls.it", {
 		"Abilita i suggerimenti rapidi all\'interno di stringhe.",
 		"Abilita i suggerimenti rapidi all\'interno di commenti.",
 		"Abilita i suggerimenti rapidi all\'esterno di stringhe e commenti.",
-		"Controlla se i suggerimenti devono essere visualizzati automaticamente durante la digitazione. Può essere controllato per la digitazione in commenti, stringhe e altro codice. Il suggerimento rapido può essere configurato per essere visualizzato come testo fantasma o con il widget dei suggerimenti. Tenere anche conto dell\'impostazione \'{0}\' che controlla se i suggerimenti vengono attivati dai caratteri speciali.",
+		"Controls whether suggestions should automatically show up while typing. This can be controlled for typing in comments, strings, and other code. Quick suggestion can be configured to show as ghost text or with the suggest widget. Also be aware of the {0}-setting which controls if suggestions are triggered by special characters.",
 		"I numeri di riga non vengono visualizzati.",
 		"I numeri di riga vengono visualizzati come numeri assoluti.",
 		"I numeri di riga vengono visualizzati come distanza in linee alla posizione del cursore.",
@@ -406,7 +410,7 @@ define("vs/editor/editor.main.nls.it", {
 		"Non selezionare mai un suggerimento quando si attiva automaticamente IntelliSense.",
 		"Selezionare un suggerimento solo quando si attiva IntelliSense da un carattere di trigger.",
 		"Selezionare un suggerimento solo quando si attiva IntelliSense durante la digitazione.",
-		"Controlla se viene selezionato un suggerimento quando viene visualizzato il widget. Si noti che questo si applica solo ai suggerimenti attivati automaticamente (\'#editor.quickSuggestions#\' e \'#editor.suggestOnTriggerCharacters#\') e che un suggerimento viene sempre selezionato quando viene richiamato in modo esplicito, ad esempio tramite \'CTRL+BARRA SPAZIATRICE\'.",
+		"Controls whether a suggestion is selected when the widget shows. Note that this only applies to automatically triggered suggestions ({0} and {1}) and that a suggestion is always selected when explicitly invoked, e.g via `Ctrl+Space`.",
 		"Controlla se un frammento attivo impedisce i suggerimenti rapidi.",
 		"Controlla se mostrare o nascondere le icone nei suggerimenti.",
 		"Controlla la visibilità della barra di stato nella parte inferiore del widget dei suggerimenti.",
@@ -831,7 +835,6 @@ define("vs/editor/editor.main.nls.it", {
 		"Copia con nome",
 		"Condividi",
 		"Condividi",
-		"Condividi",
 	],
 	"vs/editor/contrib/codeAction/browser/codeAction": [
 		"Si è verificato un errore sconosciuto durante l\'applicazione dell\'azione del codice",
@@ -941,7 +944,7 @@ define("vs/editor/editor.main.nls.it", {
 		"Indica se il widget dell\'operazione Incolla viene visualizzato",
 		"Mostra opzioni operazione Incolla...",
 		"Non è stata trovata alcuna modifica incolla per \'{0}\'",
-		"Esecuzione dei gestori del comando Incolla. Fare clic per annullare",
+		"Running paste handlers. Click to cancel and do basic paste",
 		"Seleziona azione Incolla",
 		"Esecuzione dei gestori Incolla in corso",
 	],
@@ -962,6 +965,10 @@ define("vs/editor/editor.main.nls.it", {
 		"Indica se il widget di rilascio viene visualizzato",
 		"Mostra opzioni di rilascio...",
 		"Esecuzione dei gestori di rilascio. Fare clic per annullare",
+	],
+	"vs/editor/contrib/dropOrPasteInto/browser/postEditWidget": [
+		"Errore durante la risoluzione della modifica \'{0}\':\r\n{1}",
+		"Errore durante l\'applicazione della modifica \'{0}\':\r\n{1}",
 	],
 	"vs/editor/contrib/editorState/browser/keybindingCancellation": [
 		"Indica se l\'editor esegue un\'operazione annullabile, ad esempio \'Anteprima riferimenti\'",
@@ -985,9 +992,9 @@ define("vs/editor/editor.main.nls.it", {
 		"&&Sostituisci",
 	],
 	"vs/editor/contrib/find/browser/findWidget": [
-		"Icona per \'Trova nella selezione\' nel widget di ricerca dell\'editor.",
 		"Icona per indicare che il widget di ricerca dell\'editor è compresso.",
 		"Icona per indicare che il widget di ricerca dell\'editor è espanso.",
+		"Icona per \'Trova nella selezione\' nel widget di ricerca dell\'editor.",
 		"Icona per \'Sostituisci\' nel widget di ricerca dell\'editor.",
 		"Icona per \'Sostituisci tutto\' nel widget di ricerca dell\'editor.",
 		"Icona per \'Trova precedente\' nel widget di ricerca dell\'editor.",
@@ -1152,6 +1159,16 @@ define("vs/editor/editor.main.nls.it", {
 		"Simbolo {0} di {1}, {2} per il successivo",
 		"Simbolo {0} di {1}",
 	],
+	"vs/editor/contrib/hover/browser/hoverAccessibleViews": [
+		"Focus sul widget al passaggio del mouse per spostarti tra le parti al passaggio del mouse con il tasto Tab.",
+		"- Il livello di dettaglio della parte con stato attivo al passaggio del mouse può essere aumentato con il comando Aumenta livello di dettaglio al passaggio del mouse<tasto di scelta rapida:{0}>.",
+		"- Il livello di dettaglio della parte con stato attivo al passaggio del mouse può essere ridotto con il comando Riduci livello di dettaglio al passaggio del mouse<tasto di scelta rapida:{0}>.",
+		"L\'ultimo contenuto con stato attivo al passaggio del mouse è il seguente.",
+	],
+	"vs/editor/contrib/hover/browser/hoverActionIds": [
+		"Aumenta livello di dettaglio al passaggio del mouse",
+		"Riduci livello di dettaglio al passaggio del mouse",
+	],
 	"vs/editor/contrib/hover/browser/hoverActions": [
 		"Mostra o sposta lo stato attivo al passaggio del mouse",
 		"Il passaggio del mouse non attiverà automaticamente lo stato attivo.",
@@ -1166,8 +1183,6 @@ define("vs/editor/editor.main.nls.it", {
 		"Vai alla pagina successiva al passaggio del mouse",
 		"Vai in alto al passaggio del mouse",
 		"Vai in basso al passaggio del mouse",
-		"Aumenta livello di dettaglio al passaggio del mouse",
-		"Riduci livello di dettaglio al passaggio del mouse",
 		"Mostra o sposta lo stato attivo sull\'editor al passaggio del mouse, che mostra documentazione, riferimenti e altro contenuto per un simbolo nella posizione corrente del cursore.",
 		"Mostra l\'anteprima della definizione nell\'editor al passaggio del mouse.",
 		"Scorri verso l\'alto l\'editor al passaggio del mouse.",
@@ -1185,10 +1200,10 @@ define("vs/editor/editor.main.nls.it", {
 		"Caricamento...",
 		"Rendering sospeso per una linea lunga per motivi di prestazioni. Può essere configurato tramite \'editor.stopRenderingLineAfter\'.",
 		"Per motivi di prestazioni la tokenizzazione viene ignorata per le righe lunghe. È possibile effettuare questa configurazione tramite `editor.maxTokenizationLineLength`.",
-		"Aumenta livello di dettaglio ({0})",
-		"Aumenta livello di dettaglio",
-		"Riduci livello di dettaglio ({0})",
-		"Riduci livello di dettaglio",
+		"Aumenta livello di dettaglio al passaggio del mouse ({0})",
+		"Aumenta livello di dettaglio al passaggio del mouse",
+		"Riduci livello di dettaglio al passaggio del mouse ({0})",
+		"Riduci livello di dettaglio al passaggio del mouse",
 	],
 	"vs/editor/contrib/hover/browser/markerHoverParticipant": [
 		"Visualizza problema",
@@ -1678,6 +1693,8 @@ define("vs/editor/editor.main.nls.it", {
 		"Attività non riuscita",
 		"Comando terminale non riuscito",
 		"Comando non riuscito",
+		"Comando terminale riuscito",
+		"Comando riuscito",
 		"Campanello terminale",
 		"Campanello terminale",
 		"Cella del notebook completata",
@@ -1837,10 +1854,18 @@ define("vs/editor/editor.main.nls.it", {
 		"{0}, {1}",
 	],
 	"vs/platform/quickinput/browser/quickInput": [
+		"Indica se lo stato attivo della tastiera si trova all\'interno del controllo di input rapido",
+		"Tipo dell\'input rapido attualmente visibile",
+		"Indica se il cursore nell\'input rapido si trova alla fine della casella di input",
 		"Indietro",
 		"Premere \'INVIO\' per confermare l\'input oppure \'ESC\' per annullare",
 		"{0}/{1}",
 		"Digitare per ridurre il numero di risultati.",
+	],
+	"vs/platform/quickinput/browser/quickInputActions": [
+		"Usato nel contesto della selezione rapida. Se si modifica un tasto di scelta rapida per questo comando, è necessario modificare anche tutti gli altri tasti di scelta rapida (varianti del modificatore) di questo comando.",
+		"Se è attiva la modalità di accesso rapido, si passerà all\'elemento successivo. Se non è attiva la modalità di accesso rapido, si passerà al separatore successivo.",
+		"Se è attiva la modalità di accesso rapido, si passerà all\'elemento precedente. Se non è attiva la modalità di accesso rapido, si passerà al separatore precedente.",
 	],
 	"vs/platform/quickinput/browser/quickInputController": [
 		"Attivare/Disattivare tutte le caselle di controllo",
@@ -1915,7 +1940,9 @@ define("vs/editor/editor.main.nls.it", {
 		"Colore delle aree con lo stesso contenuto della selezione. Il colore non deve essere opaco per evitare di nascondere le decorazioni sottostanti.",
 		"Colore del bordo delle regioni con lo stesso contenuto della selezione.",
 		"Colore della corrispondenza di ricerca corrente.",
+		"Colore del testo della corrispondenza di ricerca corrente.",
 		"Colore degli altri risultati della ricerca. Il colore non deve essere opaco per evitare di nascondere le decorazioni sottostanti.",
+		"Colore primo piano delle altre corrispondenze di ricerca.",
 		"Colore dell\'intervallo di limite della ricerca. Il colore non deve essere opaco per evitare di nascondere le decorazioni sottostanti.",
 		"Colore del bordo della corrispondenza della ricerca corrente.",
 		"Colore del bordo delle altre corrispondenze della ricerca.",

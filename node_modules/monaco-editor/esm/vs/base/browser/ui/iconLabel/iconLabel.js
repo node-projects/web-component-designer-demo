@@ -91,6 +91,21 @@ export class IconLabel extends Disposable {
                 }
             }
         }
+        const existingIconNode = this.domNode.element.querySelector('.monaco-icon-label-iconpath');
+        if (options === null || options === void 0 ? void 0 : options.iconPath) {
+            let iconNode;
+            if (!existingIconNode || !(dom.isHTMLElement(existingIconNode))) {
+                iconNode = dom.$('.monaco-icon-label-iconpath');
+                this.domNode.element.prepend(iconNode);
+            }
+            else {
+                iconNode = existingIconNode;
+            }
+            iconNode.style.backgroundImage = dom.asCSSUrl(options === null || options === void 0 ? void 0 : options.iconPath);
+        }
+        else if (existingIconNode) {
+            existingIconNode.remove();
+        }
         this.domNode.className = labelClasses.join(' ');
         this.domNode.element.setAttribute('aria-label', ariaLabel);
         this.labelContainer.className = containerClasses.join(' ');

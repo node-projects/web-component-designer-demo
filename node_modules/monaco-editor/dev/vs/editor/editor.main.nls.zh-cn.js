@@ -1,6 +1,6 @@
 /*!-----------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
- * Version: 0.49.0(383fdf3fc0e1e1a024068b8d0fd4f3dcbae74d04)
+ * Version: 0.50.0(c321d0fbecb50ab8a5365fa1965476b0ae63fc87)
  * Released under the MIT license
  * https://github.com/microsoft/vscode/blob/main/LICENSE.txt
  *-----------------------------------------------------------*/
@@ -196,6 +196,9 @@ define("vs/editor/editor.main.nls.zh-cn", {
 		"多文件差异编辑器的背景色",
 		"多文件差异编辑器的边框颜色",
 	],
+	"vs/editor/browser/widget/multiDiffEditor/multiDiffEditorWidgetImpl": [
+		"没有已更改的文件",
+	],
 	"vs/editor/common/config/editorConfigurationSchema": [
 		"编辑器",
 		"一个制表符等于的空格数。当 {0} 打开时，将根据文件内容替代此设置。",
@@ -328,6 +331,7 @@ define("vs/editor/editor.main.nls.zh-cn", {
 		"控制命名区域是否在缩略图中显示为节标题。",
 		"控制 MARK: 命令是否在缩略图中显示为节标题。",
 		"控制缩略图中节标题的字号。",
+		"控制节标头字符之间的空间量(以像素为单位)。这有助于提高小字体大小的标题的可读性。",
 		"控制编辑器的顶边和第一行之间的间距量。",
 		"控制编辑器的底边和最后一行之间的间距量。",
 		"在输入时显示含有参数文档和类型信息的小面板。",
@@ -338,7 +342,7 @@ define("vs/editor/editor.main.nls.zh-cn", {
 		"在字符串内启用快速建议。",
 		"在注释内启用快速建议。",
 		"在字符串和注释外启用快速建议。",
-		"控制键入时是否应自动显示建议。这可以用于在注释、字符串和其他代码中键入时进行控制。可配置快速建议以显示为虚影文本或建议小组件。另请注意控制建议是否由特殊字符触发的“{0}”设置。",
+		"Controls whether suggestions should automatically show up while typing. This can be controlled for typing in comments, strings, and other code. Quick suggestion can be configured to show as ghost text or with the suggest widget. Also be aware of the {0}-setting which controls if suggestions are triggered by special characters.",
 		"不显示行号。",
 		"将行号显示为绝对行数。",
 		"将行号显示为与光标相隔的行数。",
@@ -406,7 +410,7 @@ define("vs/editor/editor.main.nls.zh-cn", {
 		"自动触发 IntelliSense 时，切勿选择建议。",
 		"仅当从触发器字符触发 IntelliSense 时，才选择建议。",
 		"仅在键入时触发 IntelliSense 时才选择建议。",
-		"控制在显示小组件时是否选择建议。请注意，这仅适用于(“#editor.quickSuggestions#”和“#editor.suggestOnTriggerCharacters#”)自动触发的建议，并且始终在显式调用时选择建议，例如通过“Ctrl+Space”。",
+		"Controls whether a suggestion is selected when the widget shows. Note that this only applies to automatically triggered suggestions ({0} and {1}) and that a suggestion is always selected when explicitly invoked, e.g via `Ctrl+Space`.",
 		"控制活动代码段是否阻止快速建议。",
 		"控制是否在建议中显示或隐藏图标。",
 		"控制建议小部件底部的状态栏的可见性。",
@@ -831,7 +835,6 @@ define("vs/editor/editor.main.nls.zh-cn", {
 		"复制为",
 		"共享",
 		"共享",
-		"共享",
 	],
 	"vs/editor/contrib/codeAction/browser/codeAction": [
 		"应用代码操作时发生未知错误",
@@ -941,7 +944,7 @@ define("vs/editor/editor.main.nls.zh-cn", {
 		"是否显示粘贴小组件",
 		"显示粘贴选项...",
 		"找不到“{0}”的粘贴编辑",
-		"正在运行粘贴处理程序。单击以取消",
+		"Running paste handlers. Click to cancel and do basic paste",
 		"选择粘贴操作",
 		"正在运行粘贴处理程序",
 	],
@@ -962,6 +965,10 @@ define("vs/editor/editor.main.nls.zh-cn", {
 		"是否显示放置小组件",
 		"显示放置选项...",
 		"正在运行放置处理程序。单击以取消",
+	],
+	"vs/editor/contrib/dropOrPasteInto/browser/postEditWidget": [
+		"解析编辑“{0}”时出错:\r\n{1}",
+		"应用编辑“{0}”时出错:\r\n{1}",
 	],
 	"vs/editor/contrib/editorState/browser/keybindingCancellation": [
 		"编辑器是否运行可取消的操作，例如“预览引用”",
@@ -985,9 +992,9 @@ define("vs/editor/editor.main.nls.zh-cn", {
 		"替换(&&R)",
 	],
 	"vs/editor/contrib/find/browser/findWidget": [
-		"编辑器查找小组件中的“在选定内容中查找”图标。",
 		"用于指示编辑器查找小组件已折叠的图标。",
 		"用于指示编辑器查找小组件已展开的图标。",
+		"编辑器查找小组件中的“在选定内容中查找”图标。",
 		"编辑器查找小组件中的“替换”图标。",
 		"编辑器查找小组件中的“全部替换”图标。",
 		"编辑器查找小组件中的“查找上一个”图标。",
@@ -1152,6 +1159,16 @@ define("vs/editor/editor.main.nls.zh-cn", {
 		"{1} 的符号 {0}，下一个使用 {2}",
 		"{1} 的符号 {0}",
 	],
+	"vs/editor/contrib/hover/browser/hoverAccessibleViews": [
+		"聚焦悬停小组件，使用 Tab 键循环浏览悬停部分。",
+		"- 使用 Increase Hover Verbosity 命令可以提高聚焦悬停部分的详细程度<keybinding:{0}>。",
+		"- 使用 Decrease Hover Verbosity 命令可以降低聚焦悬停部分的详细程度<keybinding:{0}>。",
+		"最后一个聚焦悬停内容如下。",
+	],
+	"vs/editor/contrib/hover/browser/hoverActionIds": [
+		"提高悬停详细程度级别",
+		"降低悬停详细程度级别",
+	],
 	"vs/editor/contrib/hover/browser/hoverActions": [
 		"显示或聚焦悬停",
 		"悬停不会自动获得焦点。",
@@ -1166,8 +1183,6 @@ define("vs/editor/editor.main.nls.zh-cn", {
 		"向下翻页悬停",
 		"转到顶部悬停",
 		"转到底部悬停",
-		"提高悬停详细程度级别",
-		"降低悬停详细程度级别",
 		"显示或聚焦编辑器悬停，该悬停将在当前光标位置显示符号的文档、引用和其他内容。",
 		"在编辑器中显示定义预览悬停。",
 		"向上滚动编辑器悬停。",
@@ -1185,10 +1200,10 @@ define("vs/editor/editor.main.nls.zh-cn", {
 		"正在加载...",
 		"由于性能原因，长线的呈现已暂停。可通过`editor.stopRenderingLineAfter`配置此设置。",
 		"出于性能原因，未对长行进行解析。解析长度阈值可通过“editor.maxTokenizationLineLength”进行配置。",
-		"提高详细程度({0})",
-		"提高详细程度",
-		"降低详细程度({0})",
-		"降低详细程度",
+		"提高悬停详细程度({0})",
+		"提高悬停详细程度",
+		"降低悬停详细程度({0})",
+		"降低悬停详细程度",
 	],
 	"vs/editor/contrib/hover/browser/markerHoverParticipant": [
 		"查看问题",
@@ -1678,6 +1693,8 @@ define("vs/editor/editor.main.nls.zh-cn", {
 		"任务失败",
 		"终端命令失败",
 		"命令失败",
+		"终端命令成功",
+		"命令成功",
 		"终端钟",
 		"终端钟",
 		"笔记本单元格已完成",
@@ -1837,10 +1854,18 @@ define("vs/editor/editor.main.nls.zh-cn", {
 		"{0}, {1}",
 	],
 	"vs/platform/quickinput/browser/quickInput": [
+		"键盘焦点是否在快速输入控件内",
+		"当前可见快速输入的类型",
+		"快速输入中的光标是否位于输入框的末尾",
 		"上一步",
 		"按 \"Enter\" 以确认或按 \"Esc\" 以取消",
 		"{0}/{1}",
 		"在此输入可缩小结果范围。",
+	],
+	"vs/platform/quickinput/browser/quickInputActions": [
+		"在快速选取上下文中使用。如果为此命令更改一个键绑定，则还应更改此命令的所有其他键绑定(修饰符变体)。",
+		"如果我们处于快速访问模式，这将导航到下一项。如果我们未处于快速访问模式，这将导航到下一个分隔符。",
+		"如果我们处于快速访问模式，这将导航到上一项。如果我们未处于快速访问模式，这将导航到上一个分隔符。",
 	],
 	"vs/platform/quickinput/browser/quickInputController": [
 		"切换所有复选框",
@@ -1915,7 +1940,9 @@ define("vs/editor/editor.main.nls.zh-cn", {
 		"具有与所选项相关内容的区域的颜色。颜色必须透明，以免隐藏下面的修饰效果。",
 		"与所选项内容相同的区域的边框颜色。",
 		"当前搜索匹配项的颜色。",
+		"当前搜索匹配项的文本颜色。",
 		"其他搜索匹配项的颜色。颜色必须透明，以免隐藏下面的修饰效果。",
+		"其他搜索匹配项的前景色。",
 		"限制搜索范围的颜色。颜色必须透明，以免隐藏下面的修饰效果。",
 		"当前搜索匹配项的边框颜色。",
 		"其他搜索匹配项的边框颜色。",

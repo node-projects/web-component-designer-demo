@@ -24,6 +24,7 @@ import * as nls from '../../../../nls.js';
 import { IQuickInputService } from '../../../../platform/quickinput/common/quickInput.js';
 import { getGoodIndentForLine, getIndentMetadata } from '../../../common/languages/autoIndent.js';
 import { getReindentEditOperations } from '../common/indentation.js';
+import { getStandardTokenTypeAtPosition } from '../../../common/tokens/lineTokens.js';
 export class IndentationToSpacesAction extends EditorAction {
     constructor() {
         super({
@@ -348,6 +349,9 @@ let AutoIndentOnPaste = class AutoIndentOnPaste {
         if (!model) {
             return;
         }
+        if (isStartOrEndInString(model, range)) {
+            return;
+        }
         if (!model.tokenization.isCheapToTokenize(range.getStartPosition().lineNumber)) {
             return;
         }
@@ -485,6 +489,13 @@ AutoIndentOnPaste = __decorate([
     __param(1, ILanguageConfigurationService)
 ], AutoIndentOnPaste);
 export { AutoIndentOnPaste };
+function isStartOrEndInString(model, range) {
+    const isPositionInString = (position) => {
+        const tokenType = getStandardTokenTypeAtPosition(model, position);
+        return tokenType === 2 /* StandardTokenType.String */;
+    };
+    return isPositionInString(range.getStartPosition()) || isPositionInString(range.getEndPosition());
+}
 function getIndentationEditOperations(model, builder, tabSize, tabsToSpaces) {
     if (model.getLineCount() === 1 && model.getLineMaxColumn(1) === 1) {
         // Model is empty

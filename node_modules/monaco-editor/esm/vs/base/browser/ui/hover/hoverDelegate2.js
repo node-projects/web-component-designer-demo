@@ -7,6 +7,7 @@ let baseHoverDelegate = {
     hideHover: () => undefined,
     showAndFocusLastHover: () => undefined,
     setupUpdatableHover: () => null,
+    triggerUpdatableHover: () => undefined
 };
 /**
  * Sets the hover delegate for use **only in the `base/` layer**.

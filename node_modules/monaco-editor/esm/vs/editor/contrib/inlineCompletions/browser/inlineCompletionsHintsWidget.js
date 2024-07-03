@@ -20,7 +20,8 @@ import { equals } from '../../../../base/common/arrays.js';
 import { RunOnceScheduler } from '../../../../base/common/async.js';
 import { Codicon } from '../../../../base/common/codicons.js';
 import { Disposable, toDisposable } from '../../../../base/common/lifecycle.js';
-import { autorun, autorunWithStore, derived, observableFromEvent } from '../../../../base/common/observable.js';
+import { autorun, autorunWithStore, derived, derivedObservableWithCache, observableFromEvent } from '../../../../base/common/observable.js';
+import { derivedWithStore } from '../../../../base/common/observableInternal/derived.js';
 import { OS } from '../../../../base/common/platform.js';
 import { ThemeIcon } from '../../../../base/common/themables.js';
 import './inlineCompletionsHintsWidget.css';
@@ -67,17 +68,26 @@ let InlineCompletionsHintsWidget = class InlineCompletionsHintsWidget extends Di
             if (!model || !this.alwaysShowToolbar.read(reader)) {
                 return;
             }
-            const contentWidget = store.add(this.instantiationService.createInstance(InlineSuggestionHintsContentWidget, this.editor, true, this.position, model.selectedInlineCompletionIndex, model.inlineCompletionsCount, model.activeCommands));
-            editor.addContentWidget(contentWidget);
-            store.add(toDisposable(() => editor.removeContentWidget(contentWidget)));
+            const contentWidgetValue = derivedWithStore((reader, store) => {
+                const contentWidget = store.add(this.instantiationService.createInstance(InlineSuggestionHintsContentWidget, this.editor, true, this.position, model.selectedInlineCompletionIndex, model.inlineCompletionsCount, model.activeCommands));
+                editor.addContentWidget(contentWidget);
+                store.add(toDisposable(() => editor.removeContentWidget(contentWidget)));
+                store.add(autorun(reader => {
+                    /** @description request explicit */
+                    const position = this.position.read(reader);
+                    if (!position) {
+                        return;
+                    }
+                    if (model.lastTriggerKind.read(reader) !== InlineCompletionTriggerKind.Explicit) {
+                        model.triggerExplicitly();
+                    }
+                }));
+                return contentWidget;
+            });
+            const hadPosition = derivedObservableWithCache(this, (reader, lastValue) => !!this.position.read(reader) || !!lastValue);
             store.add(autorun(reader => {
-                /** @description request explicit */
-                const position = this.position.read(reader);
-                if (!position) {
-                    return;
-                }
-                if (model.lastTriggerKind.read(reader) !== InlineCompletionTriggerKind.Explicit) {
-                    model.triggerExplicitly();
+                if (hadPosition.read(reader)) {
+                    contentWidgetValue.read(reader);
                 }
             }));
         }));

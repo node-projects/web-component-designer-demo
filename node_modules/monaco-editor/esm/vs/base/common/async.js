@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { CancellationTokenSource } from './cancellation.js';
-import { CancellationError } from './errors.js';
+import { BugIndicatingError, CancellationError } from './errors.js';
 import { Emitter, Event } from './event.js';
 import { toDisposable } from './lifecycle.js';
 import { setTimeout0 } from './platform.js';
@@ -324,6 +324,7 @@ export function first(promiseFactories, shouldStop = t => !!t, defaultValue = nu
 }
 export class TimeoutTimer {
     constructor(runner, timeout) {
+        this._isDisposed = false;
         this._token = -1;
         if (typeof runner === 'function' && typeof timeout === 'number') {
             this.setIfNotSet(runner, timeout);
@@ -331,6 +332,7 @@ export class TimeoutTimer {
     }
     dispose() {
         this.cancel();
+        this._isDisposed = true;
     }
     cancel() {
         if (this._token !== -1) {
@@ -339,6 +341,9 @@ export class TimeoutTimer {
         }
     }
     cancelAndSet(runner, timeout) {
+        if (this._isDisposed) {
+            throw new BugIndicatingError(`Calling 'cancelAndSet' on a disposed TimeoutTimer`);
+        }
         this.cancel();
         this._token = setTimeout(() => {
             this._token = -1;
@@ -346,6 +351,9 @@ export class TimeoutTimer {
         }, timeout);
     }
     setIfNotSet(runner, timeout) {
+        if (this._isDisposed) {
+            throw new BugIndicatingError(`Calling 'setIfNotSet' on a disposed TimeoutTimer`);
+        }
         if (this._token !== -1) {
             // timer is already set
             return;
@@ -359,6 +367,7 @@ export class TimeoutTimer {
 export class IntervalTimer {
     constructor() {
         this.disposable = undefined;
+        this.isDisposed = false;
     }
     cancel() {
         var _a;
@@ -366,6 +375,9 @@ export class IntervalTimer {
         this.disposable = undefined;
     }
     cancelAndSet(runner, interval, context = globalThis) {
+        if (this.isDisposed) {
+            throw new BugIndicatingError(`Calling 'cancelAndSet' on a disposed IntervalTimer`);
+        }
         this.cancel();
         const handle = context.setInterval(() => {
             runner();
@@ -377,6 +389,7 @@ export class IntervalTimer {
     }
     dispose() {
         this.cancel();
+        this.isDisposed = true;
     }
 }
 export class RunOnceScheduler {

@@ -1,6 +1,6 @@
 /*!-----------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
- * Version: 0.49.0(383fdf3fc0e1e1a024068b8d0fd4f3dcbae74d04)
+ * Version: 0.50.0(c321d0fbecb50ab8a5365fa1965476b0ae63fc87)
  * Released under the MIT license
  * https://github.com/microsoft/vscode/blob/main/LICENSE.txt
  *-----------------------------------------------------------*/
@@ -196,6 +196,9 @@ define("vs/editor/editor.main.nls.ja", {
 		"マルチ ファイル差分エディターの背景色",
 		"マルチ ファイル差分エディターの境界線の色",
 	],
+	"vs/editor/browser/widget/multiDiffEditor/multiDiffEditorWidgetImpl": [
+		"変更されたファイルはありません",
+	],
 	"vs/editor/common/config/editorConfigurationSchema": [
 		"エディター",
 		"1 つのタブに相当するスペースの数。{0} がオンの場合、この設定はファイル コンテンツに基づいて上書きされます。",
@@ -328,6 +331,7 @@ define("vs/editor/editor.main.nls.ja", {
 		"ミニマップの名前付き領域をセクション ヘッダーとして表示するかどうかを制御します。",
 		"MARK: コメントをミニマップのセクション ヘッダーとして表示するかどうかを制御します。",
 		"ミニマップのセクション ヘッダーのフォント サイズを制御します。",
+		"セクション ヘッダーの文字間隔をピクセル単位で制御します。これにより、小さいフォント サイズのヘッダーを読み取りやすくなります。",
 		"エディターの上端と最初の行の間の余白の大きさを制御します。",
 		"エディターの下端と最後の行の間の余白の大きさを制御します。",
 		"入力時にパラメーター ドキュメントと型情報を表示するポップアップを有効にします。",
@@ -338,7 +342,7 @@ define("vs/editor/editor.main.nls.ja", {
 		"文字列内でクイック候補を有効にします。",
 		"コメント内でクイック候補を有効にします。",
 		"文字列およびコメント外でクイック候補を有効にします。",
-		"入力中に候補を自動的に表示するかどうかを制御します。これは、コメント、文字列、その他コードの入力用に設定できます。クイック提案は、ゴースト テキストとして表示するか、提案ウィジェットで表示するように構成できます。また、\'{0}\' に注意してください。これは、提案が特殊文字によってトリガーされるかどうかを制御する設定です。",
+		"Controls whether suggestions should automatically show up while typing. This can be controlled for typing in comments, strings, and other code. Quick suggestion can be configured to show as ghost text or with the suggest widget. Also be aware of the {0}-setting which controls if suggestions are triggered by special characters.",
 		"行番号は表示されません。",
 		"行番号は、絶対値として表示されます。",
 		"行番号は、カーソル位置までの行数として表示されます。",
@@ -406,7 +410,7 @@ define("vs/editor/editor.main.nls.ja", {
 		"IntelliSense を自動でトリガーする場合に、候補を選択しません。",
 		"トリガー文字から IntelliSense をトリガーする場合にのみ、候補を選択します。",
 		"入力時に IntelliSense をトリガーする場合にのみ、候補を選択します。",
-		"ウィジェットを表示する際に候補を選択するかどうかを制御します。こちらは自動的にトリガーされる候補 (\'#editor.quickSuggestions#\' と \'#editor.suggestOnTriggerCharacters#\') にのみ適用され、(\'Ctrl+Space\' などを通じて) 明示的に呼び出される際には常に候補が選択されることにご注意ください。",
+		"Controls whether a suggestion is selected when the widget shows. Note that this only applies to automatically triggered suggestions ({0} and {1}) and that a suggestion is always selected when explicitly invoked, e.g via `Ctrl+Space`.",
 		"アクティブ スニペットがクイック候補を防止するかどうかを制御します。",
 		"提案のアイコンを表示するか、非表示にするかを制御します。",
 		"候補ウィジェットの下部にあるステータス バーの表示を制御します。",
@@ -831,7 +835,6 @@ define("vs/editor/editor.main.nls.ja", {
 		"形式を指定してコピー",
 		"共有",
 		"共有",
-		"共有",
 	],
 	"vs/editor/contrib/codeAction/browser/codeAction": [
 		"コード アクションの適用中に不明なエラーが発生しました",
@@ -941,7 +944,7 @@ define("vs/editor/editor.main.nls.ja", {
 		"貼り付けウィジェットが表示されているかどうか",
 		"貼り付けオプションを表示...",
 		"\'{0}\' の貼り付けの編集が見つかりませんでした",
-		"貼り付けハンドラーを実行しています。クリックしてキャンセルします",
+		"Running paste handlers. Click to cancel and do basic paste",
 		"貼り付け操作の選択",
 		"貼り付けハンドラーを実行しています...",
 	],
@@ -962,6 +965,10 @@ define("vs/editor/editor.main.nls.ja", {
 		"ドロップ ウィジェットが表示されているかどうか",
 		"ドロップ オプションを表示...",
 		"ドロップ ハンドラーを実行しています。クリックしてキャンセルします",
+	],
+	"vs/editor/contrib/dropOrPasteInto/browser/postEditWidget": [
+		"編集 \'{0}\' の解決中にエラーが発生しました:\r\n{1}",
+		"編集 \'{0}\' の適用中にエラーが発生しました:\r\n{1}",
 	],
 	"vs/editor/contrib/editorState/browser/keybindingCancellation": [
 		"エディターで取り消し可能な操作 (\'参照をここに表示\' など) を実行するかどうか",
@@ -985,9 +992,9 @@ define("vs/editor/editor.main.nls.ja", {
 		"置換(&&R)",
 	],
 	"vs/editor/contrib/find/browser/findWidget": [
-		"エディターの検索ウィジェット内の \'選択範囲を検索\' のアイコン。",
 		"エディターの検索ウィジェットが折りたたまれていることを示すアイコン。",
 		"エディターの検索ウィジェットが展開されていることを示すアイコン。",
+		"エディターの検索ウィジェット内の \'選択範囲を検索\' のアイコン。",
 		"エディターの検索ウィジェット内の \'置換\' のアイコン。",
 		"エディターの検索ウィジェット内の \'すべて置換\' のアイコン。",
 		"エディターの検索ウィジェット内の \'前を検索\' のアイコン。",
@@ -1152,6 +1159,16 @@ define("vs/editor/editor.main.nls.ja", {
 		"{1} のシンボル {0}、次に {2}",
 		"シンボル {0}/{1}",
 	],
+	"vs/editor/contrib/hover/browser/hoverAccessibleViews": [
+		"ホバー ウィジェットにフォーカスして、Tab キーを使用してホバー パーツを切り替えます。",
+		"- フォーカスのあるホバー部分の詳細レベルは、ホバーの詳細度を上げるコマンド <keybinding:{0}> を使用して上げられます。",
+		"- フォーカスのあるホバー部分の詳細レベルは、ホバーの詳細度を下げるコマンド <keybinding:{0}> を使用して下げられます。",
+		"最後にフォーカスされたホバー コンテンツは次のとおりです。",
+	],
+	"vs/editor/contrib/hover/browser/hoverActionIds": [
+		"ホバーの詳細レベルを上げる",
+		"ホバーの詳細レベルを下げる",
+	],
 	"vs/editor/contrib/hover/browser/hoverActions": [
 		"[表示またはフォーカス] ホバー",
 		"ホバーは自動的にフォーカスを取得しません。",
@@ -1166,8 +1183,6 @@ define("vs/editor/editor.main.nls.ja", {
 		"[ページを下に] ホバー",
 		"[上に移動] ホバー",
 		"[下に移動] ホバー",
-		"ホバーの詳細レベルを上げる",
-		"ホバーの詳細レベルを下げる",
 		"現在のカーソル位置にあるシンボルのドキュメント、参照、その他のコンテンツを表示するエディターのホバーを表示またはフォーカスします。",
 		"エディターに定義プレビュー ホバーを表示します。",
 		"エディターのホバーを上にスクロールします。",
@@ -1185,10 +1200,10 @@ define("vs/editor/editor.main.nls.ja", {
 		"読み込んでいます...",
 		"パフォーマンス上の理由から、長い行のためにレンダリングが一時停止されました。これは `editor.stopRenderingLineAfter` で設定できます。",
 		"パフォーマンス上の理由からトークン化はスキップされます。その長い行の長さは `editor.maxTokenizationLineLength` で構成できます。",
-		"詳細度を上げる ({0})",
-		"詳細度を上げる",
-		"詳細度を下げる ({0})",
-		"詳細度を下げる",
+		"ホバーの詳細レベルを上げる ({0})",
+		"ホバーの詳細レベルを上げる",
+		"ホバーの詳細レベルを下げる ({0})",
+		"ホバーの詳細レベルを下げる",
 	],
 	"vs/editor/contrib/hover/browser/markerHoverParticipant": [
 		"問題の表示",
@@ -1678,6 +1693,8 @@ define("vs/editor/editor.main.nls.ja", {
 		"タスクが失敗しました",
 		"ターミナル コマンドが失敗しました",
 		"コマンドに失敗しました",
+		"ターミナル コマンドに成功しました",
+		"コマンドが成功しました",
 		"ターミナル ベル",
 		"ターミナル ベル",
 		"ノートブック セルが完了しました",
@@ -1837,10 +1854,18 @@ define("vs/editor/editor.main.nls.ja", {
 		"{0}, {1}",
 	],
 	"vs/platform/quickinput/browser/quickInput": [
+		"キーボード フォーカスがクイック入力コントロール内にあるかどうか",
+		"現在表示されているクイック入力の種類",
+		"クイック入力のカーソルが入力ボックスの最後にあるかどうか",
 		"戻る",
 		"\'Enter\' を押して入力を確認するか \'Escape\' を押して取り消します",
 		"{0}/{1}",
 		"入力すると結果が絞り込まれます。",
+	],
+	"vs/platform/quickinput/browser/quickInputActions": [
+		"クイック ピックのコンテキスト内で使用されます。このコマンドのキー バインドを 1 つ変更する場合は、このコマンドの他のすべてのキー バインド (修飾子のバリアント) も変更する必要があります。",
+		"クイック アクセス モードの場合は、次の項目に移動します。クイック アクセス モードのでない場合は、次の区切りバーに移動します。",
+		"クイック アクセス モードの場合は、前の項目に移動します。クイック アクセス モードのでない場合は、前の区切りバーに移動します。",
 	],
 	"vs/platform/quickinput/browser/quickInputController": [
 		"すべてのチェック ボックスを切り替える",
@@ -1915,7 +1940,9 @@ define("vs/editor/editor.main.nls.ja", {
 		"選択範囲の同じコンテンツの領域の色。この色は、基本装飾が非表示にならないよう不透明にすることはできません。",
 		"選択範囲と同じコンテンツの境界線の色。",
 		"現在の検索一致項目の色。",
+		"現在の検索一致項目のテキストの色。",
 		"その他の検索条件に一致する項目の色。この色は、基本装飾が非表示にならないよう不透明にすることはできません。",
+		"他の検索一致項目の前景色。",
 		"検索を制限する範囲の色。この色は、基本装飾が非表示にならないよう不透明にすることはできません。",
 		"現在の検索一致項目の境界線の色。",
 		"他の検索一致項目の境界線の色。",

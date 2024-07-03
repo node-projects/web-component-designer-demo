@@ -1,6 +1,6 @@
 /*!-----------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
- * Version: 0.49.0(383fdf3fc0e1e1a024068b8d0fd4f3dcbae74d04)
+ * Version: 0.50.0(c321d0fbecb50ab8a5365fa1965476b0ae63fc87)
  * Released under the MIT license
  * https://github.com/microsoft/vscode/blob/main/LICENSE.txt
  *-----------------------------------------------------------*/
@@ -196,6 +196,9 @@ define("vs/editor/editor.main.nls.fr", {
 		"Couleur d’arrière-plan de l’éditeur de différences de fichiers multiples",
 		"Couleur de bordure de l’éditeur de différences de fichiers multiples",
 	],
+	"vs/editor/browser/widget/multiDiffEditor/multiDiffEditorWidgetImpl": [
+		"Aucun fichier modifié",
+	],
 	"vs/editor/common/config/editorConfigurationSchema": [
 		"Éditeur",
 		"Le nombre d’espaces auxquels une tabulation est égale. Ce paramètre est substitué basé sur le contenu du fichier lorsque {0} est activé.",
@@ -328,6 +331,7 @@ define("vs/editor/editor.main.nls.fr", {
 		"Contrôle si les régions nommées sont affichées en tant qu’en-têtes de section dans la minimap.",
 		"Contrôle si les commentaires MARK : sont affichés en tant qu’en-têtes de section dans la minimap.",
 		"Contrôle la taille de police des en-têtes de section dans le minimap.",
+		"Contrôle la quantité d’espace (en pixels) entre les caractères de l’en-tête de section. Cela permet de lire l’en-tête en petites tailles de police.",
 		"Contrôle la quantité d’espace entre le bord supérieur de l’éditeur et la première ligne.",
 		"Contrôle la quantité d\'espace entre le bord inférieur de l\'éditeur et la dernière ligne.",
 		"Active une fenêtre contextuelle qui affiche de la documentation sur les paramètres et des informations sur les types à mesure que vous tapez.",
@@ -338,7 +342,7 @@ define("vs/editor/editor.main.nls.fr", {
 		"Activez les suggestions rapides dans les chaînes.",
 		"Activez les suggestions rapides dans les commentaires.",
 		"Activez les suggestions rapides en dehors des chaînes et des commentaires.",
-		"Contrôle si les suggestions doivent s’afficher automatiquement lors de la saisie. Cela peut être contrôlé pour la saisie dans des commentaires, des chaînes et d’autres codes. Vous pouvez configurer la suggestion rapide pour qu’elle s’affiche sous forme de texte fantôme ou avec le widget de suggestion. Tenez également compte du paramètre \'{0}\' qui contrôle si des suggestions sont déclenchées par des caractères spéciaux.",
+		"Controls whether suggestions should automatically show up while typing. This can be controlled for typing in comments, strings, and other code. Quick suggestion can be configured to show as ghost text or with the suggest widget. Also be aware of the {0}-setting which controls if suggestions are triggered by special characters.",
 		"Les numéros de ligne ne sont pas affichés.",
 		"Les numéros de ligne sont affichés en nombre absolu.",
 		"Les numéros de ligne sont affichés sous la forme de distance en lignes à la position du curseur.",
@@ -406,7 +410,7 @@ define("vs/editor/editor.main.nls.fr", {
 		"Ne jamais sélectionner une suggestion lors du déclenchement automatique d’IntelliSense.",
 		"Sélectionnez une suggestion uniquement lors du déclenchement d’IntelliSense à partir d’un caractère déclencheur.",
 		"Sélectionnez une suggestion uniquement lors du déclenchement d’IntelliSense au cours de la frappe.",
-		"Contrôle si une suggestion est sélectionnée lorsque le widget s’affiche. Notez que cela s’applique uniquement aux suggestions déclenchées automatiquement (\'#editor.quickSuggestions#\' et \'#editor.suggestOnTriggerCharacters#\') et qu’une suggestion est toujours sélectionnée lorsqu’elle est appelée explicitement, par exemple via \'Ctrl+Espace\'.",
+		"Controls whether a suggestion is selected when the widget shows. Note that this only applies to automatically triggered suggestions ({0} and {1}) and that a suggestion is always selected when explicitly invoked, e.g via `Ctrl+Space`.",
 		"Contrôle si un extrait de code actif empêche les suggestions rapides.",
 		"Contrôle s\'il faut montrer ou masquer les icônes dans les suggestions.",
 		"Contrôle la visibilité de la barre d\'état en bas du widget de suggestion.",
@@ -831,7 +835,6 @@ define("vs/editor/editor.main.nls.fr", {
 		"Copier en tant que",
 		"Partager",
 		"Partager",
-		"Partager",
 	],
 	"vs/editor/contrib/codeAction/browser/codeAction": [
 		"Une erreur inconnue s\'est produite à l\'application de l\'action du code",
@@ -941,7 +944,7 @@ define("vs/editor/editor.main.nls.fr", {
 		"Si le widget de collage est affiché",
 		"Afficher les options de collage...",
 		"Nous n’avons trouvé aucune modification de collage n’a été trouvée pour « {0} »",
-		"Exécution des gestionnaires de collage. Cliquez pour annuler",
+		"Running paste handlers. Click to cancel and do basic paste",
 		"Sélectionner l’action Coller",
 		"Exécution des gestionnaires de collage",
 	],
@@ -962,6 +965,10 @@ define("vs/editor/editor.main.nls.fr", {
 		"Indique si le widget de suppression s’affiche",
 		"Afficher les options de suppression...",
 		"Exécution des gestionnaires de dépôt. Cliquez pour annuler",
+	],
+	"vs/editor/contrib/dropOrPasteInto/browser/postEditWidget": [
+		"Erreur lors de la résolution de la modification «{0}» :\r\n{1}",
+		"Erreur lors de l’application de la modification «{0}» :\r\n{1}",
 	],
 	"vs/editor/contrib/editorState/browser/keybindingCancellation": [
 		"Indique si l\'éditeur exécute une opération annulable, par exemple \'Avoir un aperçu des références\'",
@@ -985,9 +992,9 @@ define("vs/editor/editor.main.nls.fr", {
 		"&&Remplacer",
 	],
 	"vs/editor/contrib/find/browser/findWidget": [
-		"Icône de l\'option Rechercher dans la sélection dans le widget de recherche de l\'éditeur.",
 		"Icône permettant d\'indiquer que le widget de recherche de l\'éditeur est réduit.",
 		"Icône permettant d\'indiquer que le widget de recherche de l\'éditeur est développé.",
+		"Icône de l\'option Rechercher dans la sélection dans le widget de recherche de l\'éditeur.",
 		"Icône de l\'option Remplacer dans le widget de recherche de l\'éditeur.",
 		"Icône de l\'option Tout remplacer dans le widget de recherche de l\'éditeur.",
 		"Icône de l\'option Rechercher précédent dans le widget de recherche de l\'éditeur.",
@@ -1152,6 +1159,16 @@ define("vs/editor/editor.main.nls.fr", {
 		"Symbole {0} sur {1}, {2} pour le suivant",
 		"Symbole {0} sur {1}",
 	],
+	"vs/editor/contrib/hover/browser/hoverAccessibleViews": [
+		"Concentrez-vous sur le widget de pointage pour parcourir les parties de pointage à l’aide de la touche Tab.",
+		"- Le niveau de verbosité de la partie de survol ciblée peut être augmenté avec la commande Augmenter la verbosité du survol <keybinding: {0}>.",
+		"- Le niveau de verbosité de la partie de survol ciblée peut être diminué avec la commande Diminuer la verbosité du survol <keybinding: {0}>.",
+		"Le dernier contenu de pointage prioritaire est le suivant.",
+	],
+	"vs/editor/contrib/hover/browser/hoverActionIds": [
+		"Augmenter le niveau de verbosité par pointage",
+		"Diminuer le niveau de détail du pointage",
+	],
 	"vs/editor/contrib/hover/browser/hoverActions": [
 		"Afficher ou focus sur pointer",
 		"Le pointage ne prend pas automatiquement le focus.",
@@ -1166,8 +1183,6 @@ define("vs/editor/editor.main.nls.fr", {
 		"Pointer vers le bas de la page",
 		"Atteindre le pointage supérieur",
 		"Pointer vers le bas",
-		"Augmenter le niveau de verbosité par pointage",
-		"Diminuer le niveau de détail du pointage",
 		"Affichez ou concentrez le pointeur de l’éditeur qui affiche la documentation, les références et d’autres contenus pour un symbole à la position actuelle du curseur.",
 		"Afficher l’aperçu de définition survolé dans l’éditeur.",
 		"Faites défiler vers le haut le pointage de l’éditeur.",
@@ -1185,10 +1200,10 @@ define("vs/editor/editor.main.nls.fr", {
 		"Chargement en cours...",
 		"Rendu suspendu pour une longue ligne pour des raisons de performances. Cela peut être configuré via \'editor.stopRenderingLineAfter\'.",
 		"La tokenisation des lignes longues est ignorée pour des raisons de performances. Cela peut être configurée via \'editor.maxTokenizationLineLength\'.",
-		"Augmenter la verbosité ({0})",
-		"Augmenter la verbosité",
-		"Diminuer la verbosité ({0})",
-		"Diminuer la verbosité",
+		"Augmenter la verbosité par pointage ({0})",
+		"Augmenter la verbosité par pointage",
+		"Diminuer la verbosité par pointage ({0})",
+		"Diminuer la verbosité par pointage",
 	],
 	"vs/editor/contrib/hover/browser/markerHoverParticipant": [
 		"Voir le problème",
@@ -1678,6 +1693,8 @@ define("vs/editor/editor.main.nls.fr", {
 		"Échec de la tâche",
 		"Échec de la commande de terminal",
 		"Échec de la commande",
+		"Commande terminal réussie",
+		"Commande réussie",
 		"Cloche de terminal",
 		"Cloche de terminal",
 		"Cellule de bloc-notes terminée",
@@ -1837,10 +1854,18 @@ define("vs/editor/editor.main.nls.fr", {
 		"{0}, {1}",
 	],
 	"vs/platform/quickinput/browser/quickInput": [
+		"Indique si le focus clavier se trouve à l’intérieur du contrôle d’entrée rapide",
+		"Type de l’entrée rapide actuellement visible",
+		"Indique si le curseur de l’entrée rapide se trouve à la fin de la zone d’entrée",
 		"Précédent",
 		"Appuyez sur \'Entrée\' pour confirmer votre saisie, ou sur \'Échap\' pour l\'annuler",
 		"{0}/{1}",
 		"Taper pour affiner les résultats.",
+	],
+	"vs/platform/quickinput/browser/quickInputActions": [
+		"Utilisé dans le contexte de la sélection rapide. Si vous modifiez une combinaison de touches pour cette commande, vous devez également modifier toutes les autres combinaisons de touches (variantes de modification) de cette commande.",
+		"Si nous sommes en mode d’accès rapide, vous accédez à l’élément suivant. Si nous ne sommes pas en mode d’accès rapide, cela permet d’accéder au séparateur suivant.",
+		"Si nous sommes en mode d’accès rapide, vous accédez à l’élément précédent. Si nous ne sommes pas en mode d’accès rapide, cela permet d’accéder au séparateur précédent.",
 	],
 	"vs/platform/quickinput/browser/quickInputController": [
 		"Activer/désactiver toutes les cases à cocher",
@@ -1915,7 +1940,9 @@ define("vs/editor/editor.main.nls.fr", {
 		"Couleur des régions dont le contenu est le même que celui de la sélection. La couleur ne doit pas être opaque pour ne pas masquer les ornements sous-jacents.",
 		"Couleur de bordure des régions dont le contenu est identique à la sélection.",
 		"Couleur du résultat de recherche actif.",
+		"Couleur du texte du résultat de recherche actif.",
 		"Couleur des autres correspondances de recherche. La couleur ne doit pas être opaque pour ne pas masquer les ornements sous-jacents.",
+		"Couleur de premier plan des autres résultats de recherche.",
 		"Couleur de la plage limitant la recherche. La couleur ne doit pas être opaque pour ne pas masquer les ornements sous-jacents.",
 		"Couleur de bordure du résultat de recherche actif.",
 		"Couleur de bordure des autres résultats de recherche.",

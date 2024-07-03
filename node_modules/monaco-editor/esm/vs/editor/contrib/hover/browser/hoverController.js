@@ -22,6 +22,7 @@ import { ContentHoverWidget } from './contentHoverWidget.js';
 import { ContentHoverController } from './contentHoverController.js';
 import './hover.css';
 import { MarginHoverWidget } from './marginHoverWidget.js';
+import { Emitter } from '../../../../base/common/event.js';
 // sticky hover widget which doesn't disappear on focus out and such
 const _sticky = false;
 let HoverController = HoverController_1 = class HoverController extends Disposable {
@@ -30,6 +31,8 @@ let HoverController = HoverController_1 = class HoverController extends Disposab
         this._editor = _editor;
         this._instantiationService = _instantiationService;
         this._keybindingService = _keybindingService;
+        this._onHoverContentsChanged = this._register(new Emitter());
+        this.shouldKeepOpenOnEditorMouseMoveOrLeave = false;
         this._listenersStore = new DisposableStore();
         this._hoverState = {
             mouseDown: false,
@@ -118,6 +121,9 @@ let HoverController = HoverController_1 = class HoverController extends Disposab
         this._hoverState.mouseDown = false;
     }
     _onEditorMouseLeave(mouseEvent) {
+        if (this.shouldKeepOpenOnEditorMouseMoveOrLeave) {
+            return;
+        }
         this._cancelScheduler();
         const shouldNotHideCurrentHoverWidget = this._shouldNotHideCurrentHoverWidget(mouseEvent);
         if (shouldNotHideCurrentHoverWidget) {
@@ -161,6 +167,9 @@ let HoverController = HoverController_1 = class HoverController extends Disposab
     }
     _onEditorMouseMove(mouseEvent) {
         var _a, _b, _c, _d;
+        if (this.shouldKeepOpenOnEditorMouseMoveOrLeave) {
+            return;
+        }
         this._mouseMoveEvent = mouseEvent;
         if (((_a = this._contentWidget) === null || _a === void 0 ? void 0 : _a.isFocused) || ((_b = this._contentWidget) === null || _b === void 0 ? void 0 : _b.isResizing)) {
             return;
@@ -282,6 +291,7 @@ let HoverController = HoverController_1 = class HoverController extends Disposab
     _getOrCreateContentWidget() {
         if (!this._contentWidget) {
             this._contentWidget = this._instantiationService.createInstance(ContentHoverController, this._editor);
+            this._listenersStore.add(this._contentWidget.onContentsChanged(() => this._onHoverContentsChanged.fire()));
         }
         return this._contentWidget;
     }
@@ -299,8 +309,14 @@ let HoverController = HoverController_1 = class HoverController extends Disposab
         var _a;
         return ((_a = this._contentWidget) === null || _a === void 0 ? void 0 : _a.widget.isResizing) || false;
     }
-    updateFocusedMarkdownHoverVerbosityLevel(action) {
-        this._getOrCreateContentWidget().updateFocusedMarkdownHoverVerbosityLevel(action);
+    markdownHoverContentAtIndex(index) {
+        return this._getOrCreateContentWidget().markdownHoverContentAtIndex(index);
+    }
+    doesMarkdownHoverAtIndexSupportVerbosityAction(index, action) {
+        return this._getOrCreateContentWidget().doesMarkdownHoverAtIndexSupportVerbosityAction(index, action);
+    }
+    updateMarkdownHoverVerbosityLevel(action, index, focus) {
+        this._getOrCreateContentWidget().updateMarkdownHoverVerbosityLevel(action, index, focus);
     }
     focus() {
         var _a;

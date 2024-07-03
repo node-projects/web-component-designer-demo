@@ -1,6 +1,6 @@
 /*!-----------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
- * Version: 0.49.0(383fdf3fc0e1e1a024068b8d0fd4f3dcbae74d04)
+ * Version: 0.50.0(c321d0fbecb50ab8a5365fa1965476b0ae63fc87)
  * Released under the MIT license
  * https://github.com/microsoft/vscode/blob/main/LICENSE.txt
  *-----------------------------------------------------------*/
@@ -196,6 +196,9 @@ define("vs/editor/editor.main.nls.de", {
 		"Die Hintergrundfarbe des Diff-Editors für mehrere Dateien",
 		"Die Rahmenfarbe des Diff-Editors für mehrere Dateien",
 	],
+	"vs/editor/browser/widget/multiDiffEditor/multiDiffEditorWidgetImpl": [
+		"Keine geänderten Dateien",
+	],
 	"vs/editor/common/config/editorConfigurationSchema": [
 		"Editor",
 		"Die Anzahl der Leerzeichen, denen ein Tabstopp entspricht. Diese Einstellung wird basierend auf dem Inhalt der Datei überschrieben, wenn {0} aktiviert ist.",
@@ -328,6 +331,7 @@ define("vs/editor/editor.main.nls.de", {
 		"Steuert, ob benannte Bereiche als Abschnittsheader in der Minimap angezeigt werden.",
 		"Steuert, ob „MARK: Kommentare“ als Abschnittsheader in der Minimap angezeigt werden.",
 		"Steuert den Schriftgrad von Abschnittsüberschriften in der Minimap.",
+		"Steuert den Abstand (in Pixeln) zwischen den Zeichen der Abschnittsüberschrift. Dies erleichtert die Lesbarkeit der Kopfzeile bei kleinen Schriftgrößen.",
 		"Steuert den Abstand zwischen dem oberen Rand des Editors und der ersten Zeile.",
 		"Steuert den Abstand zwischen dem unteren Rand des Editors und der letzten Zeile.",
 		"Aktiviert ein Pop-up, das Dokumentation und Typ eines Parameters anzeigt während Sie tippen.",
@@ -338,7 +342,7 @@ define("vs/editor/editor.main.nls.de", {
 		"Schnellvorschläge innerhalb von Zeichenfolgen aktivieren.",
 		"Schnellvorschläge innerhalb von Kommentaren aktivieren.",
 		"Schnellvorschläge außerhalb von Zeichenfolgen und Kommentaren aktivieren.",
-		"Steuert, ob Vorschläge während des Tippens automatisch angezeigt werden sollen. Dies kann bei der Eingabe von Kommentaren, Zeichenketten und anderem Code kontrolliert werden. Schnellvorschläge können so konfiguriert werden, dass sie als Geistertext oder mit dem Vorschlags-Widget angezeigt werden. Beachten Sie auch die \'{0}\'-Einstellung, die steuert, ob Vorschläge durch Sonderzeichen ausgelöst werden.",
+		"Controls whether suggestions should automatically show up while typing. This can be controlled for typing in comments, strings, and other code. Quick suggestion can be configured to show as ghost text or with the suggest widget. Also be aware of the {0}-setting which controls if suggestions are triggered by special characters.",
 		"Zeilennummern werden nicht dargestellt.",
 		"Zeilennummern werden als absolute Zahl dargestellt.",
 		"Zeilennummern werden als Abstand in Zeilen an Cursorposition dargestellt.",
@@ -406,7 +410,7 @@ define("vs/editor/editor.main.nls.de", {
 		"Wählen Sie niemals einen Vorschlag aus, wenn IntelliSense automatisch ausgelöst wird.",
 		"Wählen Sie einen Vorschlag nur aus, wenn IntelliSense aus einem Triggerzeichen ausgelöst wird.",
 		"Wählen Sie einen Vorschlag nur aus, wenn Sie IntelliSense während der Eingabe auslösen.",
-		"Steuert, ob ein Vorschlag ausgewählt wird, wenn das Widget angezeigt wird. Beachten Sie, dass dies nur für automatisch ausgelöste Vorschläge gilt (\"#editor.quickSuggestions#\" und \"#editor.suggestOnTriggerCharacters#\"), und dass ein Vorschlag immer ausgewählt wird, wenn er explizit aufgerufen wird, z. B. über STRG+LEERTASTE.",
+		"Controls whether a suggestion is selected when the widget shows. Note that this only applies to automatically triggered suggestions ({0} and {1}) and that a suggestion is always selected when explicitly invoked, e.g via `Ctrl+Space`.",
 		"Steuert, ob ein aktiver Schnipsel verhindert, dass der Bereich \"Schnelle Vorschläge\" angezeigt wird.",
 		"Steuert, ob Symbole in Vorschlägen ein- oder ausgeblendet werden.",
 		"Steuert die Sichtbarkeit der Statusleiste unten im Vorschlagswidget.",
@@ -831,7 +835,6 @@ define("vs/editor/editor.main.nls.de", {
 		"Kopieren als",
 		"Freigeben",
 		"Freigeben",
-		"Freigeben",
 	],
 	"vs/editor/contrib/codeAction/browser/codeAction": [
 		"Beim Anwenden der Code-Aktion ist ein unbekannter Fehler aufgetreten",
@@ -941,7 +944,7 @@ define("vs/editor/editor.main.nls.de", {
 		"Gibt an, ob das Einfügewidget angezeigt wird.",
 		"Einfügeoptionen anzeigen...",
 		"Es wurden keine Einfügebearbeitungen für „{0}“ gefunden.",
-		"Einfügehandler werden ausgeführt. Klicken Sie hier, um den Vorgang abzubrechen.",
+		"Running paste handlers. Click to cancel and do basic paste",
 		"Einfügeaktion auswählen",
 		"Einfügehandler werden ausgeführt",
 	],
@@ -962,6 +965,10 @@ define("vs/editor/editor.main.nls.de", {
 		"Gibt an, ob das Ablagewidget angezeigt wird.",
 		"Ablageoptionen anzeigen...",
 		"Drophandler werden ausgeführt. Klicken Sie hier, um den Vorgang abzubrechen.",
+	],
+	"vs/editor/contrib/dropOrPasteInto/browser/postEditWidget": [
+		"Fehler beim Auflösen der Bearbeitung \"{0}\":\r\n{1}",
+		"Fehler beim Anwenden der Bearbeitung \"{0}\":\r\n{1}",
 	],
 	"vs/editor/contrib/editorState/browser/keybindingCancellation": [
 		"Gibt an, ob der Editor einen abbrechbaren Vorgang ausführt, z. B. \"Verweisvorschau\".",
@@ -985,9 +992,9 @@ define("vs/editor/editor.main.nls.de", {
 		"&&Ersetzen",
 	],
 	"vs/editor/contrib/find/browser/findWidget": [
-		"Symbol für \"In Auswahl suchen\" im Editor-Such-Widget.",
 		"Symbol für die Anzeige, dass das Editor-Such-Widget zugeklappt wurde.",
 		"Symbol für die Anzeige, dass das Editor-Such-Widget aufgeklappt wurde.",
+		"Symbol für \"In Auswahl suchen\" im Editor-Such-Widget.",
 		"Symbol für \"Ersetzen\" im Editor-Such-Widget.",
 		"Symbol für \"Alle ersetzen\" im Editor-Such-Widget.",
 		"Symbol für \"Vorheriges Element suchen\" im Editor-Such-Widget.",
@@ -1152,6 +1159,16 @@ define("vs/editor/editor.main.nls.de", {
 		"Symbol {0} von {1}, {2} für nächstes",
 		"Symbol {0} von {1}",
 	],
+	"vs/editor/contrib/hover/browser/hoverAccessibleViews": [
+		"Konzentrieren Sie sich auf das Hoverwidget, um die Hoverteile mit der Tabulatortaste durchlaufen zu können.",
+		"– Der Ausführlichkeitsgrad des Hoverteils im Fokus kann mit dem Befehl \"Ausführlichkeit beim Daraufzeigen erhöhen\"<keybinding:{0}> erhöht werden.",
+		"– Der Ausführlichkeitsgrad des Hoverteils im Fokus kann mit dem Befehl \"Ausführlichkeit beim Daraufzeigen verringern\"<keybinding:{0}> verringert werden.",
+		"Der letzte Hoverinhalt im Fokus ist der folgende.",
+	],
+	"vs/editor/contrib/hover/browser/hoverActionIds": [
+		"Ausführlichkeitsgrad beim Daraufzeigen erhöhen",
+		"Ausführlichkeitsgrad beim Daraufzeigen verringern",
+	],
 	"vs/editor/contrib/hover/browser/hoverActions": [
 		"Anzeigen oder Fokus beim Daraufzeigen",
 		"Beim Daraufzeigen wird der Fokus nicht automatisch verwendet.",
@@ -1166,8 +1183,6 @@ define("vs/editor/editor.main.nls.de", {
 		"Eine Seite nach unten beim Daraufzeigen",
 		"Gehe nach oben beim Daraufzeigen",
 		"Gehe nach unten beim Daraufzeigen",
-		"Ausführlichkeitsgrad beim Daraufzeigen erhöhen",
-		"Ausführlichkeitsgrad beim Daraufzeigen verringern",
 		"Editor-Mauszeiger anzeigen oder fokussieren, um Dokumentation, Verweise und anderen Inhalt für ein Symbol an der aktuellen Cursorposition anzuzeigen oder zu fokussieren.",
 		"Definitionsvorschau-Mauszeiger im Editor anzeigen",
 		"Beim Daraufzeigen auf den Editor nach oben scrollen.",
@@ -1185,10 +1200,10 @@ define("vs/editor/editor.main.nls.de", {
 		"Wird geladen...",
 		"Das Rendering langer Zeilen wurde aus Leistungsgründen angehalten. Dies kann über „editor.stopRenderingLineAfter“ konfiguriert werden.",
 		"Die Tokenisierung wird bei langen Zeilen aus Leistungsgründen übersprungen. Dies kann über „editor.maxTokenizationLineLength“ konfiguriert werden.",
-		"Ausführlichkeit erhöhen ({0})",
-		"Ausführlichkeit erhöhen",
-		"Ausführlichkeit verringern ({0})",
-		"Ausführlichkeit verringern",
+		"Ausführlichkeit beim Daraufzeigen erhöhen ({0})",
+		"Ausführlichkeit beim Daraufzeigen erhöhen",
+		"Ausführlichkeit beim Daraufzeigen verringern ({0})",
+		"Ausführlichkeit beim Daraufzeigen verringern",
 	],
 	"vs/editor/contrib/hover/browser/markerHoverParticipant": [
 		"Problem anzeigen",
@@ -1678,6 +1693,8 @@ define("vs/editor/editor.main.nls.de", {
 		"Fehler bei Aufgabe",
 		"Terminalbefehl fehlgeschlagen",
 		"Befehl fehlgeschlagen",
+		"Terminalbefehl erfolgreich",
+		"Befehl erfolgreich",
 		"Terminalglocke",
 		"Terminalglocke",
 		"Notebookzelle abgeschlossen",
@@ -1837,10 +1854,18 @@ define("vs/editor/editor.main.nls.de", {
 		"{0}, {1}",
 	],
 	"vs/platform/quickinput/browser/quickInput": [
+		"Gibt an, ob sich der Tastaturfokus innerhalb des Steuerelements für die Schnelleingabe befindet.",
+		"Der Typ der aktuell sichtbaren Schnelleingabe",
+		"Gibt an, ob sich der Cursor in der Schnelleingabe am Ende des Eingabefelds befindet.",
 		"Zurück",
 		"Drücken Sie die EINGABETASTE, um Ihre Eingabe zu bestätigen, oder ESC, um den Vorgang abzubrechen.",
 		"{0}/{1}",
 		"Nehmen Sie eine Eingabe vor, um die Ergebnisse einzugrenzen.",
+	],
+	"vs/platform/quickinput/browser/quickInputActions": [
+		"Wird im Kontext der Schnellauswahl verwendet. Wenn Sie eine Tastenzuordnung für diesen Befehl ändern, sollten Sie auch alle anderen Tastenzuordnungen (Modifizierervarianten) dieses Befehls ändern.",
+		"Wenn wir uns im Schnellzugriffsmodus befinden, wird zum nächsten Element navigiert. Wenn wir uns nicht im Schnellzugriffsmodus befinden, wird zum nächsten Trennzeichen navigiert.",
+		"Wenn wir uns im Schnellzugriffsmodus befinden, wird zum vorherigen Element navigiert. Wenn wir uns nicht im Schnellzugriffsmodus befinden, wird zum vorherigen Trennzeichen navigiert.",
 	],
 	"vs/platform/quickinput/browser/quickInputController": [
 		"Aktivieren Sie alle Kontrollkästchen",
@@ -1915,7 +1940,9 @@ define("vs/editor/editor.main.nls.de", {
 		"Farbe für Bereiche mit dem gleichen Inhalt wie die Auswahl. Die Farbe darf nicht deckend sein, weil sie sonst die zugrunde liegenden Dekorationen verdeckt.",
 		"Randfarbe für Bereiche, deren Inhalt der Auswahl entspricht.",
 		"Farbe des aktuellen Suchergebnisses.",
+		"Textfarbe der aktuellen Suchübereinstimmung.",
 		"Farbe der anderen Suchergebnisse. Die Farbe darf nicht deckend sein, weil sie sonst die zugrunde liegenden Dekorationen verdeckt.",
+		"Vordergrundfarbe der anderen Suchübereinstimmungen.",
 		"Farbe des Bereichs, der die Suche eingrenzt. Die Farbe darf nicht deckend sein, damit sie nicht die zugrunde liegenden Dekorationen verdeckt.",
 		"Randfarbe des aktuellen Suchergebnisses.",
 		"Randfarbe der anderen Suchtreffer.",

@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { DECREASE_HOVER_VERBOSITY_ACTION_ID, GO_TO_BOTTOM_HOVER_ACTION_ID, GO_TO_TOP_HOVER_ACTION_ID, INCREASE_HOVER_VERBOSITY_ACTION_ID, PAGE_DOWN_HOVER_ACTION_ID, PAGE_UP_HOVER_ACTION_ID, SCROLL_DOWN_HOVER_ACTION_ID, SCROLL_LEFT_HOVER_ACTION_ID, SCROLL_RIGHT_HOVER_ACTION_ID, SCROLL_UP_HOVER_ACTION_ID, SHOW_DEFINITION_PREVIEW_HOVER_ACTION_ID, SHOW_OR_FOCUS_HOVER_ACTION_ID } from './hoverActionIds.js';
+import { DECREASE_HOVER_VERBOSITY_ACTION_ID, DECREASE_HOVER_VERBOSITY_ACTION_LABEL, GO_TO_BOTTOM_HOVER_ACTION_ID, GO_TO_TOP_HOVER_ACTION_ID, INCREASE_HOVER_VERBOSITY_ACTION_ID, INCREASE_HOVER_VERBOSITY_ACTION_LABEL, PAGE_DOWN_HOVER_ACTION_ID, PAGE_UP_HOVER_ACTION_ID, SCROLL_DOWN_HOVER_ACTION_ID, SCROLL_LEFT_HOVER_ACTION_ID, SCROLL_RIGHT_HOVER_ACTION_ID, SCROLL_UP_HOVER_ACTION_ID, SHOW_DEFINITION_PREVIEW_HOVER_ACTION_ID, SHOW_OR_FOCUS_HOVER_ACTION_ID } from './hoverActionIds.js';
 import { KeyChord } from '../../../../base/common/keyCodes.js';
 import { EditorAction } from '../../../browser/editorExtensions.js';
 import { Range } from '../../../common/core/range.js';
@@ -381,33 +381,27 @@ export class IncreaseHoverVerbosityLevel extends EditorAction {
     constructor() {
         super({
             id: INCREASE_HOVER_VERBOSITY_ACTION_ID,
-            label: nls.localize({
-                key: 'increaseHoverVerbosityLevel',
-                comment: ['Label for action that will increase the hover verbosity level.']
-            }, "Increase Hover Verbosity Level"),
+            label: INCREASE_HOVER_VERBOSITY_ACTION_LABEL,
             alias: 'Increase Hover Verbosity Level',
-            precondition: EditorContextKeys.hoverFocused
+            precondition: EditorContextKeys.hoverVisible
         });
     }
-    run(accessor, editor) {
+    run(accessor, editor, args) {
         var _a;
-        (_a = HoverController.get(editor)) === null || _a === void 0 ? void 0 : _a.updateFocusedMarkdownHoverVerbosityLevel(HoverVerbosityAction.Increase);
+        (_a = HoverController.get(editor)) === null || _a === void 0 ? void 0 : _a.updateMarkdownHoverVerbosityLevel(HoverVerbosityAction.Increase, args === null || args === void 0 ? void 0 : args.index, args === null || args === void 0 ? void 0 : args.focus);
     }
 }
 export class DecreaseHoverVerbosityLevel extends EditorAction {
     constructor() {
         super({
             id: DECREASE_HOVER_VERBOSITY_ACTION_ID,
-            label: nls.localize({
-                key: 'decreaseHoverVerbosityLevel',
-                comment: ['Label for action that will decrease the hover verbosity level.']
-            }, "Decrease Hover Verbosity Level"),
+            label: DECREASE_HOVER_VERBOSITY_ACTION_LABEL,
             alias: 'Decrease Hover Verbosity Level',
-            precondition: EditorContextKeys.hoverFocused
+            precondition: EditorContextKeys.hoverVisible
         });
     }
     run(accessor, editor, args) {
         var _a;
-        (_a = HoverController.get(editor)) === null || _a === void 0 ? void 0 : _a.updateFocusedMarkdownHoverVerbosityLevel(HoverVerbosityAction.Decrease);
+        (_a = HoverController.get(editor)) === null || _a === void 0 ? void 0 : _a.updateMarkdownHoverVerbosityLevel(HoverVerbosityAction.Decrease, args === null || args === void 0 ? void 0 : args.index, args === null || args === void 0 ? void 0 : args.focus);
     }
 }
