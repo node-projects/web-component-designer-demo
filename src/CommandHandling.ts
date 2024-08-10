@@ -3,7 +3,7 @@ import { IUiCommandHandler } from '@node-projects/web-component-designer/dist/co
 import { DockManager } from 'dock-spawn-ts/lib/js/DockManager.js';
 import { AppShell } from './appShell.js';
 import { WebRtcMultiplayerServer } from '@node-projects/web-component-designer-webrtc-multiplayer';
-import { UndoRedoGraph } from './Undo_RedoGraph.js';
+import { UndoRedoGraph } from './UndoRedoGraph.js';
 
 let multiplayer: WebRtcMultiplayerServer = null;;
 
