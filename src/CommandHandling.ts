@@ -1,8 +1,9 @@
 import { DocumentContainer, ServiceContainer } from '@node-projects/web-component-designer';
 import { IUiCommandHandler } from '@node-projects/web-component-designer/dist/commandHandling/IUiCommandHandler';
-import { DockManager } from 'dock-spawn-ts/lib/js/DockManager';
-import { AppShell } from './appShell';
+import { DockManager } from 'dock-spawn-ts/lib/js/DockManager.js';
+import { AppShell } from './appShell.js';
 import { WebRtcMultiplayerServer } from '@node-projects/web-component-designer-webrtc-multiplayer';
+import { UndoRedoGraph } from './Undo_RedoGraph.js';
 
 let multiplayer: WebRtcMultiplayerServer = null;;
 
@@ -16,8 +17,8 @@ export class CommandHandling {
     this.init(serviceContainer);
   }
 
-  handleCommandButtonClick(e) {
-    let button = e.currentTarget;
+  handleCommandButtonClick(e: MouseEvent) {
+    let button = <HTMLElement>e.currentTarget;
     let commandName = button.dataset['command'];
     let commandParameter = button.dataset['commandParameter'];
 
@@ -39,6 +40,21 @@ export class CommandHandling {
         multiplayer.useBroadcast();
         //multiplayer.startClient();
       }
+    } else if (commandName === 'redo' && e.shiftKey) {
+      const target: DocumentContainer = <DocumentContainer>this.dockManager.activeDocument.resolvedElementContent;
+      if (target) {
+        const redos = Array.from(target.instanceServiceContainer.undoService.getRedoEntries());
+        let undoRedoGraph = new UndoRedoGraph(target.instanceServiceContainer.undoService);
+        undoRedoGraph.render(redos);
+        undoRedoGraph.style.left = e.x + 'px';
+        undoRedoGraph.style.top = e.y + 'px';
+        undoRedoGraph.style.width = 'auto';
+        undoRedoGraph.style.height = 'auto';
+        undoRedoGraph.style.zIndex = '9';
+        undoRedoGraph.style.position = 'absolute';
+        document.body.appendChild(undoRedoGraph);
+      }
+
     } else if (this.dockManager.activeDocument) {
       let target: any = this.dockManager.activeDocument.resolvedElementContent;
       if (target.executeCommand) {

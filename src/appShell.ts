@@ -1,4 +1,4 @@
-import { NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, DocumentContainer, CopyPasteAsJsonService, DebugView, UnkownElementsPropertiesService, sleep, RefactorView, BindingsRefactorService, TextRefactorService, SeperatorContextMenu, IDesignItem, DomConverter, PropertyGridWithHeader, DesignItem, ValueType } from '@node-projects/web-component-designer';
+import { NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, DocumentContainer, CopyPasteAsJsonService, DebugView, UnkownElementsPropertiesService, sleep, RefactorView, BindingsRefactorService, TextRefactorService, SeperatorContextMenu, IDesignItem, DomConverter, PropertyGridWithHeader, DesignItem, ValueType, UndoService } from '@node-projects/web-component-designer';
 import createDefaultServiceContainer from '@node-projects/web-component-designer/dist/elements/services/DefaultServiceBootstrap.js';
 
 import { NodeHtmlParserService } from '@node-projects/web-component-designer-htmlparserservice-nodehtmlparser';
@@ -19,6 +19,7 @@ serviceContainer.register("bindableObjectsService", new CustomBindableObjectsSer
 serviceContainer.registerLast("propertyService", new UnkownElementsPropertiesService());
 serviceContainer.register("refactorService", new BindingsRefactorService());
 serviceContainer.register("refactorService", new TextRefactorService());
+serviceContainer.register("undoService", (designerCanvas) => new UndoService(designerCanvas, true));
 
 serviceContainer.config.codeViewWidget = CodeViewMonaco;
 
