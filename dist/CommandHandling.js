@@ -107,7 +107,7 @@ export class CommandHandling {
             else {
                 this.handleCommand(buttons, null);
             }
-            const target = this.dockManager.activeDocument.resolvedElementContent;
+            const target = this.dockManager.activeDocument?.resolvedElementContent;
             if (target) {
                 const undoCount = target.instanceServiceContainer.undoService.undoCount;
                 const redoCount = target.instanceServiceContainer.undoService.redoCount;
