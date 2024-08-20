@@ -1,5 +1,5 @@
 import { WebRtcMultiplayerServer } from '@node-projects/web-component-designer-webrtc-multiplayer';
-import { UndoRedoGraph } from './UndoRedoGraph.js';
+//import { UndoRedoGraph } from './UndoRedoGraph.js';
 let multiplayer = null;
 ;
 export class CommandHandling {
@@ -37,7 +37,7 @@ export class CommandHandling {
         else if (commandName === 'redo' && e.shiftKey) {
             const target = this.dockManager.activeDocument.resolvedElementContent;
             if (target) {
-                const redos = Array.from(target.instanceServiceContainer.undoService.getRedoEntries());
+                /*const redos = Array.from(target.instanceServiceContainer.undoService.getRedoEntries());
                 let undoRedoGraph = new UndoRedoGraph(target.instanceServiceContainer.undoService);
                 undoRedoGraph.render(redos);
                 undoRedoGraph.style.left = e.x + 'px';
@@ -46,7 +46,7 @@ export class CommandHandling {
                 undoRedoGraph.style.height = 'auto';
                 undoRedoGraph.style.zIndex = '9';
                 undoRedoGraph.style.position = 'absolute';
-                document.body.appendChild(undoRedoGraph);
+                document.body.appendChild(undoRedoGraph);*/
             }
         }
         else if (this.dockManager.activeDocument) {
