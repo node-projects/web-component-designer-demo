@@ -3,7 +3,7 @@ import { IUiCommandHandler } from '@node-projects/web-component-designer/dist/co
 import { DockManager } from 'dock-spawn-ts/lib/js/DockManager.js';
 import { AppShell } from './appShell.js';
 import { WebRtcMultiplayerServer } from '@node-projects/web-component-designer-webrtc-multiplayer';
-import { UndoRedoGraph } from './UndoRedoGraph.js';
+//import { UndoRedoGraph } from './UndoRedoGraph.js';
 
 let multiplayer: WebRtcMultiplayerServer = null;;
 
@@ -43,7 +43,7 @@ export class CommandHandling {
     } else if (commandName === 'redo' && e.shiftKey) {
       const target: DocumentContainer = <DocumentContainer>this.dockManager.activeDocument.resolvedElementContent;
       if (target) {
-        const redos = Array.from(target.instanceServiceContainer.undoService.getRedoEntries());
+        /*const redos = Array.from(target.instanceServiceContainer.undoService.getRedoEntries());
         let undoRedoGraph = new UndoRedoGraph(target.instanceServiceContainer.undoService);
         undoRedoGraph.render(redos);
         undoRedoGraph.style.left = e.x + 'px';
@@ -52,7 +52,7 @@ export class CommandHandling {
         undoRedoGraph.style.height = 'auto';
         undoRedoGraph.style.zIndex = '9';
         undoRedoGraph.style.position = 'absolute';
-        document.body.appendChild(undoRedoGraph);
+        document.body.appendChild(undoRedoGraph);*/
       }
 
     } else if (this.dockManager.activeDocument) {
