@@ -211,6 +211,17 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
                 code = decodeURIComponent(p.substring(5));
             if (p.startsWith('style='))
                 style = decodeURIComponent(p.substring(6));
+            if (p.startsWith('demo=')) {
+                const d = decodeURIComponent(p.substring(5));
+                code = '';
+                if (d == '1') {
+                    for (let i = 0; i < 300; i++) {
+                        let l = 20 + (80 * (i % 10));
+                        let t = 30 + (30 * Math.round(i / 10));
+                        code += '<button style="width:80px;height:30px;position:absolute;left:' + l + 'px;top:' + t + 'px;">Button</button>';
+                    }
+                }
+            }
         }
         await customElements.whenDefined('dock-spawn-ts');
         const linkElement = document.createElement("link");
