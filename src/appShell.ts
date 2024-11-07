@@ -273,7 +273,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     });
 
     await this._setupServiceContainer();
-    this._bindableObjectsBrowser.initialize(serviceContainer);
+    this._bindableObjectsBrowser.initialize(serviceContainer, null, 'itemsView');
     //@ts-ignore
     this._propertyGrid.propertyGrid.propertyGroupHover = (group) => group.properties?.[0]?.styleDeclaration;
     this._propertyGrid.propertyGrid.propertyContextMenuProvider = (designItems, property) => {

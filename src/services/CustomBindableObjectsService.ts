@@ -1,6 +1,10 @@
-import { IBindableObjectsService, IBindableObject, BindableObjectType } from "@node-projects/web-component-designer";
+import { IBindableObjectsService, IBindableObject, BindableObjectType, BindableObjectsTarget, InstanceServiceContainer } from "@node-projects/web-component-designer";
 
 export class CustomBindableObjectsService implements IBindableObjectsService {
+
+  hasObjectsForInstanceServiceContainer(instanceServiceContainer: InstanceServiceContainer, source: BindableObjectsTarget) {
+    return true;
+  }
 
   name = 'custom';
 
