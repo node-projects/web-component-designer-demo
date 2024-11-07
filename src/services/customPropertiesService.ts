@@ -26,7 +26,7 @@ export class CustomPropertiesService extends AbstractPropertiesService {
     throw new Error("Method not implemented.");
   }
 
-  setValue(designItems: IDesignItem[], property: IProperty, value: any) {
+  async setValue(designItems: IDesignItem[], property: IProperty, value: any) {
     // throw new Error("Method not implemented.");
   }
   getValue(designItems: IDesignItem[], property: IProperty) {
@@ -42,11 +42,11 @@ export class CustomPropertiesService extends AbstractPropertiesService {
     return false;
   }
 
-  getProperty(designItem: IDesignItem, name: string): IProperty {
+  async getProperty(designItem: IDesignItem, name: string): Promise<IProperty> {
     return this.getProperties(designItem)[name];
   }
 
-  getProperties(designItem: IDesignItem): IProperty[] {
+  async getProperties(designItem: IDesignItem): Promise<IProperty[]> {
     let properties: IProperty[] = [];
     properties.push({ name: "Test 1", type: "string", service: this, propertyType: PropertyType.propertyAndAttribute });
     return properties;
