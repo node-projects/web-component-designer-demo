@@ -1,4 +1,4 @@
-import { NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, DocumentContainer, CopyPasteAsJsonService, UnkownElementsPropertiesService, sleep, BindingsRefactorService, TextRefactorService, SeperatorContextMenu, DomConverter, ValueType, UndoService } from '@node-projects/web-component-designer';
+import { NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, DocumentContainer, CopyPasteAsJsonService, UnkownElementsPropertiesService, sleep, BindingsRefactorService, TextRefactorService, SeperatorContextMenu, DomConverter, ValueType } from '@node-projects/web-component-designer';
 import createDefaultServiceContainer from '@node-projects/web-component-designer/dist/elements/services/DefaultServiceBootstrap.js';
 import { NodeHtmlParserService } from '@node-projects/web-component-designer-htmlparserservice-nodehtmlparser';
 import { CodeViewMonaco } from '@node-projects/web-component-designer-codeview-monaco';
@@ -16,7 +16,6 @@ serviceContainer.register("bindableObjectsService", new CustomBindableObjectsSer
 serviceContainer.registerLast("propertyService", new UnkownElementsPropertiesService());
 serviceContainer.register("refactorService", new BindingsRefactorService());
 serviceContainer.register("refactorService", new TextRefactorService());
-serviceContainer.register("undoService", (designerCanvas) => new UndoService(designerCanvas, true));
 serviceContainer.config.codeViewWidget = CodeViewMonaco;
 serviceContainer.designerContextMenuExtensions.push(new ExpandCollapseContextMenu());
 serviceContainer.designerContextMenuExtensions.push(new SeperatorContextMenu(), new EditTemplateContextMenu());
@@ -249,7 +248,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
             }
         });
         await this._setupServiceContainer();
-        this._bindableObjectsBrowser.initialize(serviceContainer);
+        this._bindableObjectsBrowser.initialize(serviceContainer, null, 'itemsView');
         //@ts-ignore
         this._propertyGrid.propertyGrid.propertyGroupHover = (group) => group.properties?.[0]?.styleDeclaration;
         this._propertyGrid.propertyGrid.propertyContextMenuProvider = (designItems, property) => {
@@ -280,7 +279,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
                 this.jumpToCss(group.properties?.[0]?.styleDeclaration?.ast?.parent, group.properties?.[0]?.styleDeclaration?.stylesheet);
             //}
         };
-        this.newDocument(code, style, false);
+        this.newDocument(false, code, style);
         await sleep(200);
         this.activateDockById('treeUpper');
     }
@@ -332,9 +331,9 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         this._paletteTree.loadControls(serviceContainer, serviceContainer.elementsServices);
         this._propertyGrid.serviceContainer = serviceContainer;
     }
-    newDocument(code, style, useIframe) {
+    newDocument(fixedWidth, code, style) {
         this._documentNumber++;
-        let sampleDocument = new DocumentContainer(serviceContainer, null, useIframe);
+        let sampleDocument = new DocumentContainer(serviceContainer);
         sampleDocument.setAttribute('dock-spawn-panel-type', 'document');
         sampleDocument.title = "document-" + this._documentNumber;
         sampleDocument.additionalStylesheets = [
@@ -377,6 +376,10 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
             }
         }, true);
         this._dock.appendChild(sampleDocument);
+        if (fixedWidth) {
+            sampleDocument.designerView.designerWidth = '400px';
+            sampleDocument.designerView.designerHeight = '400px';
+        }
         if (code) {
             sampleDocument.content = code;
         }

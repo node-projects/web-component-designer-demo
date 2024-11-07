@@ -34,7 +34,7 @@ export class CustomPropertiesService extends AbstractPropertiesService {
         return false;
     }
     async getProperty(designItem, name) {
-        return (await this.getProperties(designItem))[name];
+        return this.getProperties(designItem)[name];
     }
     async getProperties(designItem) {
         let properties = [];

@@ -1,5 +1,8 @@
 import { BindableObjectType } from "@node-projects/web-component-designer";
 export class CustomBindableObjectsService {
+    hasObjectsForInstanceServiceContainer(instanceServiceContainer, source) {
+        return true;
+    }
     name = 'custom';
     async getBindableObject(fullName) {
         let objs = await this.getBindableObjects();
