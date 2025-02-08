@@ -25,23 +25,23 @@
   "dependencies": {
     "@adobe/css-tools": "4.4.1",
     "@doubletrade/lit-datepicker": "^1.0.0",
-    "@node-projects/base-custom-webcomponent": "0.27.8",
+    "@node-projects/base-custom-webcomponent": "0.28.2",
     "@node-projects/lean-he-esm": "^3.3.0",
     "@node-projects/node-html-parser-esm": "^6.2.0",
-    "@node-projects/web-component-designer": "^0.1.231",
-    "@node-projects/web-component-designer-codeview-monaco": "^0.1.32",
+    "@node-projects/web-component-designer": "^0.1.243",
+    "@node-projects/web-component-designer-codeview-monaco": "^0.1.33",
     "@node-projects/web-component-designer-htmlparserservice-nodehtmlparser": "^0.1.11",
     "@node-projects/web-component-designer-stylesheetservice-css-tools": "^0.1.10",
-    "@node-projects/web-component-designer-widgets-wunderbaum": "^0.1.31",
+    "@node-projects/web-component-designer-widgets-wunderbaum": "^0.1.32",
     "codemirror": "^6.0.1",
     "dock-spawn-ts": "^3.2.1",
-    "es-module-shims": "^1.10.1",
+    "es-module-shims": "^2.0.9",
     "esprima-next": "^6.0.3",
     "lit": "^3.2.1",
-    "mdn-data": "^2.12.2",
+    "mdn-data": "^2.15.0",
     "mobile-drag-drop": "^3.0.0-rc.0",
     "monaco-editor": "^0.50.0",
-    "typescript": "^5.6.3",
-    "wunderbaum": "^0.11.0"
+    "typescript": "^5.7.3",
+    "wunderbaum": "^0.12.0"
   }
 }
