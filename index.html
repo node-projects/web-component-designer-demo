@@ -19,34 +19,30 @@
   <script>
     const importMap = {
       imports: {
+        "min_@node-projects/base-custom-webcomponent": "./node_modules/@node-projects/base-custom-webcomponent/dist/index-min.js",
+        "min_@node-projects/web-component-designer": "./node_modules/@node-projects/web-component-designer/dist/index-min.js",
+        "min_@node-projects/web-component-designer-widgets-wunderbaum": "./node_modules/@node-projects/web-component-designer-widgets-wunderbaum/dist/index-min.js",
+        "min_@node-projects/lean-he-esm": "./node_modules/@node-projects/lean-he-esm/lib/index-min.js",
+        "min_@node-projects/node-html-parser-esm": "./node_modules/@node-projects/node-html-parser-esm/dist/index-min.js",
+        "min_dock-spawn-ts": "./node_modules/dock-spawn-ts/lib/js/index-webcomponent-min.js",
+
+        "@node-projects/base-custom-webcomponent": "./node_modules/@node-projects/base-custom-webcomponent/dist/index.js",
+        "@node-projects/web-component-designer": "./node_modules/@node-projects/web-component-designer/dist/index.js",
+        "@node-projects/web-component-designer-widgets-wunderbaum": "./node_modules/@node-projects/web-component-designer-widgets-wunderbaum/dist/index.js",
+        "@node-projects/lean-he-esm": "./node_modules/@node-projects/lean-he-esm/lib/index.js",
+        "@node-projects/node-html-parser-esm": "./node_modules/@node-projects/node-html-parser-esm/dist/index.js",
+        "dock-spawn-ts": "./node_modules/dock-spawn-ts/lib/js/index-webcomponent.js",
+
+        "@node-projects/": "./node_modules/@node-projects/",
         "jquery": "./node_modules/jquery/dist/jquery.min.js",
         "jquery.fancytree": "./node_modules/jquery.fancytree/dist/jquery.fancytree-all-deps.min.js",
         "jquery.fancytree/": "./node_modules/jquery.fancytree/",
         "monaco-editor/": "./node_modules/monaco-editor/",
         "monaco-editor": "./node_modules/monaco-editor/esm/vs/editor/editor.main.js",
-        "@node-projects/web-component-designer": "./node_modules/@node-projects/web-component-designer/dist/index.js",
-        "@node-projects/web-component-designer/": "./node_modules/@node-projects/web-component-designer/",
-        "@adobe/css-tools": "./node_modules/@adobe/css-tools/dist/index.mjs",
-        "dock-spawn-ts/": "./node_modules/dock-spawn-ts/",
-        "@node-projects/base-custom-webcomponent/": "./node_modules/@node-projects/base-custom-webcomponent/",
-        "@node-projects/base-custom-webcomponent": "./node_modules/@node-projects/base-custom-webcomponent/dist/index.js",
-        "@node-projects/lean-he-esm/": "./node_modules/@node-projects/lean-he-esm/",
-        "codemirror/": "./node_modules/codemirror/",
-        "@node-projects/node-html-parser-esm": "./node_modules/@node-projects/node-html-parser-esm/dist/index.js",
+        "@adobe/css-tools": "./node_modules/@adobe/css-tools/dist/esm/adobe-css-tools.mjs",
         "@node-projects/web-component-designer-htmlparserservice-nodehtmlparser": "./node_modules/@node-projects/web-component-designer-htmlparserservice-nodehtmlparser/dist/service/htmlParserService/NodeHtmlParserService.js",
-        "@node-projects/web-component-designer-htmlparserservice-nodehtmlparser/": "./node_modules/@node-projects/web-component-designer-htmlparserservice-nodehtmlparser/",
         "@node-projects/web-component-designer-codeview-monaco": "./node_modules/@node-projects/web-component-designer-codeview-monaco/dist/widgets/codeView/code-view-monaco.js",
-        "@node-projects/web-component-designer-codeview-monaco/": "./node_modules/@node-projects/web-component-designer-codeview-monaco/",
-        "@node-projects/web-component-designer-codeview-ace": "./node_modules/@node-projects/web-component-designer-codeview-ace/dist/widgets/codeView/code-view-ace.js",
-        "@node-projects/web-component-designer-codeview-ace/": "./node_modules/@node-projects/web-component-designer-codeview-ace/",
-        "@node-projects/web-component-designer-texteditextension-stylo": "./node_modules/@node-projects/web-component-designer-texteditextension-stylo/dist/index.js",
-        "@node-projects/web-component-designer-texteditextension-stylo/": "./node_modules/@node-projects/web-component-designer-texteditextension-stylo/",
         "@node-projects/web-component-designer-stylesheetservice-css-tools": "./node_modules/@node-projects/web-component-designer-stylesheetservice-css-tools/dist/service/stylesheetservice/CssToolsStylesheetService.js",
-        "@node-projects/web-component-designer-stylesheetservice-css-tools/": "./node_modules/@node-projects/web-component-designer-stylesheetservice-css-tools/",
-        "@node-projects/web-component-designer-widgets-fancytree": "./node_modules/@node-projects/web-component-designer-widgets-fancytree/dist/index.js",
-        "@node-projects/web-component-designer-widgets-fancytree/": "./node_modules/@node-projects/web-component-designer-widgets-fancytree/",
-        "@node-projects/web-component-designer-widgets-wunderbaum": "./node_modules/@node-projects/web-component-designer-widgets-wunderbaum/dist/index.js",
-        "@node-projects/web-component-designer-widgets-wunderbaum/": "./node_modules/@node-projects/web-component-designer-widgets-wunderbaum/",
         "wunderbaum": "./node_modules/wunderbaum/dist/wunderbaum.esm.min.js",
         "wunderbaum/": "./node_modules/wunderbaum/",
       }
@@ -88,9 +84,9 @@
   -->
 
   <script type="module">
-    importShim('dock-spawn-ts/lib/js/webcomponent/DockSpawnTsWebcomponent.js');
-    importShim('./node_modules/@node-projects/web-component-designer/dist/index.js');
-    importShim('./dist/appShell.js');
+    await importShim('dock-spawn-ts');
+    await importShim('./node_modules/@node-projects/web-component-designer/dist/index.js');
+    await importShim('./dist/appShell.js');
   </script>
 
   <style>
