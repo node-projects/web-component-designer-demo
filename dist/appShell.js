@@ -180,7 +180,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         this._npmStatus = this._getDomElement('npmStatus');
         this._getNpm = this._getDomElement('getNpm');
         let loadAllImports = window.location.search.includes("loadAllImports");
-        const loadPkg = async (e) => {
+        const loadPkg = async () => {
             const pkgName = this._npmInput.value;
             if (pkgName.startsWith('http://') || pkgName.startsWith('https://')) {
                 const observedCustomElementsRegistry = new ObservedCustomElementsRegistry();
@@ -217,7 +217,11 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
             }
             this._npmInput.value = '';
         };
-        this._npmInput.onkeydown = loadPkg;
+        this._npmInput.onkeydown = (event) => {
+            if (event.key === 'Enter') {
+                loadPkg();
+            }
+        };
         this._getNpm.onclick = loadPkg;
         let code = "";
         let style = "";
