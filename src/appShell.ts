@@ -211,7 +211,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     }
     this._getNpm.onclick = async (e) => {
       const pkgName = this._npmInput.value;
-      if (pkgName.startsWith('http://')) {
+      if (pkgName.startsWith('http://') || pkgName.startsWith('https://')) {
         const observedCustomElementsRegistry = new ObservedCustomElementsRegistry();
         try {
           await import(pkgName);
@@ -229,7 +229,6 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
           serviceContainer.register('elementsService', elService);
           this._paletteTree.loadControls(serviceContainer, serviceContainer.elementsServices);
         }
-
         observedCustomElementsRegistry.dispose();
       } else {
         let res = await this._npmPackageLoader.loadNpmPackage(pkgName, serviceContainer, this._paletteTree, loadAllImports, state => this._npmStatus.innerText = state);
