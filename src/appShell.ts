@@ -29,8 +29,7 @@ serviceContainer.designerContextMenuExtensions.push(new SeperatorContextMenu(), 
 //Instance Service Container Factories
 serviceContainer.register("stylesheetService", designerCanvas => new CssToolsStylesheetService(designerCanvas));
 
-import { DockSpawnTsWebcomponent } from 'dock-spawn-ts/lib/js/webcomponent/DockSpawnTsWebcomponent.js';
-import { DockManager } from 'dock-spawn-ts/lib/js/DockManager.js';
+import { DockManager, DockSpawnTsWebcomponent } from 'dock-spawn-ts';
 import { BaseCustomWebComponentConstructorAppend, css, Disposable, html, LazyLoader } from '@node-projects/base-custom-webcomponent';
 import { CommandHandling } from './CommandHandling.js'
 import { StyleEditor } from './styleEditor.js';
