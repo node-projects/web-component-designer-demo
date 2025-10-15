@@ -180,17 +180,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         this._npmStatus = this._getDomElement('npmStatus');
         this._getNpm = this._getDomElement('getNpm');
         let loadAllImports = window.location.search.includes("loadAllImports");
-        this._npmInput.onkeydown = async (e) => {
-            if (e.key == 'Enter') {
-                let res = await this._npmPackageLoader.loadNpmPackage(this._npmInput.value, serviceContainer, this._paletteTree, loadAllImports, state => this._npmStatus.innerText = state);
-                if (res.html) {
-                    let element = this._dock.getElementInSlot(this._dockManager.activeDocument.elementContent);
-                    element.content = res.html + element.content;
-                }
-                this._npmInput.value = '';
-            }
-        };
-        this._getNpm.onclick = async (e) => {
+        const loadPkg = async (e) => {
             const pkgName = this._npmInput.value;
             if (pkgName.startsWith('http://') || pkgName.startsWith('https://')) {
                 const observedCustomElementsRegistry = new ObservedCustomElementsRegistry();
@@ -199,7 +189,12 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
                 }
                 catch (error) {
                     console.error("Error loading url with import, trying with script tag.", error);
-                    await LazyLoader.LoadJavascript(pkgName);
+                    try {
+                        await LazyLoader.LoadJavascript(pkgName);
+                    }
+                    catch (error) {
+                        console.error("Error loading url with script tag.", error);
+                    }
                 }
                 await sleep(500);
                 const newElements = observedCustomElementsRegistry.getNewElements();
@@ -222,6 +217,8 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
             }
             this._npmInput.value = '';
         };
+        this._npmInput.onkeydown = loadPkg;
+        this._getNpm.onclick = loadPkg;
         let code = "";
         let style = "";
         let s = window.location.search;
