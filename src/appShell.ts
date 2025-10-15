@@ -1,4 +1,4 @@
-import { NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, DocumentContainer, CopyPasteAsJsonService, DebugView, UnkownElementsPropertiesService, sleep, RefactorView, BindingsRefactorService, TextRefactorService, SeperatorContextMenu, IDesignItem, DomConverter, PropertyGridWithHeader, DesignItem, ValueType } from '@node-projects/web-component-designer';
+import { NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, DocumentContainer, CopyPasteAsJsonService, DebugView, UnkownElementsPropertiesService, sleep, RefactorView, BindingsRefactorService, TextRefactorService, SeperatorContextMenu, IDesignItem, DomConverter, PropertyGridWithHeader, DesignItem, ValueType, ObservedCustomElementsRegistry, IElementsJson, PreDefinedElementsService } from '@node-projects/web-component-designer';
 import createDefaultServiceContainer from '@node-projects/web-component-designer/dist/elements/services/DefaultServiceBootstrap.js';
 
 import { NodeHtmlParserService } from '@node-projects/web-component-designer-htmlparserservice-nodehtmlparser';
@@ -31,7 +31,7 @@ serviceContainer.register("stylesheetService", designerCanvas => new CssToolsSty
 
 import { DockSpawnTsWebcomponent } from 'dock-spawn-ts/lib/js/webcomponent/DockSpawnTsWebcomponent.js';
 import { DockManager } from 'dock-spawn-ts/lib/js/DockManager.js';
-import { BaseCustomWebComponentConstructorAppend, css, Disposable, html } from '@node-projects/base-custom-webcomponent';
+import { BaseCustomWebComponentConstructorAppend, css, Disposable, html, LazyLoader } from '@node-projects/base-custom-webcomponent';
 import { CommandHandling } from './CommandHandling.js'
 import { StyleEditor } from './styleEditor.js';
 import './styleEditor.js';
@@ -210,10 +210,33 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
       }
     }
     this._getNpm.onclick = async (e) => {
-      let res = await this._npmPackageLoader.loadNpmPackage(this._npmInput.value, serviceContainer, this._paletteTree, loadAllImports, state => this._npmStatus.innerText = state);
-      if (res.html) {
-        let element = <DocumentContainer>this._dock.getElementInSlot((<HTMLSlotElement><any>this._dockManager.activeDocument.elementContent));
-        element.content = res.html + element.content;
+      const pkgName = this._npmInput.value;
+      if (pkgName.startsWith('http://')) {
+        const observedCustomElementsRegistry = new ObservedCustomElementsRegistry();
+        try {
+          await import(pkgName);
+        } catch (error) {
+          console.error("Error loading url with import, trying with script tag.", error);
+          await LazyLoader.LoadJavascript(pkgName);
+        }
+        await sleep(500);
+        const newElements = observedCustomElementsRegistry.getNewElements();
+        if (newElements.length > 0 && serviceContainer && this._paletteTree) {
+          const elementsCfg: IElementsJson = {
+            elements: newElements
+          }
+          let elService = new PreDefinedElementsService(pkgName, elementsCfg)
+          serviceContainer.register('elementsService', elService);
+          this._paletteTree.loadControls(serviceContainer, serviceContainer.elementsServices);
+        }
+
+        observedCustomElementsRegistry.dispose();
+      } else {
+        let res = await this._npmPackageLoader.loadNpmPackage(pkgName, serviceContainer, this._paletteTree, loadAllImports, state => this._npmStatus.innerText = state);
+        if (res.html) {
+          let element = <DocumentContainer>this._dock.getElementInSlot((<HTMLSlotElement><any>this._dockManager.activeDocument.elementContent));
+          element.content = res.html + element.content;
+        }
       }
       this._npmInput.value = '';
     }
