@@ -1,5 +1,4 @@
-import { ContextMenu, DocumentContainer, IContextMenuItem, ServiceContainer } from '@node-projects/web-component-designer';
-import { IUiCommandHandler } from '@node-projects/web-component-designer/dist/commandHandling/IUiCommandHandler.js';
+import { ContextMenu, DocumentContainer, IContextMenuItem, IUiCommandHandler, ServiceContainer } from '@node-projects/web-component-designer';
 import { DockManager } from 'dock-spawn-ts/lib/js/DockManager.js';
 import { AppShell } from './appShell.js';
 //Command Handling..

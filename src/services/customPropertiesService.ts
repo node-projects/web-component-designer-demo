@@ -1,7 +1,4 @@
-import { IProperty, IDesignItem, PropertyType, IBinding, AbstractPropertiesService } from '@node-projects/web-component-designer';
-import { BindingTarget } from '@node-projects/web-component-designer/dist/elements/item/BindingTarget';
-import { RefreshMode } from '@node-projects/web-component-designer/dist/elements/services/propertiesService/IPropertiesService';
-import { ValueType } from '@node-projects/web-component-designer/dist/elements/services/propertiesService/ValueType';
+import { IProperty, IDesignItem, PropertyType, IBinding, AbstractPropertiesService, BindingTarget, ValueType, RefreshMode } from '@node-projects/web-component-designer';
 
 export class CustomPropertiesService extends AbstractPropertiesService {
   getRefreshMode(designItem: IDesignItem) {

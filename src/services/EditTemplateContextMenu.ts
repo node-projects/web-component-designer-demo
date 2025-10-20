@@ -1,5 +1,5 @@
 import { IContextMenuExtension, IDesignerCanvas, IDesignItem, ContextmenuInitiator, IContextMenuItem } from "@node-projects/web-component-designer";
-import { AppShell } from "../appShell";
+import { AppShell } from "../appShell.js";
 
 
 export class EditTemplateContextMenu implements IContextMenuExtension {
