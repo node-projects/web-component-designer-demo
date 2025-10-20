@@ -1,6 +1,4 @@
-import { PropertyType, AbstractPropertiesService } from '@node-projects/web-component-designer';
-import { BindingTarget } from '@node-projects/web-component-designer/dist/elements/item/BindingTarget';
-import { RefreshMode } from '@node-projects/web-component-designer/dist/elements/services/propertiesService/IPropertiesService';
+import { PropertyType, AbstractPropertiesService, BindingTarget, RefreshMode } from '@node-projects/web-component-designer';
 export class CustomPropertiesService extends AbstractPropertiesService {
     getRefreshMode(designItem) {
         return RefreshMode.full;
