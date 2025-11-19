@@ -25,10 +25,10 @@
   "dependencies": {
     "@adobe/css-tools": "4.4.4",
     "@doubletrade/lit-datepicker": "^1.0.0",
-    "@node-projects/base-custom-webcomponent": "0.41.1",
+    "@node-projects/base-custom-webcomponent": "0.42.0",
     "@node-projects/lean-he-esm": "^3.4.1",
     "@node-projects/node-html-parser-esm": "^6.4.1",
-    "@node-projects/web-component-designer": "^0.1.310",
+    "@node-projects/web-component-designer": "^0.1.312",
     "@node-projects/web-component-designer-codeview-monaco": "^0.1.33",
     "@node-projects/web-component-designer-htmlparserservice-nodehtmlparser": "^0.1.12",
     "@node-projects/web-component-designer-stylesheetservice-css-tools": "^0.1.11",
