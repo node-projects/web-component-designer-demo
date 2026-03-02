@@ -184,7 +184,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
               <div id="llmOutput" style="width: 100%;height: 100%;padding: 0; display: flex; flex-direction: column; overflow-y: auto;">
                 <button style="margin: auto" id="llmEnable">Enable LLM</button>
               </div>
-              <textarea id="llmInput" style="width: 100%;height: 100%;padding: 0;resize: none;" placeholder="Ask a question to the LLM here..."></textarea>
+              <textarea id="llmInput" style="height: 100%;margin: 10px;resize: none;" placeholder="Ask a question to the LLM here..."></textarea>
             </div>
           </div>
 
@@ -576,21 +576,15 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     const systemPrompt = `
 You are an expert HTML and CSS editor inside a visual designer tool.
 
-You must:
-- Modify the provided HTML and CSS according to the user request.
-- Always return STRICT JSON.
-- Never explain outside JSON.
-- Keep valid HTML and CSS.
-- Do not remove unrelated content.
-- Do not wrap in markdown.
+Return exactly three text blocks, each marked with:
+---ANSWER---
+---HTML---
+---CSS---
 
-- Return exactly this structure:
-
-{
-  "answer": "short explanation of what was changed",
-  "html": "updated html here",
-  "css": "updated css here"
-}
+DO NOT:
+- wrap anything in \`\`\` or any markdown
+- add explanations after CSS
+- add any text outside these blocks
 `;
 
     const userPrompt = `
@@ -617,10 +611,33 @@ ${css}
       ]
     });
 
+    const sections = {
+      answer: "",
+      html: "",
+      css: ""
+    };
+
     const text = response.choices[0].message.content ?? "";
 
     try {
-      return JSON.parse(text);
+      // markers
+      const markers = ["---ANSWER---", "---HTML---", "---CSS---"];
+
+      let current = null;
+      const lines = text.split(/\r?\n/);
+
+      for (const line of lines) {
+        if (markers.includes(line.trim())) {
+          current = line.trim().slice(3).toLowerCase().slice(0, -3); // "answer", "html", "css"
+          
+          continue;
+        }
+        if (current) {
+          sections[current] += (sections[current] ? "\n" : "") + line;
+        }
+      }
+
+      return sections;
     } catch {
       throw new Error("Model did not return valid JSON:\n" + text);
     }
