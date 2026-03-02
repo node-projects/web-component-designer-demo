@@ -162,6 +162,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
           <div id="lower2" title="LLM" dock-spawn-dock-to="lower" style="overflow: hidden; width: 100%;">
             <div style="display: flex; flex-direction: column; height: 100%; width: 100%;">
               <div id="llmOutput" style="width: 100%;height: 100%;padding: 0; display: flex; flex-direction: column; overflow-y: auto;">
+                <button style="margin: auto" id="llmEnable">Enable LLM</button>
               </div>
               <textarea id="llmInput" style="width: 100%;height: 100%;padding: 0;resize: none;" placeholder="Ask a question to the LLM here..."></textarea>
             </div>
@@ -327,7 +328,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         this.newDocument(false, code, style);
         await sleep(200);
         this.activateDockById('treeUpper');
-        this.initLLM();
+        this.LLM();
     }
     jumpToCss(styleDeclaration, stylesheet) {
         //@ts-ignore
@@ -461,6 +462,14 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         nd.parent.container.setActiveChild(nd.container);
     }
     engine;
+    async LLM() {
+        let op = this._getDomElement('llmOutput');
+        let btn = this._getDomElement('llmEnable');
+        btn.onclick = async () => {
+            op.innerHTML = "";
+            this.initLLM();
+        };
+    }
     async initLLM() {
         let op = this._getDomElement('llmOutput');
         // Initialize with a progress callback
@@ -468,6 +477,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
             op.innerText = "Model loading progress: " + Math.round(progress.progress * 100) + "%";
         };
         this.engine = await webllm.CreateMLCEngine("Llama-3-8B-Instruct-q4f32_1-MLC-1k", { initProgressCallback });
+        op.innerText = 'Init LLM...';
         const ip = this._getDomElement('llmInput');
         ip.addEventListener('keydown', async (event) => {
             if (event.key === 'Enter' && event.shiftKey) {
