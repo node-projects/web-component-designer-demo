@@ -505,9 +505,10 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
 
   engine: webllm.MLCEngine;
   async initLLM() {
+    let op = this._getDomElement<HTMLTextAreaElement>('llmOutput');
     // Initialize with a progress callback
     const initProgressCallback = (progress) => {
-      console.log("Model loading progress:", progress);
+      op.innerText = "Model loading progress: " + Math.round(progress.progress*100) + "%";
     };
     this.engine = await webllm.CreateMLCEngine("Llama-3-8B-Instruct-q4f32_1-MLC-1k", { initProgressCallback });
 
@@ -520,7 +521,6 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         const prompt = ip.value;
         ip.value = '';
 
-        let op = this._getDomElement<HTMLTextAreaElement>('llmOutput');
         let sp = document.createElement('span');
         sp.innerText = prompt;
         op.appendChild(sp);
