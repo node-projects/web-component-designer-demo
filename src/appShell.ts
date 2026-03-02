@@ -7,6 +7,13 @@ import { CssToolsStylesheetService } from '@node-projects/web-component-designer
 import '@node-projects/web-component-designer-widgets-wunderbaum';
 import { PaletteTreeView, BindableObjectsBrowser, TreeViewExtended, ExpandCollapseContextMenu } from '@node-projects/web-component-designer-widgets-wunderbaum';
 
+import * as webllm from "@mlc-ai/web-llm";
+type EditResult = {
+  answer: string;
+  html: string;
+  css: string;
+};
+
 let serviceContainer = createDefaultServiceContainer();
 serviceContainer.register("bindingService", new BaseCustomWebcomponentBindingsService());
 let rootDir = "/web-component-designer-demo";
@@ -171,6 +178,15 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
           <div id="lower" title="stylesheet.css" dock-spawn-dock-type="down" dock-spawn-dock-ratio="0.25" style="overflow: hidden; width: 100%;">
             <node-projects-style-editor id="styleEditor"></node-projects-style-editor>
           </div>
+
+          <div id="lower2" title="LLM" dock-spawn-dock-to="lower" style="overflow: hidden; width: 100%;">
+            <div style="display: flex; flex-direction: column; height: 100%; width: 100%;">
+              <div id="llmOutput" style="width: 100%;height: 100%;padding: 0; display: flex; flex-direction: column; overflow-y: auto;">
+              </div>
+              <textarea id="llmInput" style="width: 100%;height: 100%;padding: 0;resize: none;" placeholder="Ask a question to the LLM here..."></textarea>
+            </div>
+          </div>
+
         </dock-spawn-ts>
       </div>
     `;
@@ -339,6 +355,8 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
 
     await sleep(200)
     this.activateDockById('treeUpper');
+
+    this.initLLM();
   }
 
   private jumpToCss(styleDeclaration, stylesheet) {
@@ -474,9 +492,6 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         div.querySelectorAll('node-projects-dce').forEach(x => (<any>x).upgradeAllInstances());
       });
     });
-
-
-
   }
 
   activateDockById(name: string) {
@@ -486,6 +501,118 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
   activateDock(element: Element) {
     const nd = this._dockManager.getNodeByElement(element);
     nd.parent.container.setActiveChild(nd.container);
+  }
+
+  engine: webllm.MLCEngine;
+  async initLLM() {
+    // Initialize with a progress callback
+    const initProgressCallback = (progress) => {
+      console.log("Model loading progress:", progress);
+    };
+    this.engine = await webllm.CreateMLCEngine("Llama-3-8B-Instruct-q4f32_1-MLC-1k", { initProgressCallback });
+
+    const ip = this._getDomElement<HTMLTextAreaElement>('llmInput');
+    ip.addEventListener('keydown', async (event) => {
+      if (event.key === 'Enter' && event.shiftKey) {
+        event.preventDefault();
+      }
+      if (event.key === 'Enter' && !event.shiftKey) {
+        const prompt = ip.value;
+        ip.value = '';
+
+        let op = this._getDomElement<HTMLTextAreaElement>('llmOutput');
+        let sp = document.createElement('span');
+        sp.innerText = prompt;
+        op.appendChild(sp);
+
+        let sp2 = document.createElement('span');
+        sp2.style.alignSelf = 'end';
+        sp2.innerText = "Processing...";
+        op.appendChild(sp2);
+
+        event.preventDefault();
+
+        const documentContainer = this._dock.getElementInSlot((<HTMLSlotElement><any>this._dockManager.activeDocument.elementContent)) as DocumentContainer;
+        if (documentContainer) {
+          const html = documentContainer.content;
+          const css = documentContainer.additionalStylesheets?.[0]?.content ?? '';
+          try {
+            const result = await this.editHtmlCss(prompt, html, css);
+            documentContainer.content = result.html;
+            if (documentContainer.additionalStylesheets && documentContainer.additionalStylesheets.length > 0) {
+              documentContainer.additionalStylesheets = [
+                {
+                  name: "stylesheet.css",
+                  content: result.css
+                }
+              ];
+            }
+            sp2.innerText = "Done. Explanation: " + result.answer;
+          } catch (error) {
+            console.error("Error editing HTML/CSS:", error);
+          }
+        }
+      }
+    });
+  }
+
+  async editHtmlCss(
+    prompt: string,
+    html: string,
+    css: string
+  ): Promise<EditResult> {
+
+    const systemPrompt = `
+You are an expert HTML and CSS editor inside a visual designer tool.
+
+You must:
+- Modify the provided HTML and CSS according to the user request.
+- Always return STRICT JSON.
+- Never explain outside JSON.
+- Keep valid HTML and CSS.
+- Do not remove unrelated content.
+- Do not wrap in markdown.
+
+- Return exactly this structure:
+
+{
+  "answer": "short explanation of what was changed",
+  "html": "updated html here",
+  "css": "updated css here"
+}
+`;
+
+    const userPrompt = `
+USER REQUEST:
+${prompt}
+
+CURRENT HTML:
+${html}
+
+CURRENT CSS:
+${css}
+`;
+
+    const response = await this.engine.chat.completions.create({
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt },
+      ],
+      temperature: 0.2,
+      stop: [
+        "<|start_header_id|>",
+        "<|end_header_id|>",
+        "</s>"
+      ]
+    });
+
+    const text = response.choices[0].message.content ?? "";
+
+    try {
+      return JSON.parse(text);
+    } catch {
+      throw new Error("Model did not return valid JSON:\n" + text);
+    }
   }
 }
 

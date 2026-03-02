@@ -29,3 +29,8 @@ https://node-projects.github.io/web-component-designer-demo/index.html
   $ npm start
 ```
 
+## thanks to
+
+https://github.com/jcfranco/composed-offset-position
+https://github.com/floating-ui/floating-ui
+--> needed code from those two to get the correct offset-parent of slotted content in shadow DOM
