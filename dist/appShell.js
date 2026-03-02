@@ -512,6 +512,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
                         sp2.innerText = "Done. Explanation: " + result.answer;
                     }
                     catch (error) {
+                        sp2.innerText = "Error: " + error.message;
                         console.error("Error editing HTML/CSS:", error);
                     }
                 }
