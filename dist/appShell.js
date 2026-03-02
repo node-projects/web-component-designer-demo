@@ -462,9 +462,10 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     }
     engine;
     async initLLM() {
+        let op = this._getDomElement('llmOutput');
         // Initialize with a progress callback
         const initProgressCallback = (progress) => {
-            console.log("Model loading progress:", progress);
+            op.innerText = "Model loading progress: " + Math.round(progress.progress * 100) + "%";
         };
         this.engine = await webllm.CreateMLCEngine("Llama-3-8B-Instruct-q4f32_1-MLC-1k", { initProgressCallback });
         const ip = this._getDomElement('llmInput');
@@ -475,7 +476,6 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
             if (event.key === 'Enter' && !event.shiftKey) {
                 const prompt = ip.value;
                 ip.value = '';
-                let op = this._getDomElement('llmOutput');
                 let sp = document.createElement('span');
                 sp.innerText = prompt;
                 op.appendChild(sp);
