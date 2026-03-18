@@ -2,7 +2,7 @@ import { createDefaultServiceContainer, NpmPackageLoader, BaseCustomWebcomponent
 
 import { NodeHtmlParserService } from '@node-projects/web-component-designer-htmlparserservice-nodehtmlparser';
 import { CodeViewMonaco } from '@node-projects/web-component-designer-codeview-monaco';
-import { CssToolsStylesheetService } from '@node-projects/web-component-designer-stylesheetservice-css-tools';
+import { CssParserStylesheetService } from '@node-projects/web-component-designer-stylesheetservice-css-parser';
 
 import '@node-projects/web-component-designer-widgets-wunderbaum';
 import { PaletteTreeView, BindableObjectsBrowser, TreeViewExtended, ExpandCollapseContextMenu } from '@node-projects/web-component-designer-widgets-wunderbaum';
@@ -33,7 +33,7 @@ serviceContainer.designerContextMenuExtensions.push(new ExpandCollapseContextMen
 serviceContainer.designerContextMenuExtensions.push(new SeperatorContextMenu(), new EditTemplateContextMenu());
 
 //Instance Service Container Factories
-serviceContainer.register("stylesheetService", designerCanvas => new CssToolsStylesheetService(designerCanvas));
+serviceContainer.register("stylesheetService", designerCanvas => new CssParserStylesheetService(designerCanvas));
 
 import { DockManager, DockSpawnTsWebcomponent } from 'dock-spawn-ts';
 import { BaseCustomWebComponentConstructorAppend, css, Disposable, html, LazyLoader } from '@node-projects/base-custom-webcomponent';
@@ -519,7 +519,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     const initProgressCallback = (progress) => {
       op.innerText = "Model loading progress: " + Math.round(progress.progress * 100) + "%";
     };
-    this.engine = await webllm.CreateMLCEngine("Llama-3-8B-Instruct-q4f32_1-MLC-1k", { initProgressCallback });
+    this.engine = await webllm.CreateMLCEngine("Qwen3-8B-q4f32_1-MLC", { initProgressCallback });
     op.innerText = '';
 
     const ip = this._getDomElement<HTMLTextAreaElement>('llmInput');
@@ -581,10 +581,15 @@ Return exactly three text blocks, each marked with:
 ---HTML---
 ---CSS---
 
+DO:
+- Write your explanation in the ANSWER section.
+- If you do not change the HTML or CSS, return the original content in the respective section.
+
 DO NOT:
 - wrap anything in \`\`\` or any markdown
 - add explanations after CSS
 - add any text outside these blocks
+- The CSS block must be the final content. Do not write anything after ---CSS--- section.
 `;
 
     const userPrompt = `
