@@ -520,7 +520,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     const initProgressCallback = (progress) => {
       op.innerText = "Model loading progress: " + Math.round(progress.progress * 100) + "%";
     };
-    this.engine = await webllm.CreateMLCEngine("Qwen3-8B-q4f32_1-MLC", { initProgressCallback });
+    this.engine = await webllm.CreateMLCEngine("Llama-3.2-3B-Instruct-q4f16_1-MLC", { initProgressCallback });
     op.innerText = '';
 
     const ip = this._getDomElement<HTMLTextAreaElement>('llmInput');
