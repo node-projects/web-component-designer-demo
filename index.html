@@ -19,6 +19,7 @@
   <script>
     const importMap = {
       imports: {
+        "aa__monaco-editor": "./node_modules/monaco-editor/esm/vs/editor/editor.main.min.js",
         "aa__@node-projects/base-custom-webcomponent": "./node_modules/@node-projects/base-custom-webcomponent/dist/index-min.js",
         "aa__@node-projects/css-parser": "./node_modules/@node-projects/css-parser/dist/index-min.js",
         "aa__@node-projects/web-component-designer": "./node_modules/@node-projects/web-component-designer/dist/index-min.js",
@@ -27,6 +28,7 @@
         "aa__@node-projects/node-html-parser-esm": "./node_modules/@node-projects/node-html-parser-esm/dist/index-min.js",
         "aa__dock-spawn-ts": "./node_modules/dock-spawn-ts/lib/js/index-webcomponent-min.js",
 
+        "monaco-editor": "./node_modules/monaco-editor/esm/vs/editor/editor.main.js",
         "@node-projects/base-custom-webcomponent": "./node_modules/@node-projects/base-custom-webcomponent/dist/index.js",
         "@node-projects/css-parser": "./node_modules/@node-projects/css-parser/dist/index.js",
         "@node-projects/web-component-designer": "./node_modules/@node-projects/web-component-designer/dist/index.js",
@@ -60,15 +62,6 @@
     });
   </script>
 
-  <!-- if you use Moacco Editor -->
-  <script src="./node_modules/monaco-editor/min/vs/loader.js"></script>
-  <script>
-    require.config({ paths: { 'vs': 'node_modules/monaco-editor/min/vs', 'vs/css': { disabled: true } } });
-    require(['vs/editor/editor.main'], () => {
-      monaco.editor.setTheme('vs-dark');
-    });    
-  </script>
-
   <!-- if you use ACE Editor -->
   <!--
   <script src="./node_modules/ace-builds/src-min-noconflict/ace.js"></script>
@@ -82,6 +75,9 @@
   -->
 
   <script type="module">
+    let { CodeViewMonaco } = await importShim('@node-projects/web-component-designer-codeview-monaco');
+    await CodeViewMonaco.loadMonacoEditorViaImport();
+
     await importShim('dock-spawn-ts');
     await importShim('@node-projects/web-component-designer');
     await importShim('./dist/appShell.js');
@@ -218,7 +214,8 @@
         src="./node_modules/@node-projects/web-component-designer/assets/icons/copy.svg"></button>
     <button data-command="delete" title="delete" disabled><img
         src="./node_modules/@node-projects/web-component-designer/assets/icons/delete.svg"></button>
-    <button ondragstart="return false;" style="margin-left: 10px;" data-command="undo" disabled title="click and hold to see the undo list"><img
+    <button ondragstart="return false;" style="margin-left: 10px;" data-command="undo" disabled
+      title="click and hold to see the undo list"><img
         src="./node_modules/@node-projects/web-component-designer/assets/icons/undo.svg"></button>
     <button ondragstart="return false;" data-command="redo" disabled title="click and hold to see the redo list"><img
         src="./node_modules/@node-projects/web-component-designer/assets/icons/redo.svg"></button>

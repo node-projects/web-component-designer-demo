@@ -122,12 +122,12 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
   static readonly template = html`
       <div class="app-body">
         <dock-spawn-ts id="dock" style="width: 100%; height: 100%; position: relative;">
-          <div id="treeUpper" title="Palette" dock-spawn-dock-type="left" dock-spawn-dock-ratio="0.2"
+          <div id="treeUpper" dock-spawn-title="Palette" dock-spawn-dock-type="left" dock-spawn-dock-ratio="0.2"
             style="z-index: 1; position: relative; overflow: hidden; width: 100%; height: 100%; display: flex; flex-direction: column;">
             <node-projects-palette-tree-view name="paletteTree" id="paletteTree" style="height: calc(100% - 44px);"></node-projects-palette-tree-view>
             <div style="height: 28px;">
               <div style="display: flex; height: 100%;">
-                <input list="npmInputList" id="npmInput" title="NPM Package Name" placeholder="npm-package" type="text" style="height: 100%; border: solid black 1px; box-sizing: border-box; width: 100%">
+                <input list="npmInputList" id="npmInput" dock-spawn-title="NPM Package Name" placeholder="npm-package" type="text" style="height: 100%; border: solid black 1px; box-sizing: border-box; width: 100%">
                 <datalist id="npmInputList">
                   <option value="@christianliebel/paint"></option>
                   <option value="@vanillawc/wc-marquee"></option>
@@ -153,33 +153,33 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
             <div style="height: 16px; font-size: 10px; white-space: nowrap;" id="npmStatus">none</div>
           </div>
       
-          <div id="upper3" title="Bind" dock-spawn-dock-to="treeUpper"
+          <div id="upper3" dock-spawn-title="Bind" dock-spawn-dock-to="treeUpper"
             style="overflow: hidden; width: 100%;">
             <node-projects-bindable-objects-browser id="bindableObjectsBrowser"></node-projects-bindable-objects-browser>
           </div>
 
-          <div title="TreeExtended" dock-spawn-dock-type="down" dock-spawn-dock-to="treeUpper" dock-spawn-dock-ratio="0.5"
+          <div dock-spawn-title="TreeExtended" dock-spawn-dock-type="down" dock-spawn-dock-to="treeUpper" dock-spawn-dock-ratio="0.5"
             style="overflow: hidden; width: 100%;">
             <node-projects-tree-view-extended name="tree" id="treeViewExtended"></node-projects-tree-view-extended>
           </div>
       
-          <div id="attributeDock" title="Properties" dock-spawn-dock-type="right" dock-spawn-dock-ratio="0.2">
+          <div id="attributeDock" dock-spawn-title="Properties" dock-spawn-dock-type="right" dock-spawn-dock-ratio="0.2">
             <node-projects-web-component-designer-property-grid-with-header id="propertyGrid"></node-projects-web-component-designer-property-grid-with-header>
           </div>
 
-          <div id="debugDock" title="Debug" dock-spawn-dock-type="down" dock-spawn-dock-to="attributeDock" dock-spawn-dock-ratio="0.2">
+          <div id="debugDock" dock-spawn-title="Debug" dock-spawn-dock-type="down" dock-spawn-dock-to="attributeDock" dock-spawn-dock-ratio="0.2">
             <node-projects-debug-view id="debugView"></node-projects-debug-view>
           </div>
 
-          <div id="refactorDock" title="Refactor" dock-spawn-dock-type="down" dock-spawn-dock-to="attributeDock" dock-spawn-dock-ratio="0.2">
+          <div id="refactorDock" dock-spawn-title="Refactor" dock-spawn-dock-type="down" dock-spawn-dock-to="attributeDock" dock-spawn-dock-ratio="0.2">
             <node-projects-refactor-view id="refactorView"></node-projects-refactor-view>
           </div>
 
-          <div id="lower" title="stylesheet.css" dock-spawn-dock-type="down" dock-spawn-dock-ratio="0.25" style="overflow: hidden; width: 100%;">
+          <div id="lower" dock-spawn-title="stylesheet.css" dock-spawn-dock-type="down" dock-spawn-dock-ratio="0.25" style="overflow: hidden; width: 100%;">
             <node-projects-style-editor id="styleEditor"></node-projects-style-editor>
           </div>
 
-          <div id="lower2" title="LLM" dock-spawn-dock-to="lower" style="overflow: hidden; width: 100%;">
+          <div id="lower2" dock-spawn-title="LLM" dock-spawn-dock-to="lower" style="overflow: hidden; width: 100%;">
             <div style="display: flex; flex-direction: column; height: 100%; width: 100%;">
               <div id="llmOutput" style="width: 100%;height: 100%;padding: 0; display: flex; flex-direction: column; overflow-y: auto;">
                 <button style="margin: auto" id="llmEnable">Enable LLM</button>
@@ -356,6 +356,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
 
     await sleep(200)
     this.activateDockById('treeUpper');
+    this.activateDockById('lower');
 
     this.LLM();
   }
@@ -634,7 +635,7 @@ ${css}
       for (const line of lines) {
         if (markers.includes(line.trim())) {
           current = line.trim().slice(3).toLowerCase().slice(0, -3); // "answer", "html", "css"
-          
+
           continue;
         }
         if (current) {

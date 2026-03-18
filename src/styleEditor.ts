@@ -1,4 +1,6 @@
 import { BaseCustomWebComponentConstructorAppend, css, html } from "@node-projects/base-custom-webcomponent";
+import { CodeViewMonaco } from '@node-projects/web-component-designer-codeview-monaco';
+
 import type * as monaco from 'monaco-editor';
 
 export class StyleEditor extends BaseCustomWebComponentConstructorAppend {
@@ -20,8 +22,7 @@ export class StyleEditor extends BaseCustomWebComponentConstructorAppend {
     `;
 
     public createModel(text: string) {
-        //@ts-ignore
-        return monaco.editor.createModel(text, 'css');
+        return CodeViewMonaco.monacoLib.editor.createModel(text, 'css');
     }
     private _model: monaco.editor.ITextModel;
     public get model() {
@@ -52,13 +53,13 @@ export class StyleEditor extends BaseCustomWebComponentConstructorAppend {
         this._parseAttributesToProperties();
         //@ts-ignore
         const style = await importShim("monaco-editor/min/vs/editor/editor.main.css", { with: { type: 'css' } });
+
         //@ts-ignore
         this.shadowRoot.adoptedStyleSheets = [style.default, this.constructor.style];
 
         this._container = this._getDomElement<HTMLDivElement>('container')
 
-        //@ts-ignore
-        this._editor = monaco.editor.create(this._container, {
+        this._editor = CodeViewMonaco.monacoLib.editor.create(this._container, {
             automaticLayout: true,
             language: 'css',
             minimap: {
@@ -97,8 +98,7 @@ export class StyleEditor extends BaseCustomWebComponentConstructorAppend {
 
     public showLine(line: number, column: number, lineEnd: number, columnEnd: number) {
         this._editor.setSelection({ startLineNumber: line, startColumn: column, endLineNumber: lineEnd, endColumn: columnEnd });
-        //@ts-ignore
-        this._editor.revealRangeAtTop(new monaco.Range(line, column, lineEnd, columnEnd), 1);
+        this._editor.revealRangeAtTop(new CodeViewMonaco.monacoLib.Range(line, column, lineEnd, columnEnd), 1);
     }
 }
 

@@ -7,7 +7,10 @@
     "tsc": "tsc",
     "start": "web-dev-server --open",
     "build": "tsc",
-    "linkAll": "npm link @node-projects/web-component-designer @node-projects/web-component-designer-codeview-monaco @node-projects/web-component-designer-htmlparserservice-nodehtmlparser @node-projects/web-component-designer-stylesheetservice-css-parser @node-projects/web-component-designer-widgets-wunderbaum"
+    "linkAll": "npm link @node-projects/web-component-designer @node-projects/web-component-designer-codeview-monaco @node-projects/web-component-designer-htmlparserservice-nodehtmlparser @node-projects/web-component-designer-stylesheetservice-css-parser @node-projects/web-component-designer-widgets-wunderbaum",
+    "patchMonaco": "node patchMonaco",
+    "bundleMonaco": "esbuild ./node_modules/monaco-editor/esm/vs/editor/editor.main.js --format=esm --minify --external:dompurify --platform=neutral --bundle --outfile=./node_modules/monaco-editor/esm/vs/editor/editor.main.min.js",
+    "postinstall": "npm run patchMonaco && npm run bundleMonaco"
   },
   "repository": {
     "type": "git",
@@ -20,27 +23,28 @@
   },
   "homepage": "https://github.com/node-projects/web-component-designer-demo#readme",
   "devDependencies": {
-    "@web/dev-server": "^0.4.6"
+    "@web/dev-server": "^0.4.6",
+    "esbuild": "^0.27.4"
   },
   "dependencies": {
     "@doubletrade/lit-datepicker": "^1.0.0",
     "@mlc-ai/web-llm": "^0.2.82",
     "@node-projects/base-custom-webcomponent": "0.45.0",
+    "@node-projects/css-parser": "^5.2.0",
     "@node-projects/lean-he-esm": "^3.4.1",
     "@node-projects/node-html-parser-esm": "^6.4.1",
-    "@node-projects/css-parser": "^5.0.0",
     "@node-projects/web-component-designer": "^0.1.332",
     "@node-projects/web-component-designer-codeview-monaco": "^0.1.33",
     "@node-projects/web-component-designer-htmlparserservice-nodehtmlparser": "^0.1.12",
     "@node-projects/web-component-designer-stylesheetservice-css-parser": "^0.1.4",
     "@node-projects/web-component-designer-widgets-wunderbaum": "^0.1.40",
-    "dock-spawn-ts": "^3.13.1",
+    "dock-spawn-ts": "^3.14.0",
     "es-module-shims": "^2.8.0",
     "esprima-next": "^6.0.3",
     "lit": "^3.3.2",
     "mdn-data": "^2.27.1",
     "mobile-drag-drop": "^3.0.0-rc.0",
-    "monaco-editor": "^0.50.0",
+    "monaco-editor": "^0.55.1",
     "typescript": "^5.9.3",
     "wunderbaum": "^0.13.0"
   }
