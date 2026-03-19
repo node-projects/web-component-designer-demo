@@ -103,16 +103,14 @@ export class MiniatureView extends BaseCustomWebComponentConstructorAppend imple
       const designerCanvas = this._instanceServiceContainer?.designerCanvas;
       this._innerShadow.adoptedStyleSheets = [...designerCanvas.rootDesignItem.element.shadowRoot.adoptedStyleSheets];
 
-      this._maxX = 0;
-      this._maxY = 0;
+      const pixelSize = designerCanvas.designerPixelSize;
+      this._maxX = pixelSize.width;
+      this._maxY = pixelSize.height;
 
       console.time('miniature render');
       let el = document.createDocumentFragment();
       for (const e of designerCanvas.rootDesignItem.children()) {
         //if (!(e.element instanceof UiMove)) { //TODO: maybe add an option to hide some elements in the miniature view
-          const { x, y, width, height } = designerCanvas.getNormalizedElementCoordinates(e.element);
-          this._maxX = Math.max(this._maxX, x + width);
-          this._maxY = Math.max(this._maxY, y + height);
           el.appendChild(e.element.cloneNode(true));
         //}
       }
