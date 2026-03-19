@@ -1,9 +1,6 @@
 import { BaseCustomWebComponentConstructorAppend, css, html, Disposable } from "@node-projects/base-custom-webcomponent";
 import { DesignerCanvas, IMiniatureView, InstanceServiceContainer } from "@node-projects/web-component-designer";
 
-//TODO: with click on miniature view move main view to the position of the click
-//use: this._instanceServiceContainer.designerCanvas.canvasOffset = {x: ..., y: ... }
-
 export class MiniatureView extends BaseCustomWebComponentConstructorAppend implements IMiniatureView {
 
   static override readonly style = css`
@@ -32,6 +29,7 @@ export class MiniatureView extends BaseCustomWebComponentConstructorAppend imple
           height: 100%;
           pointer-events: auto;
           background: transparent;
+          cursor: pointer;
         }
         #viewRect {
           position: absolute;
@@ -40,6 +38,7 @@ export class MiniatureView extends BaseCustomWebComponentConstructorAppend imple
           width: 100%;
           height: 100%;
           border: 1px solid black;
+          pointer-events: none;
         }`;
 
   static override readonly template = html`
@@ -52,6 +51,7 @@ export class MiniatureView extends BaseCustomWebComponentConstructorAppend imple
 
   private _innerDiv: HTMLDivElement;
   private _outerDiv: HTMLDivElement;
+  private _above: HTMLDivElement;
   private _instanceServiceContainer: InstanceServiceContainer;
   private _contentChangedHandler: Disposable;
   private _maxX = 0;
@@ -63,7 +63,9 @@ export class MiniatureView extends BaseCustomWebComponentConstructorAppend imple
   private _minatureScaleX = 1;
   private _minatureScaleY = 1;
   private _reRenderFlag = false;
-  //private _cachedMiniatureViews = new WeakMap<InstanceServiceContainer, HTMLDivElement>();
+  private _isDragging = false;
+  private _boundMouseMove: (e: MouseEvent) => void;
+  private _boundMouseUp: (e: MouseEvent) => void;
 
   constructor() {
     super();
@@ -72,7 +74,13 @@ export class MiniatureView extends BaseCustomWebComponentConstructorAppend imple
     this._outerDiv = this._getDomElement<HTMLDivElement>('outerDiv');
     this._innerDiv = this._getDomElement<HTMLDivElement>('innerDiv');
     this._viewRect = this._getDomElement<HTMLDivElement>('viewRect');
+    this._above = this._getDomElement<HTMLDivElement>('above');
     this._innerShadow = this._innerDiv.attachShadow({ mode: 'open' });
+
+    this._boundMouseMove = this._onMouseMove.bind(this);
+    this._boundMouseUp = this._onMouseUp.bind(this);
+
+    this._above.addEventListener('mousedown', (e) => this._onMouseDown(e));
 
     this._resizeObserver = new ResizeObserver(() => {
       this._reSize();
@@ -121,10 +129,51 @@ export class MiniatureView extends BaseCustomWebComponentConstructorAppend imple
     const offset = designerCanvas.canvasOffset;
     const zoom = designerCanvas.zoomFactor;
 
-    this._viewRect.style.left = (offset.x / this._maxX * 100) + '%';
-    this._viewRect.style.top = (offset.y / this._maxY * 100) + '%';
+    this._viewRect.style.left = (-offset.x / this._maxX * 100) + '%';
+    this._viewRect.style.top = (-offset.y / this._maxY * 100) + '%';
     this._viewRect.style.width = (designerCanvas.clientWidth / zoom / this._maxX * 100) + '%';
     this._viewRect.style.height = (designerCanvas.clientHeight / zoom / this._maxY * 100) + '%';
+  }
+
+  private _onMouseDown(e: MouseEvent) {
+    if (!this._instanceServiceContainer) return;
+    this._isDragging = true;
+    this._moveCanvasToMousePosition(e);
+    window.addEventListener('mousemove', this._boundMouseMove);
+    window.addEventListener('mouseup', this._boundMouseUp);
+    e.preventDefault();
+  }
+
+  private _onMouseMove(e: MouseEvent) {
+    if (!this._isDragging) return;
+    this._moveCanvasToMousePosition(e);
+    e.preventDefault();
+  }
+
+  private _onMouseUp(e: MouseEvent) {
+    this._isDragging = false;
+    window.removeEventListener('mousemove', this._boundMouseMove);
+    window.removeEventListener('mouseup', this._boundMouseUp);
+  }
+
+  private _moveCanvasToMousePosition(e: MouseEvent) {
+    const designerCanvas = this._instanceServiceContainer.designerCanvas;
+    const zoom = designerCanvas.zoomFactor;
+    const aboveRect = this._above.getBoundingClientRect();
+
+    const mouseX = e.clientX - aboveRect.left;
+    const mouseY = e.clientY - aboveRect.top;
+
+    const contentX = (mouseX / aboveRect.width) * this._maxX;
+    const contentY = (mouseY / aboveRect.height) * this._maxY;
+
+    const halfViewW = designerCanvas.clientWidth / zoom / 2;
+    const halfViewH = designerCanvas.clientHeight / zoom / 2;
+
+    designerCanvas.canvasOffset = {
+      x: -(contentX - halfViewW),
+      y: -(contentY - halfViewH)
+    };
   }
 
   public set instanceServiceContainer(value: InstanceServiceContainer) {
