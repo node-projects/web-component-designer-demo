@@ -19,8 +19,6 @@ jobs:
       run: npm ci
     - name: Typescript
       run: npm run build
-    - name: fixMonaco
-      run: node fixMonaco.js 
     - name: Copy js & json
       run: |
         npx copyfiles --verbose "node_modules/**/*.js" build/default
