@@ -1,4 +1,4 @@
-import { createDefaultServiceContainer, NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, DocumentContainer, CopyPasteAsJsonService, DebugView, UnkownElementsPropertiesService, sleep, RefactorView, BindingsRefactorService, TextRefactorService, SeperatorContextMenu, IDesignItem, DomConverter, PropertyGridWithHeader, DesignItem, ValueType, ObservedCustomElementsRegistry, IElementsJson, PreDefinedElementsService } from '@node-projects/web-component-designer';
+import { createDefaultServiceContainer, MiniatureView, NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, DocumentContainer, CopyPasteAsJsonService, DebugView, UnkownElementsPropertiesService, sleep, RefactorView, BindingsRefactorService, TextRefactorService, SeperatorContextMenu, IDesignItem, DomConverter, PropertyGridWithHeader, DesignItem, ValueType, ObservedCustomElementsRegistry, IElementsJson, PreDefinedElementsService } from '@node-projects/web-component-designer';
 
 import { NodeHtmlParserService } from '@node-projects/web-component-designer-htmlparserservice-nodehtmlparser';
 import { CodeViewMonaco } from '@node-projects/web-component-designer-codeview-monaco';
@@ -6,8 +6,6 @@ import { CssParserStylesheetService } from '@node-projects/web-component-designe
 
 import '@node-projects/web-component-designer-widgets-wunderbaum';
 import { PaletteTreeView, BindableObjectsBrowser, TreeViewExtended, ExpandCollapseContextMenu } from '@node-projects/web-component-designer-widgets-wunderbaum';
-
-import './miniature-view.js';
 
 import * as webllm from "@mlc-ai/web-llm";
 type EditResult = {
@@ -45,7 +43,6 @@ import './styleEditor.js';
 import { CustomBindableObjectsService } from './services/CustomBindableObjectsService.js';
 import { CustomBindableObjectDragDropService } from './services/CustomBindableObjectDragDropService.js';
 import { EditTemplateContextMenu } from './services/EditTemplateContextMenu.js';
-import { MiniatureView } from './miniature-view.js';
 
 export class AppShell extends BaseCustomWebComponentConstructorAppend {
   activeElement: HTMLElement;
