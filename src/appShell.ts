@@ -7,6 +7,8 @@ import { CssParserStylesheetService } from '@node-projects/web-component-designe
 import '@node-projects/web-component-designer-widgets-wunderbaum';
 import { PaletteTreeView, BindableObjectsBrowser, TreeViewExtended, ExpandCollapseContextMenu } from '@node-projects/web-component-designer-widgets-wunderbaum';
 
+import './miniature-view.js';
+
 import * as webllm from "@mlc-ai/web-llm";
 type EditResult = {
   answer: string;
@@ -43,6 +45,7 @@ import './styleEditor.js';
 import { CustomBindableObjectsService } from './services/CustomBindableObjectsService.js';
 import { CustomBindableObjectDragDropService } from './services/CustomBindableObjectDragDropService.js';
 import { EditTemplateContextMenu } from './services/EditTemplateContextMenu.js';
+import { MiniatureView } from './miniature-view.js';
 
 export class AppShell extends BaseCustomWebComponentConstructorAppend {
   activeElement: HTMLElement;
@@ -163,7 +166,11 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
             <node-projects-tree-view-extended name="tree" id="treeViewExtended"></node-projects-tree-view-extended>
           </div>
       
-          <div id="attributeDock" dock-spawn-title="Properties" dock-spawn-dock-type="right" dock-spawn-dock-ratio="0.2">
+          <div id="miniatureDock" dock-spawn-title="Miniature" dock-spawn-dock-type="right" dock-spawn-dock-ratio="0.2">
+            <node-projects-web-component-designer-miniature-view id="miniature"></node-projects-web-component-designer-miniature-view>
+          </div>
+
+          <div id="attributeDock" dock-spawn-dock-to="miniatureDock" dock-spawn-title="Properties" dock-spawn-dock-type="down" dock-spawn-dock-ratio="0.7">
             <node-projects-web-component-designer-property-grid-with-header id="propertyGrid"></node-projects-web-component-designer-property-grid-with-header>
           </div>
 
@@ -196,6 +203,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
   private _npmStatus: HTMLDivElement;
   private _getNpm: HTMLButtonElement;
   private _refactorView: RefactorView;
+  private _miniatureView: MiniatureView;
 
   private _npmPackageLoader = new NpmPackageLoader();
 
@@ -208,6 +216,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     this._propertyGrid = this._getDomElement<PropertyGridWithHeader>('propertyGrid');
     this._debugView = this._getDomElement<DebugView>('debugView');
     this._styleEditor = this._getDomElement<StyleEditor>('styleEditor');
+    this._miniatureView = this._getDomElement<MiniatureView>('miniature');
 
     this._npmInput = this._getDomElement<HTMLInputElement>('npmInput');
     this._npmStatus = this._getDomElement<HTMLDivElement>('npmStatus');
@@ -301,6 +310,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
             this._propertyGrid.instanceServiceContainer = sampleDocument.instanceServiceContainer;
             this._treeViewExtended.instanceServiceContainer = sampleDocument.instanceServiceContainer;
             this._refactorView.instanceServiceContainer = sampleDocument.instanceServiceContainer;
+            this._miniatureView.instanceServiceContainer = sampleDocument.instanceServiceContainer;
             sampleDocument.instanceServiceContainer.selectionService.onSelectionChanged.on(e => {
               this._debugView.update(e.selectedElements[0]);
             });
