@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-export class Array2D {
+class Array2D {
     constructor(width, height) {
         this.width = width;
         this.height = height;
@@ -16,10 +16,11 @@ export class Array2D {
         this.array[x + y * this.width] = value;
     }
 }
-export function isSpace(charCode) {
+function isSpace(charCode) {
     return charCode === 32 /* CharCode.Space */ || charCode === 9 /* CharCode.Tab */;
 }
-export class LineRangeFragment {
+class LineRangeFragment {
+    static { this.chrKeys = new Map(); }
     static getKey(chr) {
         let key = this.chrKeys.get(chr);
         if (key === undefined) {
@@ -49,13 +50,13 @@ export class LineRangeFragment {
         this.totalCount = counter;
     }
     computeSimilarity(other) {
-        var _a, _b;
         let sumDifferences = 0;
         const maxLength = Math.max(this.histogram.length, other.histogram.length);
         for (let i = 0; i < maxLength; i++) {
-            sumDifferences += Math.abs(((_a = this.histogram[i]) !== null && _a !== void 0 ? _a : 0) - ((_b = other.histogram[i]) !== null && _b !== void 0 ? _b : 0));
+            sumDifferences += Math.abs((this.histogram[i] ?? 0) - (other.histogram[i] ?? 0));
         }
         return 1 - (sumDifferences / (this.totalCount + other.totalCount));
     }
 }
-LineRangeFragment.chrKeys = new Map();
+
+export { Array2D, LineRangeFragment, isSpace };

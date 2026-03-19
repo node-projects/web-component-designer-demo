@@ -1,26 +1,27 @@
+import { registerSingleton } from '../../../../platform/instantiation/common/extensions.js';
+import { createDecorator, IInstantiationService } from '../../../../platform/instantiation/common/instantiation.js';
+import { Emitter } from '../../../../base/common/event.js';
+import { StopWatch } from '../../../../base/common/stopwatch.js';
+import { LineRange } from '../../../common/core/ranges/lineRange.js';
+import { DetailedLineRangeMapping, RangeMapping } from '../../../common/diff/rangeMapping.js';
+import { IEditorWorkerService } from '../../../common/services/editorWorker.js';
+import { ITelemetryService } from '../../../../platform/telemetry/common/telemetry.js';
+
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __param = (this && this.__param) || function (paramIndex, decorator) {
+var __param = (undefined && undefined.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 var WorkerBasedDocumentDiffProvider_1;
-import { registerSingleton } from '../../../../platform/instantiation/common/extensions.js';
-import { IInstantiationService, createDecorator } from '../../../../platform/instantiation/common/instantiation.js';
-import { Emitter } from '../../../../base/common/event.js';
-import { StopWatch } from '../../../../base/common/stopwatch.js';
-import { LineRange } from '../../../common/core/lineRange.js';
-import { DetailedLineRangeMapping, RangeMapping } from '../../../common/diff/rangeMapping.js';
-import { IEditorWorkerService } from '../../../common/services/editorWorker.js';
-import { ITelemetryService } from '../../../../platform/telemetry/common/telemetry.js';
-export const IDiffProviderFactoryService = createDecorator('diffProviderFactoryService');
+const IDiffProviderFactoryService = createDecorator('diffProviderFactoryService');
 let WorkerBasedDiffProviderFactoryService = class WorkerBasedDiffProviderFactoryService {
     constructor(instantiationService) {
         this.instantiationService = instantiationService;
@@ -32,9 +33,10 @@ let WorkerBasedDiffProviderFactoryService = class WorkerBasedDiffProviderFactory
 WorkerBasedDiffProviderFactoryService = __decorate([
     __param(0, IInstantiationService)
 ], WorkerBasedDiffProviderFactoryService);
-export { WorkerBasedDiffProviderFactoryService };
 registerSingleton(IDiffProviderFactoryService, WorkerBasedDiffProviderFactoryService, 1 /* InstantiationType.Delayed */);
-let WorkerBasedDocumentDiffProvider = WorkerBasedDocumentDiffProvider_1 = class WorkerBasedDocumentDiffProvider {
+let WorkerBasedDocumentDiffProvider = class WorkerBasedDocumentDiffProvider {
+    static { WorkerBasedDocumentDiffProvider_1 = this; }
+    static { this.diffCache = new Map(); }
     constructor(options, editorWorkerService, telemetryService) {
         this.editorWorkerService = editorWorkerService;
         this.telemetryService = telemetryService;
@@ -45,11 +47,9 @@ let WorkerBasedDocumentDiffProvider = WorkerBasedDocumentDiffProvider_1 = class 
         this.setOptions(options);
     }
     dispose() {
-        var _a;
-        (_a = this.diffAlgorithmOnDidChangeSubscription) === null || _a === void 0 ? void 0 : _a.dispose();
+        this.diffAlgorithmOnDidChangeSubscription?.dispose();
     }
     async computeDiff(original, modified, options, cancellationToken) {
-        var _a, _b;
         if (typeof this.diffAlgorithm !== 'string') {
             return this.diffAlgorithm.computeDiff(original, modified, options, cancellationToken);
         }
@@ -94,8 +94,8 @@ let WorkerBasedDocumentDiffProvider = WorkerBasedDocumentDiffProvider_1 = class 
         const timeMs = sw.elapsed();
         this.telemetryService.publicLog2('diffEditor.computeDiff', {
             timeMs,
-            timedOut: (_a = result === null || result === void 0 ? void 0 : result.quitEarly) !== null && _a !== void 0 ? _a : true,
-            detectedMoves: options.computeMoves ? ((_b = result === null || result === void 0 ? void 0 : result.moves.length) !== null && _b !== void 0 ? _b : 0) : -1,
+            timedOut: result?.quitEarly ?? true,
+            detectedMoves: options.computeMoves ? (result?.moves.length ?? 0) : -1,
         });
         if (cancellationToken.isCancellationRequested) {
             // Text models might be disposed!
@@ -117,11 +117,10 @@ let WorkerBasedDocumentDiffProvider = WorkerBasedDocumentDiffProvider_1 = class 
         return result;
     }
     setOptions(newOptions) {
-        var _a;
         let didChange = false;
         if (newOptions.diffAlgorithm) {
             if (this.diffAlgorithm !== newOptions.diffAlgorithm) {
-                (_a = this.diffAlgorithmOnDidChangeSubscription) === null || _a === void 0 ? void 0 : _a.dispose();
+                this.diffAlgorithmOnDidChangeSubscription?.dispose();
                 this.diffAlgorithmOnDidChangeSubscription = undefined;
                 this.diffAlgorithm = newOptions.diffAlgorithm;
                 if (typeof newOptions.diffAlgorithm !== 'string') {
@@ -135,9 +134,9 @@ let WorkerBasedDocumentDiffProvider = WorkerBasedDocumentDiffProvider_1 = class 
         }
     }
 };
-WorkerBasedDocumentDiffProvider.diffCache = new Map();
 WorkerBasedDocumentDiffProvider = WorkerBasedDocumentDiffProvider_1 = __decorate([
     __param(1, IEditorWorkerService),
     __param(2, ITelemetryService)
 ], WorkerBasedDocumentDiffProvider);
-export { WorkerBasedDocumentDiffProvider };
+
+export { IDiffProviderFactoryService, WorkerBasedDiffProviderFactoryService, WorkerBasedDocumentDiffProvider };

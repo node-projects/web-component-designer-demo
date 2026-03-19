@@ -1,26 +1,29 @@
+import { distinct } from './arrays.js';
+import { Iterable } from './iterator.js';
+import { generateUuid } from './uuid.js';
+
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { distinct } from './arrays.js';
-import { Iterable } from './iterator.js';
-import { generateUuid } from './uuid.js';
-export function createStringDataTransferItem(stringOrPromise) {
+function createStringDataTransferItem(stringOrPromise, id) {
     return {
+        id,
         asString: async () => stringOrPromise,
         asFile: () => undefined,
         value: typeof stringOrPromise === 'string' ? stringOrPromise : undefined,
     };
 }
-export function createFileDataTransferItem(fileName, uri, data) {
+function createFileDataTransferItem(fileName, uri, data, id) {
     const file = { id: generateUuid(), name: fileName, uri, data };
     return {
+        id,
         asString: async () => '',
         asFile: () => file,
         value: undefined,
     };
 }
-export class VSDataTransfer {
+class VSDataTransfer {
     constructor() {
         this._entries = new Map();
     }
@@ -42,8 +45,7 @@ export class VSDataTransfer {
         return matchesMimeType_normalized(normalizeMimeType(pattern), mimes);
     }
     get(mimeType) {
-        var _a;
-        return (_a = this._entries.get(this.toKey(mimeType))) === null || _a === void 0 ? void 0 : _a[0];
+        return this._entries.get(this.toKey(mimeType))?.[0];
     }
     /**
      * Add a new entry to this data transfer.
@@ -92,7 +94,7 @@ export class VSDataTransfer {
 function normalizeMimeType(mimeType) {
     return mimeType.toLowerCase();
 }
-export function matchesMimeType(pattern, mimeTypes) {
+function matchesMimeType(pattern, mimeTypes) {
     return matchesMimeType_normalized(normalizeMimeType(pattern), mimeTypes.map(normalizeMimeType));
 }
 function matchesMimeType_normalized(normalizedPattern, normalizedMimeTypes) {
@@ -115,7 +117,7 @@ function matchesMimeType_normalized(normalizedPattern, normalizedMimeTypes) {
     }
     return false;
 }
-export const UriList = Object.freeze({
+const UriList = Object.freeze({
     // http://amundsen.com/hypermedia/urilist/
     create: (entries) => {
         return distinct(entries.map(x => x.toString())).join('\r\n');
@@ -127,3 +129,5 @@ export const UriList = Object.freeze({
         return UriList.split(str).filter(value => !value.startsWith('#'));
     }
 });
+
+export { UriList, VSDataTransfer, createFileDataTransferItem, createStringDataTransferItem, matchesMimeType };

@@ -1,16 +1,16 @@
+import { stripIcons } from '../../../../base/common/iconLabels.js';
+import { isLocalizedString } from '../../../../platform/action/common/action.js';
+import { AbstractCommandsQuickAccessProvider } from '../../../../platform/quickinput/browser/commandsQuickAccess.js';
+
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { stripIcons } from '../../../../base/common/iconLabels.js';
-import { isLocalizedString } from '../../../../platform/action/common/action.js';
-import { AbstractCommandsQuickAccessProvider } from '../../../../platform/quickinput/browser/commandsQuickAccess.js';
-export class AbstractEditorCommandsQuickAccessProvider extends AbstractCommandsQuickAccessProvider {
+class AbstractEditorCommandsQuickAccessProvider extends AbstractCommandsQuickAccessProvider {
     constructor(options, instantiationService, keybindingService, commandService, telemetryService, dialogService) {
         super(options, instantiationService, keybindingService, commandService, telemetryService, dialogService);
     }
     getCodeEditorCommandPicks() {
-        var _a;
         const activeTextEditorControl = this.activeTextEditorControl;
         if (!activeTextEditorControl) {
             return [];
@@ -18,7 +18,7 @@ export class AbstractEditorCommandsQuickAccessProvider extends AbstractCommandsQ
         const editorCommandPicks = [];
         for (const editorAction of activeTextEditorControl.getSupportedActions()) {
             let commandDescription;
-            if ((_a = editorAction.metadata) === null || _a === void 0 ? void 0 : _a.description) {
+            if (editorAction.metadata?.description) {
                 if (isLocalizedString(editorAction.metadata.description)) {
                     commandDescription = editorAction.metadata.description;
                 }
@@ -36,3 +36,5 @@ export class AbstractEditorCommandsQuickAccessProvider extends AbstractCommandsQ
         return editorCommandPicks;
     }
 }
+
+export { AbstractEditorCommandsQuickAccessProvider };

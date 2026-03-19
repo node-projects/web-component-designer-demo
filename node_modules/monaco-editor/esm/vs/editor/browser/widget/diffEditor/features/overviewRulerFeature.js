@@ -1,28 +1,46 @@
+import { h, addStandardDisposableListener, EventType, addDisposableListener } from '../../../../../base/browser/dom.js';
+import { createFastDomNode } from '../../../../../base/browser/fastDomNode.js';
+import { ScrollbarState } from '../../../../../base/browser/ui/scrollbar/scrollbarState.js';
+import { Disposable } from '../../../../../base/common/lifecycle.js';
+import '../../../../../base/common/observableInternal/index.js';
+import { appendRemoveOnDispose } from '../utils.js';
+import { Position } from '../../../../common/core/position.js';
+import { OverviewRulerZone } from '../../../../common/viewModel/overviewZoneManager.js';
+import '../../../../../platform/theme/common/colorUtils.js';
+import '../../../../../platform/theme/common/colors/baseColors.js';
+import '../../../../../platform/theme/common/colors/chartsColors.js';
+import { diffOverviewRulerInserted, defaultInsertColor, diffInserted, diffOverviewRulerRemoved, defaultRemoveColor, diffRemoved } from '../../../../../platform/theme/common/colors/editorColors.js';
+import '../../../../../platform/theme/common/colors/inputColors.js';
+import '../../../../../platform/theme/common/colors/listColors.js';
+import '../../../../../platform/theme/common/colors/menuColors.js';
+import '../../../../../platform/theme/common/colors/minimapColors.js';
+import '../../../../../platform/theme/common/colors/miscColors.js';
+import '../../../../../platform/theme/common/colors/quickpickColors.js';
+import '../../../../../platform/theme/common/colors/searchColors.js';
+import { IThemeService } from '../../../../../platform/theme/common/themeService.js';
+import { observableFromEvent } from '../../../../../base/common/observableInternal/observables/observableFromEvent.js';
+import { derived } from '../../../../../base/common/observableInternal/observables/derived.js';
+import { autorunWithStore, autorun } from '../../../../../base/common/observableInternal/reactions/autorun.js';
+import { observableSignalFromEvent } from '../../../../../base/common/observableInternal/observables/observableSignalFromEvent.js';
+
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __param = (this && this.__param) || function (paramIndex, decorator) {
+var __param = (undefined && undefined.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 var OverviewRulerFeature_1;
-import { EventType, addDisposableListener, addStandardDisposableListener, h } from '../../../../../base/browser/dom.js';
-import { createFastDomNode } from '../../../../../base/browser/fastDomNode.js';
-import { ScrollbarState } from '../../../../../base/browser/ui/scrollbar/scrollbarState.js';
-import { Disposable } from '../../../../../base/common/lifecycle.js';
-import { autorun, autorunWithStore, derived, observableFromEvent, observableSignalFromEvent } from '../../../../../base/common/observable.js';
-import { appendRemoveOnDispose } from '../utils.js';
-import { Position } from '../../../../common/core/position.js';
-import { OverviewRulerZone } from '../../../../common/viewModel/overviewZoneManager.js';
-import { defaultInsertColor, defaultRemoveColor, diffInserted, diffOverviewRulerInserted, diffOverviewRulerRemoved, diffRemoved } from '../../../../../platform/theme/common/colorRegistry.js';
-import { IThemeService } from '../../../../../platform/theme/common/themeService.js';
-let OverviewRulerFeature = OverviewRulerFeature_1 = class OverviewRulerFeature extends Disposable {
+let OverviewRulerFeature = class OverviewRulerFeature extends Disposable {
+    static { OverviewRulerFeature_1 = this; }
+    static { this.ONE_OVERVIEW_WIDTH = 15; }
+    static { this.ENTIRE_DIFF_OVERVIEW_WIDTH = this.ONE_OVERVIEW_WIDTH * 2; }
     constructor(_editors, _rootElement, _diffModel, _rootWidth, _rootHeight, _modifiedEditorLayoutInfo, _themeService) {
         super();
         this._editors = _editors;
@@ -77,14 +95,13 @@ let OverviewRulerFeature = OverviewRulerFeature_1 = class OverviewRulerFeature e
             const origHiddenRangesChanged = observableSignalFromEvent('hiddenRangesChanged', this._editors.original.onDidChangeHiddenAreas);
             const modHiddenRangesChanged = observableSignalFromEvent('hiddenRangesChanged', this._editors.modified.onDidChangeHiddenAreas);
             store.add(autorun(reader => {
-                var _a;
                 /** @description set overview ruler zones */
                 origViewZonesChanged.read(reader);
                 modViewZonesChanged.read(reader);
                 origHiddenRangesChanged.read(reader);
                 modHiddenRangesChanged.read(reader);
                 const colors = currentColors.read(reader);
-                const diff = (_a = m === null || m === void 0 ? void 0 : m.diff.read(reader)) === null || _a === void 0 ? void 0 : _a.mappings;
+                const diff = m?.diff.read(reader)?.mappings;
                 function createZones(ranges, color, editor) {
                     const vm = editor._getViewModel();
                     if (!vm) {
@@ -104,8 +121,8 @@ let OverviewRulerFeature = OverviewRulerFeature_1 = class OverviewRulerFeature e
                 }
                 const originalZones = createZones((diff || []).map(d => d.lineRangeMapping.original), colors.removeColor, this._editors.original);
                 const modifiedZones = createZones((diff || []).map(d => d.lineRangeMapping.modified), colors.insertColor, this._editors.modified);
-                originalOverviewRuler === null || originalOverviewRuler === void 0 ? void 0 : originalOverviewRuler.setZones(originalZones);
-                modifiedOverviewRuler === null || modifiedOverviewRuler === void 0 ? void 0 : modifiedOverviewRuler.setZones(modifiedZones);
+                originalOverviewRuler?.setZones(originalZones);
+                modifiedOverviewRuler?.setZones(modifiedZones);
             }));
             store.add(autorun(reader => {
                 /** @description layout overview ruler */
@@ -128,7 +145,7 @@ let OverviewRulerFeature = OverviewRulerFeature_1 = class OverviewRulerFeature e
                     });
                     const scrollTop = this._editors.modifiedScrollTop.read(reader);
                     const scrollHeight = this._editors.modifiedScrollHeight.read(reader);
-                    const scrollBarOptions = this._editors.modified.getOption(103 /* EditorOption.scrollbar */);
+                    const scrollBarOptions = this._editors.modified.getOption(117 /* EditorOption.scrollbar */);
                     const state = new ScrollbarState(scrollBarOptions.verticalHasArrows ? scrollBarOptions.arrowSize : 0, scrollBarOptions.verticalScrollbarSize, 0, layoutInfo.height, scrollHeight, scrollTop);
                     viewportDomElement.setTop(state.getSliderPosition());
                     viewportDomElement.setHeight(state.getSliderSize());
@@ -144,9 +161,8 @@ let OverviewRulerFeature = OverviewRulerFeature_1 = class OverviewRulerFeature e
         }));
     }
 };
-OverviewRulerFeature.ONE_OVERVIEW_WIDTH = 15;
-OverviewRulerFeature.ENTIRE_DIFF_OVERVIEW_WIDTH = OverviewRulerFeature_1.ONE_OVERVIEW_WIDTH * 2;
 OverviewRulerFeature = OverviewRulerFeature_1 = __decorate([
     __param(6, IThemeService)
 ], OverviewRulerFeature);
+
 export { OverviewRulerFeature };

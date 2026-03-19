@@ -1,21 +1,28 @@
+import { h, reset } from '../../../../../base/browser/dom.js';
+import { Disposable, toDisposable } from '../../../../../base/common/lifecycle.js';
+import '../../../../../base/common/observableInternal/index.js';
+import { LineRange } from '../../../../common/core/ranges/lineRange.js';
+import { OffsetRange } from '../../../../common/core/ranges/offsetRange.js';
+import { observableFromEvent } from '../../../../../base/common/observableInternal/observables/observableFromEvent.js';
+import { observableSignalFromEvent } from '../../../../../base/common/observableInternal/observables/observableSignalFromEvent.js';
+import { observableSignal } from '../../../../../base/common/observableInternal/observables/observableSignal.js';
+import { transaction } from '../../../../../base/common/observableInternal/transaction.js';
+import { autorun } from '../../../../../base/common/observableInternal/reactions/autorun.js';
+import { observableValue } from '../../../../../base/common/observableInternal/observables/observableValue.js';
+
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { h, reset } from '../../../../../base/browser/dom.js';
-import { Disposable, toDisposable } from '../../../../../base/common/lifecycle.js';
-import { autorun, observableFromEvent, observableSignal, observableSignalFromEvent, observableValue, transaction } from '../../../../../base/common/observable.js';
-import { LineRange } from '../../../../common/core/lineRange.js';
-import { OffsetRange } from '../../../../common/core/offsetRange.js';
-export class EditorGutter extends Disposable {
+class EditorGutter extends Disposable {
     constructor(_editor, _domNode, itemProvider) {
         super();
         this._editor = _editor;
         this._domNode = _domNode;
         this.itemProvider = itemProvider;
-        this.scrollTop = observableFromEvent(this._editor.onDidScrollChange, (e) => /** @description editor.onDidScrollChange */ this._editor.getScrollTop());
+        this.scrollTop = observableFromEvent(this, this._editor.onDidScrollChange, (e) => /** @description editor.onDidScrollChange */ this._editor.getScrollTop());
         this.isScrollTopZero = this.scrollTop.map((scrollTop) => /** @description isScrollTopZero */ scrollTop === 0);
-        this.modelAttached = observableFromEvent(this._editor.onDidChangeModel, (e) => /** @description editor.onDidChangeModel */ this._editor.hasModel());
+        this.modelAttached = observableFromEvent(this, this._editor.onDidChangeModel, (e) => /** @description editor.onDidChangeModel */ this._editor.hasModel());
         this.editorOnDidChangeViewZones = observableSignalFromEvent('onDidChangeViewZones', this._editor.onDidChangeViewZones);
         this.editorOnDidContentSizeChange = observableSignalFromEvent('onDidContentSizeChange', this._editor.onDidContentSizeChange);
         this.domNodeSizeChanged = observableSignal('domNodeSizeChanged');
@@ -77,11 +84,12 @@ export class EditorGutter extends Disposable {
                         }
                         const top = gutterItem.range.startLineNumber <= this._editor.getModel().getLineCount()
                             ? this._editor.getTopForLineNumber(gutterItem.range.startLineNumber, true) - scrollTop
-                            : this._editor.getBottomForLineNumber(gutterItem.range.startLineNumber - 1, false) - scrollTop;
-                        const bottom = gutterItem.range.isEmpty
-                            // Don't trust that `getBottomForLineNumber` for the previous line equals `getTopForLineNumber` for the current one.
-                            ? top
-                            : (this._editor.getBottomForLineNumber(gutterItem.range.endLineNumberExclusive - 1, true) - scrollTop);
+                            : gutterItem.range.startLineNumber > 1
+                                ? this._editor.getBottomForLineNumber(gutterItem.range.startLineNumber - 1, false) - scrollTop
+                                : 0;
+                        const bottom = gutterItem.range.endLineNumberExclusive === 1 ?
+                            Math.max(top, this._editor.getTopForLineNumber(gutterItem.range.startLineNumber, false) - scrollTop)
+                            : Math.max(top, this._editor.getBottomForLineNumber(gutterItem.range.endLineNumberExclusive - 1, true) - scrollTop);
                         const height = bottom - top;
                         view.domNode.style.top = `${top}px`;
                         view.domNode.style.height = `${height}px`;
@@ -93,7 +101,7 @@ export class EditorGutter extends Disposable {
         for (const id of unusedIds) {
             const view = this.views.get(id);
             view.gutterItemView.dispose();
-            this._domNode.removeChild(view.domNode);
+            view.domNode.remove();
             this.views.delete(id);
         }
     }
@@ -105,3 +113,5 @@ class ManagedGutterItemView {
         this.domNode = domNode;
     }
 }
+
+export { EditorGutter };

@@ -1,23 +1,24 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
 import { createTrustedTypesPolicy } from '../../../base/browser/trustedTypes.js';
-import * as strings from '../../../base/common/strings.js';
-import { assertIsDefined } from '../../../base/common/types.js';
+import { firstNonWhitespaceIndex, isFullWidthCharacter } from '../../../base/common/strings.js';
+import { assertReturnsDefined } from '../../../base/common/types.js';
 import { applyFontInfo } from '../config/domFontInfo.js';
 import { StringBuilder } from '../../common/core/stringBuilder.js';
 import { ModelLineProjectionData } from '../../common/modelLineProjectionData.js';
 import { LineInjectedText } from '../../common/textModelEvents.js';
+
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 const ttPolicy = createTrustedTypesPolicy('domLineBreaksComputer', { createHTML: value => value });
-export class DOMLineBreaksComputerFactory {
+class DOMLineBreaksComputerFactory {
     static create(targetWindow) {
         return new DOMLineBreaksComputerFactory(new WeakRef(targetWindow));
     }
     constructor(targetWindow) {
         this.targetWindow = targetWindow;
     }
-    createLineBreaksComputer(fontInfo, tabSize, wrappingColumn, wrappingIndent, wordBreak) {
+    createLineBreaksComputer(fontInfo, tabSize, wrappingColumn, wrappingIndent, wordBreak, wrapOnEscapedLineFeeds) {
         const requests = [];
         const injectedTexts = [];
         return {
@@ -26,13 +27,12 @@ export class DOMLineBreaksComputerFactory {
                 injectedTexts.push(injectedText);
             },
             finalize: () => {
-                return createLineBreaks(assertIsDefined(this.targetWindow.deref()), requests, fontInfo, tabSize, wrappingColumn, wrappingIndent, wordBreak, injectedTexts);
+                return createLineBreaks(assertReturnsDefined(this.targetWindow.deref()), requests, fontInfo, tabSize, wrappingColumn, wrappingIndent, wordBreak, injectedTexts);
             }
         };
     }
 }
 function createLineBreaks(targetWindow, requests, fontInfo, tabSize, firstLineBreakColumn, wrappingIndent, wordBreak, injectedTextsPerLine) {
-    var _a;
     function createEmptyLineBreakWithPossiblyInjectedText(requestIdx) {
         const injectedTexts = injectedTextsPerLine[requestIdx];
         if (injectedTexts) {
@@ -68,18 +68,18 @@ function createLineBreaks(targetWindow, requests, fontInfo, tabSize, firstLineBr
     const allVisibleColumns = [];
     for (let i = 0; i < requests.length; i++) {
         const lineContent = LineInjectedText.applyInjectedText(requests[i], injectedTextsPerLine[i]);
-        let firstNonWhitespaceIndex = 0;
+        let firstNonWhitespaceIndex$1 = 0;
         let wrappedTextIndentLength = 0;
         let width = overallWidth;
         if (wrappingIndent !== 0 /* WrappingIndent.None */) {
-            firstNonWhitespaceIndex = strings.firstNonWhitespaceIndex(lineContent);
-            if (firstNonWhitespaceIndex === -1) {
+            firstNonWhitespaceIndex$1 = firstNonWhitespaceIndex(lineContent);
+            if (firstNonWhitespaceIndex$1 === -1) {
                 // all whitespace line
-                firstNonWhitespaceIndex = 0;
+                firstNonWhitespaceIndex$1 = 0;
             }
             else {
                 // Track existing indent
-                for (let i = 0; i < firstNonWhitespaceIndex; i++) {
+                for (let i = 0; i < firstNonWhitespaceIndex$1; i++) {
                     const charWidth = (lineContent.charCodeAt(i) === 9 /* CharCode.Tab */
                         ? (tabSize - (wrappedTextIndentLength % tabSize))
                         : 1);
@@ -88,7 +88,7 @@ function createLineBreaks(targetWindow, requests, fontInfo, tabSize, firstLineBr
                 const indentWidth = Math.ceil(fontInfo.spaceWidth * wrappedTextIndentLength);
                 // Force sticking to beginning of line if no character would fit except for the indentation
                 if (indentWidth + fontInfo.typicalFullwidthCharacterWidth > overallWidth) {
-                    firstNonWhitespaceIndex = 0;
+                    firstNonWhitespaceIndex$1 = 0;
                     wrappedTextIndentLength = 0;
                 }
                 else {
@@ -96,16 +96,16 @@ function createLineBreaks(targetWindow, requests, fontInfo, tabSize, firstLineBr
                 }
             }
         }
-        const renderLineContent = lineContent.substr(firstNonWhitespaceIndex);
+        const renderLineContent = lineContent.substr(firstNonWhitespaceIndex$1);
         const tmp = renderLine(renderLineContent, wrappedTextIndentLength, tabSize, width, sb, additionalIndentLength);
-        firstNonWhitespaceIndices[i] = firstNonWhitespaceIndex;
+        firstNonWhitespaceIndices[i] = firstNonWhitespaceIndex$1;
         wrappedTextIndentLengths[i] = wrappedTextIndentLength;
         renderLineContents[i] = renderLineContent;
         allCharOffsets[i] = tmp[0];
         allVisibleColumns[i] = tmp[1];
     }
     const html = sb.build();
-    const trustedhtml = (_a = ttPolicy === null || ttPolicy === void 0 ? void 0 : ttPolicy.createHTML(html)) !== null && _a !== void 0 ? _a : html;
+    const trustedhtml = ttPolicy?.createHTML(html) ?? html;
     containerDomNode.innerHTML = trustedhtml;
     containerDomNode.style.position = 'absolute';
     containerDomNode.style.top = '10000';
@@ -156,7 +156,7 @@ function createLineBreaks(targetWindow, requests, fontInfo, tabSize, firstLineBr
         }
         result[i] = new ModelLineProjectionData(injectionOffsets, injectionOptions, breakOffsets, breakOffsetsVisibleColumn, wrappedTextIndentLength);
     }
-    targetWindow.document.body.removeChild(containerDomNode);
+    containerDomNode.remove();
     return result;
 }
 function renderLine(lineContent, initialVisibleColumn, tabSize, width, sb, wrappingIndentLength) {
@@ -233,7 +233,7 @@ function renderLine(lineContent, initialVisibleColumn, tabSize, width, sb, wrapp
                 sb.appendCharCode(0xFFFD);
                 break;
             default:
-                if (strings.isFullWidthCharacter(charCode)) {
+                if (isFullWidthCharacter(charCode)) {
                     charWidth++;
                 }
                 if (charCode < 32) {
@@ -297,3 +297,5 @@ function readClientRect(range, spans, startOffset, endOffset) {
     range.setEnd(spans[(endOffset / 16384 /* Constants.SPAN_MODULO_LIMIT */) | 0].firstChild, endOffset % 16384 /* Constants.SPAN_MODULO_LIMIT */);
     return range.getClientRects();
 }
+
+export { DOMLineBreaksComputerFactory };

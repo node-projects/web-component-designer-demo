@@ -1,11 +1,12 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
 import { Emitter } from '../../../../base/common/event.js';
 import { Disposable } from '../../../../base/common/lifecycle.js';
 import { Range } from '../../../common/core/range.js';
 import { MATCHES_LIMIT } from './findModel.js';
+
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 function effectiveOptionValue(override, value) {
     if (override === 1 /* FindOptionOverride.True */) {
         return true;
@@ -15,7 +16,7 @@ function effectiveOptionValue(override, value) {
     }
     return value;
 }
-export class FindReplaceState extends Disposable {
+class FindReplaceState extends Disposable {
     get searchString() { return this._searchString; }
     get replaceString() { return this._replaceString; }
     get isRevealed() { return this._isRevealed; }
@@ -105,7 +106,6 @@ export class FindReplaceState extends Disposable {
         }
     }
     change(newState, moveCursor, updateHistory = true) {
-        var _a;
         const changeEvent = {
             moveCursor: moveCursor,
             updateHistory: updateHistory,
@@ -171,12 +171,11 @@ export class FindReplaceState extends Disposable {
             this._preserveCase = newState.preserveCase;
         }
         if (typeof newState.searchScope !== 'undefined') {
-            if (!((_a = newState.searchScope) === null || _a === void 0 ? void 0 : _a.every((newSearchScope) => {
-                var _a;
-                return (_a = this._searchScope) === null || _a === void 0 ? void 0 : _a.some(existingSearchScope => {
+            if (!newState.searchScope?.every((newSearchScope) => {
+                return this._searchScope?.some(existingSearchScope => {
                     return !Range.equalsRange(existingSearchScope, newSearchScope);
                 });
-            }))) {
+            })) {
                 this._searchScope = newState.searchScope;
                 changeEvent.searchScope = true;
                 somethingChanged = true;
@@ -241,3 +240,5 @@ export class FindReplaceState extends Disposable {
         return this._loop || (this.matchesCount >= MATCHES_LIMIT);
     }
 }
+
+export { FindReplaceState };

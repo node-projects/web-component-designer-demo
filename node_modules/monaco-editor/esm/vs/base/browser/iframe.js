@@ -20,7 +20,7 @@ function getParentWindowIfSameOrigin(w) {
     }
     return w.parent;
 }
-export class IframeUtils {
+class IframeUtils {
     /**
      * Returns a chain of embedded windows with the same origin (which can be accessed programmatically).
      * Having a chain of length 1 might mean that the current execution environment is running outside of an iframe or inside an iframe embedded in a window with a different origin.
@@ -55,7 +55,6 @@ export class IframeUtils {
      * Returns the position of `childWindow` relative to `ancestorWindow`
      */
     static getPositionOfChildWindowRelativeToAncestorWindow(childWindow, ancestorWindow) {
-        var _a, _b;
         if (!ancestorWindow || childWindow === ancestorWindow) {
             return {
                 top: 0,
@@ -66,8 +65,8 @@ export class IframeUtils {
         const windowChain = this.getSameOriginWindowChain(childWindow);
         for (const windowChainEl of windowChain) {
             const windowInChain = windowChainEl.window.deref();
-            top += (_a = windowInChain === null || windowInChain === void 0 ? void 0 : windowInChain.scrollY) !== null && _a !== void 0 ? _a : 0;
-            left += (_b = windowInChain === null || windowInChain === void 0 ? void 0 : windowInChain.scrollX) !== null && _b !== void 0 ? _b : 0;
+            top += windowInChain?.scrollY ?? 0;
+            left += windowInChain?.scrollX ?? 0;
             if (windowInChain === ancestorWindow) {
                 break;
             }
@@ -84,3 +83,5 @@ export class IframeUtils {
         };
     }
 }
+
+export { IframeUtils };

@@ -1,10 +1,11 @@
+import { Emitter } from './event.js';
+import { Disposable } from './lifecycle.js';
+
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { Emitter } from './event.js';
-import { Disposable } from './lifecycle.js';
-export class ScrollState {
+class ScrollState {
     constructor(_forceIntegerValues, width, scrollWidth, scrollLeft, height, scrollHeight, scrollTop) {
         this._forceIntegerValues = _forceIntegerValues;
         this._scrollStateBrand = undefined;
@@ -89,7 +90,7 @@ export class ScrollState {
         };
     }
 }
-export class Scrollable extends Disposable {
+class Scrollable extends Disposable {
     constructor(options) {
         super();
         this._scrollableBrand = undefined;
@@ -117,11 +118,10 @@ export class Scrollable extends Disposable {
         return this._state;
     }
     setScrollDimensions(dimensions, useRawScrollPositions) {
-        var _a;
         const newState = this._state.withScrollDimensions(dimensions, useRawScrollPositions);
         this._setState(newState, Boolean(this._smoothScrolling));
         // Validate outstanding animated scroll position target
-        (_a = this._smoothScrolling) === null || _a === void 0 ? void 0 : _a.acceptScrollDimensions(this._state);
+        this._smoothScrolling?.acceptScrollDimensions(this._state);
     }
     /**
      * Returns the final scroll position that the instance will have once the smooth scroll animation concludes.
@@ -230,7 +230,7 @@ export class Scrollable extends Disposable {
         this._onScroll.fire(this._state.createScrollEvent(oldState, inSmoothScrolling));
     }
 }
-export class SmoothScrollingUpdate {
+class SmoothScrollingUpdate {
     constructor(scrollLeft, scrollTop, isDone) {
         this.scrollLeft = scrollLeft;
         this.scrollTop = scrollTop;
@@ -251,7 +251,7 @@ function createComposed(a, b, cut) {
         return b((completion - cut) / (1 - cut));
     };
 }
-export class SmoothScrollingOperation {
+class SmoothScrollingOperation {
     constructor(from, to, startTime, duration) {
         this.from = from;
         this.to = to;
@@ -319,3 +319,5 @@ function easeInCubic(t) {
 function easeOutCubic(t) {
     return 1 - easeInCubic(1 - t);
 }
+
+export { ScrollState, Scrollable, SmoothScrollingOperation, SmoothScrollingUpdate };

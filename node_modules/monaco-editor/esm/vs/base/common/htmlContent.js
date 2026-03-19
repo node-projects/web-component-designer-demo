@@ -1,15 +1,16 @@
+import { illegalArgument } from './errors.js';
+import { escapeIcons } from './iconLabels.js';
+import { Schemas } from './network.js';
+import { isEqual } from './resources.js';
+import { escapeRegExpCharacters } from './strings.js';
+import { URI } from './uri.js';
+
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { illegalArgument } from './errors.js';
-import { escapeIcons } from './iconLabels.js';
-import { isEqual } from './resources.js';
-import { escapeRegExpCharacters } from './strings.js';
-import { URI } from './uri.js';
-export class MarkdownString {
+class MarkdownString {
     constructor(value = '', isTrustedOrOptions = false) {
-        var _a, _b, _c;
         this.value = value;
         if (typeof this.value !== 'string') {
             throw illegalArgument('value');
@@ -18,11 +19,13 @@ export class MarkdownString {
             this.isTrusted = isTrustedOrOptions;
             this.supportThemeIcons = false;
             this.supportHtml = false;
+            this.supportAlertSyntax = false;
         }
         else {
-            this.isTrusted = (_a = isTrustedOrOptions.isTrusted) !== null && _a !== void 0 ? _a : undefined;
-            this.supportThemeIcons = (_b = isTrustedOrOptions.supportThemeIcons) !== null && _b !== void 0 ? _b : false;
-            this.supportHtml = (_c = isTrustedOrOptions.supportHtml) !== null && _c !== void 0 ? _c : false;
+            this.isTrusted = isTrustedOrOptions.isTrusted ?? undefined;
+            this.supportThemeIcons = isTrustedOrOptions.supportThemeIcons ?? false;
+            this.supportHtml = isTrustedOrOptions.supportHtml ?? false;
+            this.supportAlertSyntax = isTrustedOrOptions.supportAlertSyntax ?? false;
         }
     }
     appendText(value, newlineStyle = 0 /* MarkdownStringTextNewlineStyle.Paragraph */) {
@@ -63,7 +66,7 @@ export class MarkdownString {
         });
     }
 }
-export function isEmptyMarkdownString(oneOrMany) {
+function isEmptyMarkdownString(oneOrMany) {
     if (isMarkdownString(oneOrMany)) {
         return !oneOrMany.value;
     }
@@ -74,18 +77,19 @@ export function isEmptyMarkdownString(oneOrMany) {
         return true;
     }
 }
-export function isMarkdownString(thing) {
+function isMarkdownString(thing) {
     if (thing instanceof MarkdownString) {
         return true;
     }
     else if (thing && typeof thing === 'object') {
         return typeof thing.value === 'string'
             && (typeof thing.isTrusted === 'boolean' || typeof thing.isTrusted === 'object' || thing.isTrusted === undefined)
-            && (typeof thing.supportThemeIcons === 'boolean' || thing.supportThemeIcons === undefined);
+            && (typeof thing.supportThemeIcons === 'boolean' || thing.supportThemeIcons === undefined)
+            && (typeof thing.supportAlertSyntax === 'boolean' || thing.supportAlertSyntax === undefined);
     }
     return false;
 }
-export function markdownStringEqual(a, b) {
+function markdownStringEqual(a, b) {
     if (a === b) {
         return true;
     }
@@ -97,19 +101,20 @@ export function markdownStringEqual(a, b) {
             && a.isTrusted === b.isTrusted
             && a.supportThemeIcons === b.supportThemeIcons
             && a.supportHtml === b.supportHtml
+            && a.supportAlertSyntax === b.supportAlertSyntax
             && (a.baseUri === b.baseUri || !!a.baseUri && !!b.baseUri && isEqual(URI.from(a.baseUri), URI.from(b.baseUri)));
     }
 }
-export function escapeMarkdownSyntaxTokens(text) {
+function escapeMarkdownSyntaxTokens(text) {
     // escape markdown syntax tokens: http://daringfireball.net/projects/markdown/syntax#backslash
     return text.replace(/[\\`*_{}[\]()#+\-!~]/g, '\\$&'); // CodeQL [SM02383] Backslash is escaped in the character class
 }
 /**
  * @see https://github.com/microsoft/vscode/issues/193746
  */
-export function appendEscapedMarkdownCodeBlockFence(code, langId) {
-    var _a, _b;
-    const longestFenceLength = (_b = (_a = code.match(/^`+/gm)) === null || _a === void 0 ? void 0 : _a.reduce((a, b) => (a.length > b.length ? a : b)).length) !== null && _b !== void 0 ? _b : 0;
+function appendEscapedMarkdownCodeBlockFence(code, langId) {
+    const longestFenceLength = code.match(/^`+/gm)?.reduce((a, b) => (a.length > b.length ? a : b)).length ??
+        0;
     const desiredFenceLength = longestFenceLength >= 3 ? longestFenceLength + 1 : 3;
     // the markdown result
     return [
@@ -118,16 +123,16 @@ export function appendEscapedMarkdownCodeBlockFence(code, langId) {
         `${'`'.repeat(desiredFenceLength)}`,
     ].join('\n');
 }
-export function escapeDoubleQuotes(input) {
+function escapeDoubleQuotes(input) {
     return input.replace(/"/g, '&quot;');
 }
-export function removeMarkdownEscapes(text) {
+function removeMarkdownEscapes(text) {
     if (!text) {
         return text;
     }
     return text.replace(/\\([\\`*_{}[\]()#+\-.!~])/g, '$1');
 }
-export function parseHrefAndDimensions(href) {
+function parseHrefAndDimensions(href) {
     const dimensions = [];
     const splitted = href.split('|').map(s => s.trim());
     href = splitted[0];
@@ -148,3 +153,12 @@ export function parseHrefAndDimensions(href) {
     }
     return { href, dimensions };
 }
+function createCommandUri(commandId, ...commandArgs) {
+    return URI.from({
+        scheme: Schemas.command,
+        path: commandId,
+        query: commandArgs.length ? encodeURIComponent(JSON.stringify(commandArgs)) : undefined,
+    });
+}
+
+export { MarkdownString, appendEscapedMarkdownCodeBlockFence, createCommandUri, escapeDoubleQuotes, escapeMarkdownSyntaxTokens, isEmptyMarkdownString, isMarkdownString, markdownStringEqual, parseHrefAndDimensions, removeMarkdownEscapes };

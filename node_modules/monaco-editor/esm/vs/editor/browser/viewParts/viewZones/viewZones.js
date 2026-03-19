@@ -1,18 +1,24 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
 import { createFastDomNode } from '../../../../base/browser/fastDomNode.js';
 import { onUnexpectedError } from '../../../../base/common/errors.js';
 import { ViewPart } from '../../view/viewPart.js';
 import { Position } from '../../../common/core/position.js';
+
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 const invalidFunc = () => { throw new Error(`Invalid change accessor`); };
-export class ViewZones extends ViewPart {
+/**
+ * A view zone is a rectangle that is a section that is inserted into the editor
+ * lines that can be used for various purposes such as showing a diffs, peeking
+ * an implementation, etc.
+ */
+class ViewZones extends ViewPart {
     constructor(context) {
         super(context);
         const options = this._context.configuration.options;
-        const layoutInfo = options.get(145 /* EditorOption.layoutInfo */);
-        this._lineHeight = options.get(67 /* EditorOption.lineHeight */);
+        const layoutInfo = options.get(165 /* EditorOption.layoutInfo */);
+        this._lineHeight = options.get(75 /* EditorOption.lineHeight */);
         this._contentWidth = layoutInfo.contentWidth;
         this._contentLeft = layoutInfo.contentLeft;
         this.domNode = createFastDomNode(document.createElement('div'));
@@ -58,11 +64,11 @@ export class ViewZones extends ViewPart {
     }
     onConfigurationChanged(e) {
         const options = this._context.configuration.options;
-        const layoutInfo = options.get(145 /* EditorOption.layoutInfo */);
-        this._lineHeight = options.get(67 /* EditorOption.lineHeight */);
+        const layoutInfo = options.get(165 /* EditorOption.layoutInfo */);
+        this._lineHeight = options.get(75 /* EditorOption.lineHeight */);
         this._contentWidth = layoutInfo.contentWidth;
         this._contentLeft = layoutInfo.contentLeft;
-        if (e.hasChanged(67 /* EditorOption.lineHeight */)) {
+        if (e.hasChanged(75 /* EditorOption.lineHeight */)) {
             this._recomputeWhitespacesProps();
         }
         return true;
@@ -84,8 +90,7 @@ export class ViewZones extends ViewPart {
     }
     // ---- end view event handlers
     _getZoneOrdinal(zone) {
-        var _a, _b;
-        return (_b = (_a = zone.ordinal) !== null && _a !== void 0 ? _a : zone.afterColumn) !== null && _b !== void 0 ? _b : 10000;
+        return zone.ordinal ?? zone.afterColumn ?? 10000;
     }
     _computeWhitespaceProps(zone) {
         if (zone.afterLineNumber === 0) {
@@ -196,11 +201,11 @@ export class ViewZones extends ViewPart {
             whitespaceAccessor.removeWhitespace(zone.whitespaceId);
             zone.domNode.removeAttribute('monaco-visible-view-zone');
             zone.domNode.removeAttribute('monaco-view-zone');
-            zone.domNode.domNode.parentNode.removeChild(zone.domNode.domNode);
+            zone.domNode.domNode.remove();
             if (zone.marginDomNode) {
                 zone.marginDomNode.removeAttribute('monaco-visible-view-zone');
                 zone.marginDomNode.removeAttribute('monaco-view-zone');
-                zone.marginDomNode.domNode.parentNode.removeChild(zone.marginDomNode.domNode);
+                zone.marginDomNode.domNode.remove();
             }
             this.setShouldRender();
             return true;
@@ -300,7 +305,7 @@ export class ViewZones extends ViewPart {
                     zone.domNode.removeAttribute('monaco-visible-view-zone');
                     zone.isVisible = false;
                 }
-                this._safeCallOnDomNodeTop(zone.delegate, ctx.getScrolledTopFromAbsoluteTop(-1000000));
+                this._safeCallOnDomNodeTop(zone.delegate, ctx.getScrolledTopFromAbsoluteTop(-1e6));
             }
             zone.domNode.setTop(newTop);
             zone.domNode.setHeight(newHeight);
@@ -323,5 +328,8 @@ function safeInvoke1Arg(func, arg1) {
     }
     catch (e) {
         onUnexpectedError(e);
+        return undefined;
     }
 }
+
+export { ViewZones };

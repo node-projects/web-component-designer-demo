@@ -1,13 +1,17 @@
+import { isFalsyOrEmpty, binarySearch } from '../../../../base/common/arrays.js';
+import { Range } from '../../../common/core/range.js';
+import { BracketSelectionRangeProvider } from '../../smartSelect/browser/bracketSelections.js';
+
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { binarySearch, isFalsyOrEmpty } from '../../../../base/common/arrays.js';
-import { Range } from '../../../common/core/range.js';
-import { BracketSelectionRangeProvider } from '../../smartSelect/browser/bracketSelections.js';
-export class WordDistance {
+class WordDistance {
+    static { this.None = new class extends WordDistance {
+        distance() { return 0; }
+    }; }
     static async create(service, editor) {
-        if (!editor.getOption(118 /* EditorOption.suggest */).localityBonus) {
+        if (!editor.getOption(134 /* EditorOption.suggest */).localityBonus) {
             return WordDistance.None;
         }
         if (!editor.hasModel()) {
@@ -56,6 +60,5 @@ export class WordDistance {
         };
     }
 }
-WordDistance.None = new class extends WordDistance {
-    distance() { return 0; }
-};
+
+export { WordDistance };

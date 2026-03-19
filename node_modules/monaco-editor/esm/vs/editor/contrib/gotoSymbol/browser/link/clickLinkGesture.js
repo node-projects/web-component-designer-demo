@@ -1,23 +1,31 @@
+import { Emitter } from '../../../../../base/common/event.js';
+import { Disposable } from '../../../../../base/common/lifecycle.js';
+import { isMacintosh } from '../../../../../base/common/platform.js';
+
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { Emitter } from '../../../../../base/common/event.js';
-import { Disposable } from '../../../../../base/common/lifecycle.js';
-import * as platform from '../../../../../base/common/platform.js';
 function hasModifier(e, modifier) {
     return !!e[modifier];
 }
 /**
  * An event that encapsulates the various trigger modifiers logic needed for go to definition.
  */
-export class ClickLinkMouseEvent {
+class ClickLinkMouseEvent {
     constructor(source, opts) {
         this.target = source.target;
         this.isLeftClick = source.event.leftButton;
         this.isMiddleClick = source.event.middleButton;
         this.isRightClick = source.event.rightButton;
+        this.mouseMiddleClickAction = opts.mouseMiddleClickAction;
         this.hasTriggerModifier = hasModifier(source.event, opts.triggerModifier);
+        if (this.isMiddleClick && opts.mouseMiddleClickAction === 'ctrlLeftClick') {
+            // Redirect middle click to left click with modifier
+            this.isMiddleClick = false;
+            this.isLeftClick = true;
+            this.hasTriggerModifier = true;
+        }
         this.hasSideBySideModifier = hasModifier(source.event, opts.triggerSideBySideModifier);
         this.isNoneOrSingleMouseDown = (source.event.detail <= 1);
     }
@@ -25,15 +33,16 @@ export class ClickLinkMouseEvent {
 /**
  * An event that encapsulates the various trigger modifiers logic needed for go to definition.
  */
-export class ClickLinkKeyboardEvent {
+class ClickLinkKeyboardEvent {
     constructor(source, opts) {
         this.keyCodeIsTriggerKey = (source.keyCode === opts.triggerKey);
         this.keyCodeIsSideBySideKey = (source.keyCode === opts.triggerSideBySideKey);
         this.hasTriggerModifier = hasModifier(source, opts.triggerModifier);
     }
 }
-export class ClickLinkOptions {
-    constructor(triggerKey, triggerModifier, triggerSideBySideKey, triggerSideBySideModifier) {
+class ClickLinkOptions {
+    constructor(triggerKey, triggerModifier, triggerSideBySideKey, triggerSideBySideModifier, mouseMiddleClickAction) {
+        this.mouseMiddleClickAction = mouseMiddleClickAction;
         this.triggerKey = triggerKey;
         this.triggerModifier = triggerModifier;
         this.triggerSideBySideKey = triggerSideBySideKey;
@@ -43,24 +52,24 @@ export class ClickLinkOptions {
         return (this.triggerKey === other.triggerKey
             && this.triggerModifier === other.triggerModifier
             && this.triggerSideBySideKey === other.triggerSideBySideKey
-            && this.triggerSideBySideModifier === other.triggerSideBySideModifier);
+            && this.triggerSideBySideModifier === other.triggerSideBySideModifier
+            && this.mouseMiddleClickAction === other.mouseMiddleClickAction);
     }
 }
-function createOptions(multiCursorModifier) {
+function createOptions(multiCursorModifier, mouseMiddleClickAction) {
     if (multiCursorModifier === 'altKey') {
-        if (platform.isMacintosh) {
-            return new ClickLinkOptions(57 /* KeyCode.Meta */, 'metaKey', 6 /* KeyCode.Alt */, 'altKey');
+        if (isMacintosh) {
+            return new ClickLinkOptions(57 /* KeyCode.Meta */, 'metaKey', 6 /* KeyCode.Alt */, 'altKey', mouseMiddleClickAction);
         }
-        return new ClickLinkOptions(5 /* KeyCode.Ctrl */, 'ctrlKey', 6 /* KeyCode.Alt */, 'altKey');
+        return new ClickLinkOptions(5 /* KeyCode.Ctrl */, 'ctrlKey', 6 /* KeyCode.Alt */, 'altKey', mouseMiddleClickAction);
     }
-    if (platform.isMacintosh) {
-        return new ClickLinkOptions(6 /* KeyCode.Alt */, 'altKey', 57 /* KeyCode.Meta */, 'metaKey');
+    if (isMacintosh) {
+        return new ClickLinkOptions(6 /* KeyCode.Alt */, 'altKey', 57 /* KeyCode.Meta */, 'metaKey', mouseMiddleClickAction);
     }
-    return new ClickLinkOptions(6 /* KeyCode.Alt */, 'altKey', 5 /* KeyCode.Ctrl */, 'ctrlKey');
+    return new ClickLinkOptions(6 /* KeyCode.Alt */, 'altKey', 5 /* KeyCode.Ctrl */, 'ctrlKey', mouseMiddleClickAction);
 }
-export class ClickLinkGesture extends Disposable {
+class ClickLinkGesture extends Disposable {
     constructor(editor, opts) {
-        var _a;
         super();
         this._onMouseMoveOrRelevantKeyDown = this._register(new Emitter());
         this.onMouseMoveOrRelevantKeyDown = this._onMouseMoveOrRelevantKeyDown.event;
@@ -69,14 +78,14 @@ export class ClickLinkGesture extends Disposable {
         this._onCancel = this._register(new Emitter());
         this.onCancel = this._onCancel.event;
         this._editor = editor;
-        this._extractLineNumberFromMouseEvent = (_a = opts === null || opts === void 0 ? void 0 : opts.extractLineNumberFromMouseEvent) !== null && _a !== void 0 ? _a : ((e) => e.target.position ? e.target.position.lineNumber : 0);
-        this._opts = createOptions(this._editor.getOption(78 /* EditorOption.multiCursorModifier */));
+        this._extractLineNumberFromMouseEvent = opts?.extractLineNumberFromMouseEvent ?? ((e) => e.target.position ? e.target.position.lineNumber : 0);
+        this._opts = createOptions(this._editor.getOption(86 /* EditorOption.multiCursorModifier */), this._editor.getOption(87 /* EditorOption.mouseMiddleClickAction */));
         this._lastMouseMoveEvent = null;
         this._hasTriggerKeyOnMouseDown = false;
         this._lineNumberOnMouseDown = 0;
         this._register(this._editor.onDidChangeConfiguration((e) => {
-            if (e.hasChanged(78 /* EditorOption.multiCursorModifier */)) {
-                const newOpts = createOptions(this._editor.getOption(78 /* EditorOption.multiCursorModifier */));
+            if (e.hasChanged(86 /* EditorOption.multiCursorModifier */) || e.hasChanged(87 /* EditorOption.mouseMiddleClickAction */)) {
+                const newOpts = createOptions(this._editor.getOption(86 /* EditorOption.multiCursorModifier */), this._editor.getOption(87 /* EditorOption.mouseMiddleClickAction */));
                 if (this._opts.equals(newOpts)) {
                     return;
                 }
@@ -121,7 +130,8 @@ export class ClickLinkGesture extends Disposable {
     }
     _onEditorMouseUp(mouseEvent) {
         const currentLineNumber = this._extractLineNumberFromMouseEvent(mouseEvent);
-        if (this._hasTriggerKeyOnMouseDown && this._lineNumberOnMouseDown && this._lineNumberOnMouseDown === currentLineNumber) {
+        const lineNumbersCorrect = !!this._lineNumberOnMouseDown && this._lineNumberOnMouseDown === currentLineNumber;
+        if (lineNumbersCorrect && (this._hasTriggerKeyOnMouseDown || (mouseEvent.isMiddleClick && mouseEvent.mouseMiddleClickAction === 'openLink'))) {
             this._onExecute.fire(mouseEvent);
         }
     }
@@ -147,3 +157,5 @@ export class ClickLinkGesture extends Disposable {
         this._onCancel.fire();
     }
 }
+
+export { ClickLinkGesture, ClickLinkKeyboardEvent, ClickLinkMouseEvent, ClickLinkOptions };

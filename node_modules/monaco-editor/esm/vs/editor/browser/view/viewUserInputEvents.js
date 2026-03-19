@@ -1,9 +1,10 @@
+import { Position } from '../../common/core/position.js';
+
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { Position } from '../../common/core/position.js';
-export class ViewUserInputEvents {
+class ViewUserInputEvents {
     constructor(coordinatesConverter) {
         this.onKeyDown = null;
         this.onKeyUp = null;
@@ -19,48 +20,37 @@ export class ViewUserInputEvents {
         this._coordinatesConverter = coordinatesConverter;
     }
     emitKeyDown(e) {
-        var _a;
-        (_a = this.onKeyDown) === null || _a === void 0 ? void 0 : _a.call(this, e);
+        this.onKeyDown?.(e);
     }
     emitKeyUp(e) {
-        var _a;
-        (_a = this.onKeyUp) === null || _a === void 0 ? void 0 : _a.call(this, e);
+        this.onKeyUp?.(e);
     }
     emitContextMenu(e) {
-        var _a;
-        (_a = this.onContextMenu) === null || _a === void 0 ? void 0 : _a.call(this, this._convertViewToModelMouseEvent(e));
+        this.onContextMenu?.(this._convertViewToModelMouseEvent(e));
     }
     emitMouseMove(e) {
-        var _a;
-        (_a = this.onMouseMove) === null || _a === void 0 ? void 0 : _a.call(this, this._convertViewToModelMouseEvent(e));
+        this.onMouseMove?.(this._convertViewToModelMouseEvent(e));
     }
     emitMouseLeave(e) {
-        var _a;
-        (_a = this.onMouseLeave) === null || _a === void 0 ? void 0 : _a.call(this, this._convertViewToModelMouseEvent(e));
+        this.onMouseLeave?.(this._convertViewToModelMouseEvent(e));
     }
     emitMouseDown(e) {
-        var _a;
-        (_a = this.onMouseDown) === null || _a === void 0 ? void 0 : _a.call(this, this._convertViewToModelMouseEvent(e));
+        this.onMouseDown?.(this._convertViewToModelMouseEvent(e));
     }
     emitMouseUp(e) {
-        var _a;
-        (_a = this.onMouseUp) === null || _a === void 0 ? void 0 : _a.call(this, this._convertViewToModelMouseEvent(e));
+        this.onMouseUp?.(this._convertViewToModelMouseEvent(e));
     }
     emitMouseDrag(e) {
-        var _a;
-        (_a = this.onMouseDrag) === null || _a === void 0 ? void 0 : _a.call(this, this._convertViewToModelMouseEvent(e));
+        this.onMouseDrag?.(this._convertViewToModelMouseEvent(e));
     }
     emitMouseDrop(e) {
-        var _a;
-        (_a = this.onMouseDrop) === null || _a === void 0 ? void 0 : _a.call(this, this._convertViewToModelMouseEvent(e));
+        this.onMouseDrop?.(this._convertViewToModelMouseEvent(e));
     }
     emitMouseDropCanceled() {
-        var _a;
-        (_a = this.onMouseDropCanceled) === null || _a === void 0 ? void 0 : _a.call(this);
+        this.onMouseDropCanceled?.();
     }
     emitMouseWheel(e) {
-        var _a;
-        (_a = this.onMouseWheel) === null || _a === void 0 ? void 0 : _a.call(this, e);
+        this.onMouseWheel?.(e);
     }
     _convertViewToModelMouseEvent(e) {
         if (e.target) {
@@ -97,3 +87,5 @@ export class ViewUserInputEvents {
         };
     }
 }
+
+export { ViewUserInputEvents };

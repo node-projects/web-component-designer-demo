@@ -1,25 +1,26 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __param = (this && this.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-};
 import { doHash } from '../../../base/common/hash.js';
 import { LRUCache } from '../../../base/common/map.js';
-import { clamp, MovingAverage, SlidingWindowAverage } from '../../../base/common/numbers.js';
+import { MovingAverage, clamp, SlidingWindowAverage } from '../../../base/common/numbers.js';
 import { IEnvironmentService } from '../../../platform/environment/common/environment.js';
 import { registerSingleton } from '../../../platform/instantiation/common/extensions.js';
 import { createDecorator } from '../../../platform/instantiation/common/instantiation.js';
 import { ILogService } from '../../../platform/log/common/log.js';
 import { matchesScheme } from '../../../base/common/network.js';
-export const ILanguageFeatureDebounceService = createDecorator('ILanguageFeatureDebounceService');
+
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __param = (undefined && undefined.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+const ILanguageFeatureDebounceService = createDecorator('ILanguageFeatureDebounceService');
 var IdentityHash;
 (function (IdentityHash) {
     const _hashes = new WeakMap();
@@ -100,10 +101,9 @@ let LanguageFeatureDebounceService = class LanguageFeatureDebounceService {
         this._isDev = envService.isExtensionDevelopment || !envService.isBuilt;
     }
     for(feature, name, config) {
-        var _a, _b, _c;
-        const min = (_a = config === null || config === void 0 ? void 0 : config.min) !== null && _a !== void 0 ? _a : 50;
-        const max = (_b = config === null || config === void 0 ? void 0 : config.max) !== null && _b !== void 0 ? _b : min ** 2;
-        const extra = (_c = config === null || config === void 0 ? void 0 : config.key) !== null && _c !== void 0 ? _c : undefined;
+        const min = config?.min ?? 50;
+        const max = config?.max ?? min ** 2;
+        const extra = config?.key ?? undefined;
         const key = `${IdentityHash.of(feature)},${min}${extra ? ',' + extra : ''}`;
         let info = this._data.get(key);
         if (!info) {
@@ -132,5 +132,6 @@ LanguageFeatureDebounceService = __decorate([
     __param(0, ILogService),
     __param(1, IEnvironmentService)
 ], LanguageFeatureDebounceService);
-export { LanguageFeatureDebounceService };
 registerSingleton(ILanguageFeatureDebounceService, LanguageFeatureDebounceService, 1 /* InstantiationType.Delayed */);
+
+export { ILanguageFeatureDebounceService, LanguageFeatureDebounceService };

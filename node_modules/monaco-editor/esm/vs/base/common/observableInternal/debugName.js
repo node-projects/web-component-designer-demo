@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-export class DebugNameData {
+class DebugNameData {
     constructor(owner, debugNameSource, referenceFn) {
         this.owner = owner;
         this.debugNameSource = debugNameSource;
@@ -14,15 +14,14 @@ export class DebugNameData {
 }
 const countPerName = new Map();
 const cachedDebugName = new WeakMap();
-export function getDebugName(target, data) {
-    var _a;
+function getDebugName(target, data) {
     const cached = cachedDebugName.get(target);
     if (cached) {
         return cached;
     }
     const dbgName = computeDebugName(target, data);
     if (dbgName) {
-        let count = (_a = countPerName.get(dbgName)) !== null && _a !== void 0 ? _a : 0;
+        let count = countPerName.get(dbgName) ?? 0;
         count++;
         countPerName.set(dbgName, count);
         const result = count === 1 ? dbgName : `${dbgName}#${count}`;
@@ -67,6 +66,7 @@ function computeDebugName(self, data) {
 }
 function findKey(obj, value) {
     for (const key in obj) {
+        // eslint-disable-next-line local/code-no-any-casts
         if (obj[key] === value) {
             return key;
         }
@@ -76,13 +76,12 @@ function findKey(obj, value) {
 const countPerClassName = new Map();
 const ownerId = new WeakMap();
 function formatOwner(owner) {
-    var _a;
     const id = ownerId.get(owner);
     if (id) {
         return id;
     }
-    const className = getClassName(owner);
-    let count = (_a = countPerClassName.get(className)) !== null && _a !== void 0 ? _a : 0;
+    const className = getClassName(owner) ?? 'Object';
+    let count = countPerClassName.get(className) ?? 0;
     count++;
     countPerClassName.set(className, count);
     const result = count === 1 ? className : `${className}#${count}`;
@@ -92,15 +91,20 @@ function formatOwner(owner) {
 function getClassName(obj) {
     const ctor = obj.constructor;
     if (ctor) {
+        if (ctor.name === 'Object') {
+            return undefined;
+        }
         return ctor.name;
     }
-    return 'Object';
+    return undefined;
 }
-export function getFunctionName(fn) {
+function getFunctionName(fn) {
     const fnSrc = fn.toString();
     // Pattern: /** @description ... */
     const regexp = /\/\*\*\s*@description\s*([^*]*)\*\//;
     const match = regexp.exec(fnSrc);
     const result = match ? match[1] : undefined;
-    return result === null || result === void 0 ? void 0 : result.trim();
+    return result?.trim();
 }
+
+export { DebugNameData, getClassName, getDebugName, getFunctionName };

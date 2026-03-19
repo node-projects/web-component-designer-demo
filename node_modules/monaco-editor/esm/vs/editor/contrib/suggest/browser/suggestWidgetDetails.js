@@ -1,58 +1,62 @@
+import { Dimension, $, append, show, clearNode, hide, size, getClientArea } from '../../../../base/browser/dom.js';
+import { ResizableHTMLElement } from '../../../../base/browser/ui/resizable/resizable.js';
+import { DomScrollableElement } from '../../../../base/browser/ui/scrollbar/scrollableElement.js';
+import { Codicon } from '../../../../base/common/codicons.js';
+import { Emitter } from '../../../../base/common/event.js';
+import { MarkdownString } from '../../../../base/common/htmlContent.js';
+import { DisposableStore } from '../../../../base/common/lifecycle.js';
+import { ThemeIcon } from '../../../../base/common/themables.js';
+import { localize } from '../../../../nls.js';
+import { isHighContrast } from '../../../../platform/theme/common/theme.js';
+import { IThemeService } from '../../../../platform/theme/common/themeService.js';
+import { IMarkdownRendererService } from '../../../../platform/markdown/browser/markdownRenderer.js';
+
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __param = (this && this.__param) || function (paramIndex, decorator) {
+var __param = (undefined && undefined.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import * as dom from '../../../../base/browser/dom.js';
-import { DomScrollableElement } from '../../../../base/browser/ui/scrollbar/scrollableElement.js';
-import { Codicon } from '../../../../base/common/codicons.js';
-import { ThemeIcon } from '../../../../base/common/themables.js';
-import { Emitter } from '../../../../base/common/event.js';
-import { MarkdownString } from '../../../../base/common/htmlContent.js';
-import { DisposableStore } from '../../../../base/common/lifecycle.js';
-import { MarkdownRenderer } from '../../../browser/widget/markdownRenderer/browser/markdownRenderer.js';
-import { ResizableHTMLElement } from '../../../../base/browser/ui/resizable/resizable.js';
-import * as nls from '../../../../nls.js';
-import { IInstantiationService } from '../../../../platform/instantiation/common/instantiation.js';
-export function canExpandCompletionItem(item) {
+function canExpandCompletionItem(item) {
     return !!item && Boolean(item.completion.documentation || item.completion.detail && item.completion.detail !== item.completion.label);
 }
 let SuggestDetailsWidget = class SuggestDetailsWidget {
-    constructor(_editor, instaService) {
+    constructor(_editor, _themeService, _markdownRendererService) {
         this._editor = _editor;
+        this._themeService = _themeService;
+        this._markdownRendererService = _markdownRendererService;
         this._onDidClose = new Emitter();
         this.onDidClose = this._onDidClose.event;
         this._onDidChangeContents = new Emitter();
         this.onDidChangeContents = this._onDidChangeContents.event;
         this._disposables = new DisposableStore();
         this._renderDisposeable = new DisposableStore();
-        this._borderWidth = 1;
-        this._size = new dom.Dimension(330, 0);
-        this.domNode = dom.$('.suggest-details');
+        this._size = new Dimension(330, 0);
+        this.domNode = $('.suggest-details');
         this.domNode.classList.add('no-docs');
-        this._markdownRenderer = instaService.createInstance(MarkdownRenderer, { editor: _editor });
-        this._body = dom.$('.body');
+        this._body = $('.body');
         this._scrollbar = new DomScrollableElement(this._body, {
             alwaysConsumeMouseWheel: true,
         });
-        dom.append(this.domNode, this._scrollbar.getDomNode());
+        append(this.domNode, this._scrollbar.getDomNode());
         this._disposables.add(this._scrollbar);
-        this._header = dom.append(this._body, dom.$('.header'));
-        this._close = dom.append(this._header, dom.$('span' + ThemeIcon.asCSSSelector(Codicon.close)));
-        this._close.title = nls.localize('details.close', "Close");
-        this._type = dom.append(this._header, dom.$('p.type'));
-        this._docs = dom.append(this._body, dom.$('p.docs'));
+        this._header = append(this._body, $('.header'));
+        this._close = append(this._header, $('span' + ThemeIcon.asCSSSelector(Codicon.close)));
+        this._close.title = localize(1490, "Close");
+        this._close.role = 'button';
+        this._close.tabIndex = -1;
+        this._type = append(this._header, $('p.type'));
+        this._docs = append(this._body, $('p.docs'));
         this._configureFont();
         this._disposables.add(this._editor.onDidChangeConfiguration(e => {
-            if (e.hasChanged(50 /* EditorOption.fontInfo */)) {
+            if (e.hasChanged(59 /* EditorOption.fontInfo */)) {
                 this._configureFont();
             }
         }));
@@ -63,10 +67,10 @@ let SuggestDetailsWidget = class SuggestDetailsWidget {
     }
     _configureFont() {
         const options = this._editor.getOptions();
-        const fontInfo = options.get(50 /* EditorOption.fontInfo */);
+        const fontInfo = options.get(59 /* EditorOption.fontInfo */);
         const fontFamily = fontInfo.getMassagedFontFamily();
-        const fontSize = options.get(119 /* EditorOption.suggestFontSize */) || fontInfo.fontSize;
-        const lineHeight = options.get(120 /* EditorOption.suggestLineHeight */) || fontInfo.lineHeight;
+        const fontSize = options.get(135 /* EditorOption.suggestFontSize */) || fontInfo.fontSize;
+        const lineHeight = options.get(136 /* EditorOption.suggestLineHeight */) || fontInfo.lineHeight;
         const fontWeight = fontInfo.fontWeight;
         const fontSizePx = `${fontSize}px`;
         const lineHeightPx = `${lineHeight}px`;
@@ -79,8 +83,8 @@ let SuggestDetailsWidget = class SuggestDetailsWidget {
         this._close.style.width = lineHeightPx;
     }
     getLayoutInfo() {
-        const lineHeight = this._editor.getOption(120 /* EditorOption.suggestLineHeight */) || this._editor.getOption(50 /* EditorOption.fontInfo */).lineHeight;
-        const borderWidth = this._borderWidth;
+        const lineHeight = this._editor.getOption(136 /* EditorOption.suggestLineHeight */) || this._editor.getOption(59 /* EditorOption.fontInfo */).lineHeight;
+        const borderWidth = isHighContrast(this._themeService.getColorTheme().type) ? 2 : 1;
         const borderHeight = borderWidth * 2;
         return {
             lineHeight,
@@ -91,24 +95,23 @@ let SuggestDetailsWidget = class SuggestDetailsWidget {
         };
     }
     renderLoading() {
-        this._type.textContent = nls.localize('loading', "Loading...");
+        this._type.textContent = localize(1491, "Loading...");
         this._docs.textContent = '';
         this.domNode.classList.remove('no-docs', 'no-type');
         this.layout(this.size.width, this.getLayoutInfo().lineHeight * 2);
         this._onDidChangeContents.fire(this);
     }
     renderItem(item, explainMode) {
-        var _a, _b;
         this._renderDisposeable.clear();
         let { detail, documentation } = item.completion;
         if (explainMode) {
             let md = '';
             md += `score: ${item.score[0]}\n`;
-            md += `prefix: ${(_a = item.word) !== null && _a !== void 0 ? _a : '(no prefix)'}\n`;
+            md += `prefix: ${item.word ?? '(no prefix)'}\n`;
             md += `word: ${item.completion.filterText ? item.completion.filterText + ' (filterText)' : item.textLabel}\n`;
             md += `distance: ${item.distance} (localityBonus-setting)\n`;
             md += `index: ${item.idx}, based on ${item.completion.sortText && `sortText: "${item.completion.sortText}"` || 'label'}\n`;
-            md += `commit_chars: ${(_b = item.completion.commitCharacters) === null || _b === void 0 ? void 0 : _b.join('')}\n`;
+            md += `commit_chars: ${item.completion.commitCharacters?.join('')}\n`;
             documentation = new MarkdownString().appendCodeblock('empty', md);
             detail = `Provider: ${item.provider._debugDisplayName}`;
         }
@@ -122,32 +125,35 @@ let SuggestDetailsWidget = class SuggestDetailsWidget {
             const cappedDetail = detail.length > 100000 ? `${detail.substr(0, 100000)}…` : detail;
             this._type.textContent = cappedDetail;
             this._type.title = cappedDetail;
-            dom.show(this._type);
+            show(this._type);
             this._type.classList.toggle('auto-wrap', !/\r?\n^\s+/gmi.test(cappedDetail));
         }
         else {
-            dom.clearNode(this._type);
+            clearNode(this._type);
             this._type.title = '';
-            dom.hide(this._type);
+            hide(this._type);
             this.domNode.classList.add('no-type');
         }
         // --- documentation
-        dom.clearNode(this._docs);
+        clearNode(this._docs);
         if (typeof documentation === 'string') {
             this._docs.classList.remove('markdown-docs');
             this._docs.textContent = documentation;
         }
         else if (documentation) {
             this._docs.classList.add('markdown-docs');
-            dom.clearNode(this._docs);
-            const renderedContents = this._markdownRenderer.render(documentation);
+            clearNode(this._docs);
+            const renderedContents = this._markdownRendererService.render(documentation, {
+                context: this._editor,
+                asyncRenderCallback: () => {
+                    this.layout(this._size.width, this._type.clientHeight + this._docs.clientHeight);
+                    this._onDidChangeContents.fire(this);
+                }
+            });
             this._docs.appendChild(renderedContents.element);
             this._renderDisposeable.add(renderedContents);
-            this._renderDisposeable.add(this._markdownRenderer.onDidRenderAsync(() => {
-                this.layout(this._size.width, this._type.clientHeight + this._docs.clientHeight);
-                this._onDidChangeContents.fire(this);
-            }));
         }
+        this.domNode.classList.toggle('detail-and-doc', !!detail && !!documentation);
         this.domNode.style.userSelect = 'text';
         this.domNode.tabIndex = -1;
         this._close.onmousedown = e => {
@@ -175,10 +181,10 @@ let SuggestDetailsWidget = class SuggestDetailsWidget {
         return this._size;
     }
     layout(width, height) {
-        const newSize = new dom.Dimension(width, height);
-        if (!dom.Dimension.equals(newSize, this._size)) {
+        const newSize = new Dimension(width, height);
+        if (!Dimension.equals(newSize, this._size)) {
             this._size = newSize;
-            dom.size(this.domNode, width, height);
+            size(this.domNode, width, height);
         }
         this._scrollbar.scanDomNode();
     }
@@ -200,18 +206,15 @@ let SuggestDetailsWidget = class SuggestDetailsWidget {
     pageUp() {
         this.scrollUp(80);
     }
-    set borderWidth(width) {
-        this._borderWidth = width;
-    }
-    get borderWidth() {
-        return this._borderWidth;
+    focus() {
+        this.domNode.focus();
     }
 };
 SuggestDetailsWidget = __decorate([
-    __param(1, IInstantiationService)
+    __param(1, IThemeService),
+    __param(2, IMarkdownRendererService)
 ], SuggestDetailsWidget);
-export { SuggestDetailsWidget };
-export class SuggestDetailsOverlay {
+class SuggestDetailsOverlay {
     constructor(widget, _editor) {
         this.widget = widget;
         this._editor = _editor;
@@ -259,9 +262,8 @@ export class SuggestDetailsOverlay {
             }
         }));
         this._disposables.add(this.widget.onDidChangeContents(() => {
-            var _a;
             if (this._anchorBox) {
-                this._placeAtAnchor(this._anchorBox, (_a = this._userSize) !== null && _a !== void 0 ? _a : this.widget.size, this._preferAlignAtTop);
+                this._placeAtAnchor(this._anchorBox, this._userSize ?? this.widget.size, this._preferAlignAtTop);
             }
         }));
     }
@@ -299,23 +301,21 @@ export class SuggestDetailsOverlay {
         }
     }
     placeAtAnchor(anchor, preferAlignAtTop) {
-        var _a;
         const anchorBox = anchor.getBoundingClientRect();
         this._anchorBox = anchorBox;
         this._preferAlignAtTop = preferAlignAtTop;
-        this._placeAtAnchor(this._anchorBox, (_a = this._userSize) !== null && _a !== void 0 ? _a : this.widget.size, preferAlignAtTop);
+        this._placeAtAnchor(this._anchorBox, this._userSize ?? this.widget.size, preferAlignAtTop);
     }
     _placeAtAnchor(anchorBox, size, preferAlignAtTop) {
-        var _a;
-        const bodyBox = dom.getClientArea(this.getDomNode().ownerDocument.body);
+        const bodyBox = getClientArea(this.getDomNode().ownerDocument.body);
         const info = this.widget.getLayoutInfo();
-        const defaultMinSize = new dom.Dimension(220, 2 * info.lineHeight);
+        const defaultMinSize = new Dimension(220, 2 * info.lineHeight);
         const defaultTop = anchorBox.top;
         // EAST
         const eastPlacement = (function () {
             const width = bodyBox.width - (anchorBox.left + anchorBox.width + info.borderWidth + info.horizontalPadding);
             const left = -info.borderWidth + anchorBox.left + anchorBox.width;
-            const maxSizeTop = new dom.Dimension(width, bodyBox.height - anchorBox.top - info.borderHeight - info.verticalPadding);
+            const maxSizeTop = new Dimension(width, bodyBox.height - anchorBox.top - info.borderHeight - info.verticalPadding);
             const maxSizeBottom = maxSizeTop.with(undefined, anchorBox.top + anchorBox.height - info.borderHeight - info.verticalPadding);
             return { top: defaultTop, left, fit: width - size.width, maxSizeTop, maxSizeBottom, minSize: defaultMinSize.with(Math.min(width, defaultMinSize.width)) };
         })();
@@ -323,7 +323,7 @@ export class SuggestDetailsOverlay {
         const westPlacement = (function () {
             const width = anchorBox.left - info.borderWidth - info.horizontalPadding;
             const left = Math.max(info.horizontalPadding, anchorBox.left - size.width - info.borderWidth);
-            const maxSizeTop = new dom.Dimension(width, bodyBox.height - anchorBox.top - info.borderHeight - info.verticalPadding);
+            const maxSizeTop = new Dimension(width, bodyBox.height - anchorBox.top - info.borderHeight - info.verticalPadding);
             const maxSizeBottom = maxSizeTop.with(undefined, anchorBox.top + anchorBox.height - info.borderHeight - info.verticalPadding);
             return { top: defaultTop, left, fit: width - size.width, maxSizeTop, maxSizeBottom, minSize: defaultMinSize.with(Math.min(width, defaultMinSize.width)) };
         })();
@@ -331,12 +331,12 @@ export class SuggestDetailsOverlay {
         const southPacement = (function () {
             const left = anchorBox.left;
             const top = -info.borderWidth + anchorBox.top + anchorBox.height;
-            const maxSizeBottom = new dom.Dimension(anchorBox.width - info.borderHeight, bodyBox.height - anchorBox.top - anchorBox.height - info.verticalPadding);
+            const maxSizeBottom = new Dimension(anchorBox.width - info.borderHeight, bodyBox.height - anchorBox.top - anchorBox.height - info.verticalPadding);
             return { top, left, fit: maxSizeBottom.height - size.height, maxSizeBottom, maxSizeTop: maxSizeBottom, minSize: defaultMinSize.with(maxSizeBottom.width) };
         })();
         // take first placement that fits or the first with "least bad" fit
         const placements = [eastPlacement, westPlacement, southPacement];
-        const placement = (_a = placements.find(p => p.fit >= 0)) !== null && _a !== void 0 ? _a : placements.sort((a, b) => b.fit - a.fit)[0];
+        const placement = placements.find(p => p.fit >= 0) ?? placements.sort((a, b) => b.fit - a.fit)[0];
         // top/bottom placement
         const bottom = anchorBox.top + anchorBox.height - info.borderHeight;
         let alignAtTop;
@@ -389,3 +389,5 @@ export class SuggestDetailsOverlay {
         this._editor.layoutOverlayWidget(this);
     }
 }
+
+export { SuggestDetailsOverlay, SuggestDetailsWidget, canExpandCompletionItem };

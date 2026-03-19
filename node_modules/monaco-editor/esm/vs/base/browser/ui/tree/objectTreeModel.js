@@ -1,18 +1,20 @@
+import { IndexTreeModel } from './indexTreeModel.js';
+import { ObjectTreeElementCollapseState, TreeError } from './tree.js';
+import { Iterable } from '../../../common/iterator.js';
+
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { IndexTreeModel } from './indexTreeModel.js';
-import { ObjectTreeElementCollapseState, TreeError } from './tree.js';
-import { Iterable } from '../../../common/iterator.js';
-export class ObjectTreeModel {
-    constructor(user, list, options = {}) {
+class ObjectTreeModel {
+    constructor(user, options = {}) {
         this.user = user;
         this.rootRef = null;
         this.nodes = new Map();
         this.nodesByIdentity = new Map();
-        this.model = new IndexTreeModel(user, list, null, options);
-        this.onDidSplice = this.model.onDidSplice;
+        this.model = new IndexTreeModel(user, null, options);
+        this.onDidSpliceModel = this.model.onDidSpliceModel;
+        this.onDidSpliceRenderedNodes = this.model.onDidSpliceRenderedNodes;
         this.onDidChangeCollapseState = this.model.onDidChangeCollapseState;
         this.onDidChangeRenderNodeCount = this.model.onDidChangeRenderNodeCount;
         if (options.sorter) {
@@ -32,7 +34,6 @@ export class ObjectTreeModel {
         const insertedElements = new Set();
         const insertedElementIds = new Set();
         const onDidCreateNode = (node) => {
-            var _a;
             if (node.element === null) {
                 return;
             }
@@ -44,10 +45,9 @@ export class ObjectTreeModel {
                 insertedElementIds.add(id);
                 this.nodesByIdentity.set(id, tnode);
             }
-            (_a = options.onDidCreateNode) === null || _a === void 0 ? void 0 : _a.call(options, tnode);
+            options.onDidCreateNode?.(tnode);
         };
         const onDidDeleteNode = (node) => {
-            var _a;
             if (node.element === null) {
                 return;
             }
@@ -61,7 +61,7 @@ export class ObjectTreeModel {
                     this.nodesByIdentity.delete(id);
                 }
             }
-            (_a = options.onDidDeleteNode) === null || _a === void 0 ? void 0 : _a.call(options, tnode);
+            options.onDidDeleteNode?.(tnode);
         };
         this.model.splice([...location, 0], Number.MAX_VALUE, children, { ...options, onDidCreateNode, onDidDeleteNode });
     }
@@ -120,6 +120,26 @@ export class ObjectTreeModel {
     rerender(element) {
         const location = this.getElementLocation(element);
         this.model.rerender(location);
+    }
+    resort(element = null, recursive = true) {
+        if (!this.sorter) {
+            return;
+        }
+        const location = this.getElementLocation(element);
+        const node = this.model.getNode(location);
+        this._setChildren(location, this.resortChildren(node, recursive), {});
+    }
+    resortChildren(node, recursive, first = true) {
+        let childrenNodes = [...node.children];
+        if (recursive || first) {
+            childrenNodes = childrenNodes.sort(this.sorter.compare.bind(this.sorter));
+        }
+        return Iterable.map(childrenNodes, node => ({
+            element: node.element,
+            collapsible: node.collapsible,
+            collapsed: node.collapsed,
+            children: this.resortChildren(node, recursive, false)
+        }));
     }
     getFirstElementChild(ref = null) {
         const location = this.getElementLocation(ref);
@@ -196,3 +216,5 @@ export class ObjectTreeModel {
         return this.model.getNodeLocation(node);
     }
 }
+
+export { ObjectTreeModel };

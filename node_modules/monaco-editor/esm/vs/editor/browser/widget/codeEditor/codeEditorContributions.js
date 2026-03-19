@@ -1,11 +1,12 @@
+import { runWhenWindowIdle, getWindow } from '../../../../base/browser/dom.js';
+import { onUnexpectedError } from '../../../../base/common/errors.js';
+import { Disposable, DisposableMap } from '../../../../base/common/lifecycle.js';
+
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { getWindow, runWhenWindowIdle } from '../../../../base/browser/dom.js';
-import { onUnexpectedError } from '../../../../base/common/errors.js';
-import { Disposable, DisposableMap } from '../../../../base/common/lifecycle.js';
-export class CodeEditorContributions extends Disposable {
+class CodeEditorContributions extends Disposable {
     constructor() {
         super();
         this._editor = null;
@@ -82,8 +83,7 @@ export class CodeEditorContributions extends Disposable {
         this._instantiateSome(2 /* EditorContributionInstantiation.BeforeFirstInteraction */);
     }
     onAfterModelAttached() {
-        var _a;
-        return runWhenWindowIdle(getWindow((_a = this._editor) === null || _a === void 0 ? void 0 : _a.getDomNode()), () => {
+        return runWhenWindowIdle(getWindow(this._editor?.getDomNode()), () => {
             this._instantiateSome(1 /* EditorContributionInstantiation.AfterFirstRender */);
         }, 50);
     }
@@ -128,3 +128,5 @@ export class CodeEditorContributions extends Disposable {
         }
     }
 }
+
+export { CodeEditorContributions };

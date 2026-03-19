@@ -1,32 +1,37 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-import { coalesce, equals, isNonEmptyArray } from '../../../../base/common/arrays.js';
+import { equals, coalesce, isNonEmptyArray } from '../../../../base/common/arrays.js';
 import { CancellationToken } from '../../../../base/common/cancellation.js';
 import { illegalArgument, isCancellationError, onUnexpectedExternalError } from '../../../../base/common/errors.js';
-import { Disposable, DisposableStore } from '../../../../base/common/lifecycle.js';
+import { HierarchicalKind } from '../../../../base/common/hierarchicalKind.js';
+import { DisposableStore, Disposable } from '../../../../base/common/lifecycle.js';
 import { URI } from '../../../../base/common/uri.js';
-import { IBulkEditService } from '../../../browser/services/bulkEditService.js';
-import { Range } from '../../../common/core/range.js';
-import { Selection } from '../../../common/core/selection.js';
-import { ILanguageFeaturesService } from '../../../common/services/languageFeatures.js';
-import { IModelService } from '../../../common/services/model.js';
-import { TextModelCancellationTokenSource } from '../../editorState/browser/editorState.js';
-import * as nls from '../../../../nls.js';
+import { localize } from '../../../../nls.js';
+import { IAccessibilitySignalService, AccessibilitySignal } from '../../../../platform/accessibilitySignal/browser/accessibilitySignalService.js';
 import { CommandsRegistry, ICommandService } from '../../../../platform/commands/common/commands.js';
 import { INotificationService } from '../../../../platform/notification/common/notification.js';
 import { Progress } from '../../../../platform/progress/common/progress.js';
 import { ITelemetryService } from '../../../../platform/telemetry/common/telemetry.js';
-import { CodeActionItem, CodeActionKind, CodeActionTriggerSource, filtersAction, mayIncludeActionsOfKind } from '../common/types.js';
-import { HierarchicalKind } from '../../../../base/common/hierarchicalKind.js';
-export const codeActionCommandId = 'editor.action.codeAction';
-export const quickFixCommandId = 'editor.action.quickFix';
-export const autoFixCommandId = 'editor.action.autoFix';
-export const refactorCommandId = 'editor.action.refactor';
-export const sourceActionCommandId = 'editor.action.sourceAction';
-export const organizeImportsCommandId = 'editor.action.organizeImports';
-export const fixAllCommandId = 'editor.action.fixAll';
+import { IBulkEditService } from '../../../browser/services/bulkEditService.js';
+import { Range } from '../../../common/core/range.js';
+import { Selection } from '../../../common/core/selection.js';
+import { ProviderId } from '../../../common/languages.js';
+import { ILanguageFeaturesService } from '../../../common/services/languageFeatures.js';
+import { IModelService } from '../../../common/services/model.js';
+import { EditSources } from '../../../common/textModelEditSource.js';
+import { TextModelCancellationTokenSource } from '../../editorState/browser/editorState.js';
+import { CodeActionTriggerSource, CodeActionKind, filtersAction, CodeActionItem, mayIncludeActionsOfKind } from '../common/types.js';
+
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+const codeActionCommandId = 'editor.action.codeAction';
+const quickFixCommandId = 'editor.action.quickFix';
+const autoFixCommandId = 'editor.action.autoFix';
+const refactorCommandId = 'editor.action.refactor';
+const sourceActionCommandId = 'editor.action.sourceAction';
+const organizeImportsCommandId = 'editor.action.organizeImports';
+const fixAllCommandId = 'editor.action.fixAll';
+const CODE_ACTION_SOUND_APPLIED_DURATION = 1000;
 class ManagedCodeActionSet extends Disposable {
     static codeActionsPreferredComparator(a, b) {
         if (a.isPreferred && !b.isPreferred) {
@@ -74,15 +79,14 @@ class ManagedCodeActionSet extends Disposable {
     }
 }
 const emptyCodeActionsResponse = { actions: [], documentation: undefined };
-export async function getCodeActions(registry, model, rangeOrSelection, trigger, progress, token) {
-    var _a;
+async function getCodeActions(registry, model, rangeOrSelection, trigger, progress, token) {
     const filter = trigger.filter || {};
     const notebookFilter = {
         ...filter,
         excludes: [...(filter.excludes || []), CodeActionKind.Notebook],
     };
     const codeActionContext = {
-        only: (_a = filter.include) === null || _a === void 0 ? void 0 : _a.value,
+        only: filter.include?.value,
         trigger: trigger.type,
     };
     const cts = new TextModelCancellationTokenSource(model, token);
@@ -91,16 +95,17 @@ export async function getCodeActions(registry, model, rangeOrSelection, trigger,
     const providers = getCodeActionProviders(registry, model, (excludeNotebookCodeActions) ? notebookFilter : filter);
     const disposables = new DisposableStore();
     const promises = providers.map(async (provider) => {
+        const handle = setTimeout(() => progress.report(provider), 1250);
         try {
-            progress.report(provider);
             const providedCodeActions = await provider.provideCodeActions(model, rangeOrSelection, codeActionContext, cts.token);
+            if (cts.token.isCancellationRequested) {
+                providedCodeActions?.dispose();
+                return emptyCodeActionsResponse;
+            }
             if (providedCodeActions) {
                 disposables.add(providedCodeActions);
             }
-            if (cts.token.isCancellationRequested) {
-                return emptyCodeActionsResponse;
-            }
-            const filteredActions = ((providedCodeActions === null || providedCodeActions === void 0 ? void 0 : providedCodeActions.actions) || []).filter(action => action && filtersAction(filter, action));
+            const filteredActions = (providedCodeActions?.actions || []).filter(action => action && filtersAction(filter, action));
             const documentation = getDocumentationFromProvider(provider, filteredActions, filter.include);
             return {
                 actions: filteredActions.map(action => new CodeActionItem(action, provider)),
@@ -113,6 +118,9 @@ export async function getCodeActions(registry, model, rangeOrSelection, trigger,
             }
             onUnexpectedExternalError(err);
             return emptyCodeActionsResponse;
+        }
+        finally {
+            clearTimeout(handle);
         }
     });
     const listener = registry.onDidChange(() => {
@@ -128,7 +136,13 @@ export async function getCodeActions(registry, model, rangeOrSelection, trigger,
             ...coalesce(actions.map(x => x.documentation)),
             ...getAdditionalDocumentationForShowingActions(registry, model, trigger, allActions)
         ];
-        return new ManagedCodeActionSet(allActions, allDocumentation, disposables);
+        const managedCodeActionSet = new ManagedCodeActionSet(allActions, allDocumentation, disposables);
+        disposables.add(managedCodeActionSet);
+        return managedCodeActionSet;
+    }
+    catch (err) {
+        disposables.dispose();
+        throw err;
     }
     finally {
         listener.dispose();
@@ -147,11 +161,10 @@ function getCodeActionProviders(registry, model, filter) {
     });
 }
 function* getAdditionalDocumentationForShowingActions(registry, model, trigger, actionsToShow) {
-    var _a, _b, _c;
     if (model && actionsToShow.length) {
         for (const provider of registry.all(model)) {
             if (provider._getAdditionalMenuItems) {
-                yield* (_a = provider._getAdditionalMenuItems) === null || _a === void 0 ? void 0 : _a.call(provider, { trigger: trigger.type, only: (_c = (_b = trigger.filter) === null || _b === void 0 ? void 0 : _b.include) === null || _c === void 0 ? void 0 : _c.value }, actionsToShow.map(item => item.action));
+                yield* provider._getAdditionalMenuItems?.({ trigger: trigger.type, only: trigger.filter?.include?.value }, actionsToShow.map(item => item.action));
             }
         }
     }
@@ -177,7 +190,7 @@ function getDocumentationFromProvider(provider, providedCodeActions, only) {
             }
         }
         if (currentBest) {
-            return currentBest === null || currentBest === void 0 ? void 0 : currentBest.command;
+            return currentBest?.command;
         }
     }
     // Otherwise, check to see if any of the provided actions match.
@@ -193,37 +206,40 @@ function getDocumentationFromProvider(provider, providedCodeActions, only) {
     }
     return undefined;
 }
-export var ApplyCodeActionReason;
+var ApplyCodeActionReason;
 (function (ApplyCodeActionReason) {
     ApplyCodeActionReason["OnSave"] = "onSave";
     ApplyCodeActionReason["FromProblemsView"] = "fromProblemsView";
     ApplyCodeActionReason["FromCodeActions"] = "fromCodeActions";
-    ApplyCodeActionReason["FromAILightbulb"] = "fromAILightbulb"; // direct invocation when clicking on the AI lightbulb
+    ApplyCodeActionReason["FromAILightbulb"] = "fromAILightbulb";
+    ApplyCodeActionReason["FromProblemsHover"] = "fromProblemsHover";
 })(ApplyCodeActionReason || (ApplyCodeActionReason = {}));
-export async function applyCodeAction(accessor, item, codeActionReason, options, token = CancellationToken.None) {
-    var _a;
+async function applyCodeAction(accessor, item, codeActionReason, options, token = CancellationToken.None) {
     const bulkEditService = accessor.get(IBulkEditService);
     const commandService = accessor.get(ICommandService);
     const telemetryService = accessor.get(ITelemetryService);
     const notificationService = accessor.get(INotificationService);
+    const accessibilitySignalService = accessor.get(IAccessibilitySignalService);
     telemetryService.publicLog2('codeAction.applyCodeAction', {
         codeActionTitle: item.action.title,
         codeActionKind: item.action.kind,
         codeActionIsPreferred: !!item.action.isPreferred,
         reason: codeActionReason,
     });
+    accessibilitySignalService.playSignal(AccessibilitySignal.codeActionTriggered);
     await item.resolve(token);
     if (token.isCancellationRequested) {
         return;
     }
-    if ((_a = item.action.edit) === null || _a === void 0 ? void 0 : _a.edits.length) {
+    if (item.action.edit?.edits.length) {
         const result = await bulkEditService.apply(item.action.edit, {
-            editor: options === null || options === void 0 ? void 0 : options.editor,
+            editor: options?.editor,
             label: item.action.title,
             quotableLabel: item.action.title,
             code: 'undoredo.codeAction',
             respectAutoSaveConfig: codeActionReason !== ApplyCodeActionReason.OnSave,
-            showPreview: options === null || options === void 0 ? void 0 : options.preview,
+            showPreview: options?.preview,
+            reason: EditSources.codeAction({ kind: item.action.kind, providerId: ProviderId.fromExtensionId(item.provider?.extensionId) }),
         });
         if (!result.isApplied) {
             return;
@@ -237,9 +253,11 @@ export async function applyCodeAction(accessor, item, codeActionReason, options,
             const message = asMessage(err);
             notificationService.error(typeof message === 'string'
                 ? message
-                : nls.localize('applyCodeActionFailed', "An unknown error occurred while applying the code action"));
+                : localize(830, "An unknown error occurred while applying the code action"));
         }
     }
+    // ensure the start sound and end sound do not overlap
+    setTimeout(() => accessibilitySignalService.playSignal(AccessibilitySignal.codeActionApplied), CODE_ACTION_SOUND_APPLIED_DURATION);
 }
 function asMessage(err) {
     if (typeof err === 'string') {
@@ -284,3 +302,5 @@ CommandsRegistry.registerCommand('_executeCodeActionProvider', async function (a
         setTimeout(() => codeActionSet.dispose(), 100);
     }
 });
+
+export { ApplyCodeActionReason, applyCodeAction, autoFixCommandId, codeActionCommandId, fixAllCommandId, getCodeActions, organizeImportsCommandId, quickFixCommandId, refactorCommandId, sourceActionCommandId };

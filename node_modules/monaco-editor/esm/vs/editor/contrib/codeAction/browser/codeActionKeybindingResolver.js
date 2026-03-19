@@ -1,23 +1,32 @@
+import { HierarchicalKind } from '../../../../base/common/hierarchicalKind.js';
+import { Lazy } from '../../../../base/common/lazy.js';
+import { refactorCommandId, codeActionCommandId, sourceActionCommandId, organizeImportsCommandId, fixAllCommandId } from './codeAction.js';
+import { CodeActionKind, CodeActionCommandArgs } from '../common/types.js';
+import { IKeybindingService } from '../../../../platform/keybinding/common/keybinding.js';
+
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __param = (this && this.__param) || function (paramIndex, decorator) {
+var __param = (undefined && undefined.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 var CodeActionKeybindingResolver_1;
-import { HierarchicalKind } from '../../../../base/common/hierarchicalKind.js';
-import { Lazy } from '../../../../base/common/lazy.js';
-import { codeActionCommandId, fixAllCommandId, organizeImportsCommandId, refactorCommandId, sourceActionCommandId } from './codeAction.js';
-import { CodeActionCommandArgs, CodeActionKind } from '../common/types.js';
-import { IKeybindingService } from '../../../../platform/keybinding/common/keybinding.js';
-let CodeActionKeybindingResolver = CodeActionKeybindingResolver_1 = class CodeActionKeybindingResolver {
+let CodeActionKeybindingResolver = class CodeActionKeybindingResolver {
+    static { CodeActionKeybindingResolver_1 = this; }
+    static { this.codeActionCommands = [
+        refactorCommandId,
+        codeActionCommandId,
+        sourceActionCommandId,
+        organizeImportsCommandId,
+        fixAllCommandId
+    ]; }
     constructor(keybindingService) {
         this.keybindingService = keybindingService;
     }
@@ -46,7 +55,7 @@ let CodeActionKeybindingResolver = CodeActionKeybindingResolver_1 = class CodeAc
         return (action) => {
             if (action.kind) {
                 const binding = this.bestKeybindingForCodeAction(action, allCodeActionBindings.value);
-                return binding === null || binding === void 0 ? void 0 : binding.resolvedKeybinding;
+                return binding?.resolvedKeybinding;
             }
             return undefined;
         };
@@ -74,14 +83,8 @@ let CodeActionKeybindingResolver = CodeActionKeybindingResolver_1 = class CodeAc
         }, undefined);
     }
 };
-CodeActionKeybindingResolver.codeActionCommands = [
-    refactorCommandId,
-    codeActionCommandId,
-    sourceActionCommandId,
-    organizeImportsCommandId,
-    fixAllCommandId
-];
 CodeActionKeybindingResolver = CodeActionKeybindingResolver_1 = __decorate([
     __param(0, IKeybindingService)
 ], CodeActionKeybindingResolver);
+
 export { CodeActionKeybindingResolver };

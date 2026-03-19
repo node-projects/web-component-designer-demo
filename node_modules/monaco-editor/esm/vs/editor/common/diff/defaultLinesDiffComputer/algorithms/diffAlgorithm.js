@@ -1,11 +1,12 @@
+import { forEachAdjacent } from '../../../../../base/common/arrays.js';
+import { BugIndicatingError } from '../../../../../base/common/errors.js';
+import { OffsetRange } from '../../../core/ranges/offsetRange.js';
+
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { forEachAdjacent } from '../../../../../base/common/arrays.js';
-import { BugIndicatingError } from '../../../../../base/common/errors.js';
-import { OffsetRange } from '../../../core/offsetRange.js';
-export class DiffAlgorithmResult {
+class DiffAlgorithmResult {
     static trivial(seq1, seq2) {
         return new DiffAlgorithmResult([new SequenceDiff(OffsetRange.ofLength(seq1.length), OffsetRange.ofLength(seq2.length))], false);
     }
@@ -22,7 +23,7 @@ export class DiffAlgorithmResult {
         this.hitTimeout = hitTimeout;
     }
 }
-export class SequenceDiff {
+class SequenceDiff {
     static invert(sequenceDiffs, doc1Length) {
         const result = [];
         forEachAdjacent(sequenceDiffs, (a, b) => {
@@ -32,6 +33,17 @@ export class SequenceDiff {
     }
     static fromOffsetPairs(start, endExclusive) {
         return new SequenceDiff(new OffsetRange(start.offset1, endExclusive.offset1), new OffsetRange(start.offset2, endExclusive.offset2));
+    }
+    static assertSorted(sequenceDiffs) {
+        let last = undefined;
+        for (const cur of sequenceDiffs) {
+            if (last) {
+                if (!(last.seq1Range.endExclusive <= cur.seq1Range.start && last.seq2Range.endExclusive <= cur.seq2Range.start)) {
+                    throw new BugIndicatingError('Sequence diffs must be sorted');
+                }
+            }
+            last = cur;
+        }
     }
     constructor(seq1Range, seq2Range) {
         this.seq1Range = seq1Range;
@@ -79,7 +91,9 @@ export class SequenceDiff {
         return new OffsetPair(this.seq1Range.endExclusive, this.seq2Range.endExclusive);
     }
 }
-export class OffsetPair {
+class OffsetPair {
+    static { this.zero = new OffsetPair(0, 0); }
+    static { this.max = new OffsetPair(Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER); }
     constructor(offset1, offset2) {
         this.offset1 = offset1;
         this.offset2 = offset2;
@@ -97,15 +111,13 @@ export class OffsetPair {
         return this.offset1 === other.offset1 && this.offset2 === other.offset2;
     }
 }
-OffsetPair.zero = new OffsetPair(0, 0);
-OffsetPair.max = new OffsetPair(Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER);
-export class InfiniteTimeout {
+class InfiniteTimeout {
+    static { this.instance = new InfiniteTimeout(); }
     isValid() {
         return true;
     }
 }
-InfiniteTimeout.instance = new InfiniteTimeout();
-export class DateTimeout {
+class DateTimeout {
     constructor(timeout) {
         this.timeout = timeout;
         this.startTime = Date.now();
@@ -119,9 +131,9 @@ export class DateTimeout {
         const valid = Date.now() - this.startTime < this.timeout;
         if (!valid && this.valid) {
             this.valid = false; // timeout reached
-            // eslint-disable-next-line no-debugger
-            debugger; // WARNING: Most likely debugging caused the timeout. Call `this.disable()` to continue without timing out.
         }
         return this.valid;
     }
 }
+
+export { DateTimeout, DiffAlgorithmResult, InfiniteTimeout, OffsetPair, SequenceDiff };

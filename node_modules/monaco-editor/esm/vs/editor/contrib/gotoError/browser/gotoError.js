@@ -1,32 +1,35 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __param = (this && this.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-};
-var MarkerController_1;
 import { Codicon } from '../../../../base/common/codicons.js';
 import { DisposableStore } from '../../../../base/common/lifecycle.js';
-import { EditorAction, EditorCommand, registerEditorAction, registerEditorCommand, registerEditorContribution } from '../../../browser/editorExtensions.js';
+import { registerEditorContribution, registerEditorAction, EditorCommand, registerEditorCommand, EditorAction } from '../../../browser/editorExtensions.js';
 import { ICodeEditorService } from '../../../browser/services/codeEditorService.js';
 import { Position } from '../../../common/core/position.js';
 import { Range } from '../../../common/core/range.js';
 import { EditorContextKeys } from '../../../common/editorContextKeys.js';
 import { IMarkerNavigationService } from './markerNavigationService.js';
-import * as nls from '../../../../nls.js';
+import { localize2, localize } from '../../../../nls.js';
 import { MenuId } from '../../../../platform/actions/common/actions.js';
-import { IContextKeyService, RawContextKey } from '../../../../platform/contextkey/common/contextkey.js';
+import { RawContextKey, IContextKeyService } from '../../../../platform/contextkey/common/contextkey.js';
 import { IInstantiationService } from '../../../../platform/instantiation/common/instantiation.js';
 import { registerIcon } from '../../../../platform/theme/common/iconRegistry.js';
 import { MarkerNavigationWidget } from './gotoErrorWidget.js';
-let MarkerController = MarkerController_1 = class MarkerController {
+
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __param = (undefined && undefined.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var MarkerController_1;
+let MarkerController = class MarkerController {
+    static { MarkerController_1 = this; }
+    static { this.ID = 'editor.contrib.markerController'; }
     static get(editor) {
         return editor.getContribution(MarkerController_1.ID);
     }
@@ -69,9 +72,8 @@ let MarkerController = MarkerController_1 = class MarkerController {
         this._sessionDispoables.add(this._widget);
         // follow cursor
         this._sessionDispoables.add(this._editor.onDidChangeCursorPosition(e => {
-            var _a, _b, _c;
-            if (!((_a = this._model) === null || _a === void 0 ? void 0 : _a.selected) || !Range.containsPosition((_b = this._model) === null || _b === void 0 ? void 0 : _b.selected.marker, e.position)) {
-                (_c = this._model) === null || _c === void 0 ? void 0 : _c.resetIndex();
+            if (!this._model?.selected || !Range.containsPosition(this._model?.selected.marker, e.position)) {
+                this._model?.resetIndex();
             }
         }));
         // update markers
@@ -105,50 +107,51 @@ let MarkerController = MarkerController_1 = class MarkerController {
         }
     }
     showAtMarker(marker) {
-        if (this._editor.hasModel()) {
-            const model = this._getOrCreateModel(this._editor.getModel().uri);
-            model.resetIndex();
-            model.move(true, this._editor.getModel(), new Position(marker.startLineNumber, marker.startColumn));
-            if (model.selected) {
-                this._widget.showAtMarker(model.selected.marker, model.selected.index, model.selected.total);
-            }
+        if (!this._editor.hasModel()) {
+            return;
+        }
+        const textModel = this._editor.getModel();
+        const model = this._getOrCreateModel(textModel.uri);
+        model.resetIndex();
+        model.move(true, textModel, new Position(marker.startLineNumber, marker.startColumn));
+        if (model.selected) {
+            this._widget.showAtMarker(model.selected.marker, model.selected.index, model.selected.total);
         }
     }
-    async nagivate(next, multiFile) {
-        var _a, _b;
-        if (this._editor.hasModel()) {
-            const model = this._getOrCreateModel(multiFile ? undefined : this._editor.getModel().uri);
-            model.move(next, this._editor.getModel(), this._editor.getPosition());
-            if (!model.selected) {
-                return;
+    async navigate(next, multiFile) {
+        if (!this._editor.hasModel()) {
+            return;
+        }
+        const textModel = this._editor.getModel();
+        const model = this._getOrCreateModel(multiFile ? undefined : textModel.uri);
+        model.move(next, textModel, this._editor.getPosition());
+        if (!model.selected) {
+            return;
+        }
+        if (model.selected.marker.resource.toString() !== textModel.uri.toString()) {
+            // show in different editor
+            this._cleanUp();
+            const otherEditor = await this._editorService.openCodeEditor({
+                resource: model.selected.marker.resource,
+                options: { pinned: false, revealIfOpened: true, selectionRevealType: 2 /* TextEditorSelectionRevealType.NearTop */, selection: model.selected.marker }
+            }, this._editor);
+            if (otherEditor) {
+                MarkerController_1.get(otherEditor)?.close();
+                MarkerController_1.get(otherEditor)?.navigate(next, multiFile);
             }
-            if (model.selected.marker.resource.toString() !== this._editor.getModel().uri.toString()) {
-                // show in different editor
-                this._cleanUp();
-                const otherEditor = await this._editorService.openCodeEditor({
-                    resource: model.selected.marker.resource,
-                    options: { pinned: false, revealIfOpened: true, selectionRevealType: 2 /* TextEditorSelectionRevealType.NearTop */, selection: model.selected.marker }
-                }, this._editor);
-                if (otherEditor) {
-                    (_a = MarkerController_1.get(otherEditor)) === null || _a === void 0 ? void 0 : _a.close();
-                    (_b = MarkerController_1.get(otherEditor)) === null || _b === void 0 ? void 0 : _b.nagivate(next, multiFile);
-                }
-            }
-            else {
-                // show in this editor
-                this._widget.showAtMarker(model.selected.marker, model.selected.index, model.selected.total);
-            }
+        }
+        else {
+            // show in this editor
+            this._widget.showAtMarker(model.selected.marker, model.selected.index, model.selected.total);
         }
     }
 };
-MarkerController.ID = 'editor.contrib.markerController';
 MarkerController = MarkerController_1 = __decorate([
     __param(1, IMarkerNavigationService),
     __param(2, IContextKeyService),
     __param(3, ICodeEditorService),
     __param(4, IInstantiationService)
 ], MarkerController);
-export { MarkerController };
 class MarkerNavigationAction extends EditorAction {
     constructor(_next, _multiFile, opts) {
         super(opts);
@@ -156,18 +159,18 @@ class MarkerNavigationAction extends EditorAction {
         this._multiFile = _multiFile;
     }
     async run(_accessor, editor) {
-        var _a;
         if (editor.hasModel()) {
-            (_a = MarkerController.get(editor)) === null || _a === void 0 ? void 0 : _a.nagivate(this._next, this._multiFile);
+            await MarkerController.get(editor)?.navigate(this._next, this._multiFile);
         }
     }
 }
-export class NextMarkerAction extends MarkerNavigationAction {
+class NextMarkerAction extends MarkerNavigationAction {
+    static { this.ID = 'editor.action.marker.next'; }
+    static { this.LABEL = localize2(1020, "Go to Next Problem (Error, Warning, Info)"); }
     constructor() {
         super(true, false, {
             id: NextMarkerAction.ID,
             label: NextMarkerAction.LABEL,
-            alias: 'Go to Next Problem (Error, Warning, Info)',
             precondition: undefined,
             kbOpts: {
                 kbExpr: EditorContextKeys.focus,
@@ -176,22 +179,21 @@ export class NextMarkerAction extends MarkerNavigationAction {
             },
             menuOpts: {
                 menuId: MarkerNavigationWidget.TitleMenu,
-                title: NextMarkerAction.LABEL,
-                icon: registerIcon('marker-navigation-next', Codicon.arrowDown, nls.localize('nextMarkerIcon', 'Icon for goto next marker.')),
+                title: NextMarkerAction.LABEL.value,
+                icon: registerIcon('marker-navigation-next', Codicon.arrowDown, localize(1016, 'Icon for goto next marker.')),
                 group: 'navigation',
                 order: 1
             }
         });
     }
 }
-NextMarkerAction.ID = 'editor.action.marker.next';
-NextMarkerAction.LABEL = nls.localize('markerAction.next.label', "Go to Next Problem (Error, Warning, Info)");
 class PrevMarkerAction extends MarkerNavigationAction {
+    static { this.ID = 'editor.action.marker.prev'; }
+    static { this.LABEL = localize2(1021, "Go to Previous Problem (Error, Warning, Info)"); }
     constructor() {
         super(false, false, {
             id: PrevMarkerAction.ID,
             label: PrevMarkerAction.LABEL,
-            alias: 'Go to Previous Problem (Error, Warning, Info)',
             precondition: undefined,
             kbOpts: {
                 kbExpr: EditorContextKeys.focus,
@@ -200,22 +202,19 @@ class PrevMarkerAction extends MarkerNavigationAction {
             },
             menuOpts: {
                 menuId: MarkerNavigationWidget.TitleMenu,
-                title: PrevMarkerAction.LABEL,
-                icon: registerIcon('marker-navigation-previous', Codicon.arrowUp, nls.localize('previousMarkerIcon', 'Icon for goto previous marker.')),
+                title: PrevMarkerAction.LABEL.value,
+                icon: registerIcon('marker-navigation-previous', Codicon.arrowUp, localize(1017, 'Icon for goto previous marker.')),
                 group: 'navigation',
                 order: 2
             }
         });
     }
 }
-PrevMarkerAction.ID = 'editor.action.marker.prev';
-PrevMarkerAction.LABEL = nls.localize('markerAction.previous.label', "Go to Previous Problem (Error, Warning, Info)");
 class NextMarkerInFilesAction extends MarkerNavigationAction {
     constructor() {
         super(true, true, {
             id: 'editor.action.marker.nextInFiles',
-            label: nls.localize('markerAction.nextInFiles.label', "Go to Next Problem in Files (Error, Warning, Info)"),
-            alias: 'Go to Next Problem in Files (Error, Warning, Info)',
+            label: localize2(1022, "Go to Next Problem in Files (Error, Warning, Info)"),
             precondition: undefined,
             kbOpts: {
                 kbExpr: EditorContextKeys.focus,
@@ -224,7 +223,7 @@ class NextMarkerInFilesAction extends MarkerNavigationAction {
             },
             menuOpts: {
                 menuId: MenuId.MenubarGoMenu,
-                title: nls.localize({ key: 'miGotoNextProblem', comment: ['&& denotes a mnemonic'] }, "Next &&Problem"),
+                title: localize(1018, "Next &&Problem"),
                 group: '6_problem_nav',
                 order: 1
             }
@@ -235,8 +234,7 @@ class PrevMarkerInFilesAction extends MarkerNavigationAction {
     constructor() {
         super(false, true, {
             id: 'editor.action.marker.prevInFiles',
-            label: nls.localize('markerAction.previousInFiles.label', "Go to Previous Problem in Files (Error, Warning, Info)"),
-            alias: 'Go to Previous Problem in Files (Error, Warning, Info)',
+            label: localize2(1023, "Go to Previous Problem in Files (Error, Warning, Info)"),
             precondition: undefined,
             kbOpts: {
                 kbExpr: EditorContextKeys.focus,
@@ -245,7 +243,7 @@ class PrevMarkerInFilesAction extends MarkerNavigationAction {
             },
             menuOpts: {
                 menuId: MenuId.MenubarGoMenu,
-                title: nls.localize({ key: 'miGotoPreviousProblem', comment: ['&& denotes a mnemonic'] }, "Previous &&Problem"),
+                title: localize(1019, "Previous &&Problem"),
                 group: '6_problem_nav',
                 order: 2
             }
@@ -270,3 +268,5 @@ registerEditorCommand(new MarkerCommand({
         secondary: [1024 /* KeyMod.Shift */ | 9 /* KeyCode.Escape */]
     }
 }));
+
+export { MarkerController, NextMarkerAction };

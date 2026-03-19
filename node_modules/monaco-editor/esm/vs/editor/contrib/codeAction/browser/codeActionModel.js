@@ -1,22 +1,23 @@
+import { createCancelablePromise, TimeoutTimer } from '../../../../base/common/async.js';
+import { isCancellationError } from '../../../../base/common/errors.js';
+import { Emitter } from '../../../../base/common/event.js';
+import { HierarchicalKind } from '../../../../base/common/hierarchicalKind.js';
+import { Disposable, MutableDisposable } from '../../../../base/common/lifecycle.js';
+import { isEqual } from '../../../../base/common/resources.js';
+import { RawContextKey } from '../../../../platform/contextkey/common/contextkey.js';
+import { Progress } from '../../../../platform/progress/common/progress.js';
+import { ShowLightbulbIconMode } from '../../../common/config/editorOptions.js';
+import { Position } from '../../../common/core/position.js';
+import { Selection } from '../../../common/core/selection.js';
+import { CodeActionTriggerSource, CodeActionKind } from '../common/types.js';
+import { getCodeActions } from './codeAction.js';
+
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { createCancelablePromise, TimeoutTimer } from '../../../../base/common/async.js';
-import { isCancellationError } from '../../../../base/common/errors.js';
-import { Emitter } from '../../../../base/common/event.js';
-import { Disposable, MutableDisposable } from '../../../../base/common/lifecycle.js';
-import { isEqual } from '../../../../base/common/resources.js';
-import { ShowLightbulbIconMode } from '../../../common/config/editorOptions.js';
-import { Position } from '../../../common/core/position.js';
-import { Selection } from '../../../common/core/selection.js';
-import { RawContextKey } from '../../../../platform/contextkey/common/contextkey.js';
-import { Progress } from '../../../../platform/progress/common/progress.js';
-import { CodeActionKind, CodeActionTriggerSource } from '../common/types.js';
-import { getCodeActions } from './codeAction.js';
-import { HierarchicalKind } from '../../../../base/common/hierarchicalKind.js';
-export const SUPPORTED_CODE_ACTIONS = new RawContextKey('supportedCodeAction', '');
-export const APPLY_FIX_ALL_COMMAND_ID = '_typescript.applyFixAllCodeAction';
+const SUPPORTED_CODE_ACTIONS = new RawContextKey('supportedCodeAction', '');
+const APPLY_FIX_ALL_COMMAND_ID = '_typescript.applyFixAllCodeAction';
 class CodeActionOracle extends Disposable {
     constructor(_editor, _markerService, _signalChange, _delay = 250) {
         super();
@@ -51,7 +52,7 @@ class CodeActionOracle extends Disposable {
         if (trigger.type === 1 /* CodeActionTriggerType.Invoke */) {
             return selection;
         }
-        const enabled = this._editor.getOption(65 /* EditorOption.lightbulb */).enabled;
+        const enabled = this._editor.getOption(73 /* EditorOption.lightbulb */).enabled;
         if (enabled === ShowLightbulbIconMode.Off) {
             return undefined;
         }
@@ -92,7 +93,7 @@ class CodeActionOracle extends Disposable {
         return selection;
     }
 }
-export var CodeActionsState;
+var CodeActionsState;
 (function (CodeActionsState) {
     CodeActionsState.Empty = { type: 0 /* Type.Empty */ };
     class Triggered {
@@ -123,7 +124,7 @@ const emptyCodeActionSet = Object.freeze({
     hasAIFix: false,
     allAIFixes: false,
 });
-export class CodeActionModel extends Disposable {
+class CodeActionModel extends Disposable {
     constructor(_editor, _registry, _markerService, contextKeyService, _progressService, _configurationService) {
         super();
         this._editor = _editor;
@@ -135,13 +136,14 @@ export class CodeActionModel extends Disposable {
         this._state = CodeActionsState.Empty;
         this._onDidChangeState = this._register(new Emitter());
         this.onDidChangeState = this._onDidChangeState.event;
+        this.codeActionsDisposable = this._register(new MutableDisposable());
         this._disposed = false;
         this._supportedCodeActions = SUPPORTED_CODE_ACTIONS.bindTo(contextKeyService);
         this._register(this._editor.onDidChangeModel(() => this._update()));
         this._register(this._editor.onDidChangeModelLanguage(() => this._update()));
         this._register(this._registry.onDidChange(() => this._update()));
         this._register(this._editor.onDidChangeConfiguration((e) => {
-            if (e.hasChanged(65 /* EditorOption.lightbulb */)) {
+            if (e.hasChanged(73 /* EditorOption.lightbulb */)) {
                 this._update();
             }
         }));
@@ -156,9 +158,8 @@ export class CodeActionModel extends Disposable {
         this.setState(CodeActionsState.Empty, true);
     }
     _settingEnabledNearbyQuickfixes() {
-        var _a;
-        const model = (_a = this._editor) === null || _a === void 0 ? void 0 : _a.getModel();
-        return this._configurationService ? this._configurationService.getValue('editor.codeActionWidget.includeNearbyQuickFixes', { resource: model === null || model === void 0 ? void 0 : model.uri }) : false;
+        const model = this._editor?.getModel();
+        return this._configurationService ? this._configurationService.getValue('editor.codeActionWidget.includeNearbyQuickFixes', { resource: model?.uri }) : false;
     }
     _update() {
         if (this._disposed) {
@@ -169,37 +170,41 @@ export class CodeActionModel extends Disposable {
         const model = this._editor.getModel();
         if (model
             && this._registry.has(model)
-            && !this._editor.getOption(91 /* EditorOption.readOnly */)) {
-            const supportedActions = this._registry.all(model).flatMap(provider => { var _a; return (_a = provider.providedCodeActionKinds) !== null && _a !== void 0 ? _a : []; });
+            && !this._editor.getOption(104 /* EditorOption.readOnly */)) {
+            const supportedActions = this._registry.all(model).flatMap(provider => provider.providedCodeActionKinds ?? []);
             this._supportedCodeActions.set(supportedActions.join(' '));
             this._codeActionOracle.value = new CodeActionOracle(this._editor, this._markerService, trigger => {
-                var _a;
                 if (!trigger) {
                     this.setState(CodeActionsState.Empty);
                     return;
                 }
                 const startPosition = trigger.selection.getStartPosition();
                 const actions = createCancelablePromise(async (token) => {
-                    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
-                    if (this._settingEnabledNearbyQuickfixes() && trigger.trigger.type === 1 /* CodeActionTriggerType.Invoke */ && (trigger.trigger.triggerAction === CodeActionTriggerSource.QuickFix || ((_b = (_a = trigger.trigger.filter) === null || _a === void 0 ? void 0 : _a.include) === null || _b === void 0 ? void 0 : _b.contains(CodeActionKind.QuickFix)))) {
+                    if (this._settingEnabledNearbyQuickfixes() && trigger.trigger.type === 1 /* CodeActionTriggerType.Invoke */ && (trigger.trigger.triggerAction === CodeActionTriggerSource.QuickFix || trigger.trigger.filter?.include?.contains(CodeActionKind.QuickFix))) {
                         const codeActionSet = await getCodeActions(this._registry, model, trigger.selection, trigger.trigger, Progress.None, token);
+                        this.codeActionsDisposable.value = codeActionSet;
                         const allCodeActions = [...codeActionSet.allActions];
                         if (token.isCancellationRequested) {
+                            codeActionSet.dispose();
                             return emptyCodeActionSet;
                         }
-                        // Search for quickfixes in the curret code action set.
-                        const foundQuickfix = (_c = codeActionSet.validActions) === null || _c === void 0 ? void 0 : _c.some(action => action.action.kind ? CodeActionKind.QuickFix.contains(new HierarchicalKind(action.action.kind)) : false);
+                        // Search for non-AI quickfixes in the current code action set - if AI code actions are the only thing found, continue searching for diagnostics in line.
+                        const foundQuickfix = codeActionSet.validActions?.some(action => {
+                            return action.action.kind &&
+                                CodeActionKind.QuickFix.contains(new HierarchicalKind(action.action.kind)) &&
+                                !action.action.isAI;
+                        });
                         const allMarkers = this._markerService.read({ resource: model.uri });
                         if (foundQuickfix) {
                             for (const action of codeActionSet.validActions) {
-                                if ((_e = (_d = action.action.command) === null || _d === void 0 ? void 0 : _d.arguments) === null || _e === void 0 ? void 0 : _e.some(arg => typeof arg === 'string' && arg.includes(APPLY_FIX_ALL_COMMAND_ID))) {
+                                if (action.action.command?.arguments?.some(arg => typeof arg === 'string' && arg.includes(APPLY_FIX_ALL_COMMAND_ID))) {
                                     action.action.diagnostics = [...allMarkers.filter(marker => marker.relatedInformation)];
                                 }
                             }
-                            return { validActions: codeActionSet.validActions, allActions: allCodeActions, documentation: codeActionSet.documentation, hasAutoFix: codeActionSet.hasAutoFix, hasAIFix: codeActionSet.hasAIFix, allAIFixes: codeActionSet.allAIFixes, dispose: () => { codeActionSet.dispose(); } };
+                            return { validActions: codeActionSet.validActions, allActions: allCodeActions, documentation: codeActionSet.documentation, hasAutoFix: codeActionSet.hasAutoFix, hasAIFix: codeActionSet.hasAIFix, allAIFixes: codeActionSet.allAIFixes, dispose: () => { this.codeActionsDisposable.value = codeActionSet; } };
                         }
                         else if (!foundQuickfix) {
-                            // If markers exists, and there are no quickfixes found or length is zero, check for quickfixes on that line.
+                            // If markers exist, and there are no quickfixes found or length is zero, check for quickfixes on that line.
                             if (allMarkers.length > 0) {
                                 const currPosition = trigger.selection.getPosition();
                                 let trackedPosition = currPosition;
@@ -215,15 +220,19 @@ export class CodeActionModel extends Disposable {
                                         const newCodeActionTrigger = {
                                             type: trigger.trigger.type,
                                             triggerAction: trigger.trigger.triggerAction,
-                                            filter: { include: ((_f = trigger.trigger.filter) === null || _f === void 0 ? void 0 : _f.include) ? (_g = trigger.trigger.filter) === null || _g === void 0 ? void 0 : _g.include : CodeActionKind.QuickFix },
+                                            filter: { include: trigger.trigger.filter?.include ? trigger.trigger.filter?.include : CodeActionKind.QuickFix },
                                             autoApply: trigger.trigger.autoApply,
-                                            context: { notAvailableMessage: ((_h = trigger.trigger.context) === null || _h === void 0 ? void 0 : _h.notAvailableMessage) || '', position: trackedPosition }
+                                            context: { notAvailableMessage: trigger.trigger.context?.notAvailableMessage || '', position: trackedPosition }
                                         };
                                         const selectionAsPosition = new Selection(trackedPosition.lineNumber, trackedPosition.column, trackedPosition.lineNumber, trackedPosition.column);
                                         const actionsAtMarker = await getCodeActions(this._registry, model, selectionAsPosition, newCodeActionTrigger, Progress.None, token);
+                                        if (token.isCancellationRequested) {
+                                            actionsAtMarker.dispose();
+                                            return emptyCodeActionSet;
+                                        }
                                         if (actionsAtMarker.validActions.length !== 0) {
                                             for (const action of actionsAtMarker.validActions) {
-                                                if ((_k = (_j = action.action.command) === null || _j === void 0 ? void 0 : _j.arguments) === null || _k === void 0 ? void 0 : _k.some(arg => typeof arg === 'string' && arg.includes(APPLY_FIX_ALL_COMMAND_ID))) {
+                                                if (action.action.command?.arguments?.some(arg => typeof arg === 'string' && arg.includes(APPLY_FIX_ALL_COMMAND_ID))) {
                                                     action.action.diagnostics = [...allMarkers.filter(marker => marker.relatedInformation)];
                                                 }
                                             }
@@ -260,15 +269,22 @@ export class CodeActionModel extends Disposable {
                                     }
                                 });
                                 // Only retriggers if actually found quickfix on the same line as cursor
-                                return { validActions: filteredActions, allActions: allCodeActions, documentation: codeActionSet.documentation, hasAutoFix: codeActionSet.hasAutoFix, hasAIFix: codeActionSet.hasAIFix, allAIFixes: codeActionSet.allAIFixes, dispose: () => { codeActionSet.dispose(); } };
+                                return { validActions: filteredActions, allActions: allCodeActions, documentation: codeActionSet.documentation, hasAutoFix: codeActionSet.hasAutoFix, hasAIFix: codeActionSet.hasAIFix, allAIFixes: codeActionSet.allAIFixes, dispose: () => { this.codeActionsDisposable.value = codeActionSet; } };
                             }
                         }
                     }
-                    // temporarilly hiding here as this is enabled/disabled behind a setting.
-                    return getCodeActions(this._registry, model, trigger.selection, trigger.trigger, Progress.None, token);
+                    // Case for manual triggers - specifically Source Actions and Refactors
+                    if (trigger.trigger.type === 1 /* CodeActionTriggerType.Invoke */) {
+                        const codeActions = await getCodeActions(this._registry, model, trigger.selection, trigger.trigger, Progress.None, token);
+                        this.codeActionsDisposable.value = codeActions;
+                        return codeActions;
+                    }
+                    const codeActionSet = await getCodeActions(this._registry, model, trigger.selection, trigger.trigger, Progress.None, token);
+                    this.codeActionsDisposable.value = codeActionSet;
+                    return codeActionSet;
                 });
                 if (trigger.trigger.type === 1 /* CodeActionTriggerType.Invoke */) {
-                    (_a = this._progressService) === null || _a === void 0 ? void 0 : _a.showWhile(actions, 250);
+                    this._progressService?.showWhile(actions, 250);
                 }
                 const newState = new CodeActionsState.Triggered(trigger.trigger, startPosition, actions);
                 let isManualToAutoTransition = false;
@@ -297,8 +313,8 @@ export class CodeActionModel extends Disposable {
         }
     }
     trigger(trigger) {
-        var _a;
-        (_a = this._codeActionOracle.value) === null || _a === void 0 ? void 0 : _a.trigger(trigger);
+        this._codeActionOracle.value?.trigger(trigger);
+        this.codeActionsDisposable.dispose();
     }
     setState(newState, skipNotify) {
         if (newState === this._state) {
@@ -314,3 +330,5 @@ export class CodeActionModel extends Disposable {
         }
     }
 }
+
+export { APPLY_FIX_ALL_COMMAND_ID, CodeActionModel, CodeActionsState, SUPPORTED_CODE_ACTIONS };

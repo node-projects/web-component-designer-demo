@@ -1,18 +1,18 @@
+import { LcsDiff } from '../../../base/common/diff/diff.js';
+import { LinesDiff } from './linesDiffComputer.js';
+import { DetailedLineRangeMapping, RangeMapping } from './rangeMapping.js';
+import { firstNonWhitespaceIndex, lastNonWhitespaceIndex } from '../../../base/common/strings.js';
+import { Range } from '../core/range.js';
+import { assertFn, checkAdjacentItems } from '../../../base/common/assert.js';
+import { LineRange } from '../core/ranges/lineRange.js';
+
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { LcsDiff } from '../../../base/common/diff/diff.js';
-import { LinesDiff } from './linesDiffComputer.js';
-import { RangeMapping, DetailedLineRangeMapping } from './rangeMapping.js';
-import * as strings from '../../../base/common/strings.js';
-import { Range } from '../core/range.js';
-import { assertFn, checkAdjacentItems } from '../../../base/common/assert.js';
-import { LineRange } from '../core/lineRange.js';
 const MINIMUM_MATCHING_CHARACTER_LENGTH = 3;
-export class LegacyLinesDiffComputer {
+class LegacyLinesDiffComputer {
     computeDiff(originalLines, modifiedLines, options) {
-        var _a;
         const diffComputer = new DiffComputer(originalLines, modifiedLines, {
             maxComputationTime: options.maxComputationTimeMs,
             shouldIgnoreTrimWhitespace: options.ignoreTrimWhitespace,
@@ -40,7 +40,7 @@ export class LegacyLinesDiffComputer {
             else {
                 modifiedRange = new LineRange(c.modifiedStartLineNumber, c.modifiedEndLineNumber + 1);
             }
-            let change = new DetailedLineRangeMapping(originalRange, modifiedRange, (_a = c.charChanges) === null || _a === void 0 ? void 0 : _a.map(c => new RangeMapping(new Range(c.originalStartLineNumber, c.originalStartColumn, c.originalEndLineNumber, c.originalEndColumn), new Range(c.modifiedStartLineNumber, c.modifiedStartColumn, c.modifiedEndLineNumber, c.modifiedEndColumn))));
+            let change = new DetailedLineRangeMapping(originalRange, modifiedRange, c.charChanges?.map(c => new RangeMapping(new Range(c.originalStartLineNumber, c.originalStartColumn, c.originalEndLineNumber, c.originalEndColumn), new Range(c.modifiedStartLineNumber, c.modifiedStartColumn, c.modifiedEndLineNumber, c.modifiedEndColumn))));
             if (lastChange) {
                 if (lastChange.modified.endLineNumberExclusive === change.modified.startLineNumber
                     || lastChange.original.endLineNumberExclusive === change.original.startLineNumber) {
@@ -276,7 +276,7 @@ class LineChange {
         return new LineChange(originalStartLineNumber, originalEndLineNumber, modifiedStartLineNumber, modifiedEndLineNumber, charChanges);
     }
 }
-export class DiffComputer {
+class DiffComputer {
     constructor(originalLines, modifiedLines, opts) {
         this.shouldComputeCharChanges = opts.shouldComputeCharChanges;
         this.shouldPostProcessCharChanges = opts.shouldPostProcessCharChanges;
@@ -442,14 +442,14 @@ export class DiffComputer {
     }
 }
 function getFirstNonBlankColumn(txt, defaultValue) {
-    const r = strings.firstNonWhitespaceIndex(txt);
+    const r = firstNonWhitespaceIndex(txt);
     if (r === -1) {
         return defaultValue;
     }
     return r + 1;
 }
 function getLastNonBlankColumn(txt, defaultValue) {
-    const r = strings.lastNonWhitespaceIndex(txt);
+    const r = lastNonWhitespaceIndex(txt);
     if (r === -1) {
         return defaultValue;
     }
@@ -464,3 +464,5 @@ function createContinueProcessingPredicate(maximumRuntime) {
         return Date.now() - startTime < maximumRuntime;
     };
 }
+
+export { DiffComputer, LegacyLinesDiffComputer };

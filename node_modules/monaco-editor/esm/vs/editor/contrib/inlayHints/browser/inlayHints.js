@@ -1,20 +1,20 @@
+import { onUnexpectedExternalError, CancellationError } from '../../../../base/common/errors.js';
+import { DisposableStore } from '../../../../base/common/lifecycle.js';
+import { Position } from '../../../common/core/position.js';
+import { Range } from '../../../common/core/range.js';
+import { createCommandUri } from '../../../../base/common/htmlContent.js';
+
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { CancellationError, onUnexpectedExternalError } from '../../../../base/common/errors.js';
-import { DisposableStore } from '../../../../base/common/lifecycle.js';
-import { Position } from '../../../common/core/position.js';
-import { Range } from '../../../common/core/range.js';
-import { Schemas } from '../../../../base/common/network.js';
-import { URI } from '../../../../base/common/uri.js';
-export class InlayHintAnchor {
+class InlayHintAnchor {
     constructor(range, direction) {
         this.range = range;
         this.direction = direction;
     }
 }
-export class InlayHintItem {
+class InlayHintItem {
     constructor(hint, anchor, provider) {
         this.hint = hint;
         this.anchor = anchor;
@@ -47,12 +47,11 @@ export class InlayHintItem {
         await this._currentResolve;
     }
     async _doResolve(token) {
-        var _a, _b, _c;
         try {
             const newHint = await Promise.resolve(this.provider.resolveInlayHint(this.hint, token));
-            this.hint.tooltip = (_a = newHint === null || newHint === void 0 ? void 0 : newHint.tooltip) !== null && _a !== void 0 ? _a : this.hint.tooltip;
-            this.hint.label = (_b = newHint === null || newHint === void 0 ? void 0 : newHint.label) !== null && _b !== void 0 ? _b : this.hint.label;
-            this.hint.textEdits = (_c = newHint === null || newHint === void 0 ? void 0 : newHint.textEdits) !== null && _c !== void 0 ? _c : this.hint.textEdits;
+            this.hint.tooltip = newHint?.tooltip ?? this.hint.tooltip;
+            this.hint.label = newHint?.label ?? this.hint.label;
+            this.hint.textEdits = newHint?.textEdits ?? this.hint.textEdits;
             this._isResolved = true;
         }
         catch (err) {
@@ -61,14 +60,15 @@ export class InlayHintItem {
         }
     }
 }
-export class InlayHintsFragments {
+class InlayHintsFragments {
+    static { this._emptyInlayHintList = Object.freeze({ dispose() { }, hints: [] }); }
     static async create(registry, model, ranges, token) {
         const data = [];
         const promises = registry.ordered(model).reverse().map(provider => ranges.map(async (range) => {
             try {
                 const result = await provider.provideInlayHints(model, range, token);
-                if ((result === null || result === void 0 ? void 0 : result.hints.length) || provider.onDidChangeInlayHints) {
-                    data.push([result !== null && result !== void 0 ? result : InlayHintsFragments._emptyInlayHintList, provider]);
+                if (result?.hints.length || provider.onDidChangeInlayHints) {
+                    data.push([result ?? InlayHintsFragments._emptyInlayHintList, provider]);
                 }
             }
             catch (err) {
@@ -140,11 +140,8 @@ export class InlayHintsFragments {
         return new Range(line, start + 1, line, end + 1);
     }
 }
-InlayHintsFragments._emptyInlayHintList = Object.freeze({ dispose() { }, hints: [] });
-export function asCommandLink(command) {
-    return URI.from({
-        scheme: Schemas.command,
-        path: command.id,
-        query: command.arguments && encodeURIComponent(JSON.stringify(command.arguments))
-    }).toString();
+function asCommandLink(command) {
+    return createCommandUri(command.id, ...(command.arguments ?? [])).toString();
 }
+
+export { InlayHintAnchor, InlayHintItem, InlayHintsFragments, asCommandLink };

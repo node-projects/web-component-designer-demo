@@ -1,59 +1,60 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __param = (this && this.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-};
 import { RunOnceScheduler } from '../../../../base/common/async.js';
 import { Disposable } from '../../../../base/common/lifecycle.js';
 import { registerEditorContribution } from '../../../browser/editorExtensions.js';
 import { ILanguageConfigurationService } from '../../../common/languages/languageConfigurationRegistry.js';
 import { ModelDecorationOptions } from '../../../common/model/textModel.js';
 import { IEditorWorkerService } from '../../../common/services/editorWorker.js';
+
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __param = (undefined && undefined.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 let SectionHeaderDetector = class SectionHeaderDetector extends Disposable {
+    static { this.ID = 'editor.sectionHeaderDetector'; }
     constructor(editor, languageConfigurationService, editorWorkerService) {
         super();
         this.editor = editor;
         this.languageConfigurationService = languageConfigurationService;
         this.editorWorkerService = editorWorkerService;
         this.decorations = this.editor.createDecorationsCollection();
-        this.options = this.createOptions(editor.getOption(73 /* EditorOption.minimap */));
+        this.options = this.createOptions(editor.getOption(81 /* EditorOption.minimap */));
         this.computePromise = null;
         this.currentOccurrences = {};
         this._register(editor.onDidChangeModel((e) => {
             this.currentOccurrences = {};
-            this.options = this.createOptions(editor.getOption(73 /* EditorOption.minimap */));
+            this.options = this.createOptions(editor.getOption(81 /* EditorOption.minimap */));
             this.stop();
             this.computeSectionHeaders.schedule(0);
         }));
         this._register(editor.onDidChangeModelLanguage((e) => {
             this.currentOccurrences = {};
-            this.options = this.createOptions(editor.getOption(73 /* EditorOption.minimap */));
+            this.options = this.createOptions(editor.getOption(81 /* EditorOption.minimap */));
             this.stop();
             this.computeSectionHeaders.schedule(0);
         }));
         this._register(languageConfigurationService.onDidChange((e) => {
-            var _a;
-            const editorLanguageId = (_a = this.editor.getModel()) === null || _a === void 0 ? void 0 : _a.getLanguageId();
+            const editorLanguageId = this.editor.getModel()?.getLanguageId();
             if (editorLanguageId && e.affects(editorLanguageId)) {
                 this.currentOccurrences = {};
-                this.options = this.createOptions(editor.getOption(73 /* EditorOption.minimap */));
+                this.options = this.createOptions(editor.getOption(81 /* EditorOption.minimap */));
                 this.stop();
                 this.computeSectionHeaders.schedule(0);
             }
         }));
         this._register(editor.onDidChangeConfiguration(e => {
-            if (this.options && !e.hasChanged(73 /* EditorOption.minimap */)) {
+            if (this.options && !e.hasChanged(81 /* EditorOption.minimap */)) {
                 return;
             }
-            this.options = this.createOptions(editor.getOption(73 /* EditorOption.minimap */));
+            this.options = this.createOptions(editor.getOption(81 /* EditorOption.minimap */));
             // Remove any links (for the getting disabled case)
             this.updateDecorations([]);
             // Stop any computation (for the getting disabled case)
@@ -84,19 +85,19 @@ let SectionHeaderDetector = class SectionHeaderDetector extends Disposable {
         }
         const commentsConfiguration = this.languageConfigurationService.getLanguageConfiguration(languageId).comments;
         const foldingRules = this.languageConfigurationService.getLanguageConfiguration(languageId).foldingRules;
-        if (!commentsConfiguration && !(foldingRules === null || foldingRules === void 0 ? void 0 : foldingRules.markers)) {
+        if (!commentsConfiguration && !foldingRules?.markers) {
             return undefined;
         }
         return {
             foldingRules,
+            markSectionHeaderRegex: minimap.markSectionHeaderRegex,
             findMarkSectionHeaders: minimap.showMarkSectionHeaders,
             findRegionSectionHeaders: minimap.showRegionSectionHeaders,
         };
     }
     findSectionHeaders() {
-        var _a, _b;
         if (!this.editor.hasModel()
-            || (!((_a = this.options) === null || _a === void 0 ? void 0 : _a.findMarkSectionHeaders) && !((_b = this.options) === null || _b === void 0 ? void 0 : _b.findRegionSectionHeaders))) {
+            || (!this.options?.findMarkSectionHeaders && !this.options?.findRegionSectionHeaders)) {
             return;
         }
         const model = this.editor.getModel();
@@ -153,12 +154,10 @@ let SectionHeaderDetector = class SectionHeaderDetector extends Disposable {
         this.decorations.clear();
     }
 };
-SectionHeaderDetector.ID = 'editor.sectionHeaderDetector';
 SectionHeaderDetector = __decorate([
     __param(1, ILanguageConfigurationService),
     __param(2, IEditorWorkerService)
 ], SectionHeaderDetector);
-export { SectionHeaderDetector };
 function decoration(sectionHeader) {
     return {
         range: sectionHeader.range,
@@ -176,3 +175,5 @@ function decoration(sectionHeader) {
     };
 }
 registerEditorContribution(SectionHeaderDetector.ID, SectionHeaderDetector, 1 /* EditorContributionInstantiation.AfterFirstRender */);
+
+export { SectionHeaderDetector };
