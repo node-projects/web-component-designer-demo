@@ -33,7 +33,7 @@
     "@node-projects/css-parser": "^5.2.0",
     "@node-projects/lean-he-esm": "^3.4.1",
     "@node-projects/node-html-parser-esm": "^6.4.1",
-    "@node-projects/web-component-designer": "^0.1.338",
+    "@node-projects/web-component-designer": "^0.1.339",
     "@node-projects/web-component-designer-codeview-monaco": "^0.1.33",
     "@node-projects/web-component-designer-htmlparserservice-nodehtmlparser": "^0.1.12",
     "@node-projects/web-component-designer-stylesheetservice-css-parser": "^0.1.4",
@@ -46,6 +46,6 @@
     "mobile-drag-drop": "^3.0.0-rc.0",
     "monaco-editor": "^0.55.1",
     "typescript": "^5.9.3",
-    "wunderbaum": "^0.13.0"
+    "wunderbaum": "^0.14.0"
   }
 }
