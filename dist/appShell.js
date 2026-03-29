@@ -4,7 +4,6 @@ import { CodeViewMonaco } from '@node-projects/web-component-designer-codeview-m
 import { CssParserStylesheetService } from '@node-projects/web-component-designer-stylesheetservice-css-parser';
 import '@node-projects/web-component-designer-widgets-wunderbaum';
 import { ExpandCollapseContextMenu } from '@node-projects/web-component-designer-widgets-wunderbaum';
-import * as webllm from "@mlc-ai/web-llm";
 let serviceContainer = createDefaultServiceContainer();
 serviceContainer.register("bindingService", new BaseCustomWebcomponentBindingsService());
 let rootDir = "/web-component-designer-demo";
@@ -16,6 +15,29 @@ serviceContainer.register("bindableObjectsService", new CustomBindableObjectsSer
 serviceContainer.registerLast("propertyService", new UnkownElementsPropertiesService());
 serviceContainer.register("refactorService", new BindingsRefactorService());
 serviceContainer.register("refactorService", new TextRefactorService());
+/*
+globalThis.MonacoEnvironment = {
+  getWorker: (_moduleId, label) => {
+    switch (label) {
+      case 'json':
+        return new Worker(new URL('monaco-editor/esm/vs/language/json/json.worker', import.meta.url), { type: 'module' });
+      case 'css':
+      case 'scss':
+      case 'less':
+        return new Worker(new URL('monaco-editor/esm/vs/language/css/css.worker', import.meta.url), { type: 'module' });
+      case 'html':
+      case 'handlebars':
+      case 'razor':
+        return new Worker(new URL('monaco-editor/esm/vs/language/html/html.worker', import.meta.url), { type: 'module' });
+      case 'typescript':
+      case 'javascript':
+        return new Worker(new URL('monaco-editor/esm/vs/language/typescript/ts.worker', import.meta.url), { type: 'module' });
+      default:
+        return new Worker(new URL('monaco-editor/esm/vs/editor/editor.worker', import.meta.url), { type: 'module' });
+    }
+  }
+};
+*/
 serviceContainer.config.codeViewWidget = CodeViewMonaco;
 serviceContainer.designerContextMenuExtensions.push(new ExpandCollapseContextMenu());
 serviceContainer.designerContextMenuExtensions.push(new SeperatorContextMenu(), new EditTemplateContextMenu());
@@ -479,6 +501,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         };
     }
     async initLLM() {
+        const webllm = await import("@mlc-ai/web-llm");
         let op = this._getDomElement('llmOutput');
         // Initialize with a progress callback
         const initProgressCallback = (progress) => {

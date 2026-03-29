@@ -8,9 +8,8 @@
     "start": "web-dev-server --open",
     "build": "tsc",
     "linkAll": "npm link @node-projects/web-component-designer @node-projects/web-component-designer-codeview-monaco @node-projects/web-component-designer-htmlparserservice-nodehtmlparser @node-projects/web-component-designer-stylesheetservice-css-parser @node-projects/web-component-designer-widgets-wunderbaum",
-    "patchMonaco": "node patchMonaco",
-    "bundleMonaco": "esbuild ./node_modules/monaco-editor/esm/vs/editor/editor.main.js --format=esm --minify --external:dompurify --platform=neutral --bundle --outfile=./node_modules/monaco-editor/esm/vs/editor/editor.main.min.js",
-    "postinstall": "npm run patchMonaco && npm run bundleMonaco"
+    "bundleMonaco": "node _patchAndMinifyMonaco.js",
+    "postinstall": "npm run bundleMonaco"
   },
   "repository": {
     "type": "git",
