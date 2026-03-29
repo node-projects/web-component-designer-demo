@@ -1,4 +1,5 @@
 import { createDefaultServiceContainer, MiniatureView, NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, DocumentContainer, CopyPasteAsJsonService, DebugView, UnkownElementsPropertiesService, sleep, RefactorView, BindingsRefactorService, TextRefactorService, SeperatorContextMenu, IDesignItem, DomConverter, PropertyGridWithHeader, DesignItem, ValueType, ObservedCustomElementsRegistry, IElementsJson, PreDefinedElementsService } from '@node-projects/web-component-designer';
+import type * as webllmType from "@mlc-ai/web-llm";
 
 import { NodeHtmlParserService } from '@node-projects/web-component-designer-htmlparserservice-nodehtmlparser';
 import { CodeViewMonaco } from '@node-projects/web-component-designer-codeview-monaco';
@@ -6,13 +7,6 @@ import { CssParserStylesheetService } from '@node-projects/web-component-designe
 
 import '@node-projects/web-component-designer-widgets-wunderbaum';
 import { PaletteTreeView, BindableObjectsBrowser, TreeViewExtended, ExpandCollapseContextMenu } from '@node-projects/web-component-designer-widgets-wunderbaum';
-
-import * as webllm from "@mlc-ai/web-llm";
-type EditResult = {
-  answer: string;
-  html: string;
-  css: string;
-};
 
 let serviceContainer = createDefaultServiceContainer();
 serviceContainer.register("bindingService", new BaseCustomWebcomponentBindingsService());
@@ -25,6 +19,30 @@ serviceContainer.register("bindableObjectsService", new CustomBindableObjectsSer
 serviceContainer.registerLast("propertyService", new UnkownElementsPropertiesService());
 serviceContainer.register("refactorService", new BindingsRefactorService());
 serviceContainer.register("refactorService", new TextRefactorService());
+
+/*
+globalThis.MonacoEnvironment = {
+  getWorker: (_moduleId, label) => {
+    switch (label) {
+      case 'json':
+        return new Worker(new URL('monaco-editor/esm/vs/language/json/json.worker', import.meta.url), { type: 'module' });
+      case 'css':
+      case 'scss':
+      case 'less':
+        return new Worker(new URL('monaco-editor/esm/vs/language/css/css.worker', import.meta.url), { type: 'module' });
+      case 'html':
+      case 'handlebars':
+      case 'razor':
+        return new Worker(new URL('monaco-editor/esm/vs/language/html/html.worker', import.meta.url), { type: 'module' });
+      case 'typescript':
+      case 'javascript':
+        return new Worker(new URL('monaco-editor/esm/vs/language/typescript/ts.worker', import.meta.url), { type: 'module' });
+      default:
+        return new Worker(new URL('monaco-editor/esm/vs/editor/editor.worker', import.meta.url), { type: 'module' });
+    }
+  }
+};
+*/
 
 serviceContainer.config.codeViewWidget = CodeViewMonaco;
 
@@ -512,7 +530,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     nd.parent.container.setActiveChild(nd.container);
   }
 
-  engine: webllm.MLCEngine;
+  engine: webllmType.MLCEngine;
   async LLM() {
     let op = this._getDomElement<HTMLTextAreaElement>('llmOutput');
     let btn = this._getDomElement<HTMLTextAreaElement>('llmEnable');
@@ -522,6 +540,8 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     }
   }
   async initLLM() {
+    const webllm: typeof webllmType = await import("@mlc-ai/web-llm");
+
     let op = this._getDomElement<HTMLTextAreaElement>('llmOutput');
     // Initialize with a progress callback
     const initProgressCallback = (progress) => {
@@ -575,11 +595,16 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     });
   }
 
+
   async editHtmlCss(
     prompt: string,
     html: string,
     css: string
-  ): Promise<EditResult> {
+  ): Promise<{
+    answer: string;
+    html: string;
+    css: string;
+  }> {
 
     const systemPrompt = `
 You are an expert HTML and CSS editor inside a visual designer tool.
