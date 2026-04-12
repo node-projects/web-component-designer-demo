@@ -1,9 +1,10 @@
-import { createDefaultServiceContainer, NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, DocumentContainer, CopyPasteAsJsonService, UnkownElementsPropertiesService, sleep, BindingsRefactorService, TextRefactorService, SeperatorContextMenu, DomConverter, ValueType, ObservedCustomElementsRegistry, PreDefinedElementsService } from '@node-projects/web-component-designer';
+import { createDefaultServiceContainer, NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, DocumentContainer, CopyPasteAsJsonService, UnkownElementsPropertiesService, sleep, BindingsRefactorService, TextRefactorService, SeperatorContextMenu, DomConverter, ValueType, ObservedCustomElementsRegistry, PreDefinedElementsService, ContextMenu, CommandType } from '@node-projects/web-component-designer';
 import { NodeHtmlParserService } from '@node-projects/web-component-designer-htmlparserservice-nodehtmlparser';
 import { CodeViewMonaco } from '@node-projects/web-component-designer-codeview-monaco';
 import { CssParserStylesheetService } from '@node-projects/web-component-designer-stylesheetservice-css-parser';
 import '@node-projects/web-component-designer-widgets-wunderbaum';
 import { ExpandCollapseContextMenu } from '@node-projects/web-component-designer-widgets-wunderbaum';
+import { DemoEditorTypesService } from './services/DemoEditorTypesService.js';
 let serviceContainer = createDefaultServiceContainer();
 serviceContainer.register("bindingService", new BaseCustomWebcomponentBindingsService());
 let rootDir = "/web-component-designer-demo";
@@ -15,6 +16,7 @@ serviceContainer.register("bindableObjectsService", new CustomBindableObjectsSer
 serviceContainer.registerLast("propertyService", new UnkownElementsPropertiesService());
 serviceContainer.register("refactorService", new BindingsRefactorService());
 serviceContainer.register("refactorService", new TextRefactorService());
+serviceContainer.register("editorTypesService", new DemoEditorTypesService());
 /*
 globalThis.MonacoEnvironment = {
   getWorker: (_moduleId, label) => {
@@ -49,6 +51,7 @@ import './styleEditor.js';
 import { CustomBindableObjectsService } from './services/CustomBindableObjectsService.js';
 import { CustomBindableObjectDragDropService } from './services/CustomBindableObjectDragDropService.js';
 import { EditTemplateContextMenu } from './services/EditTemplateContextMenu.js';
+import { saveData } from './file.js';
 export class AppShell extends BaseCustomWebComponentConstructorAppend {
     activeElement;
     mainPage = 'designer';
@@ -490,6 +493,93 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     activateDock(element) {
         const nd = this._dockManager.getNodeByElement(element);
         nd.parent.container.setActiveChild(nd.container);
+    }
+    _exportOverlays = false;
+    showScreenshotContextMenu(e) {
+        ContextMenu.show([
+            {
+                title: 'export as DXF', action: async () => {
+                    this.exportData('dxf');
+                }
+            },
+            {
+                title: 'export as PDF', action: async () => {
+                    this.exportData('pdf');
+                }
+            },
+            {
+                title: 'export as PNG', action: async () => {
+                    this.exportData('png');
+                }
+            },
+            {
+                title: 'export as SVG', action: async () => {
+                    this.exportData('svg');
+                }
+            },
+            {
+                title: 'export as HTML', action: async () => {
+                    this.exportData('html');
+                }
+            },
+            { title: '-' },
+            {
+                title: 'export overlay', checked: this._exportOverlays, checkable: true, action: () => {
+                    this._exportOverlays = !this._exportOverlays;
+                }
+            },
+            { title: '-' },
+            {
+                title: 'export via screen-capture-api', action: () => {
+                    const doc = this._dockManager.activeDocument.resolvedElementContent;
+                    doc.executeCommand({ type: CommandType.screenshot, event: e });
+                }
+            }
+        ], e);
+    }
+    async exportData(format) {
+        const { extractIR, renderIR, DXFWriter, PDFWriter, PNGWriter, SVGWriter, HTMLWriter } = await import("@node-projects/layout2vector");
+        const doc = this._dockManager.activeDocument.resolvedElementContent;
+        const source = this._exportOverlays ? [
+            doc.designerView.designerCanvas.rootDesignItem.element,
+            doc.designerView.designerCanvas.overlayLayer
+        ] : doc.designerView.designerCanvas.rootDesignItem.element;
+        const ir = await extractIR(source, {
+            boxType: "border", // "border" | "content"
+            includeText: true, // extract text node geometry
+            includeInvisible: false, // skip display:none / visibility:hidden
+            includeImages: true,
+            zoom: 1 / doc.designerView.designerCanvas.zoomFactor
+        });
+        if (format === 'dxf') {
+            const dxfWriter = new DXFWriter(document.documentElement.scrollHeight);
+            const dxfString = await renderIR(ir, dxfWriter);
+            await saveData(dxfString, "dxfFile", 'dxf');
+        }
+        else if (format === 'pdf') {
+            const pdfWriter = new PDFWriter(1000, 1000);
+            const pdfDoc = await renderIR(ir, pdfWriter);
+            await pdfDoc.finalize();
+            const pdfBytes = pdfDoc.toBytes();
+            await saveData(pdfBytes, 'pdfFile', 'pdf');
+        }
+        else if (format === 'png') {
+            const pngWriter = new PNGWriter(document.documentElement.scrollWidth, document.documentElement.scrollHeight);
+            const pngResult = await renderIR(ir, pngWriter);
+            await pngResult.finalize();
+            const pngBytes = pngResult.toBytes();
+            await saveData(pngBytes, 'pngFile', 'png');
+        }
+        else if (format === 'svg') {
+            const svgWriter = new SVGWriter(2000, 1000);
+            const svgString = await renderIR(ir, svgWriter);
+            await saveData(svgString, 'svgFile', 'svg');
+        }
+        else if (format === 'html') {
+            const htmlWriter = new HTMLWriter(1000, 2000);
+            const htmlContent = await renderIR(ir, htmlWriter);
+            await saveData(htmlContent, 'htmlFile', 'html');
+        }
     }
     engine;
     async LLM() {
