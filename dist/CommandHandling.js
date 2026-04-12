@@ -9,6 +9,9 @@ export class CommandHandling {
         this.appShell = appShell;
         this.init(serviceContainer);
     }
+    supportsMouseHold(commandName) {
+        return commandName === 'undo' || commandName === 'redo';
+    }
     handleCommandButtonClick(e) {
         let button = e.currentTarget;
         let commandName = button.dataset['command'];
@@ -17,6 +20,8 @@ export class CommandHandling {
             this.appShell.newDocument(false);
         else if (commandName === 'screenshot')
             this.appShell.showScreenshotContextMenu(e);
+        else if (commandName === 'collaboration')
+            this.appShell.showCollaborationContextMenu(e);
         else if (commandName === 'newFixedWidth')
             this.appShell.newDocument(true);
         else if (commandName === 'github')
@@ -50,18 +55,24 @@ export class CommandHandling {
         buttons.forEach(b => {
             if (b instanceof HTMLButtonElement) {
                 b.onclick = (e) => this.handleCommandButtonClick(e);
-                let mouseDownTimer = null;
-                b.onmousedown = (e) => {
-                    mouseDownTimer = setTimeout(() => {
-                        this.handleCommandButtonMouseHold(b, e);
-                    }, 300);
-                };
-                b.onmouseup = (e) => {
-                    if (mouseDownTimer) {
-                        clearTimeout(mouseDownTimer);
-                        mouseDownTimer = null;
-                    }
-                };
+                if (this.supportsMouseHold(b.dataset['command'])) {
+                    let mouseDownTimer = null;
+                    b.onmousedown = (e) => {
+                        mouseDownTimer = setTimeout(() => {
+                            this.handleCommandButtonMouseHold(b, e);
+                        }, 300);
+                    };
+                    b.onmouseup = (e) => {
+                        if (mouseDownTimer) {
+                            clearTimeout(mouseDownTimer);
+                            mouseDownTimer = null;
+                        }
+                    };
+                }
+                else {
+                    b.onmousedown = null;
+                    b.onmouseup = null;
+                }
             }
             else {
                 b.onchange = (e) => this.handleInputValueChanged(e);
@@ -128,6 +139,8 @@ export class CommandHandling {
                 b.disabled = false;
             else if (command === 'newFixedWidth')
                 b.disabled = false;
+            else if (command === 'collaboration')
+                b.disabled = !this.dockManager.activeDocument;
             else if (command === 'github')
                 b.disabled = false;
             else

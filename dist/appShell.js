@@ -1,4 +1,4 @@
-import { createDefaultServiceContainer, NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, DocumentContainer, CopyPasteAsJsonService, UnkownElementsPropertiesService, sleep, BindingsRefactorService, TextRefactorService, SeperatorContextMenu, DomConverter, ValueType, ObservedCustomElementsRegistry, PreDefinedElementsService, ContextMenu, CommandType } from '@node-projects/web-component-designer';
+import { createDefaultServiceContainer, NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, DocumentContainer, CopyPasteAsJsonService, UnkownElementsPropertiesService, sleep, BindingsRefactorService, TextRefactorService, SeperatorContextMenu, DomConverter, ValueType, ObservedCustomElementsRegistry, PreDefinedElementsService, ContextMenu, CommandType, showPopup } from '@node-projects/web-component-designer';
 import { NodeHtmlParserService } from '@node-projects/web-component-designer-htmlparserservice-nodehtmlparser';
 import { CodeViewMonaco } from '@node-projects/web-component-designer-codeview-monaco';
 import { CssParserStylesheetService } from '@node-projects/web-component-designer-stylesheetservice-css-parser';
@@ -6,6 +6,8 @@ import '@node-projects/web-component-designer-widgets-wunderbaum';
 import { ExpandCollapseContextMenu } from '@node-projects/web-component-designer-widgets-wunderbaum';
 import { DemoEditorTypesService } from './services/DemoEditorTypesService.js';
 let serviceContainer = createDefaultServiceContainer();
+import { defaultWebRtcTabCollaborationSignalingChannels, setupCollaborationService, WebRtcTabCollaborationTransport } from '@node-projects/web-component-designer-collaboration-service';
+setupCollaborationService(serviceContainer);
 serviceContainer.register("bindingService", new BaseCustomWebcomponentBindingsService());
 let rootDir = "/web-component-designer-demo";
 if (window.location.hostname == 'localhost' || window.location.hostname == '127.0.0.1')
@@ -45,6 +47,45 @@ serviceContainer.designerContextMenuExtensions.push(new ExpandCollapseContextMen
 serviceContainer.designerContextMenuExtensions.push(new SeperatorContextMenu(), new EditTemplateContextMenu());
 //Instance Service Container Factories
 serviceContainer.register("stylesheetService", designerCanvas => new CssParserStylesheetService(designerCanvas));
+function createRandomId() {
+    return globalThis.crypto?.randomUUID?.() ?? `peer-${Date.now()}-${Math.floor(Math.random() * 100000)}`;
+}
+function getOrCreateCollaborationPeerBaseId() {
+    const key = 'wcd-demo-collaboration-peer-base-id';
+    let id = sessionStorage.getItem(key);
+    if (!id) {
+        id = createRandomId();
+        sessionStorage.setItem(key, id);
+    }
+    return id;
+}
+function isCollaborationSignalingChannelKind(value) {
+    return value === 'broadcast-channel' || value === 'manual';
+}
+function readCollaborationSignalingChannels() {
+    const storageKey = 'wcd-demo-collaboration-signaling-channels';
+    try {
+        const serializedValue = localStorage.getItem(storageKey);
+        if (!serializedValue)
+            return [...defaultWebRtcTabCollaborationSignalingChannels];
+        const parsedValue = JSON.parse(serializedValue);
+        const channels = Array.isArray(parsedValue)
+            ? parsedValue.filter(isCollaborationSignalingChannelKind)
+            : [];
+        return channels.length > 0 ? channels : [...defaultWebRtcTabCollaborationSignalingChannels];
+    }
+    catch {
+        return [...defaultWebRtcTabCollaborationSignalingChannels];
+    }
+}
+function writeCollaborationSignalingChannels(channels) {
+    const storageKey = 'wcd-demo-collaboration-signaling-channels';
+    try {
+        localStorage.setItem(storageKey, JSON.stringify(channels));
+    }
+    catch {
+    }
+}
 import { BaseCustomWebComponentConstructorAppend, css, html, LazyLoader } from '@node-projects/base-custom-webcomponent';
 import { CommandHandling } from './CommandHandling.js';
 import './styleEditor.js';
@@ -207,6 +248,11 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     _refactorView;
     _miniatureView;
     _npmPackageLoader = new NpmPackageLoader();
+    _collaborationPeerBaseId = getOrCreateCollaborationPeerBaseId();
+    _collaborationSignalingChannels = readCollaborationSignalingChannels();
+    _collaborationSessionOverrides = new WeakMap();
+    _collaborationTransports = new WeakMap();
+    _closeCollaborationHelpPopup;
     async ready() {
         this._dock = this._getDomElement('dock');
         this._paletteTree = this._getDomElement('paletteTree');
@@ -463,6 +509,135 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         if (code) {
             sampleDocument.content = code;
         }
+        requestAnimationFrame(() => this._initializeCollaboration(sampleDocument));
+    }
+    _getCollaborationDisplayName() {
+        const params = new URLSearchParams(window.location.search);
+        return params.get('peerName') ?? `tab-${this._collaborationPeerBaseId.substring(0, 4)}`;
+    }
+    _getCollaborationPeerId(documentContainer) {
+        return `${this._collaborationPeerBaseId}:${documentContainer.title}`;
+    }
+    _getCollaborationSessionId(documentContainer) {
+        const params = new URLSearchParams(window.location.search);
+        return this._collaborationSessionOverrides.get(documentContainer) ?? params.get('collabSession') ?? documentContainer.title;
+    }
+    _getOrCreateCollaborationTransport(documentContainer) {
+        let transport = this._collaborationTransports.get(documentContainer);
+        if (!transport) {
+            transport = new WebRtcTabCollaborationTransport({ enabledSignalingChannels: this._collaborationSignalingChannels });
+            this._collaborationTransports.set(documentContainer, transport);
+        }
+        else {
+            transport.setEnabledSignalingChannels(this._collaborationSignalingChannels);
+        }
+        return transport;
+    }
+    _getActiveDocumentContainer() {
+        return this._dockManager?.activeDocument?.resolvedElementContent;
+    }
+    _setCollaborationSignalingChannels(channels) {
+        const normalizedChannels = [...new Set(channels.filter(isCollaborationSignalingChannelKind))];
+        if (normalizedChannels.length === 0) {
+            alert('At least one collaboration signaling channel must stay enabled.');
+            return;
+        }
+        this._collaborationSignalingChannels = normalizedChannels;
+        writeCollaborationSignalingChannels(this._collaborationSignalingChannels);
+        const documents = Array.from(this._dock.querySelectorAll('node-projects-document-container'));
+        for (const documentContainer of documents)
+            this._collaborationTransports.get(documentContainer)?.setEnabledSignalingChannels(this._collaborationSignalingChannels);
+    }
+    _toggleCollaborationSignalingChannel(channel) {
+        const nextChannels = this._collaborationSignalingChannels.includes(channel)
+            ? this._collaborationSignalingChannels.filter(x => x !== channel)
+            : [...this._collaborationSignalingChannels, channel];
+        this._setCollaborationSignalingChannels(nextChannels);
+    }
+    _reconnectCollaboration(documentContainer) {
+        const collaborationService = documentContainer.instanceServiceContainer.collaborationService;
+        if (!collaborationService)
+            return;
+        collaborationService.disconnect();
+        const transport = this._getOrCreateCollaborationTransport(documentContainer);
+        collaborationService.attachTransport(transport);
+        collaborationService.connect(this._getCollaborationSessionId(documentContainer), this._getCollaborationPeerId(documentContainer), this._getCollaborationDisplayName());
+    }
+    async _copyTextToClipboard(text, promptTitle) {
+        try {
+            await navigator.clipboard.writeText(text);
+            //alert(`${promptTitle} copied to the clipboard.`);
+        }
+        catch {
+            prompt(promptTitle, text);
+        }
+    }
+    async _readTextForPrompt(promptTitle) {
+        try {
+            const clipboardText = await navigator.clipboard.readText();
+            if (clipboardText?.trim())
+                return clipboardText;
+        }
+        catch {
+        }
+        return prompt(promptTitle, '');
+    }
+    _showCollaborationHelpPopup(anchorEl) {
+        this._closeCollaborationHelpPopup?.();
+        const popup = this.ownerDocument.createElement('div');
+        popup.style.width = '360px';
+        popup.style.maxWidth = 'min(360px, calc(100vw - 32px))';
+        popup.style.padding = '14px 16px';
+        popup.style.border = '1px solid #c7cdd4';
+        popup.style.borderRadius = '8px';
+        popup.style.background = '#ffffff';
+        popup.style.boxShadow = '0 12px 28px rgba(0, 0, 0, 0.16)';
+        popup.style.color = '#1f2933';
+        popup.style.font = '13px/1.45 monospace';
+        popup.innerHTML = `
+      <div style="font-size: 14px; font-weight: 700; margin-bottom: 10px;">Connect another client</div>
+      <div style="margin-bottom: 10px;">Always use the same session id in both clients.</div>
+      <div style="font-weight: 700; margin-bottom: 6px;">Same browser tabs</div>
+      <ol style="margin: 0 0 12px 18px; padding: 0;">
+        <li>Keep <strong>broadcast signaling</strong> enabled in both tabs.</li>
+        <li>Open the same document or set the same session id.</li>
+        <li>The connection should start automatically.</li>
+      </ol>
+      <div style="font-weight: 700; margin-bottom: 6px;">Different browsers or different machines</div>
+      <ol style="margin: 0 0 12px 18px; padding: 0;">
+        <li>Keep <strong>manual copy/paste signaling</strong> enabled in both clients.</li>
+        <li>Copy the signaling bundle in client A and paste it in client B.</li>
+        <li>Copy the new signaling bundle in client B and paste it back in client A.</li>
+        <li>If a client still shows a newer bundle, copy that one back once more.</li>
+      </ol>
+      <div style="margin-bottom: 12px;">The paste action reads from the clipboard directly when the browser allows it.</div>
+    `;
+        const closeButton = this.ownerDocument.createElement('button');
+        closeButton.type = 'button';
+        closeButton.textContent = 'close';
+        closeButton.style.border = '1px solid #c7cdd4';
+        closeButton.style.background = '#f5f7fa';
+        closeButton.style.borderRadius = '6px';
+        closeButton.style.padding = '6px 10px';
+        closeButton.style.cursor = 'pointer';
+        popup.appendChild(closeButton);
+        this._closeCollaborationHelpPopup = showPopup(popup, anchorEl, () => {
+            this._closeCollaborationHelpPopup = undefined;
+        });
+        closeButton.onclick = () => {
+            this._closeCollaborationHelpPopup?.();
+        };
+    }
+    _initializeCollaboration(documentContainer) {
+        const collaborationService = documentContainer.instanceServiceContainer.collaborationService;
+        if (!collaborationService)
+            return;
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('collab') === '0')
+            return;
+        const transport = this._getOrCreateCollaborationTransport(documentContainer);
+        collaborationService.attachTransport(transport);
+        collaborationService.connect(this._getCollaborationSessionId(documentContainer), this._getCollaborationPeerId(documentContainer), this._getCollaborationDisplayName());
     }
     editTemplate(templateDesignItem) {
         this._documentNumber++;
@@ -533,6 +708,115 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
                 title: 'export via screen-capture-api', action: () => {
                     const doc = this._dockManager.activeDocument.resolvedElementContent;
                     doc.executeCommand({ type: CommandType.screenshot, event: e });
+                }
+            }
+        ], e);
+    }
+    showCollaborationContextMenu(e) {
+        const documentContainer = this._getActiveDocumentContainer();
+        const collaborationService = documentContainer?.instanceServiceContainer.collaborationService;
+        const transport = documentContainer ? this._collaborationTransports.get(documentContainer) : null;
+        const currentSessionId = documentContainer ? this._getCollaborationSessionId(documentContainer) : null;
+        const manualEnabled = this._collaborationSignalingChannels.includes('manual');
+        const broadcastEnabled = this._collaborationSignalingChannels.includes('broadcast-channel');
+        const manualBundle = transport?.getManualSignalingBundle();
+        const popupAnchor = e.currentTarget instanceof HTMLElement ? e.currentTarget : document.querySelector('[data-command="collaboration"]');
+        ContextMenu.show([
+            {
+                title: documentContainer ? `session: ${currentSessionId}` : 'no active document',
+                disabled: true
+            },
+            {
+                title: documentContainer ? `peer: ${this._getCollaborationPeerId(documentContainer)}` : 'peer: -',
+                disabled: true
+            },
+            { title: '-' },
+            {
+                title: 'change session id...',
+                disabled: !documentContainer || !collaborationService,
+                action: () => {
+                    if (!documentContainer)
+                        return;
+                    const currentValue = this._getCollaborationSessionId(documentContainer);
+                    const nextValue = prompt('Set collaboration session id (leave empty to use the document title)', currentValue);
+                    if (nextValue == null)
+                        return;
+                    const trimmedValue = nextValue.trim();
+                    if (trimmedValue)
+                        this._collaborationSessionOverrides.set(documentContainer, trimmedValue);
+                    else
+                        this._collaborationSessionOverrides.delete(documentContainer);
+                    this._reconnectCollaboration(documentContainer);
+                }
+            },
+            {
+                title: 'copy session id',
+                disabled: !documentContainer,
+                action: () => {
+                    if (!currentSessionId)
+                        return;
+                    void this._copyTextToClipboard(currentSessionId, 'Collaboration session id');
+                }
+            },
+            {
+                title: 'how to connect clients...',
+                disabled: !popupAnchor,
+                action: () => {
+                    if (popupAnchor)
+                        this._showCollaborationHelpPopup(popupAnchor);
+                }
+            },
+            { title: '-' },
+            {
+                title: 'broadcast signaling',
+                checked: broadcastEnabled,
+                checkable: true,
+                disabled: !transport,
+                action: () => {
+                    this._toggleCollaborationSignalingChannel('broadcast-channel');
+                }
+            },
+            {
+                title: 'manual copy/paste signaling',
+                checked: manualEnabled,
+                checkable: true,
+                disabled: !transport,
+                action: () => {
+                    this._toggleCollaborationSignalingChannel('manual');
+                }
+            },
+            { title: '-' },
+            {
+                title: manualBundle ? `copy signaling bundle (${manualBundle.messages.length} messages)` : 'copy signaling bundle',
+                disabled: !transport || !manualEnabled,
+                action: async () => {
+                    if (!transport)
+                        return;
+                    const data = transport.exportManualSignalingData();
+                    if (!data) {
+                        alert('No collaboration signaling data is available yet.');
+                        return;
+                    }
+                    await this._copyTextToClipboard(data, 'Collaboration signaling data');
+                }
+            },
+            {
+                title: 'paste signaling bundle...',
+                disabled: !transport || !manualEnabled,
+                action: async () => {
+                    if (!transport)
+                        return;
+                    const data = await this._readTextForPrompt('Paste collaboration signaling data');
+                    if (!data?.trim())
+                        return;
+                    try {
+                        const result = await transport.importManualSignalingData(data);
+                        alert(`Imported ${result.importedCount} signaling message(s)${result.ignoredCount ? `, ignored ${result.ignoredCount}` : ''}.`);
+                    }
+                    catch (error) {
+                        const message = error instanceof Error ? error.message : String(error);
+                        alert(`Could not import collaboration signaling data: ${message}`);
+                    }
                 }
             }
         ], e);
