@@ -21,6 +21,8 @@ export class CommandHandling {
 
     if (commandName === 'new')
       this.appShell.newDocument(false);
+    else if (commandName === 'screenshot')
+      this.appShell.showScreenshotContextMenu(e);
     else if (commandName === 'newFixedWidth')
       this.appShell.newDocument(true);
     else if (commandName === 'github')
