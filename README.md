@@ -6,6 +6,16 @@ Demonstration project using https://github.com/node-projects/web-component-desig
 
 https://node-projects.github.io/web-component-designer-demo/index.html
 
+## Collaboration Notes
+
+Manual WebRTC signaling works out of the box for same-browser tabs. For different machines you will often need STUN or TURN servers. The demo accepts one or more `collabIceServer` query parameters, for example:
+
+```text
+https://node-projects.github.io/web-component-designer-demo/index.html?collabIceServer=stun:stun.l.google.com:19302
+```
+
+For more advanced setups you can pass a full JSON-encoded `RTCConfiguration` through `collabRtcConfiguration`.
+
 ## Developing
 
   * Install dependencies
