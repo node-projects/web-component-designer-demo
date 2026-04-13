@@ -28,9 +28,10 @@
   "dependencies": {
     "@doubletrade/lit-datepicker": "^1.0.0",
     "@mlc-ai/web-llm": "^0.2.82",
+    "@node-projects/acad-ts": "^1.1.0",
     "@node-projects/base-custom-webcomponent": "0.46.0",
     "@node-projects/css-parser": "^5.2.0",
-    "@node-projects/layout2vector": "^4.6.0",
+    "@node-projects/layout2vector": "^4.8.0",
     "@node-projects/lean-he-esm": "^3.4.1",
     "@node-projects/node-html-parser-esm": "^6.4.1",
     "@node-projects/pickr-webcomponent": "^1.1.0",

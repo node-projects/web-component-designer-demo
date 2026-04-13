@@ -807,6 +807,16 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
           this.exportData('emf');
         }
       },
+      {
+        title: 'export as DWG (acad-ts)', action: async () => {
+          this.exportData('dwg');
+        }
+      },
+      {
+        title: 'export as DXF (acad-ts)', action: async () => {
+          this.exportData('dxf-acad-ts');
+        }
+      },
       { title: '-' },
       {
         title: 'export overlay', checked: this._exportOverlays, checkable: true, action: () => {
@@ -823,8 +833,8 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     ], e);
   }
 
-  async exportData(format: 'dxf' | 'pdf' | 'png' | 'svg' | 'html' | 'emf') {
-    const { extractIR, renderIR, DXFWriter, PDFWriter, PNGWriter, SVGWriter, HTMLWriter, EMFWriter } = await import("@node-projects/layout2vector");
+  async exportData(format: 'dxf' | 'pdf' | 'png' | 'svg' | 'html' | 'emf' | 'dwg' | 'dxf-acad-ts') {
+    const { extractIR, renderIR, DXFWriter, PDFWriter, PNGWriter, SVGWriter, HTMLWriter, EMFWriter, DWGWriter, AcadDXFWriter } = await import("@node-projects/layout2vector");
 
     const doc = <DocumentContainer>this._dockManager.activeDocument.resolvedElementContent;
 
@@ -870,6 +880,14 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
       const emfWriter = new EMFWriter(1000, 2000);
       const emfContent = await renderIR(ir, emfWriter);
       await saveData(emfContent, 'emfFile', 'emf');
+    } else if (format === 'dwg') {
+      const dwgWriter = new DWGWriter({});
+      const dwgContent = await renderIR(ir, dwgWriter);
+      await saveData(dwgContent, 'dwgFile', 'dwg');
+    } else if (format === 'dxf-acad-ts') {
+      const dxfWriter = new AcadDXFWriter({});
+      const dxfContent = await renderIR(ir, dxfWriter);
+      await saveData(dxfContent, 'dxfFile', 'dxf');
     }
   }
 
