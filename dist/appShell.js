@@ -86,6 +86,27 @@ function writeCollaborationSignalingChannels(channels) {
     catch {
     }
 }
+function readCollaborationRtcConfiguration() {
+    const params = new URLSearchParams(window.location.search);
+    const serializedConfiguration = params.get('collabRtcConfiguration');
+    if (serializedConfiguration) {
+        try {
+            const parsedConfiguration = JSON.parse(serializedConfiguration);
+            if (parsedConfiguration && typeof parsedConfiguration === 'object')
+                return parsedConfiguration;
+        }
+        catch {
+        }
+    }
+    const iceServerUrls = params.getAll('collabIceServer')
+        .map(value => value.trim())
+        .filter(Boolean);
+    if (iceServerUrls.length === 0)
+        return undefined;
+    return {
+        iceServers: iceServerUrls.map(url => ({ urls: url }))
+    };
+}
 import { BaseCustomWebComponentConstructorAppend, css, html, LazyLoader } from '@node-projects/base-custom-webcomponent';
 import { CommandHandling } from './CommandHandling.js';
 import './styleEditor.js';
@@ -250,6 +271,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     _npmPackageLoader = new NpmPackageLoader();
     _collaborationPeerBaseId = getOrCreateCollaborationPeerBaseId();
     _collaborationSignalingChannels = readCollaborationSignalingChannels();
+    _collaborationRtcConfiguration = readCollaborationRtcConfiguration();
     _collaborationSessionOverrides = new WeakMap();
     _collaborationTransports = new WeakMap();
     _closeCollaborationHelpPopup;
@@ -525,7 +547,10 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     _getOrCreateCollaborationTransport(documentContainer) {
         let transport = this._collaborationTransports.get(documentContainer);
         if (!transport) {
-            transport = new WebRtcTabCollaborationTransport({ enabledSignalingChannels: this._collaborationSignalingChannels });
+            transport = new WebRtcTabCollaborationTransport({
+                enabledSignalingChannels: this._collaborationSignalingChannels,
+                rtcConfiguration: this._collaborationRtcConfiguration,
+            });
             this._collaborationTransports.set(documentContainer, transport);
         }
         else {
@@ -610,6 +635,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         <li>Copy the new signaling bundle in client B and paste it back in client A.</li>
         <li>If a client still shows a newer bundle, copy that one back once more.</li>
       </ol>
+      <div style="margin-bottom: 12px;">Cross-machine WebRTC often needs STUN or TURN servers. Add <code>collabIceServer</code> query parameters, for example <code>?collabIceServer=stun:stun.l.google.com:19302</code>, or pass a full JSON config in <code>collabRtcConfiguration</code>.</div>
       <div style="margin-bottom: 12px;">The paste action reads from the clipboard directly when the browser allows it.</div>
     `;
         const closeButton = this.ownerDocument.createElement('button');
@@ -697,6 +723,11 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
                     this.exportData('html');
                 }
             },
+            {
+                title: 'export as EMF', action: async () => {
+                    this.exportData('emf');
+                }
+            },
             { title: '-' },
             {
                 title: 'export overlay', checked: this._exportOverlays, checkable: true, action: () => {
@@ -711,6 +742,57 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
                 }
             }
         ], e);
+    }
+    async exportData(format) {
+        const { extractIR, renderIR, DXFWriter, PDFWriter, PNGWriter, SVGWriter, HTMLWriter, EMFWriter } = await import("@node-projects/layout2vector");
+        const doc = this._dockManager.activeDocument.resolvedElementContent;
+        const source = this._exportOverlays ? [
+            doc.designerView.designerCanvas.rootDesignItem.element,
+            doc.designerView.designerCanvas.overlayLayer
+        ] : doc.designerView.designerCanvas.rootDesignItem.element;
+        const ir = await extractIR(source, {
+            boxType: "border", // "border" | "content"
+            includeText: true, // extract text node geometry
+            includeInvisible: false, // skip display:none / visibility:hidden
+            includeImages: true,
+            zoom: 1 / doc.designerView.designerCanvas.zoomFactor,
+            convertFormControls: true, // convert form controls (input, select, textarea) to rectangles with text
+            walkIframes: true, // recursively extract iframes
+        });
+        if (format === 'dxf') {
+            const dxfWriter = new DXFWriter(document.documentElement.scrollHeight);
+            const dxfString = await renderIR(ir, dxfWriter);
+            await saveData(dxfString, "dxfFile", 'dxf');
+        }
+        else if (format === 'pdf') {
+            const pdfWriter = new PDFWriter(1000, 1000);
+            const pdfDoc = await renderIR(ir, pdfWriter);
+            await pdfDoc.finalize();
+            const pdfBytes = pdfDoc.toBytes();
+            await saveData(pdfBytes, 'pdfFile', 'pdf');
+        }
+        else if (format === 'png') {
+            const pngWriter = new PNGWriter(document.documentElement.scrollWidth, document.documentElement.scrollHeight);
+            const pngResult = await renderIR(ir, pngWriter);
+            await pngResult.finalize();
+            const pngBytes = pngResult.toBytes();
+            await saveData(pngBytes, 'pngFile', 'png');
+        }
+        else if (format === 'svg') {
+            const svgWriter = new SVGWriter(2000, 1000);
+            const svgString = await renderIR(ir, svgWriter);
+            await saveData(svgString, 'svgFile', 'svg');
+        }
+        else if (format === 'html') {
+            const htmlWriter = new HTMLWriter(1000, 2000);
+            const htmlContent = await renderIR(ir, htmlWriter);
+            await saveData(htmlContent, 'htmlFile', 'html');
+        }
+        else if (format === 'emf') {
+            const emfWriter = new EMFWriter(1000, 2000);
+            const emfContent = await renderIR(ir, emfWriter);
+            await saveData(emfContent, 'emfFile', 'emf');
+        }
     }
     showCollaborationContextMenu(e) {
         const documentContainer = this._getActiveDocumentContainer();
@@ -820,50 +902,6 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
                 }
             }
         ], e);
-    }
-    async exportData(format) {
-        const { extractIR, renderIR, DXFWriter, PDFWriter, PNGWriter, SVGWriter, HTMLWriter } = await import("@node-projects/layout2vector");
-        const doc = this._dockManager.activeDocument.resolvedElementContent;
-        const source = this._exportOverlays ? [
-            doc.designerView.designerCanvas.rootDesignItem.element,
-            doc.designerView.designerCanvas.overlayLayer
-        ] : doc.designerView.designerCanvas.rootDesignItem.element;
-        const ir = await extractIR(source, {
-            boxType: "border", // "border" | "content"
-            includeText: true, // extract text node geometry
-            includeInvisible: false, // skip display:none / visibility:hidden
-            includeImages: true,
-            zoom: 1 / doc.designerView.designerCanvas.zoomFactor
-        });
-        if (format === 'dxf') {
-            const dxfWriter = new DXFWriter(document.documentElement.scrollHeight);
-            const dxfString = await renderIR(ir, dxfWriter);
-            await saveData(dxfString, "dxfFile", 'dxf');
-        }
-        else if (format === 'pdf') {
-            const pdfWriter = new PDFWriter(1000, 1000);
-            const pdfDoc = await renderIR(ir, pdfWriter);
-            await pdfDoc.finalize();
-            const pdfBytes = pdfDoc.toBytes();
-            await saveData(pdfBytes, 'pdfFile', 'pdf');
-        }
-        else if (format === 'png') {
-            const pngWriter = new PNGWriter(document.documentElement.scrollWidth, document.documentElement.scrollHeight);
-            const pngResult = await renderIR(ir, pngWriter);
-            await pngResult.finalize();
-            const pngBytes = pngResult.toBytes();
-            await saveData(pngBytes, 'pngFile', 'png');
-        }
-        else if (format === 'svg') {
-            const svgWriter = new SVGWriter(2000, 1000);
-            const svgString = await renderIR(ir, svgWriter);
-            await saveData(svgString, 'svgFile', 'svg');
-        }
-        else if (format === 'html') {
-            const htmlWriter = new HTMLWriter(1000, 2000);
-            const htmlContent = await renderIR(ir, htmlWriter);
-            await saveData(htmlContent, 'htmlFile', 'html');
-        }
     }
     engine;
     async LLM() {

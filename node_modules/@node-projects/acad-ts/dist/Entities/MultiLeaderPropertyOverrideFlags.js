@@ -1,0 +1,35 @@
+export var MultiLeaderPropertyOverrideFlags;
+(function (MultiLeaderPropertyOverrideFlags) {
+    MultiLeaderPropertyOverrideFlags[MultiLeaderPropertyOverrideFlags["None"] = 0] = "None";
+    MultiLeaderPropertyOverrideFlags[MultiLeaderPropertyOverrideFlags["PathType"] = 1] = "PathType";
+    MultiLeaderPropertyOverrideFlags[MultiLeaderPropertyOverrideFlags["LineColor"] = 2] = "LineColor";
+    MultiLeaderPropertyOverrideFlags[MultiLeaderPropertyOverrideFlags["LeaderLineType"] = 4] = "LeaderLineType";
+    MultiLeaderPropertyOverrideFlags[MultiLeaderPropertyOverrideFlags["LeaderLineWeight"] = 8] = "LeaderLineWeight";
+    MultiLeaderPropertyOverrideFlags[MultiLeaderPropertyOverrideFlags["EnableLanding"] = 16] = "EnableLanding";
+    MultiLeaderPropertyOverrideFlags[MultiLeaderPropertyOverrideFlags["LandingGap"] = 32] = "LandingGap";
+    MultiLeaderPropertyOverrideFlags[MultiLeaderPropertyOverrideFlags["EnableDogleg"] = 64] = "EnableDogleg";
+    MultiLeaderPropertyOverrideFlags[MultiLeaderPropertyOverrideFlags["LandingDistance"] = 128] = "LandingDistance";
+    MultiLeaderPropertyOverrideFlags[MultiLeaderPropertyOverrideFlags["Arrowhead"] = 256] = "Arrowhead";
+    MultiLeaderPropertyOverrideFlags[MultiLeaderPropertyOverrideFlags["ArrowheadSize"] = 512] = "ArrowheadSize";
+    MultiLeaderPropertyOverrideFlags[MultiLeaderPropertyOverrideFlags["ContentType"] = 1024] = "ContentType";
+    MultiLeaderPropertyOverrideFlags[MultiLeaderPropertyOverrideFlags["TextStyle"] = 2048] = "TextStyle";
+    MultiLeaderPropertyOverrideFlags[MultiLeaderPropertyOverrideFlags["TextLeftAttachment"] = 4096] = "TextLeftAttachment";
+    MultiLeaderPropertyOverrideFlags[MultiLeaderPropertyOverrideFlags["TextAngle"] = 8192] = "TextAngle";
+    MultiLeaderPropertyOverrideFlags[MultiLeaderPropertyOverrideFlags["TextAlignment"] = 16384] = "TextAlignment";
+    MultiLeaderPropertyOverrideFlags[MultiLeaderPropertyOverrideFlags["TextColor"] = 32768] = "TextColor";
+    MultiLeaderPropertyOverrideFlags[MultiLeaderPropertyOverrideFlags["TextHeight"] = 65536] = "TextHeight";
+    MultiLeaderPropertyOverrideFlags[MultiLeaderPropertyOverrideFlags["TextFrame"] = 131072] = "TextFrame";
+    MultiLeaderPropertyOverrideFlags[MultiLeaderPropertyOverrideFlags["EnableUseDefaultMText"] = 262144] = "EnableUseDefaultMText";
+    MultiLeaderPropertyOverrideFlags[MultiLeaderPropertyOverrideFlags["BlockContent"] = 524288] = "BlockContent";
+    MultiLeaderPropertyOverrideFlags[MultiLeaderPropertyOverrideFlags["BlockContentColor"] = 1048576] = "BlockContentColor";
+    MultiLeaderPropertyOverrideFlags[MultiLeaderPropertyOverrideFlags["BlockContentScale"] = 2097152] = "BlockContentScale";
+    MultiLeaderPropertyOverrideFlags[MultiLeaderPropertyOverrideFlags["BlockContentRotation"] = 4194304] = "BlockContentRotation";
+    MultiLeaderPropertyOverrideFlags[MultiLeaderPropertyOverrideFlags["BlockContentConnection"] = 8388608] = "BlockContentConnection";
+    MultiLeaderPropertyOverrideFlags[MultiLeaderPropertyOverrideFlags["ScaleFactor"] = 16777216] = "ScaleFactor";
+    MultiLeaderPropertyOverrideFlags[MultiLeaderPropertyOverrideFlags["TextRightAttachment"] = 33554432] = "TextRightAttachment";
+    MultiLeaderPropertyOverrideFlags[MultiLeaderPropertyOverrideFlags["TextSwitchAlignmentType"] = 67108864] = "TextSwitchAlignmentType";
+    MultiLeaderPropertyOverrideFlags[MultiLeaderPropertyOverrideFlags["TextAttachmentDirection"] = 134217728] = "TextAttachmentDirection";
+    MultiLeaderPropertyOverrideFlags[MultiLeaderPropertyOverrideFlags["TextTopAttachment"] = 268435456] = "TextTopAttachment";
+    MultiLeaderPropertyOverrideFlags[MultiLeaderPropertyOverrideFlags["TextBottomAttachment"] = 536870912] = "TextBottomAttachment";
+})(MultiLeaderPropertyOverrideFlags || (MultiLeaderPropertyOverrideFlags = {}));
+//# sourceMappingURL=MultiLeaderPropertyOverrideFlags.js.map

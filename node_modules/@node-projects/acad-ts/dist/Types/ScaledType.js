@@ -1,0 +1,37 @@
+export var ScaledType;
+(function (ScaledType) {
+    ScaledType[ScaledType["ScaledToFit"] = 0] = "ScaledToFit";
+    ScaledType[ScaledType["_1"] = 1] = "_1";
+    ScaledType[ScaledType["_2"] = 2] = "_2";
+    ScaledType[ScaledType["_3"] = 3] = "_3";
+    ScaledType[ScaledType["_4"] = 4] = "_4";
+    ScaledType[ScaledType["_5"] = 5] = "_5";
+    ScaledType[ScaledType["_6"] = 6] = "_6";
+    ScaledType[ScaledType["_7"] = 7] = "_7";
+    ScaledType[ScaledType["_8"] = 8] = "_8";
+    ScaledType[ScaledType["_9"] = 9] = "_9";
+    ScaledType[ScaledType["_10"] = 10] = "_10";
+    ScaledType[ScaledType["_11"] = 11] = "_11";
+    ScaledType[ScaledType["_12"] = 12] = "_12";
+    ScaledType[ScaledType["_13"] = 13] = "_13";
+    ScaledType[ScaledType["_14"] = 14] = "_14";
+    ScaledType[ScaledType["_15"] = 15] = "_15";
+    ScaledType[ScaledType["_16"] = 16] = "_16";
+    ScaledType[ScaledType["_17"] = 17] = "_17";
+    ScaledType[ScaledType["_18"] = 18] = "_18";
+    ScaledType[ScaledType["_19"] = 19] = "_19";
+    ScaledType[ScaledType["_20"] = 20] = "_20";
+    ScaledType[ScaledType["_21"] = 21] = "_21";
+    ScaledType[ScaledType["_22"] = 22] = "_22";
+    ScaledType[ScaledType["_23"] = 23] = "_23";
+    ScaledType[ScaledType["_24"] = 24] = "_24";
+    ScaledType[ScaledType["_25"] = 25] = "_25";
+    ScaledType[ScaledType["_26"] = 26] = "_26";
+    ScaledType[ScaledType["_27"] = 27] = "_27";
+    ScaledType[ScaledType["_28"] = 28] = "_28";
+    ScaledType[ScaledType["_29"] = 29] = "_29";
+    ScaledType[ScaledType["_30"] = 30] = "_30";
+    ScaledType[ScaledType["_31"] = 31] = "_31";
+    ScaledType[ScaledType["_32"] = 32] = "_32";
+})(ScaledType || (ScaledType = {}));
+//# sourceMappingURL=ScaledType.js.map

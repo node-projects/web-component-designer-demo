@@ -1,0 +1,32 @@
+export var LineWeightType;
+(function (LineWeightType) {
+    LineWeightType[LineWeightType["ByDIPs"] = -4] = "ByDIPs";
+    LineWeightType[LineWeightType["Default"] = -3] = "Default";
+    LineWeightType[LineWeightType["ByBlock"] = -2] = "ByBlock";
+    LineWeightType[LineWeightType["ByLayer"] = -1] = "ByLayer";
+    LineWeightType[LineWeightType["W0"] = 0] = "W0";
+    LineWeightType[LineWeightType["W5"] = 5] = "W5";
+    LineWeightType[LineWeightType["W9"] = 9] = "W9";
+    LineWeightType[LineWeightType["W13"] = 13] = "W13";
+    LineWeightType[LineWeightType["W15"] = 15] = "W15";
+    LineWeightType[LineWeightType["W18"] = 18] = "W18";
+    LineWeightType[LineWeightType["W20"] = 20] = "W20";
+    LineWeightType[LineWeightType["W25"] = 25] = "W25";
+    LineWeightType[LineWeightType["W30"] = 30] = "W30";
+    LineWeightType[LineWeightType["W35"] = 35] = "W35";
+    LineWeightType[LineWeightType["W40"] = 40] = "W40";
+    LineWeightType[LineWeightType["W50"] = 50] = "W50";
+    LineWeightType[LineWeightType["W53"] = 53] = "W53";
+    LineWeightType[LineWeightType["W60"] = 60] = "W60";
+    LineWeightType[LineWeightType["W70"] = 70] = "W70";
+    LineWeightType[LineWeightType["W80"] = 80] = "W80";
+    LineWeightType[LineWeightType["W90"] = 90] = "W90";
+    LineWeightType[LineWeightType["W100"] = 100] = "W100";
+    LineWeightType[LineWeightType["W106"] = 106] = "W106";
+    LineWeightType[LineWeightType["W120"] = 120] = "W120";
+    LineWeightType[LineWeightType["W140"] = 140] = "W140";
+    LineWeightType[LineWeightType["W158"] = 158] = "W158";
+    LineWeightType[LineWeightType["W200"] = 200] = "W200";
+    LineWeightType[LineWeightType["W211"] = 211] = "W211";
+})(LineWeightType || (LineWeightType = {}));
+//# sourceMappingURL=LineWeightType.js.map
