@@ -768,6 +768,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
             zoom: 1 / doc.designerView.designerCanvas.zoomFactor,
             convertFormControls: true, // convert form controls (input, select, textarea) to rectangles with text
             walkIframes: true, // recursively extract iframes
+            textMeasurement: 'auto' // "auto" uses pretext library when needed
         });
         if (format === 'dxf') {
             const dxfWriter = new DXFWriter(document.documentElement.scrollHeight);
