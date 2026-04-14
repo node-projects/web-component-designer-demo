@@ -103,14 +103,66 @@ function writeCollaborationSignalingChannels(channels: readonly WebRtcTabCollabo
   }
 }
 
+const defaultCollaborationRtcConfiguration = {
+  iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+} satisfies RTCConfiguration;
+
+const collaborationRtcConfigurationStorageKey = 'wcd-demo-collaboration-rtc-configuration';
+const cloudflareTurnCredentialsUrl = 'https://speed.cloudflare.com/turn-creds';
+const openRelayProjectUrl = 'https://www.metered.ca/tools/openrelay/';
+
+function cloneCollaborationRtcConfiguration(configuration?: RTCConfiguration) {
+  if (!configuration)
+    return undefined;
+
+  return {
+    ...configuration,
+    iceServers: configuration.iceServers?.map(server => ({
+      ...server,
+      urls: Array.isArray(server.urls) ? [...server.urls] : server.urls,
+    })),
+  } satisfies RTCConfiguration;
+}
+
+function normalizeCollaborationRtcConfiguration(configuration: unknown): RTCConfiguration {
+  if (Array.isArray(configuration))
+    return { iceServers: configuration as RTCIceServer[] } satisfies RTCConfiguration;
+
+  if (!configuration || typeof configuration !== 'object')
+    throw new Error('RTC configuration must be a JSON object, an iceServers array, or a single ICE server entry.');
+
+  const record = configuration as { iceServers?: unknown; urls?: unknown; };
+  if (Array.isArray(record.iceServers))
+    return configuration as RTCConfiguration;
+
+  if (typeof record.urls === 'string' || Array.isArray(record.urls))
+    return { iceServers: [configuration as RTCIceServer] } satisfies RTCConfiguration;
+
+  throw new Error('RTC configuration must be a JSON object, an iceServers array, or a single ICE server entry.');
+}
+
+function parseCollaborationRtcConfiguration(serializedConfiguration: string) {
+  return normalizeCollaborationRtcConfiguration(JSON.parse(serializedConfiguration));
+}
+
+function summarizeCollaborationRtcConfiguration(configuration?: RTCConfiguration) {
+  const urls = configuration?.iceServers
+    ?.flatMap(server => Array.isArray(server.urls) ? server.urls : [server.urls])
+    .filter((url): url is string => typeof url === 'string' && !!url.trim()) ?? [];
+
+  if (urls.length === 0)
+    return 'custom RTC config';
+  if (urls.length === 1)
+    return urls[0];
+  return `${urls[0]} +${urls.length - 1}`;
+}
+
 function readCollaborationRtcConfiguration(): RTCConfiguration | undefined {
   const params = new URLSearchParams(window.location.search);
   const serializedConfiguration = params.get('collabRtcConfiguration');
   if (serializedConfiguration) {
     try {
-      const parsedConfiguration = JSON.parse(serializedConfiguration) as RTCConfiguration;
-      if (parsedConfiguration && typeof parsedConfiguration === 'object')
-        return parsedConfiguration;
+      return cloneCollaborationRtcConfiguration(parseCollaborationRtcConfiguration(serializedConfiguration));
     } catch {
     }
   }
@@ -118,12 +170,27 @@ function readCollaborationRtcConfiguration(): RTCConfiguration | undefined {
   const iceServerUrls = params.getAll('collabIceServer')
     .map(value => value.trim())
     .filter(Boolean);
-  if (iceServerUrls.length === 0)
-    return undefined;
+  if (iceServerUrls.length > 0) {
+    return {
+      iceServers: iceServerUrls.map(url => ({ urls: url }))
+    };
+  }
 
-  return {
-    iceServers: iceServerUrls.map(url => ({ urls: url }))
-  };
+  try {
+    const storedConfiguration = localStorage.getItem(collaborationRtcConfigurationStorageKey);
+    if (storedConfiguration)
+      return cloneCollaborationRtcConfiguration(parseCollaborationRtcConfiguration(storedConfiguration));
+  } catch {
+  }
+
+  return cloneCollaborationRtcConfiguration(defaultCollaborationRtcConfiguration);
+}
+
+function writeCollaborationRtcConfiguration(configuration: RTCConfiguration) {
+  try {
+    localStorage.setItem(collaborationRtcConfigurationStorageKey, JSON.stringify(configuration));
+  } catch {
+  }
 }
 
 import { DockManager, DockSpawnTsWebcomponent } from 'dock-spawn-ts';
@@ -600,6 +667,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
       this._collaborationTransports.set(documentContainer, transport);
     } else {
       transport.setEnabledSignalingChannels(this._collaborationSignalingChannels);
+      (transport as any).setRtcConfiguration?.(this._collaborationRtcConfiguration);
     }
     return transport;
   }
@@ -631,12 +699,25 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     this._setCollaborationSignalingChannels(nextChannels);
   }
 
-  private _reconnectCollaboration(documentContainer: DocumentContainer) {
+  private _setCollaborationRtcConfiguration(configuration: RTCConfiguration) {
+    const nextConfiguration = cloneCollaborationRtcConfiguration(configuration) ?? cloneCollaborationRtcConfiguration(defaultCollaborationRtcConfiguration)!;
+    this._collaborationRtcConfiguration = nextConfiguration;
+    writeCollaborationRtcConfiguration(nextConfiguration);
+
+    const documents = Array.from(this._dock.querySelectorAll('node-projects-document-container')) as DocumentContainer[];
+    for (const documentContainer of documents)
+      this._reconnectCollaboration(documentContainer, true);
+  }
+
+  private _reconnectCollaboration(documentContainer: DocumentContainer, recreateTransport: boolean = false) {
     const collaborationService = documentContainer.instanceServiceContainer.collaborationService;
     if (!collaborationService)
       return;
 
     collaborationService.disconnect();
+
+    if (recreateTransport)
+      this._collaborationTransports.delete(documentContainer);
 
     const transport = this._getOrCreateCollaborationTransport(documentContainer);
     collaborationService.attachTransport(transport);
@@ -697,7 +778,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         <li>Copy the new signaling bundle in client B and paste it back in client A.</li>
         <li>If a client still shows a newer bundle, copy that one back once more.</li>
       </ol>
-      <div style="margin-bottom: 12px;">Cross-machine WebRTC often needs STUN or TURN servers. Add <code>collabIceServer</code> query parameters, for example <code>?collabIceServer=stun:stun.l.google.com:19302</code>, or pass a full JSON config in <code>collabRtcConfiguration</code>.</div>
+      <div style="margin-bottom: 12px;">The demo uses Google's public STUN server by default. For a free TURN path, use <strong>free TURN providers</strong> in the collab menu. Cloudflare TURN was live-verified and needs fresh credentials from <code>speed.cloudflare.com/turn-creds</code>. OpenRelay is also listed, but it needs signup or API-provided credentials.</div>
       <div style="margin-bottom: 12px;">The paste action reads from the clipboard directly when the browser allows it.</div>
     `;
 
@@ -899,6 +980,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     const currentSessionId = documentContainer ? this._getCollaborationSessionId(documentContainer) : null;
     const manualEnabled = this._collaborationSignalingChannels.includes('manual');
     const broadcastEnabled = this._collaborationSignalingChannels.includes('broadcast-channel');
+    const rtcConfigurationSummary = summarizeCollaborationRtcConfiguration(this._collaborationRtcConfiguration);
     const manualBundle = transport?.getManualSignalingBundle();
     const popupAnchor = e.currentTarget instanceof HTMLElement ? e.currentTarget : document.querySelector<HTMLElement>('[data-command="collaboration"]');
 
@@ -949,6 +1031,100 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
           if (popupAnchor)
             this._showCollaborationHelpPopup(popupAnchor);
         }
+      },
+      {
+        title: `RTC: ${rtcConfigurationSummary}`,
+        disabled: true
+      },
+      {
+        title: 'edit RTC configuration...',
+        action: () => {
+          const currentValue = JSON.stringify(this._collaborationRtcConfiguration ?? defaultCollaborationRtcConfiguration, null, 2);
+          const nextValue = prompt('Set RTC configuration JSON (leave empty to restore the default Google STUN server)', currentValue);
+          if (nextValue == null)
+            return;
+
+          const trimmedValue = nextValue.trim();
+          if (!trimmedValue) {
+            this._setCollaborationRtcConfiguration(defaultCollaborationRtcConfiguration);
+            return;
+          }
+
+          try {
+            const nextConfiguration = parseCollaborationRtcConfiguration(trimmedValue);
+            this._setCollaborationRtcConfiguration(nextConfiguration);
+          } catch (error) {
+            const message = error instanceof Error ? error.message : String(error);
+            alert(`Could not update RTC configuration: ${message}`);
+          }
+        }
+      },
+      {
+        title: 'reset to default STUN only',
+        action: () => {
+          this._setCollaborationRtcConfiguration(defaultCollaborationRtcConfiguration);
+        }
+      },
+      {
+        title: 'free TURN providers',
+        children: [
+          {
+            title: 'Cloudflare TURN (verified)',
+            children: [
+              {
+                title: 'open live credential page',
+                action: () => {
+                  window.open(cloudflareTurnCredentialsUrl, '_blank', 'noopener,noreferrer');
+                }
+              },
+              {
+                title: 'paste turn-creds JSON...',
+                action: () => {
+                  const nextValue = prompt('Paste the JSON returned by Cloudflare turn-creds', '{\n  "urls": [\n    "stun:stun.cloudflare.com:3478",\n    "turn:turn.cloudflare.com:3478?transport=udp",\n    "turn:turn.cloudflare.com:3478?transport=tcp",\n    "turns:turn.cloudflare.com:5349?transport=tcp"\n  ],\n  "username": "",\n  "credential": ""\n}');
+                  if (!nextValue?.trim())
+                    return;
+
+                  try {
+                    this._setCollaborationRtcConfiguration(parseCollaborationRtcConfiguration(nextValue));
+                  } catch (error) {
+                    const message = error instanceof Error ? error.message : String(error);
+                    alert(`Could not apply Cloudflare TURN credentials: ${message}`);
+                  }
+                }
+              }
+            ]
+          },
+          {
+            title: 'OpenRelay free tier (signup required)',
+            children: [
+              {
+                title: 'open docs / signup',
+                action: () => {
+                  window.open(openRelayProjectUrl, '_blank', 'noopener,noreferrer');
+                }
+              },
+              {
+                title: 'paste iceServers JSON...',
+                action: () => {
+                  const nextValue = prompt('Paste the iceServers JSON returned by your OpenRelay API call', '[\n  {\n    "urls": ["turn:yourapp.metered.live:80?transport=tcp", "turns:yourapp.metered.live:443?transport=tcp"],\n    "username": "",\n    "credential": ""\n  }\n]');
+                  if (!nextValue?.trim())
+                    return;
+
+                  try {
+                    this._setCollaborationRtcConfiguration(parseCollaborationRtcConfiguration(nextValue));
+                  } catch (error) {
+                    const message = error instanceof Error ? error.message : String(error);
+                    alert(`Could not apply OpenRelay ICE servers: ${message}`);
+                  }
+                }
+              }
+            ]
+          },
+          {
+            title: 'legacy gist TURN hosts not added (not verified)',
+            disabled: true
+          }
+        ]
       },
       { title: '-' },
       {
