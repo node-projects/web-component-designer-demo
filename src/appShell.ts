@@ -107,8 +107,36 @@ const defaultCollaborationRtcConfiguration = {
   iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
 } satisfies RTCConfiguration;
 
+const meteredTurnRtcConfiguration = {
+  iceServers: [
+    {
+      urls: 'stun:stun.relay.metered.ca:80'
+    },
+    {
+      urls: 'turn:global.relay.metered.ca:80',
+      username: 'c5fd09b5e3d0ceb675a2de34',
+      credential: 'n16K4cA2vy8wSHbY'
+    },
+    {
+      urls: 'turn:global.relay.metered.ca:80?transport=tcp',
+      username: 'c5fd09b5e3d0ceb675a2de34',
+      credential: 'n16K4cA2vy8wSHbY'
+    },
+    {
+      urls: 'turn:global.relay.metered.ca:443',
+      username: 'c5fd09b5e3d0ceb675a2de34',
+      credential: 'n16K4cA2vy8wSHbY'
+    },
+    {
+      urls: 'turns:global.relay.metered.ca:443?transport=tcp',
+      username: 'c5fd09b5e3d0ceb675a2de34',
+      credential: 'n16K4cA2vy8wSHbY'
+    }
+  ]
+} satisfies RTCConfiguration;
+
 const collaborationRtcConfigurationStorageKey = 'wcd-demo-collaboration-rtc-configuration';
-const cloudflareTurnCredentialsUrl = 'https://speed.cloudflare.com/turn-creds';
+const cloudflareTurnDocsUrl = 'https://developers.cloudflare.com/realtime/turn/generate-credentials/';
 const openRelayProjectUrl = 'https://www.metered.ca/tools/openrelay/';
 
 function cloneCollaborationRtcConfiguration(configuration?: RTCConfiguration) {
@@ -143,6 +171,29 @@ function normalizeCollaborationRtcConfiguration(configuration: unknown): RTCConf
 
 function parseCollaborationRtcConfiguration(serializedConfiguration: string) {
   return normalizeCollaborationRtcConfiguration(JSON.parse(serializedConfiguration));
+}
+
+function filterRtcConfigurationForBrowser(configuration: RTCConfiguration) {
+  const filteredIceServers = configuration.iceServers
+    ?.map(server => {
+      const urls = (Array.isArray(server.urls) ? server.urls : [server.urls])
+        .filter((url): url is string => typeof url === 'string' && !!url.trim())
+        .filter(url => !/:53(?:\?|$)/.test(url));
+
+      if (urls.length === 0)
+        return null;
+
+      return {
+        ...server,
+        urls: Array.isArray(server.urls) ? urls : urls[0]
+      } satisfies RTCIceServer;
+    })
+    .filter((server): server is RTCIceServer => server != null);
+
+  return {
+    ...configuration,
+    iceServers: filteredIceServers
+  } satisfies RTCConfiguration;
 }
 
 function summarizeCollaborationRtcConfiguration(configuration?: RTCConfiguration) {
@@ -709,6 +760,57 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
       this._reconnectCollaboration(documentContainer, true);
   }
 
+  private async _fetchCloudflareTurnConfiguration() {
+    const turnKeyId = prompt('Cloudflare TURN key id', '');
+    if (!turnKeyId?.trim())
+      return;
+
+    const apiToken = prompt('Cloudflare TURN API token (testing only, this stays in the browser request)', '');
+    if (!apiToken?.trim())
+      return;
+
+    const ttlValue = prompt('Cloudflare TURN credential TTL in seconds', '3600');
+    if (ttlValue == null)
+      return;
+
+    const ttl = Number(ttlValue.trim() || '3600');
+    if (!Number.isFinite(ttl) || ttl <= 0) {
+      alert('Cloudflare TURN TTL must be a positive number of seconds.');
+      return;
+    }
+
+    let response: Response;
+    try {
+      response = await fetch(`https://rtc.live.cloudflare.com/v1/turn/keys/${encodeURIComponent(turnKeyId.trim())}/credentials/generate-ice-servers`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiToken.trim()}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ ttl: Math.floor(ttl) })
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      alert(`Could not reach Cloudflare TURN API: ${message}`);
+      return;
+    }
+
+    const responseText = await response.text();
+    if (!response.ok) {
+      alert(`Cloudflare TURN API returned ${response.status}: ${responseText}`);
+      return;
+    }
+
+    try {
+      const configuration = filterRtcConfigurationForBrowser(normalizeCollaborationRtcConfiguration(JSON.parse(responseText)));
+      this._setCollaborationRtcConfiguration(configuration);
+      alert('Applied Cloudflare TURN configuration.');
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      alert(`Could not apply Cloudflare TURN configuration: ${message}`);
+    }
+  }
+
   private _reconnectCollaboration(documentContainer: DocumentContainer, recreateTransport: boolean = false) {
     const collaborationService = documentContainer.instanceServiceContainer.collaborationService;
     if (!collaborationService)
@@ -778,7 +880,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         <li>Copy the new signaling bundle in client B and paste it back in client A.</li>
         <li>If a client still shows a newer bundle, copy that one back once more.</li>
       </ol>
-      <div style="margin-bottom: 12px;">The demo uses Google's public STUN server by default. For a free TURN path, use <strong>free TURN providers</strong> in the collab menu. Cloudflare TURN was live-verified and needs fresh credentials from <code>speed.cloudflare.com/turn-creds</code>. OpenRelay is also listed, but it needs signup or API-provided credentials.</div>
+      <div style="margin-bottom: 12px;">The demo uses Google's public STUN server by default. For TURN, use <strong>free TURN providers</strong> in the collab menu. The first option applies the hardcoded Metered/OpenRelay credentials directly. Cloudflare TURN is still available for local testing with a TURN key id and API token, which stays exposed to the browser for that path.</div>
       <div style="margin-bottom: 12px;">The paste action reads from the clipboard directly when the browser allows it.</div>
     `;
 
@@ -1069,18 +1171,28 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         title: 'free TURN providers',
         children: [
           {
-            title: 'Cloudflare TURN (verified)',
+            title: 'Metered TURN (hardcoded)',
             children: [
               {
-                title: 'open live credential page',
+                title: 'apply hardcoded credentials now',
                 action: () => {
-                  window.open(cloudflareTurnCredentialsUrl, '_blank', 'noopener,noreferrer');
+                  this._setCollaborationRtcConfiguration(meteredTurnRtcConfiguration);
                 }
               },
               {
-                title: 'paste turn-creds JSON...',
+                title: 'uses built-in Metered relay credentials',
+                disabled: true
+              },
+              {
+                title: 'open docs / signup',
                 action: () => {
-                  const nextValue = prompt('Paste the JSON returned by Cloudflare turn-creds', '{\n  "urls": [\n    "stun:stun.cloudflare.com:3478",\n    "turn:turn.cloudflare.com:3478?transport=udp",\n    "turn:turn.cloudflare.com:3478?transport=tcp",\n    "turns:turn.cloudflare.com:5349?transport=tcp"\n  ],\n  "username": "",\n  "credential": ""\n}');
+                  window.open(openRelayProjectUrl, '_blank', 'noopener,noreferrer');
+                }
+              },
+              {
+                title: 'paste iceServers JSON... ',
+                action: () => {
+                  const nextValue = prompt('Paste the iceServers JSON returned by your OpenRelay API call', '[\n  {\n    "urls": "stun:stun.relay.metered.ca:80"\n  },\n  {\n    "urls": ["turn:global.relay.metered.ca:80", "turn:global.relay.metered.ca:80?transport=tcp", "turn:global.relay.metered.ca:443", "turns:global.relay.metered.ca:443?transport=tcp"],\n    "username": "",\n    "credential": ""\n  }\n]');
                   if (!nextValue?.trim())
                     return;
 
@@ -1088,7 +1200,43 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
                     this._setCollaborationRtcConfiguration(parseCollaborationRtcConfiguration(nextValue));
                   } catch (error) {
                     const message = error instanceof Error ? error.message : String(error);
-                    alert(`Could not apply Cloudflare TURN credentials: ${message}`);
+                    alert(`Could not apply Metered ICE servers: ${message}`);
+                  }
+                }
+              }
+            ]
+          },
+          {
+            title: 'Cloudflare TURN (official API)',
+            children: [
+              {
+                title: 'fetch credentials now... (dev/test)',
+                action: async () => {
+                  await this._fetchCloudflareTurnConfiguration();
+                }
+              },
+              {
+                title: 'requires TURN key id + API token',
+                disabled: true
+              },
+              {
+                title: 'open credential docs',
+                action: () => {
+                  window.open(cloudflareTurnDocsUrl, '_blank', 'noopener,noreferrer');
+                }
+              },
+              {
+                title: 'paste generate-ice-servers JSON...',
+                action: () => {
+                  const nextValue = prompt('Paste the JSON returned by Cloudflare generate-ice-servers', '{\n  "iceServers": [\n    {\n      "urls": ["stun:stun.cloudflare.com:3478"]\n    },\n    {\n      "urls": [\n        "turn:turn.cloudflare.com:3478?transport=udp",\n        "turn:turn.cloudflare.com:3478?transport=tcp",\n        "turns:turn.cloudflare.com:5349?transport=tcp"\n      ],\n      "username": "",\n      "credential": ""\n    }\n  ]\n}');
+                  if (!nextValue?.trim())
+                    return;
+
+                  try {
+                    this._setCollaborationRtcConfiguration(parseCollaborationRtcConfiguration(nextValue));
+                  } catch (error) {
+                    const message = error instanceof Error ? error.message : String(error);
+                    alert(`Could not apply Cloudflare TURN configuration: ${message}`);
                   }
                 }
               }
