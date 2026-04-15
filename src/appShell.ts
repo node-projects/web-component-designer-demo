@@ -1,4 +1,4 @@
-import { createDefaultServiceContainer, MiniatureView, NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, DocumentContainer, CopyPasteAsJsonService, DebugView, UnkownElementsPropertiesService, sleep, RefactorView, BindingsRefactorService, TextRefactorService, SeperatorContextMenu, IDesignItem, DomConverter, PropertyGridWithHeader, DesignItem, ValueType, ObservedCustomElementsRegistry, IElementsJson, PreDefinedElementsService, ContextMenu, CommandType, showPopup } from '@node-projects/web-component-designer';
+import { createDefaultServiceContainer, MiniatureView, NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, DocumentContainer, CopyPasteAsJsonService, DebugView, UnkownElementsPropertiesService, sleep, RefactorView, BindingsRefactorService, TextRefactorService, SeperatorContextMenu, IDesignItem, DomConverter, PropertyGridWithHeader, DesignItem, ValueType, ObservedCustomElementsRegistry, IElementsJson, PreDefinedElementsService, ContextMenu, CommandType, showPopup, ExtensionType, SkewExtensionProvider } from '@node-projects/web-component-designer';
 import type * as webllmType from "@mlc-ai/web-llm";
 
 import { NodeHtmlParserService } from '@node-projects/web-component-designer-htmlparserservice-nodehtmlparser';
@@ -24,6 +24,12 @@ serviceContainer.register("refactorService", new BindingsRefactorService());
 serviceContainer.register("refactorService", new TextRefactorService());
 serviceContainer.register("editorTypesService", new DemoEditorTypesService());
 
+serviceContainer.designerExtensions.set(ExtensionType.PrimarySelection, [
+        ...serviceContainer.designerExtensions.get(ExtensionType.PrimarySelection) ?? [],
+        new SkewExtensionProvider(),
+        //new ProjectiveTransformExtensionProvider(),
+    ]);
+    
 /*
 globalThis.MonacoEnvironment = {
   getWorker: (_moduleId, label) => {
