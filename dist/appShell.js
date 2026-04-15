@@ -1,4 +1,4 @@
-import { createDefaultServiceContainer, NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, DocumentContainer, CopyPasteAsJsonService, UnkownElementsPropertiesService, sleep, BindingsRefactorService, TextRefactorService, SeperatorContextMenu, DomConverter, ValueType, ObservedCustomElementsRegistry, PreDefinedElementsService, ContextMenu, CommandType, showPopup } from '@node-projects/web-component-designer';
+import { createDefaultServiceContainer, NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, DocumentContainer, CopyPasteAsJsonService, UnkownElementsPropertiesService, sleep, BindingsRefactorService, TextRefactorService, SeperatorContextMenu, DomConverter, ValueType, ObservedCustomElementsRegistry, PreDefinedElementsService, ContextMenu, CommandType, showPopup, ExtensionType, SkewExtensionProvider } from '@node-projects/web-component-designer';
 import { NodeHtmlParserService } from '@node-projects/web-component-designer-htmlparserservice-nodehtmlparser';
 import { CodeViewMonaco } from '@node-projects/web-component-designer-codeview-monaco';
 import { CssParserStylesheetService } from '@node-projects/web-component-designer-stylesheetservice-css-parser';
@@ -19,6 +19,11 @@ serviceContainer.registerLast("propertyService", new UnkownElementsPropertiesSer
 serviceContainer.register("refactorService", new BindingsRefactorService());
 serviceContainer.register("refactorService", new TextRefactorService());
 serviceContainer.register("editorTypesService", new DemoEditorTypesService());
+serviceContainer.designerExtensions.set(ExtensionType.PrimarySelection, [
+    ...serviceContainer.designerExtensions.get(ExtensionType.PrimarySelection) ?? [],
+    new SkewExtensionProvider(),
+    //new ProjectiveTransformExtensionProvider(),
+]);
 /*
 globalThis.MonacoEnvironment = {
   getWorker: (_moduleId, label) => {
