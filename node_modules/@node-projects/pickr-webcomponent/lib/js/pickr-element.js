@@ -1,6 +1,6 @@
 import * as _ from './utils/utils.js';
-import {parseToHSVA} from './utils/color.js';
-import {HSVaColor} from './utils/hsvacolor.js';
+import { parseToHSVA } from './utils/color.js';
+import { HSVaColor } from './utils/hsvacolor.js';
 import Moveable from './libs/moveable.js';
 import Selectable from './libs/selectable.js';
 import buildTemplate from './template.js';
@@ -48,29 +48,37 @@ const DEFAULT_CONFIG = {
     adjustableNumbers: true
 };
 
+const NULL_COLOR_VALUE = 'null';
+const NULL_COLOR_ACCENT = '#f44250';
+const NULL_COLOR_BACKGROUND = [
+    `linear-gradient(45deg, transparent calc(50% - 1px), ${NULL_COLOR_ACCENT} calc(50% - 1px), ${NULL_COLOR_ACCENT} calc(50% + 1px), transparent calc(50% + 1px))`,
+    `linear-gradient(-45deg, transparent calc(50% - 1px), ${NULL_COLOR_ACCENT} calc(50% - 1px), ${NULL_COLOR_ACCENT} calc(50% + 1px), transparent calc(50% + 1px))`,
+    'rgba(255, 255, 255, 0.92)'
+].join(', ');
+
 // Attribute name -> config path/parser. Attributes are merged into _config
 // on attributeChangedCallback. Boolean attrs follow HTML conventions: an
 // explicit "false" disables defaults that are true; presence implies true.
 const ATTRIBUTE_MAP = {
-    'default':                v => ({default: v}),
-    'default-representation': v => ({defaultRepresentation: v}),
-    'comparison':             v => ({comparison: v !== 'false'}),
-    'lock-opacity':           v => ({lockOpacity: v !== null && v !== 'false'}),
-    'output-precision':       v => ({outputPrecision: Number(v) || 0}),
-    'adjustable-numbers':     v => ({adjustableNumbers: v !== 'false'}),
-    'sliders':                v => ({sliders: v}),
-    'swatches':               v => ({swatches: v ? v.split(/\s*,\s*/).filter(Boolean) : null}),
-    'components':             v => ({components: v ? JSON.parse(v) : undefined}),
-    'i18n':                   v => ({i18n: v ? JSON.parse(v) : undefined})
+    'default': v => ({ default: v }),
+    'default-representation': v => ({ defaultRepresentation: v }),
+    'comparison': v => ({ comparison: v !== 'false' }),
+    'lock-opacity': v => ({ lockOpacity: v !== null && v !== 'false' }),
+    'output-precision': v => ({ outputPrecision: Number(v) || 0 }),
+    'adjustable-numbers': v => ({ adjustableNumbers: v !== 'false' }),
+    'sliders': v => ({ sliders: v }),
+    'swatches': v => ({ swatches: v ? v.split(/\s*,\s*/).filter(Boolean) : null }),
+    'components': v => ({ components: v ? JSON.parse(v) : undefined }),
+    'i18n': v => ({ i18n: v ? JSON.parse(v) : undefined })
 };
 
 const cloneDefaults = () => ({
     ...DEFAULT_CONFIG,
     components: {
         ...DEFAULT_CONFIG.components,
-        interaction: {...DEFAULT_CONFIG.components.interaction}
+        interaction: { ...DEFAULT_CONFIG.components.interaction }
     },
-    i18n: {...DEFAULT_CONFIG.i18n}
+    i18n: { ...DEFAULT_CONFIG.i18n }
 });
 
 export class PickrElement extends HTMLElement {
@@ -88,10 +96,11 @@ export class PickrElement extends HTMLElement {
 
     constructor() {
         super();
-        this.attachShadow({mode: 'open'});
+        this.attachShadow({ mode: 'open' });
 
         this._config = cloneDefaults();
         this._color = HSVaColor();
+        this._nullColor = false;
         this._lastColor = HSVaColor();
         this._swatchColors = [];
         this._eventBindings = [];
@@ -110,7 +119,7 @@ export class PickrElement extends HTMLElement {
 
     _mergeConfig(patch) {
         const curr = this._config;
-        const next = {...curr, ...patch};
+        const next = { ...curr, ...patch };
 
         if (patch.components || curr.components) {
             const currComp = curr.components || {};
@@ -126,7 +135,7 @@ export class PickrElement extends HTMLElement {
         }
 
         if (patch.i18n) {
-            next.i18n = {...(curr.i18n || {}), ...patch.i18n};
+            next.i18n = { ...(curr.i18n || {}), ...patch.i18n };
         }
 
         this._config = next;
@@ -169,11 +178,11 @@ export class PickrElement extends HTMLElement {
 
     _normalizeConfig() {
         const opt = this._config;
-        const components = opt.components = {interaction: {}, ...opt.components};
+        const components = opt.components = { interaction: {}, ...opt.components };
         if (!components.interaction) {
             components.interaction = {};
         }
-        const {preview, opacity, hue, palette} = components;
+        const { preview, opacity, hue, palette } = components;
         components.opacity = (!opt.lockOpacity && opacity);
         components.palette = palette || preview || opacity || hue;
 
@@ -192,7 +201,7 @@ export class PickrElement extends HTMLElement {
         this._buildComponents();
         this._bindEvents();
 
-        const {swatches} = this._config;
+        const { swatches } = this._config;
         if (swatches && swatches.length) {
             swatches.forEach(color => this.addSwatch(color));
         }
@@ -244,8 +253,14 @@ export class PickrElement extends HTMLElement {
         const sliders = (inst._config.sliders || 'v').repeat(2);
         const [so, sh] = sliders.match(/^[vh]+$/g) ? sliders : [];
 
-        const getColor = () =>
-            this._color || (this._color = this._lastColor.clone());
+        const getColor = () => {
+            if (this._nullColor) {
+                this._nullColor = false;
+                this._syncCurrentColorUI();
+            }
+
+            return this._color;
+        };
 
         const components = {
 
@@ -259,8 +274,6 @@ export class PickrElement extends HTMLElement {
                     if (!cs.palette) return;
 
                     const color = getColor();
-                    const {_root, _config: options} = inst;
-                    const {lastColor, currentColor} = _root.preview;
 
                     if (inst._recalc) {
                         color.s = x * 100;
@@ -270,21 +283,8 @@ export class PickrElement extends HTMLElement {
                     }
 
                     const cssRGBaString = color.toRGBA().toString(0);
-                    this.element.style.background = cssRGBaString;
                     this.wrapper.style.background = `linear-gradient(to top, rgba(0, 0, 0, ${color.a}), transparent), linear-gradient(to left, hsla(${color.h}, 100%, 50%, ${color.a}), rgba(255, 255, 255, ${color.a}))`;
-
-                    if (!options.comparison) {
-                        lastColor.style.setProperty('--pcr-color', cssRGBaString);
-                    } else if (!inst._lastColor) {
-                        lastColor.style.setProperty('--pcr-color', cssRGBaString);
-                    }
-
-                    const hexa = color.toHEXA().toString();
-                    for (const {el, color: sc} of inst._swatchColors) {
-                        el.classList[hexa === sc.toHEXA().toString() ? 'add' : 'remove']('pcr-active');
-                    }
-
-                    currentColor.style.setProperty('--pcr-color', cssRGBaString);
+                    inst._syncCurrentColorUI();
                 }
             }),
 
@@ -343,7 +343,7 @@ export class PickrElement extends HTMLElement {
     }
 
     _bindEvents() {
-        const {_root, _config: options} = this;
+        const { _root, _config: options } = this;
 
         const eventBindings = [
 
@@ -353,7 +353,11 @@ export class PickrElement extends HTMLElement {
                 _root.interaction.cancel,
                 _root.preview.lastColor
             ], 'click', () => {
-                this.setHSVA(...(this._lastColor || this._color).toHSVA(), true);
+                if (this._lastColor === null) {
+                    this._clearColor(true);
+                } else {
+                    this.setHSVA(...this._lastColor.toHSVA(), true);
+                }
                 this._emit('cancel');
             }),
 
@@ -362,8 +366,14 @@ export class PickrElement extends HTMLElement {
             }),
 
             _.on(_root.interaction.result, ['keyup', 'input'], e => {
+                const { value } = e.target;
+
                 if (this.setColor(e.target.value, true) && !this._initializingActive) {
-                    this._emit('change', {color: this._color, source: 'input'});
+                    if (this.getColor() === null && value.trim().toLowerCase() !== NULL_COLOR_VALUE) {
+                        e.target.value = value;
+                    }
+
+                    this._emit('change', { color: this.getColor(), source: 'input' });
                     this._emit('changestop', 'input');
                 }
                 e.stopImmediatePropagation();
@@ -381,7 +391,7 @@ export class PickrElement extends HTMLElement {
                 _root.hue.picker,
                 _root.opacity.slider,
                 _root.opacity.picker
-            ], ['mousedown', 'touchstart'], () => this._recalc = true, {passive: true})
+            ], ['mousedown', 'touchstart'], () => this._recalc = true, { passive: true })
         ];
 
         if (options.adjustableNumbers) {
@@ -406,24 +416,85 @@ export class PickrElement extends HTMLElement {
         this._eventBindings = eventBindings;
     }
 
-    _updateOutput(eventSource) {
-        const {_root, _color, _config: options} = this;
+    _getCurrentColor() {
+        return this._nullColor ? null : this._color;
+    }
 
-        if (_root.interaction.type()) {
-            const method = `to${_root.interaction.type().getAttribute('data-type')}`;
-            _root.interaction.result.value = typeof _color[method] === 'function' ?
-                _color[method]().toString(options.outputPrecision) : '';
+    _setElementColor(element, color, inlineBackground = false) {
+        if (!element) return;
+
+        const cssRGBaString = color ? color.toRGBA().toString(0) : NULL_COLOR_ACCENT;
+        element.style.setProperty('--pcr-color', cssRGBaString);
+
+        if (inlineBackground) {
+            element.style.background = color ? cssRGBaString : NULL_COLOR_BACKGROUND;
+            return;
         }
 
+        if (color) {
+            element.style.removeProperty('background');
+            return;
+        }
+
+        element.style.background = NULL_COLOR_BACKGROUND;
+    }
+
+    _syncSwatches(color = this._getCurrentColor()) {
+        const hexa = color && color.toHEXA().toString();
+
+        for (const { el, color: swatchColor } of this._swatchColors) {
+            el.classList[hexa === swatchColor.toHEXA().toString() ? 'add' : 'remove']('pcr-active');
+        }
+    }
+
+    _syncLastColorPreview() {
+        const previewColor = this._config.comparison ? this._lastColor : this._getCurrentColor();
+        this._setElementColor(this._root.preview.lastColor, previewColor);
+    }
+
+    _syncCurrentColorUI() {
+        const color = this._getCurrentColor();
+
+        this._setElementColor(this._root.preview.currentColor, color);
+        this._setElementColor(this._root.palette.picker, color, true);
+        this._syncLastColorPreview();
+        this._syncSwatches(color);
+    }
+
+    _syncOutputValue() {
+        const { _root, _config: options } = this;
+
+        if (_root.interaction.type()) {
+            const color = this._getCurrentColor();
+
+            if (!color) {
+                _root.interaction.result.value = NULL_COLOR_VALUE;
+                return;
+            }
+
+            const method = `to${_root.interaction.type().getAttribute('data-type')}`;
+            _root.interaction.result.value = typeof color[method] === 'function' ?
+                color[method]().toString(options.outputPrecision) : '';
+        }
+    }
+
+    _updateOutput(eventSource) {
+        this._syncOutputValue();
+
         if (!this._initializingActive && this._recalc) {
-            this._emit('change', {color: _color, source: eventSource});
+            this._emit('change', { color: this.getColor(), source: eventSource });
         }
     }
 
     _clearColor(silent = false) {
-        this._lastColor = null;
-        const {lastColor} = this._root.preview;
-        lastColor.style.setProperty('--pcr-color', 'rgba(0, 0, 0, 0.15)');
+        this._nullColor = true;
+
+        if (!silent) {
+            this._lastColor = null;
+        }
+
+        this._syncCurrentColorUI();
+        this._syncOutputValue();
 
         if (!this._initializingActive && !silent) {
             this._emit('save', null);
@@ -432,8 +503,8 @@ export class PickrElement extends HTMLElement {
     }
 
     _parseLocalColor(str) {
-        const {values, type, a} = parseToHSVA(str);
-        const {lockOpacity} = this._config;
+        const { values, type, a } = parseToHSVA(str);
+        const { lockOpacity } = this._config;
         const alphaMakesAChange = a !== undefined && a !== 1;
 
         if (values && values.length === 3) {
@@ -452,17 +523,17 @@ export class PickrElement extends HTMLElement {
 
     _emit(event, detail) {
         this.dispatchEvent(new CustomEvent(event, {
-            detail: {value: detail, instance: this},
+            detail: { value: detail, instance: this },
             bubbles: true,
             composed: true
         }));
     }
 
     addSwatch(color) {
-        const {values} = this._parseLocalColor(color);
+        const { values } = this._parseLocalColor(color);
 
         if (values) {
-            const {_swatchColors, _root} = this;
+            const { _swatchColors, _root } = this;
             const parsed = HSVaColor(...values);
 
             const el = _.createElementFromString(
@@ -470,13 +541,13 @@ export class PickrElement extends HTMLElement {
             );
 
             _root.swatches.appendChild(el);
-            _swatchColors.push({el, color: parsed});
+            _swatchColors.push({ el, color: parsed });
 
             this._eventBindings.push(
                 _.on(el, 'click', () => {
                     this.setHSVA(...parsed.toHSVA(), true);
                     this._emit('swatchselect', parsed);
-                    this._emit('change', {color: parsed, source: 'swatch'});
+                    this._emit('change', { color: parsed, source: 'swatch' });
                 })
             );
 
@@ -497,14 +568,12 @@ export class PickrElement extends HTMLElement {
     }
 
     applyColor(silent = false) {
-        const {preview} = this._root;
-        const cssRGBaString = this._color.toRGBA().toString(0);
-        preview.lastColor.style.setProperty('--pcr-color', cssRGBaString);
-
-        this._lastColor = this._color.clone();
+        const color = this.getColor();
+        this._lastColor = color ? color.clone() : null;
+        this._syncLastColorPreview();
 
         if (!this._initializingActive && !silent) {
-            this._emit('save', this._color);
+            this._emit('save', color);
         }
 
         return this;
@@ -520,7 +589,7 @@ export class PickrElement extends HTMLElement {
 
         this._color = HSVaColor(h, s, v, a);
 
-        const {hue, opacity, palette} = this._components;
+        const { hue, opacity, palette } = this._components;
         hue.update((h / 360));
         opacity.update(a);
         palette.update(s / 100, 1 - (v / 100));
@@ -538,16 +607,18 @@ export class PickrElement extends HTMLElement {
     }
 
     setColor(string, silent = false) {
-        if (string === null) {
+        const normalized = typeof string === 'string' ? string.trim() : string;
+
+        if (normalized == null || normalized === '' || normalized.toLowerCase?.() === NULL_COLOR_VALUE) {
             this._clearColor(silent);
             return true;
         }
 
-        const {values, type} = this._parseLocalColor(string);
+        const { values, type } = this._parseLocalColor(normalized);
 
         if (values) {
             const utype = type.toUpperCase();
-            const {options} = this._root.interaction;
+            const { options } = this._root.interaction;
             const target = options.find(el => el.getAttribute('data-type') === utype);
 
             if (target && !target.hidden) {
@@ -577,7 +648,7 @@ export class PickrElement extends HTMLElement {
     }
 
     getColor() {
-        return this._color;
+        return this._getCurrentColor();
     }
 
     getSelectedColor() {
