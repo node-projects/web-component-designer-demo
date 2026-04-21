@@ -93,13 +93,17 @@ export class CommandHandling {
       }
     });
 
-    let undoButton = <HTMLButtonElement>document.querySelector('[data-command="undo"]')
+    let undoButton = <HTMLButtonElement>document.querySelector('[data-command="undo"]');
     let mouseDownTimer = null;
+    undoButton.oncontextmenu = (e) => {
+      e.preventDefault();
+    };
     undoButton.onmousedown = (e) => {
+      e.preventDefault();
       mouseDownTimer = setTimeout(() => {
         let target: DocumentContainer = <DocumentContainer>this.dockManager.activeDocument.resolvedElementContent;
         let entries = target.instanceServiceContainer.undoService.getUndoEntries(20);
-        let mnu: IContextMenuItem[] = Array.from(entries).map((x, idx) => ({ title: 'undo: ' + x, action: () => { for (let i = 0; i <= idx; i++) target.instanceServiceContainer.undoService.undo() } }));
+        let mnu: IContextMenuItem[] = Array.from(entries).map((x, idx) => ({ title: 'undo: ' + x.title, action: () => { for (let i = 0; i <= idx; i++) target.instanceServiceContainer.undoService.undo() } }));
         ContextMenu.show(mnu, e, { mode: 'undo' });
       }, 300)
     }
@@ -110,12 +114,16 @@ export class CommandHandling {
       }
     }
 
-    let redoButton = <HTMLButtonElement>document.querySelector('[data-command="redo"]')
+    let redoButton = <HTMLButtonElement>document.querySelector('[data-command="redo"]');
+    redoButton.oncontextmenu = (e) => {
+      e.preventDefault();
+    };
     redoButton.onmousedown = (e) => {
+      e.preventDefault();
       mouseDownTimer = setTimeout(() => {
         let target: DocumentContainer = <DocumentContainer>this.dockManager.activeDocument.resolvedElementContent;
         let entries = target.instanceServiceContainer.undoService.getRedoEntries(20);
-        let mnu: IContextMenuItem[] = Array.from(entries).map((x, idx) => ({ title: 'redo: ' + x, action: () => { for (let i = 0; i <= idx; i++) target.instanceServiceContainer.undoService.redo() } }));
+        let mnu: IContextMenuItem[] = Array.from(entries).map((x, idx) => ({ title: 'redo: ' + x.title, action: () => { for (let i = 0; i <= idx; i++) target.instanceServiceContainer.undoService.redo() } }));
         ContextMenu.show(mnu, e, { mode: 'undo' })
       }, 300)
     }
