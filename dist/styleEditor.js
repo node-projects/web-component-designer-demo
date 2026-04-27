@@ -1,5 +1,4 @@
 import { BaseCustomWebComponentConstructorAppend, css, html } from "@node-projects/base-custom-webcomponent";
-import { CodeViewMonaco } from '@node-projects/web-component-designer-codeview-monaco';
 export class StyleEditor extends BaseCustomWebComponentConstructorAppend {
     static style = css `
         :host {
@@ -15,8 +14,21 @@ export class StyleEditor extends BaseCustomWebComponentConstructorAppend {
     static template = html `
         <div id="container" style="width: 100%; height: 100%; position: absolute;"></div>
     `;
-    createModel(text) {
-        return CodeViewMonaco.monacoLib.editor.createModel(text, 'css');
+    static _monaco;
+    static _monacoStyle;
+    static async _getMonacoLib() {
+        if (StyleEditor._monaco) {
+            return StyleEditor._monaco;
+        }
+        const monaco = await import('monaco-editor');
+        StyleEditor._monaco = monaco;
+        //@ts-ignore
+        StyleEditor._monacoStyle = (await import("monaco-editor/min/vs/editor/editor.main.css", { with: { type: 'css' } })).default;
+        return monaco;
+    }
+    async createModel(text) {
+        const monaco = await StyleEditor._getMonacoLib();
+        return monaco.editor.createModel(text, 'css');
     }
     _model;
     get model() {
@@ -40,12 +52,11 @@ export class StyleEditor extends BaseCustomWebComponentConstructorAppend {
     }
     async ready() {
         this._parseAttributesToProperties();
+        const monaco = await StyleEditor._getMonacoLib();
         //@ts-ignore
-        const style = await importShim("monaco-editor/min/vs/editor/editor.main.css", { with: { type: 'css' } });
-        //@ts-ignore
-        this.shadowRoot.adoptedStyleSheets = [style.default, this.constructor.style];
+        this.shadowRoot.adoptedStyleSheets = [StyleEditor._monacoStyle, this.constructor.style];
         this._container = this._getDomElement('container');
-        this._editor = CodeViewMonaco.monacoLib.editor.create(this._container, {
+        this._editor = monaco.editor.create(this._container, {
             automaticLayout: true,
             language: 'css',
             minimap: {
@@ -77,7 +88,9 @@ export class StyleEditor extends BaseCustomWebComponentConstructorAppend {
     }
     showLine(line, column, lineEnd, columnEnd) {
         this._editor.setSelection({ startLineNumber: line, startColumn: column, endLineNumber: lineEnd, endColumn: columnEnd });
-        this._editor.revealRangeAtTop(new CodeViewMonaco.monacoLib.Range(line, column, lineEnd, columnEnd), 1);
+        StyleEditor._getMonacoLib().then(monaco => {
+            this._editor.revealRangeAtTop(new monaco.Range(line, column, lineEnd, columnEnd), 1);
+        });
     }
 }
 customElements.define('node-projects-style-editor', StyleEditor);
