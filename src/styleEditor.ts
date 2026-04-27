@@ -1,7 +1,5 @@
 import { BaseCustomWebComponentConstructorAppend, css, html } from "@node-projects/base-custom-webcomponent";
-import { CodeViewMonaco } from '@node-projects/web-component-designer-codeview-monaco';
-
-import type * as monaco from 'monaco-editor';
+import type * as monacoType from 'monaco-editor'
 
 export class StyleEditor extends BaseCustomWebComponentConstructorAppend {
 
@@ -21,14 +19,28 @@ export class StyleEditor extends BaseCustomWebComponentConstructorAppend {
         <div id="container" style="width: 100%; height: 100%; position: absolute;"></div>
     `;
 
-    public createModel(text: string) {
-        return CodeViewMonaco.monacoLib.editor.createModel(text, 'css');
+    private static _monaco: { editor: typeof monacoType.editor, Range: typeof monacoType.Range };
+    private static _monacoStyle: CSSStyleSheet;
+    private static async _getMonacoLib() {
+        if (StyleEditor._monaco) {
+            return StyleEditor._monaco;
+        }
+        const monaco = await import('monaco-editor');
+        StyleEditor._monaco = monaco;
+        //@ts-ignore
+        StyleEditor._monacoStyle = (await import("monaco-editor/min/vs/editor/editor.main.css", { with: { type: 'css' } })).default;
+        return monaco;
     }
-    private _model: monaco.editor.ITextModel;
+
+    public async createModel(text: string) {
+        const monaco = await StyleEditor._getMonacoLib();
+        return monaco.editor.createModel(text, 'css');
+    }
+    private _model: monacoType.editor.ITextModel;
     public get model() {
         return this._model;
     }
-    public set model(value: monaco.editor.ITextModel) {
+    public set model(value: monacoType.editor.ITextModel) {
         this._model = value;
         if (this._editor)
             this._editor.setModel(value);
@@ -42,7 +54,7 @@ export class StyleEditor extends BaseCustomWebComponentConstructorAppend {
     }
 
     private _container: HTMLDivElement;
-    private _editor: monaco.editor.IStandaloneCodeEditor;
+    private _editor: monacoType.editor.IStandaloneCodeEditor;
 
     constructor() {
         super();
@@ -51,15 +63,14 @@ export class StyleEditor extends BaseCustomWebComponentConstructorAppend {
 
     async ready() {
         this._parseAttributesToProperties();
-        //@ts-ignore
-        const style = await importShim("monaco-editor/min/vs/editor/editor.main.css", { with: { type: 'css' } });
 
+        const monaco = await StyleEditor._getMonacoLib();
         //@ts-ignore
-        this.shadowRoot.adoptedStyleSheets = [style.default, this.constructor.style];
+        this.shadowRoot.adoptedStyleSheets = [StyleEditor._monacoStyle, this.constructor.style];
 
         this._container = this._getDomElement<HTMLDivElement>('container')
 
-        this._editor = CodeViewMonaco.monacoLib.editor.create(this._container, {
+        this._editor = monaco.editor.create(this._container, {
             automaticLayout: true,
             language: 'css',
             minimap: {
@@ -98,7 +109,9 @@ export class StyleEditor extends BaseCustomWebComponentConstructorAppend {
 
     public showLine(line: number, column: number, lineEnd: number, columnEnd: number) {
         this._editor.setSelection({ startLineNumber: line, startColumn: column, endLineNumber: lineEnd, endColumn: columnEnd });
-        this._editor.revealRangeAtTop(new CodeViewMonaco.monacoLib.Range(line, column, lineEnd, columnEnd), 1);
+        StyleEditor._getMonacoLib().then(monaco => {
+            this._editor.revealRangeAtTop(new monaco.Range(line, column, lineEnd, columnEnd), 1);
+        });
     }
 }
 

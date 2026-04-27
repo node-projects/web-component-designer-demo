@@ -1,7 +1,7 @@
-import { IEditorTypesService, IProperty, IPropertyEditor } from "@node-projects/web-component-designer";
+import { IPropertyEditorTypesService, IProperty, IPropertyEditor } from "@node-projects/web-component-designer";
 import { DemoColorPropertyEditor } from "./DemoColorPropertyEditor.js";
 
-export class DemoEditorTypesService implements IEditorTypesService {
+export class DemoPropertyEditorTypesService implements IPropertyEditorTypesService {
     getEditorForProperty(property: IProperty): IPropertyEditor | null {
         if (property.createEditor)
             return property.createEditor(property);

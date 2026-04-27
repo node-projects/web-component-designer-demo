@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="viewport"
     content="width=device-width, initial-scale=1.0, shrink-to-fit=no, maximum-scale=1.0, user-scalable=no">
   <link rel="manifest" href="./manifest.json">
@@ -61,6 +61,7 @@
     importShim.addImportMap(importMap);
   </script>
 
+  <link rel="stylesheet" href="./node_modules/monaco-editor/min/vs/editor/editor.main.css">
   <link rel="stylesheet" href="./node_modules/dock-spawn-ts/lib/css/dock-manager-context-menu.css">
 
   <!-- Drag/Drop support on touch devices -->
@@ -85,8 +86,16 @@
   -->
 
   <script type="module">
+    window.MonacoEnvironment = {
+      getWorker: function (moduleId, label) {
+        if (label === 'editorWorkerService')
+          return new Worker('/node_modules/monaco-editor/esm/vs/editor/editor.worker.js', { type: 'module' });
+        return new Worker(`/node_modules/monaco-editor/esm/vs/editor/${label}.worker.js`, { type: 'module' });
+      }
+    };
+
     let { CodeViewMonaco } = await importShim('@node-projects/web-component-designer-codeview-monaco');
-    await CodeViewMonaco.loadMonacoEditorViaImport();
+    await CodeViewMonaco.getMonacoLib();
 
     await importShim('dock-spawn-ts');
     await importShim('@node-projects/web-component-designer');
@@ -231,7 +240,9 @@
         src="./node_modules/@node-projects/web-component-designer/assets/icons/redo.svg"></button>
     <button style="margin-left: 10px;" data-command="screenshot"><img
         src="./node_modules/@node-projects/web-component-designer/assets/icons/screenshot.svg"></button>
-    <button style="margin-left: 10px; color: inherit; font-family: monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;" data-command="collaboration" title="collaboration">collab</button>
+    <button
+      style="margin-left: 10px; color: inherit; font-family: monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;"
+      data-command="collaboration" title="collaboration">collab</button>
     <button style="margin-left: 10px;" data-command="github"><img
         src="./node_modules/@node-projects/web-component-designer/assets/icons/github.svg"></button>
   </nav>

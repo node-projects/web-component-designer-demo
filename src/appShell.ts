@@ -7,7 +7,8 @@ import { CssParserStylesheetService } from '@node-projects/web-component-designe
 
 import '@node-projects/web-component-designer-widgets-wunderbaum';
 import { PaletteTreeView, BindableObjectsBrowser, TreeViewExtended, ExpandCollapseContextMenu } from '@node-projects/web-component-designer-widgets-wunderbaum';
-import { DemoEditorTypesService } from './services/DemoEditorTypesService.js';
+import { DemoPropertyEditorTypesService } from './services/DemoPropertyEditorTypesService.js';
+import { DemoEditorTypeService } from './services/DemoEditorTypeService.js';
 
 let serviceContainer = createDefaultServiceContainer();
 import { defaultWebRtcTabCollaborationSignalingChannels, setupCollaborationService, WebRtcTabCollaborationSignalingChannelKind, WebRtcTabCollaborationTransport } from '@node-projects/web-component-designer-collaboration-service';
@@ -22,7 +23,8 @@ serviceContainer.register("bindableObjectsService", new CustomBindableObjectsSer
 serviceContainer.registerLast("propertyService", new UnkownElementsPropertiesService());
 serviceContainer.register("refactorService", new BindingsRefactorService());
 serviceContainer.register("refactorService", new TextRefactorService());
-serviceContainer.register("editorTypesService", new DemoEditorTypesService());
+serviceContainer.register("propertyEditorTypesService", new DemoPropertyEditorTypesService());
+serviceContainer.register("editorTypeService", new DemoEditorTypeService());
 
 serviceContainer.designerExtensions.set(ExtensionType.PrimarySelection, [
         ...serviceContainer.designerExtensions.get(ExtensionType.PrimarySelection) ?? [],
@@ -641,7 +643,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     this._propertyGrid.serviceContainer = serviceContainer;
   }
 
-  public newDocument(fixedWidth: boolean, code?: string, style?: string) {
+  public async newDocument(fixedWidth: boolean, code?: string, style?: string) {
     this._documentNumber++;
     let sampleDocument = new DocumentContainer(serviceContainer);
     sampleDocument.setAttribute('dock-spawn-panel-type', 'document');
@@ -654,7 +656,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
 }` : style
       }
     ];
-    const model = this._styleEditor.createModel(sampleDocument.additionalStylesheets[0].content);
+    const model = await this._styleEditor.createModel(sampleDocument.additionalStylesheets[0].content);
     sampleDocument.additionalData = { model: model };
 
     let timer;
