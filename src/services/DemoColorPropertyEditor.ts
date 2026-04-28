@@ -157,7 +157,6 @@ export class DemoColorPropertyEditor extends BasePropertyEditor<HTMLButtonElemen
         DemoColorPropertyEditor._closePopup = undefined;
     }
 
-
     private _applyDisplayValue(value: string | null) {
         const displayValue = value ?? DemoColorPropertyEditor._defaultColor;
         this._valueLabel.textContent = value ?? DemoColorPropertyEditor._defaultColor;

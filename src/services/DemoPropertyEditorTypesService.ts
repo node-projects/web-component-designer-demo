@@ -7,6 +7,7 @@ export class DemoPropertyEditorTypesService implements IPropertyEditorTypesServi
             return property.createEditor(property);
 
         switch (<string><any>property.type) {
+            case "css-color":
             case "color":
                 {
                     return new DemoColorPropertyEditor(property);
