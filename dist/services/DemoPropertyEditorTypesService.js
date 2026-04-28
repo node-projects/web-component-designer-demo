@@ -4,6 +4,7 @@ export class DemoPropertyEditorTypesService {
         if (property.createEditor)
             return property.createEditor(property);
         switch (property.type) {
+            case "css-color":
             case "color":
                 {
                     return new DemoColorPropertyEditor(property);
