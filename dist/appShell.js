@@ -21,10 +21,9 @@ serviceContainer.register("refactorService", new BindingsRefactorService());
 serviceContainer.register("refactorService", new TextRefactorService());
 serviceContainer.register("propertyEditorTypesService", new DemoPropertyEditorTypesService());
 serviceContainer.register("editorTypeService", new DemoEditorTypeService());
-serviceContainer.designerExtensions.set(ExtensionType.PrimarySelection, [
-    ...serviceContainer.designerExtensions.get(ExtensionType.PrimarySelection) ?? [],
+serviceContainer.designerExtensions.set(ExtensionType.OnlyOneItemSelected, [
+    ...serviceContainer.designerExtensions.get(ExtensionType.OnlyOneItemSelected) ?? [],
     new SkewExtensionProvider(),
-    //new ProjectiveTransformExtensionProvider(),
 ]);
 /*
 globalThis.MonacoEnvironment = {
