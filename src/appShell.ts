@@ -26,12 +26,11 @@ serviceContainer.register("refactorService", new TextRefactorService());
 serviceContainer.register("propertyEditorTypesService", new DemoPropertyEditorTypesService());
 serviceContainer.register("editorTypeService", new DemoEditorTypeService());
 
-serviceContainer.designerExtensions.set(ExtensionType.PrimarySelection, [
-        ...serviceContainer.designerExtensions.get(ExtensionType.PrimarySelection) ?? [],
-        new SkewExtensionProvider(),
-        //new ProjectiveTransformExtensionProvider(),
-    ]);
-    
+serviceContainer.designerExtensions.set(ExtensionType.OnlyOneItemSelected, [
+  ...serviceContainer.designerExtensions.get(ExtensionType.OnlyOneItemSelected) ?? [],
+  new SkewExtensionProvider(),
+]);
+
 /*
 globalThis.MonacoEnvironment = {
   getWorker: (_moduleId, label) => {
