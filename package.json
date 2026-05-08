@@ -32,7 +32,7 @@
     "@node-projects/acad-ts": "^2.3.0",
     "@node-projects/base-custom-webcomponent": "0.46.0",
     "@node-projects/css-parser": "^5.2.0",
-    "@node-projects/layout2vector": "^5.27.0",
+    "@node-projects/layout2vector": "^5.28.0",
     "@node-projects/lean-he-esm": "^3.4.1",
     "@node-projects/node-html-parser-esm": "^6.4.1",
     "@node-projects/pickr-webcomponent": "^1.2.0",
