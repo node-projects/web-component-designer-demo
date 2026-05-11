@@ -18,10 +18,9 @@ function getSegmentGraphemes(segmentIndex, segments, cache) {
     cache.set(segmentIndex, graphemes);
     return graphemes;
 }
-function lineHasDiscretionaryHyphen(kinds, startSegmentIndex, startGraphemeIndex, endSegmentIndex) {
-    return (endSegmentIndex > 0 &&
-        kinds[endSegmentIndex - 1] === 'soft-hyphen' &&
-        !(startSegmentIndex === endSegmentIndex && startGraphemeIndex > 0));
+function lineHasDiscretionaryHyphen(kinds, startSegmentIndex, endSegmentIndex) {
+    return (endSegmentIndex > startSegmentIndex &&
+        kinds[endSegmentIndex - 1] === 'soft-hyphen');
 }
 function appendSegmentGraphemeRange(text, graphemes, startGraphemeIndex, endGraphemeIndex) {
     for (let i = startGraphemeIndex; i < endGraphemeIndex; i++) {
@@ -39,7 +38,7 @@ export function getLineTextCache(prepared) {
 }
 export function buildLineTextFromRange(prepared, cache, startSegmentIndex, startGraphemeIndex, endSegmentIndex, endGraphemeIndex) {
     let text = '';
-    const endsWithDiscretionaryHyphen = lineHasDiscretionaryHyphen(prepared.kinds, startSegmentIndex, startGraphemeIndex, endSegmentIndex);
+    const endsWithDiscretionaryHyphen = lineHasDiscretionaryHyphen(prepared.kinds, startSegmentIndex, endSegmentIndex);
     for (let i = startSegmentIndex; i < endSegmentIndex; i++) {
         if (prepared.kinds[i] === 'soft-hyphen' || prepared.kinds[i] === 'hard-break')
             continue;
