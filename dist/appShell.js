@@ -1,11 +1,9 @@
 import { createDefaultServiceContainer, NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, DocumentContainer, CopyPasteAsJsonService, UnkownElementsPropertiesService, sleep, BindingsRefactorService, TextRefactorService, SeperatorContextMenu, DomConverter, ValueType, ObservedCustomElementsRegistry, PreDefinedElementsService, ContextMenu, CommandType, showPopup, ExtensionType, SkewExtensionProvider } from '@node-projects/web-component-designer';
 import { NodeHtmlParserService } from '@node-projects/web-component-designer-htmlparserservice-nodehtmlparser';
-import { CodeViewMonaco } from '@node-projects/web-component-designer-codeview-monaco';
+import { DesignerCodeView, treeTheme } from './designerTheme.js';
 import { CssParserStylesheetService } from '@node-projects/web-component-designer-stylesheetservice-css-parser';
 import '@node-projects/web-component-designer-widgets-wunderbaum';
 import { ExpandCollapseContextMenu } from '@node-projects/web-component-designer-widgets-wunderbaum';
-import { DemoPropertyEditorTypesService } from './services/DemoPropertyEditorTypesService.js';
-import { DemoEditorTypeService } from './services/DemoEditorTypeService.js';
 let serviceContainer = createDefaultServiceContainer();
 import { defaultWebRtcTabCollaborationSignalingChannels, setupCollaborationService, WebRtcTabCollaborationTransport } from '@node-projects/web-component-designer-collaboration-service';
 setupCollaborationService(serviceContainer);
@@ -19,8 +17,6 @@ serviceContainer.register("bindableObjectsService", new CustomBindableObjectsSer
 serviceContainer.registerLast("propertyService", new UnkownElementsPropertiesService());
 serviceContainer.register("refactorService", new BindingsRefactorService());
 serviceContainer.register("refactorService", new TextRefactorService());
-serviceContainer.register("propertyEditorTypesService", new DemoPropertyEditorTypesService());
-serviceContainer.register("editorTypeService", new DemoEditorTypeService());
 serviceContainer.designerExtensions.set(ExtensionType.OnlyOneItemSelected, [
     ...serviceContainer.designerExtensions.get(ExtensionType.OnlyOneItemSelected) ?? [],
     new SkewExtensionProvider(),
@@ -48,7 +44,7 @@ globalThis.MonacoEnvironment = {
   }
 };
 */
-serviceContainer.config.codeViewWidget = CodeViewMonaco;
+serviceContainer.config.codeViewWidget = DesignerCodeView;
 serviceContainer.designerContextMenuExtensions.push(new ExpandCollapseContextMenu());
 serviceContainer.designerContextMenuExtensions.push(new SeperatorContextMenu(), new EditTemplateContextMenu());
 //Instance Service Container Factories
@@ -239,21 +235,13 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
       box-sizing: border-box;
       position: relative;
 
-      /* Default colour scheme */
-      --canvas-background: white;
-      --almost-black: #141720;
-      --dark-grey: #232733;
-      --medium-grey: rgb(44, 46, 53);
-      --light-grey: #383f52;
-      --highlight-pink: #e91e63;
-      --highlight-blue: #2196f3;
-      --highlight-green: #99ff33;
-      --input-border-color: #596c7a;
+      color: var(--demo-text);
+      background: var(--demo-workspace);
     }
 
     .app-header {
-      background-color: var(--almost-black);
-      color: white;
+      background-color: var(--demo-surface);
+      color: var(--demo-text);
       height: 60px;
       width: 100%;
       position: fixed;
@@ -288,6 +276,21 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
       height: 100%;
     }
 
+    input, textarea, button {
+      color: var(--demo-text);
+      background: var(--demo-surface);
+      border: 1px solid var(--demo-input-border);
+    }
+
+    button:enabled:hover {
+      background: var(--demo-hover);
+    }
+
+    input:focus-visible, textarea:focus-visible, button:focus-visible {
+      outline: 2px solid var(--demo-accent);
+      outline-offset: -2px;
+    }
+
     attribute-editor {
       height: 100%;
       width: 100%;
@@ -301,7 +304,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
             <node-projects-palette-tree-view name="paletteTree" id="paletteTree" style="height: calc(100% - 44px);"></node-projects-palette-tree-view>
             <div style="height: 28px;">
               <div style="display: flex; height: 100%;">
-                <input list="npmInputList" id="npmInput" dock-spawn-title="NPM Package Name" placeholder="npm-package" type="text" style="height: 100%; border: solid black 1px; box-sizing: border-box; width: 100%">
+                <input list="npmInputList" id="npmInput" dock-spawn-title="NPM Package Name" placeholder="npm-package" type="text" style="height: 100%; border: solid var(--demo-input-border) 1px; box-sizing: border-box; width: 100%">
                 <datalist id="npmInputList">
                   <option value="@christianliebel/paint"></option>
                   <option value="@vanillawc/wc-marquee"></option>
@@ -387,6 +390,9 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         this._paletteTree = this._getDomElement('paletteTree');
         this._bindableObjectsBrowser = this._getDomElement('bindableObjectsBrowser');
         this._treeViewExtended = this._getDomElement('treeViewExtended');
+        for (const tree of [this._paletteTree, this._bindableObjectsBrowser, this._treeViewExtended]) {
+            tree.shadowRoot.adoptedStyleSheets = [...tree.shadowRoot.adoptedStyleSheets, treeTheme];
+        }
         this._refactorView = this._getDomElement('refactorView');
         this._propertyGrid = this._getDomElement('propertyGrid');
         this._debugView = this._getDomElement('debugView');
@@ -777,11 +783,11 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         popup.style.width = '360px';
         popup.style.maxWidth = 'min(360px, calc(100vw - 32px))';
         popup.style.padding = '14px 16px';
-        popup.style.border = '1px solid #c7cdd4';
+        popup.style.border = '1px solid var(--demo-input-border)';
         popup.style.borderRadius = '8px';
-        popup.style.background = '#ffffff';
-        popup.style.boxShadow = '0 12px 28px rgba(0, 0, 0, 0.16)';
-        popup.style.color = '#1f2933';
+        popup.style.background = 'var(--demo-surface)';
+        popup.style.boxShadow = '0 12px 28px var(--demo-dialog-shadow)';
+        popup.style.color = 'var(--demo-text)';
         popup.style.font = '13px/1.45 monospace';
         popup.innerHTML = `
       <div style="font-size: 14px; font-weight: 700; margin-bottom: 10px;">Connect another client</div>
@@ -805,11 +811,12 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         const closeButton = this.ownerDocument.createElement('button');
         closeButton.type = 'button';
         closeButton.textContent = 'close';
-        closeButton.style.border = '1px solid #c7cdd4';
-        closeButton.style.background = '#f5f7fa';
+        closeButton.style.border = '1px solid var(--demo-input-border)';
+        closeButton.style.background = 'var(--demo-subtle)';
         closeButton.style.borderRadius = '6px';
         closeButton.style.padding = '6px 10px';
         closeButton.style.cursor = 'pointer';
+        closeButton.style.color = 'inherit';
         popup.appendChild(closeButton);
         this._closeCollaborationHelpPopup = showPopup(popup, anchorEl, () => {
             this._closeCollaborationHelpPopup = undefined;
