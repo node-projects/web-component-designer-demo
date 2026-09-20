@@ -1,41 +1,111 @@
-.panel-titlebar-text {
+:host .panel-titlebar-text {
   padding-top: 3px;
 }
 
-.dockspan-tab-handle-text {
+:host .dockspan-tab-handle-text {
   margin-top: 0;
 }
 
-.splitbar-vertical {
-  background-color: #23252a !important;
+/* Loaded inside dock-spawn-ts; the palette is inherited from the editor page. */
+:host .dock-container,
+:host .document-manager {
+  background: var(--demo-workspace);
 }
 
-.panel-titlebar {
-  display: flex;
-  align-items: end;
+:host .panel-titlebar,
+:host .dockspan-tab-handle-list-container,
+:host .dockspan-tab-host,
+:host .dockspan-tab-content,
+:host .dockspan-tab-content > *,
+:host .panel-element-content-container {
+  background: var(--demo-surface);
+  color: var(--demo-text);
 }
 
-.dockspan-tab-handle-list-container {
-  background-color: rgb(44, 46, 53) !important;
+:host .panel-titlebar {
+  box-shadow: inset 0 -1px var(--demo-border);
 }
 
-.dockspan-tab-content {
-  background-color: rgb(44, 46, 53) !important;
+:host .panel-titlebar-text,
+:host .panel-titlebar-button-close,
+:host .dockspan-tab-handle-close-button {
+  color: var(--demo-text);
 }
 
-.dockspan-tab-host {
-  background-color: rgb(44, 46, 53) !important;
+:host .dockspan-panel-active {
+  background: var(--demo-dock-active);
+  box-shadow: inset 0 -1px var(--demo-border);
 }
 
-.dockspan-tab-handle-active {
-  background-color: #434651 !important;
+:host .dockspan-panel-titlebar-text-active {
+  color: var(--demo-accent-text);
 }
 
-.dockspan-tab-handle {
-  display: flex;
-  align-items: center;
+:host .dockspan-tab-handle {
+  color: var(--demo-text);
+  background: var(--demo-subtle);
+  box-shadow: none;
 }
 
-.dockspan-tab-handle-close-button::after {
-  top: 0;
+:host .dockspan-tab-handle:hover {
+  color: var(--demo-text);
+  background: var(--demo-hover);
 }
+
+:host .dockspan-tab-handle-selected,
+:host .dockspan-tab-handle-selected:hover {
+  color: var(--demo-accent-text);
+  background: var(--demo-selected);
+  box-shadow: none;
+}
+
+:host .splitbar-horizontal,
+:host .splitbar-vertical {
+  background: var(--demo-border);
+}
+
+:host .dockspan-tab-handle-active,
+:host .dockspan-tab-handle-active:hover {
+  color: var(--demo-accent-text);
+  background: var(--demo-dock-active);
+  box-shadow: none;
+}
+
+/* Dock focus uses a tint; reserve accent lines for the editor's inner tabs.
+   Keep the separator's layout height, but draw only a thin neutral divider. */
+:host .dockspan-tab-handle-content-seperator,
+:host .dockspan-tab-handle-content-seperator-active {
+  background: var(--demo-surface);
+  box-shadow: inset 0 1px var(--demo-border);
+}
+
+:host .splitbar-horizontal:hover,
+:host .splitbar-vertical:hover,
+:host .splitbar-horizontal:active,
+:host .splitbar-vertical:active,
+:host .splitbar-horizontal-ghoust,
+:host .splitbar-vertical-ghoust {
+  background: var(--demo-accent);
+}
+
+:host .dialog-floating {
+  box-shadow: 0 8px 28px var(--demo-dialog-shadow);
+}
+
+:host .dock-wheel-panel-preview {
+  background: var(--demo-dock-preview);
+}
+
+:host .dockspab-tab-handle-context-menu {
+  color: var(--demo-text);
+  background: var(--demo-surface);
+  border: 1px solid var(--demo-border);
+}
+
+:host .dockspab-tab-handle-context-menu > div:hover {
+  background: var(--demo-hover);
+}
+
+:host .panel-titlebar { display: flex; align-items: end; }
+:host .dockspan-tab-handle { display: flex; align-items: center; }
+:host .dockspan-tab-handle-close-button::after { top: 0; }

@@ -6,6 +6,12 @@ Demonstration project using https://github.com/node-projects/web-component-desig
 
 https://node-projects.github.io/web-component-designer-demo/index.html
 
+## Appearance
+
+Use the sun/moon switch in the toolbar to choose light or dark mode. The demo initially follows your system theme and remembers an explicit choice in this browser. The palette matches ioBroker.webui, including the tree panels, property editors and Monaco editors.
+
+Color properties and drawing tools use the color picker included in web-component-designer.
+
 ## Collaboration Notes
 
 Manual WebRTC signaling works out of the box for same-browser tabs. The demo now defaults to Google's public STUN server at `stun:stun.l.google.com:19302`, and you can change the RTC configuration from the `collab` menu.

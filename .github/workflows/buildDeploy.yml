@@ -24,6 +24,7 @@ jobs:
         npx copyfiles --verbose "node_modules/**/*.js" build/default
         npx copyfiles --verbose "node_modules/**/*.mjs" build/default
         npx copyfiles --verbose "node_modules/**/*.json" build/default
+        npx copyfiles --verbose "assets/**/*.js" build/default
         npx copyfiles --verbose "dist/**/*.js" build/default
         npx copyfiles --verbose "dist/**/*.json" build/default
         npx copyfiles --verbose "*.html" build/default

@@ -1,0 +1,165 @@
+/* Editor palette matching ioBroker.webui/assets/designer-theme.css. */
+:root {
+  color-scheme: light;
+  --demo-text: #354348;
+  --demo-muted: #859195;
+  --demo-surface: #fff;
+  --demo-workspace: #f3f6f6;
+  --demo-subtle: #f7f9f9;
+  --demo-border: #e0e6e6;
+  --demo-input-border: #d7dfe0;
+  --demo-accent: #47977c;
+  --demo-accent-text: #327d65;
+  --demo-hover: #edf5f2;
+  --demo-selected: #f1f7f4;
+  --demo-pressed: #dcefe6;
+  --demo-dock-active: #c5e3d6;
+  --demo-dock-preview: #47977c40;
+  --demo-dialog-shadow: #253f3a26;
+  --demo-tool-icon-filter: none;
+
+  --dialog-text-color: var(--demo-text);
+  --dialog-border-color: var(--demo-border);
+  --dialog-background-color: var(--demo-surface);
+
+  /* Designer custom properties cross the components' shadow boundaries. */
+  --canvas-background: var(--demo-surface);
+  --almost-black: var(--demo-text);
+  --dark-grey: var(--demo-subtle);
+  --medium-grey: var(--demo-surface);
+  --light-grey: var(--demo-hover);
+  --input-border-color: var(--demo-input-border);
+  --wcd-color-text: var(--demo-text);
+  --wcd-color-text-muted: var(--demo-muted);
+  --wcd-color-surface: var(--demo-surface);
+  --wcd-color-surface-raised: var(--demo-surface);
+  --wcd-color-surface-hover: var(--demo-hover);
+  --wcd-color-border: var(--demo-input-border);
+  --wcd-color-border-strong: var(--demo-input-border);
+  --wcd-color-accent: var(--demo-accent);
+  --wcd-color-accent-text: var(--demo-accent-text);
+  --wcd-color-focus: var(--demo-accent);
+  --wcd-tab-header-background: var(--demo-surface);
+  --wcd-tab-panel-background: var(--demo-surface);
+  --wcd-tab-selected-background: var(--demo-selected);
+  --wcd-tab-selected-indicator-color: var(--demo-accent);
+  --wcd-tab-header-hover-background: var(--demo-hover);
+  --wcd-property-grid-background: var(--demo-surface);
+  --wcd-property-grid-header-highlight-color: var(--demo-accent-text);
+  --wcd-property-grid-unset-value-color: var(--demo-muted);
+  --wcd-property-grid-select-option-color: var(--demo-text);
+  --wcd-property-grid-tab-indicator-color: var(--demo-accent);
+  --wcd-property-grid-tab-indicator-inactive-color: #dce6e1;
+  --wcd-input-border-color: var(--demo-input-border);
+  --wcd-input-background-color: var(--demo-surface);
+  --wcd-designer-view-toolbar-background: var(--demo-surface);
+  --wcd-designer-view-statusbar-background: var(--demo-surface);
+  --wcd-designer-view-statusbar-color: var(--demo-text);
+  --wcd-designer-view-tool-selected-background: var(--demo-pressed);
+  --wcd-designer-view-tool-hover-background: var(--demo-hover);
+  --wcd-designer-view-corner-background: var(--demo-subtle);
+  --wcd-debug-view-cell-border-color: var(--demo-border);
+  --wcd-debug-view-row-hover-background: var(--demo-hover);
+  --wcd-debug-view-header-background: var(--demo-selected);
+  --wcd-debug-view-link-color: var(--demo-accent-text);
+  --wcd-palette-item-hover-background: var(--demo-hover);
+}
+
+nav button {
+  border-radius: 4px;
+}
+
+nav button:enabled:hover {
+  background: var(--demo-hover);
+}
+
+nav button:enabled:active {
+  background: var(--demo-pressed);
+}
+
+nav button:focus-visible {
+  outline: 2px solid var(--demo-accent);
+  outline-offset: -2px;
+}
+
+#load {
+  background: var(--demo-surface);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --demo-text: #ececec;
+  --demo-muted: #a5a5a5;
+  --demo-surface: #212121;
+  --demo-workspace: #171717;
+  --demo-subtle: #1b1b1b;
+  --demo-border: #383838;
+  --demo-input-border: #585858;
+  --demo-accent: #c7c7c7;
+  --demo-accent-text: #f0f0f0;
+  --demo-hover: #303030;
+  --demo-selected: #343434;
+  --demo-pressed: #404040;
+  --demo-dock-active: #494949;
+  --demo-dock-preview: #ffffff26;
+  --demo-dialog-shadow: #0008;
+  --demo-icon-filter: invert(1);
+  --demo-tool-icon-filter: brightness(0) invert(92.55%);
+  --wcd-property-grid-tab-indicator-inactive-color: #505050;
+}
+
+nav button img {
+  filter: var(--demo-icon-filter, none);
+}
+
+/* A sliding sun/moon switch; its accessible name stays stable in both modes. */
+nav #themeToggle {
+  margin-left: auto;
+  align-self: center;
+  flex: 0 0 58px;
+  width: 58px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--demo-input-border);
+  border-radius: 20px;
+  background: var(--demo-subtle);
+  color: var(--demo-accent-text);
+  cursor: pointer;
+  overflow: hidden;
+}
+
+#themeToggle::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--demo-dock-active);
+  box-shadow: 0 1px 3px #0002;
+  transition: transform 350ms cubic-bezier(.22, 1, .36, 1), background-color 250ms;
+}
+
+#themeToggle svg {
+  position: absolute;
+  top: 5px;
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 400ms cubic-bezier(.22, 1, .36, 1), opacity 250ms;
+}
+
+#themeToggle .theme-sun { left: 5px; }
+#themeToggle .theme-moon { right: 5px; opacity: .45; transform: rotate(-25deg) scale(.8); }
+#themeToggle[aria-checked="true"]::before { transform: translateX(30px); }
+#themeToggle[aria-checked="true"] .theme-sun { opacity: .45; transform: rotate(90deg) scale(.8); }
+#themeToggle[aria-checked="true"] .theme-moon { opacity: 1; transform: rotate(0) scale(1); }
+
+@media (prefers-reduced-motion: reduce) {
+  #themeToggle::before, #themeToggle svg { transition: none; }
+}
