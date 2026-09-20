@@ -35,7 +35,7 @@
     "@node-projects/layout2vector": "^5.28.0",
     "@node-projects/lean-he-esm": "^3.4.1",
     "@node-projects/node-html-parser-esm": "^6.4.1",
-    "@node-projects/web-component-designer": "^0.2.29",
+    "@node-projects/web-component-designer": "^0.2.34",
     "@node-projects/web-component-designer-codeview-monaco": "^0.2.1",
     "@node-projects/web-component-designer-collaboration-service": "^0.2.0",
     "@node-projects/web-component-designer-htmlparserservice-nodehtmlparser": "^0.1.15",
