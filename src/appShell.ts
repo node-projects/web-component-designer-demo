@@ -1,3 +1,4 @@
+import { setupVisualizationDemo, visualizationDemoHtml, visualizationDemoStyle } from './visualizationDemo.js';
 import { createDefaultServiceContainer, MiniatureView, NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, DocumentContainer, CopyPasteAsJsonService, DebugView, UnkownElementsPropertiesService, sleep, RefactorView, BindingsRefactorService, TextRefactorService, SeperatorContextMenu, IDesignItem, DomConverter, PropertyGridWithHeader, DesignItem, ValueType, ObservedCustomElementsRegistry, IElementsJson, PreDefinedElementsService, ContextMenu, CommandType, showPopup, ExtensionType, SkewExtensionProvider } from '@node-projects/web-component-designer';
 import type * as webllmType from "@mlc-ai/web-llm";
 
@@ -9,6 +10,7 @@ import '@node-projects/web-component-designer-widgets-wunderbaum';
 import { PaletteTreeView, BindableObjectsBrowser, TreeViewExtended, ExpandCollapseContextMenu } from '@node-projects/web-component-designer-widgets-wunderbaum';
 
 let serviceContainer = createDefaultServiceContainer();
+setupVisualizationDemo(serviceContainer);
 import { defaultWebRtcTabCollaborationSignalingChannels, setupCollaborationService, WebRtcTabCollaborationSignalingChannelKind, WebRtcTabCollaborationTransport } from '@node-projects/web-component-designer-collaboration-service';
 setupCollaborationService(serviceContainer);
 serviceContainer.register("bindingService", new BaseCustomWebcomponentBindingsService());
@@ -507,6 +509,10 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
       if (p.startsWith('demo=')) {
         const d = decodeURIComponent(p.substring(5));
         code = '';
+        if (d === 'bindings') {
+          code = visualizationDemoHtml;
+          style = visualizationDemoStyle;
+        }
         if (d == '1') {
           for (let i = 0; i < 300; i++) {
             let l = 20 + (80 * (i % 10));
@@ -641,7 +647,6 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
   private async _setupServiceContainer() {
     serviceContainer.register('elementsService', new JsonFileElementsService('demo', './dist/elements-demo.json'));
     serviceContainer.register('elementsService', new JsonFileElementsService('native', rootDir + '/node_modules/@node-projects/web-component-designer/config/elements-native.json'));
-    serviceContainer.register('bindableObjectsService', new CustomBindableObjectsService());
     serviceContainer.register('bindableObjectDragDropService', new CustomBindableObjectDragDropService());
 
     this._paletteTree.loadControls(serviceContainer, serviceContainer.elementsServices);

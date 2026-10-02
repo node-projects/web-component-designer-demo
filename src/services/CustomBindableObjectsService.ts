@@ -24,6 +24,8 @@ export class CustomBindableObjectsService implements IBindableObjectsService {
       {
         name: 'DemoData', fullName: 'DemoData', type: BindableObjectType.folder, children: [
           { name: 'value1', fullName: 'DemoData.value1', type: BindableObjectType.number, children: false },
+          { name: 'isActive', fullName: 'DemoData.isActive', type: BindableObjectType.boolean, children: false },
+          { name: 'hasError', fullName: 'DemoData.hasError', type: BindableObjectType.boolean, children: false },
           { name: 'value2', fullName: 'DemoData.value2', type: BindableObjectType.string, children: false }
         ]
       }

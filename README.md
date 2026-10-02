@@ -56,3 +56,22 @@ For more advanced setups you can pass a full JSON-encoded `RTCConfiguration` thr
 https://github.com/jcfranco/composed-offset-position
 https://github.com/floating-ui/floating-ui
 --> needed code from those two to get the correct offset-parent of slotted content in shadow DOM
+
+## Visualization bindings demo
+
+The demo uses the classic property grid and the visualization addon's existing
+bindings editor. With the designer monorepo checked out next to this repository,
+build its core and visualization addon packages, then run `npm install`,
+`npm run linkAll`, `npm run build`, and `npm start` here. The addon dependency
+uses that sibling checkout while the new extension API is under development.
+
+Open `/?demo=bindings`, select the status button, and open **Attributes**.
+**Class bindings** lists `is-active` and `has-error`; click a name to open the
+visualization editor. **+** asks for a lowercase class name before opening the
+same editor. The row menu also supports renaming and removal, with undo/redo.
+The signal browser exposes `DemoData.isActive`, `DemoData.hasError`, `value1`,
+and `value2`. These are local sample signals; no server connection is required.
+
+Other property bindings use the same editor through the property action menu.
+The core property grid stays unchanged unless an addon explicitly registers
+a provider in `serviceContainer.propertyGridExtensions`.
