@@ -1,0 +1,54 @@
+/* Compatibility theme for widgets whose published styles still contain literals. */
+:host {
+  color: var(--wcd-color-text);
+  background: var(--wcd-color-surface);
+  --wb-node-text-color: var(--wcd-color-text);
+  --wb-border-color: var(--wcd-color-border);
+  --wb-background-color: var(--wcd-color-surface);
+  --wb-alternate-row-color: var(--wcd-color-surface-raised);
+  --wb-alternate-row-color-hover: var(--wcd-color-surface-hover);
+  --wb-header-color: var(--demo-toolbar);
+  --wb-hover-color: var(--wcd-color-surface-hover);
+  --wb-hover-border-color: var(--wcd-color-surface-hover);
+  --wb-active-color: var(--wcd-color-surface-hover);
+  --wb-active-hover-color: var(--wcd-color-surface-hover);
+  --wb-active-border-color: var(--wcd-color-accent);
+  --wb-active-color-grayscale: var(--wcd-color-surface-hover);
+  --wb-active-hover-color-grayscale: var(--wcd-color-surface-hover);
+  --wb-active-border-color-grayscale: var(--wcd-color-border-strong);
+  --wb-focus-border-color: var(--wcd-color-focus);
+  --wb-grid-color: var(--wcd-color-border);
+  --wb-filter-dim-color: var(--wcd-color-text-muted);
+}
+input, textarea, select, button {
+  background: var(--wcd-input-background-color);
+  color: var(--wcd-color-text);
+  border: 1px solid var(--wcd-color-border);
+}
+button:hover { background: var(--wcd-color-surface-hover); }
+:is(input, textarea, select, button):focus-visible {
+  outline: 2px solid var(--wcd-color-focus);
+  outline-offset: -2px;
+}
+.cmd { background: var(--wcd-color-surface); }
+.cmd > img { filter: var(--demo-raster-icon-filter); }
+#expandAll, #collapseAll { filter: var(--demo-icon-filter); }
+div.wunderbaum {
+  /* The extension declares this on the tree itself, overriding host inheritance. */
+  --wb-active-color-grayscale: var(--wcd-color-surface-hover);
+}
+.wb-expander, .wb-icon { filter: var(--demo-icon-filter); }
+/* Badge text must not inherit the icon's color filter. */
+.wb-icon:has(.wb-badge), .wb-icon > .wb-badge { filter: var(--demo-raster-icon-filter); }
+.cmd { color: var(--wcd-color-text); }
+/* The tree's expand/collapse bar is styled inline by the 1.0 widget. */
+:host(node-projects-tree-view-extended) input + div {
+  background: var(--demo-toolbar) !important;
+  border-color: var(--wcd-color-border) !important;
+}
+table { color: var(--wcd-color-text); }
+table td, table th { border-color: var(--wcd-color-border); }
+table tr:nth-child(odd) { background: var(--wcd-color-surface); }
+table tr:nth-child(even) { background: var(--wcd-color-surface-raised); }
+table tr:hover { background: var(--wcd-color-surface-hover); }
+table th { background: var(--wcd-color-surface-raised); color: var(--wcd-color-text); }

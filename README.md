@@ -6,11 +6,24 @@ Demonstration project using https://github.com/node-projects/web-component-desig
 
 https://node-projects.github.io/web-component-designer-demo/index.html
 
-## Appearance
+## Color themes
 
-Use the sun/moon switch in the toolbar to choose light or dark mode. The demo initially follows your system theme and remembers an explicit choice in this browser. The palette matches ioBroker.webui, including the tree panels, property editors and Monaco editors.
-
+The sun/moon button at the right of the toolbar switches between light and dark mode.
+The demo initially follows the system color preference and remembers an explicit choice
+in local storage. The animation respects reduced-motion preferences and is inspired by
+[Adam Argyle's theme switch](https://web.dev/articles/building/a-theme-switch-component).
+Designer controls, DockSpawn panels and menus, trees, and Monaco share the selected theme;
+the document canvas retains its checkerboard so transparent content remains visible.
 Color properties and drawing tools use the color picker included in web-component-designer.
+
+All designer packages use version 1.1. The npm override keeps transitive designer
+dependencies on the same version as the demo.
+
+DockSpawn tab groups and auto-hide are enabled. Refactor and Debug start in the
+right edge tab list; click a tab to open it and use its pin button to dock it again.
+The native tab picker at the right end of each strip lists all open tabs. Tab strips
+start with multiple rows; the adjacent row button switches to a single scrolling row.
+These controls use DockSpawn 4.2's native `tabStripMode` API.
 
 ## Collaboration Notes
 
