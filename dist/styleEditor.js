@@ -1,5 +1,5 @@
 import { BaseCustomWebComponentConstructorAppend, css, html } from "@node-projects/base-custom-webcomponent";
-import { getMonacoTheme } from './designerTheme.js';
+import { monacoTheme } from './theme.js';
 export class StyleEditor extends BaseCustomWebComponentConstructorAppend {
     static style = css `
         :host {
@@ -59,8 +59,8 @@ export class StyleEditor extends BaseCustomWebComponentConstructorAppend {
         this._container = this._getDomElement('container');
         this._editor = monaco.editor.create(this._container, {
             automaticLayout: true,
-            theme: getMonacoTheme(),
             language: 'css',
+            theme: monacoTheme(),
             minimap: {
                 size: 'fill'
             },

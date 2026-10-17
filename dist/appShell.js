@@ -1,6 +1,11 @@
 import { createDefaultServiceContainer, NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, DocumentContainer, CopyPasteAsJsonService, UnkownElementsPropertiesService, sleep, BindingsRefactorService, TextRefactorService, SeperatorContextMenu, DomConverter, ValueType, ObservedCustomElementsRegistry, PreDefinedElementsService, ContextMenu, CommandType, showPopup, ExtensionType, SkewExtensionProvider } from '@node-projects/web-component-designer';
 import { NodeHtmlParserService } from '@node-projects/web-component-designer-htmlparserservice-nodehtmlparser';
-import { DesignerCodeView, treeTheme } from './designerTheme.js';
+import { ThemedCodeViewMonaco } from './theme.js';
+import './popupTheme.js';
+// @ts-ignore CSS modules are loaded by es-module-shims in the browser.
+import dockTheme from '../assets/dockspawn.css' with { type: 'css' };
+// @ts-ignore CSS modules are loaded by es-module-shims in the browser.
+import widgetTheme from '../assets/widget-theme.css' with { type: 'css' };
 import { CssParserStylesheetService } from '@node-projects/web-component-designer-stylesheetservice-css-parser';
 import '@node-projects/web-component-designer-widgets-wunderbaum';
 import { ExpandCollapseContextMenu } from '@node-projects/web-component-designer-widgets-wunderbaum';
@@ -44,7 +49,7 @@ globalThis.MonacoEnvironment = {
   }
 };
 */
-serviceContainer.config.codeViewWidget = DesignerCodeView;
+serviceContainer.config.codeViewWidget = ThemedCodeViewMonaco;
 serviceContainer.designerContextMenuExtensions.push(new ExpandCollapseContextMenu());
 serviceContainer.designerContextMenuExtensions.push(new SeperatorContextMenu(), new EditTemplateContextMenu());
 //Instance Service Container Factories
@@ -210,6 +215,7 @@ function writeCollaborationRtcConfiguration(configuration) {
     catch {
     }
 }
+import { PanelContainer } from 'dock-spawn-ts';
 import { BaseCustomWebComponentConstructorAppend, css, html, LazyLoader } from '@node-projects/base-custom-webcomponent';
 import { CommandHandling } from './CommandHandling.js';
 import './styleEditor.js';
@@ -235,13 +241,26 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
       box-sizing: border-box;
       position: relative;
 
-      color: var(--demo-text);
-      background: var(--demo-workspace);
+      background: var(--wcd-color-surface);
+      color: var(--wcd-color-text);
+    }
+
+    input, textarea, button {
+      color: var(--wcd-color-text);
+      background: var(--wcd-input-background-color);
+      border: 1px solid var(--wcd-color-border);
+    }
+
+    button { cursor: pointer; }
+    button:hover { background: var(--wcd-color-surface-hover); }
+    :is(input, textarea, button):focus-visible {
+      outline: 2px solid var(--wcd-color-focus);
+      outline-offset: -2px;
     }
 
     .app-header {
-      background-color: var(--demo-surface);
-      color: var(--demo-text);
+      background-color: var(--demo-toolbar);
+      color: var(--wcd-color-text);
       height: 60px;
       width: 100%;
       position: fixed;
@@ -304,7 +323,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
             <node-projects-palette-tree-view name="paletteTree" id="paletteTree" style="height: calc(100% - 44px);"></node-projects-palette-tree-view>
             <div style="height: 28px;">
               <div style="display: flex; height: 100%;">
-                <input list="npmInputList" id="npmInput" dock-spawn-title="NPM Package Name" placeholder="npm-package" type="text" style="height: 100%; border: solid var(--demo-input-border) 1px; box-sizing: border-box; width: 100%">
+                <input list="npmInputList" id="npmInput" dock-spawn-title="NPM Package Name" placeholder="npm-package" type="text" style="height: 100%; box-sizing: border-box; width: 100%">
                 <datalist id="npmInputList">
                   <option value="@christianliebel/paint"></option>
                   <option value="@vanillawc/wc-marquee"></option>
@@ -390,9 +409,6 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         this._paletteTree = this._getDomElement('paletteTree');
         this._bindableObjectsBrowser = this._getDomElement('bindableObjectsBrowser');
         this._treeViewExtended = this._getDomElement('treeViewExtended');
-        for (const tree of [this._paletteTree, this._bindableObjectsBrowser, this._treeViewExtended]) {
-            tree.shadowRoot.adoptedStyleSheets = [...tree.shadowRoot.adoptedStyleSheets, treeTheme];
-        }
         this._refactorView = this._getDomElement('refactorView');
         this._propertyGrid = this._getDomElement('propertyGrid');
         this._debugView = this._getDomElement('debugView');
@@ -471,11 +487,18 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
             }
         }
         await customElements.whenDefined('dock-spawn-ts');
-        const linkElement = document.createElement("link");
-        linkElement.rel = "stylesheet";
-        linkElement.href = "./assets/dockspawn.css";
-        this._dock.shadowRoot.appendChild(linkElement);
+        // Adopted sheets follow ordinary links in the cascade. Append our theme last.
+        this._dock.shadowRoot.adoptedStyleSheets = [...this._dock.shadowRoot.adoptedStyleSheets, dockTheme];
+        for (const widget of [this._paletteTree, this._bindableObjectsBrowser, this._treeViewExtended, this._debugView, this._refactorView]) {
+            widget.shadowRoot.adoptedStyleSheets = [...widget.shadowRoot.adoptedStyleSheets, widgetTheme];
+        }
         this._dockManager = this._dock.dockManager;
+        // The web component creates its layout asynchronously. Configure it without
+        // calling runtime setters that require an initialized layout model.
+        this._dockManager.config.enableTabGroups = true;
+        this._dockManager.config.enableAutoHide = true;
+        // Native overflow picker and row toggle are supplied by DockSpawn's tab host.
+        this._dockManager.config.tabStripMode = 'wrap';
         new CommandHandling(this._dockManager, this, serviceContainer);
         this._dockManager.addLayoutListener({
             onActiveDocumentChange: async (manager, panel) => {
@@ -540,6 +563,13 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         };
         this.newDocument(false, code, style);
         await sleep(200);
+        // Keep the inspector visible and put secondary tools in the right edge list.
+        for (const id of ['refactorDock', 'debugDock']) {
+            const element = this._getDomElement(id);
+            const panel = this._dockManager.getNodeByElement(element.assignedSlot)?.container;
+            if (panel instanceof PanelContainer)
+                panel.setAutoHide(true, 'right');
+        }
         this.activateDockById('treeUpper');
         this.activateDockById('lower');
         this.LLM();
@@ -783,11 +813,11 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         popup.style.width = '360px';
         popup.style.maxWidth = 'min(360px, calc(100vw - 32px))';
         popup.style.padding = '14px 16px';
-        popup.style.border = '1px solid var(--demo-input-border)';
+        popup.style.border = '1px solid var(--wcd-color-border)';
         popup.style.borderRadius = '8px';
-        popup.style.background = 'var(--demo-surface)';
-        popup.style.boxShadow = '0 12px 28px var(--demo-dialog-shadow)';
-        popup.style.color = 'var(--demo-text)';
+        popup.style.background = 'var(--wcd-color-surface)';
+        popup.style.boxShadow = '0 12px 28px rgba(0, 0, 0, 0.16)';
+        popup.style.color = 'var(--wcd-color-text)';
         popup.style.font = '13px/1.45 monospace';
         popup.innerHTML = `
       <div style="font-size: 14px; font-weight: 700; margin-bottom: 10px;">Connect another client</div>
@@ -811,8 +841,9 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
         const closeButton = this.ownerDocument.createElement('button');
         closeButton.type = 'button';
         closeButton.textContent = 'close';
-        closeButton.style.border = '1px solid var(--demo-input-border)';
-        closeButton.style.background = 'var(--demo-subtle)';
+        closeButton.style.border = '1px solid var(--wcd-color-border)';
+        closeButton.style.background = 'var(--wcd-color-surface-raised)';
+        closeButton.style.color = 'var(--wcd-color-text)';
         closeButton.style.borderRadius = '6px';
         closeButton.style.padding = '6px 10px';
         closeButton.style.cursor = 'pointer';
