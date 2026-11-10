@@ -60,10 +60,10 @@ https://github.com/floating-ui/floating-ui
 ## Visualization bindings demo
 
 The demo uses the classic property grid and the visualization addon's existing
-bindings editor. With the designer monorepo checked out next to this repository,
-build its core and visualization addon packages, then run `npm install`,
-`npm run linkAll`, `npm run build`, and `npm start` here. The addon dependency
-uses that sibling checkout while the new extension API is under development.
+bindings editor. All designer packages, including the visualization addon, use
+published npm releases. Run `npm install`, `npm run build`, and `npm start` here.
+For local development against a sibling designer checkout, build its packages
+and run `npm run linkAll` before building the demo.
 
 Open `/?demo=bindings`, select the status button, and open **Attributes**.
 **Class bindings** lists `is-active` and `has-error`; click a name to open the
