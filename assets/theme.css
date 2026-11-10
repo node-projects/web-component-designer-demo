@@ -1,5 +1,6 @@
 :root {
   color-scheme: light;
+  --demo-color-scheme: light;
   --demo-background: #f3f6f6;
   --demo-toolbar: #ffffff;
   --demo-icon-filter: brightness(0) saturate(100%) invert(26%) sepia(12%) saturate(1100%) hue-rotate(178deg);
@@ -26,6 +27,7 @@
 
 :root[data-theme="dark"] {
   color-scheme: dark;
+  --demo-color-scheme: dark;
   --demo-background: #171717;
   --demo-toolbar: #212121;
   --demo-icon-filter: brightness(0) invert(92.55%);
@@ -57,6 +59,9 @@
   --dialog-border-color: var(--wcd-color-border);
   --wcd-input-background-color: var(--wcd-color-surface-raised);
   --wcd-input-border-color: var(--wcd-color-border);
+  --wcd-tool-popup-background: var(--wcd-color-surface);
+  --wcd-tool-popup-title-background: var(--wcd-color-surface-raised);
+  --wcd-tool-popup-border-color: var(--wcd-color-border);
   --wcd-designer-view-toolbar-background: var(--demo-toolbar);
   --wcd-designer-view-toolbar-icon-filter: var(--demo-icon-filter);
   --wcd-designer-view-statusbar-background: var(--demo-toolbar);
