@@ -1,0 +1,118 @@
+:root {
+  color-scheme: light;
+  --demo-background: #f3f6f6;
+  --demo-toolbar: #ffffff;
+  --demo-icon-filter: brightness(0) saturate(100%) invert(26%) sepia(12%) saturate(1100%) hue-rotate(178deg);
+  --demo-raster-icon-filter: none;
+  --wcd-color-surface: #ffffff;
+  --wcd-color-surface-raised: #f7f9f9;
+  --wcd-color-surface-hover: #edf5f2;
+  --wcd-color-text: #354348;
+  --wcd-color-text-muted: #657478;
+  --wcd-color-border: #d7dfe0;
+  --wcd-color-border-strong: #a4b5b1;
+  --wcd-color-accent: #47977c;
+  --wcd-color-accent-text: #327d65;
+  --wcd-color-accent-border: #47977c;
+  --wcd-color-focus: #47977c;
+  --wcd-color-error: #c52b4c;
+  --wcd-color-selection: #47977c;
+  --wcd-color-selection-fill: #47977c26;
+  --wcd-color-snapline: #c43d88;
+  --wcd-color-handle: #ffffff;
+  --wcd-color-handle-stroke: #47977c;
+  --wcd-color-handle-active: #47977c;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --demo-background: #171717;
+  --demo-toolbar: #212121;
+  --demo-icon-filter: brightness(0) invert(92.55%);
+  --demo-raster-icon-filter: invert(1);
+  --wcd-color-surface: #212121;
+  --wcd-color-surface-raised: #1b1b1b;
+  --wcd-color-surface-hover: #404040;
+  --wcd-color-text: #ececec;
+  --wcd-color-text-muted: #a5a5a5;
+  --wcd-color-border: #383838;
+  --wcd-color-border-strong: #585858;
+  --wcd-color-accent: #c7c7c7;
+  --wcd-color-accent-text: #f0f0f0;
+  --wcd-color-accent-border: #c7c7c7;
+  --wcd-color-focus: #c7c7c7;
+  --wcd-color-error: #ff7c96;
+}
+
+:root {
+  --demo-text: var(--wcd-color-text);
+  --demo-surface: var(--wcd-color-surface);
+  --demo-workspace: var(--demo-background);
+  --demo-input-border: var(--wcd-color-border);
+  --demo-border: var(--wcd-color-border);
+  --demo-accent: var(--wcd-color-accent);
+  --demo-hover: var(--wcd-color-surface-hover);
+  --dialog-text-color: var(--wcd-color-text);
+  --dialog-background-color: var(--wcd-color-surface);
+  --dialog-border-color: var(--wcd-color-border);
+  --wcd-input-background-color: var(--wcd-color-surface-raised);
+  --wcd-input-border-color: var(--wcd-color-border);
+  --wcd-designer-view-toolbar-background: var(--demo-toolbar);
+  --wcd-designer-view-toolbar-icon-filter: var(--demo-icon-filter);
+  --wcd-designer-view-statusbar-background: var(--demo-toolbar);
+  --wcd-designer-view-statusbar-color: var(--wcd-color-text);
+  --wcd-designer-view-corner-background: var(--demo-background);
+  --wcd-designer-view-tool-hover-background: var(--wcd-color-surface-hover);
+  --wcd-designer-view-tool-selected-background: var(--wcd-color-surface-hover);
+  --wcd-property-grid-header-highlight-color: var(--wcd-color-accent-text);
+  --wcd-miniature-view-border-color: var(--wcd-color-accent);
+  --wcd-debug-view-header-background: var(--wcd-color-surface-raised);
+  --wcd-debug-view-cell-border-color: var(--wcd-color-border);
+  --wcd-debug-view-row-hover-background: var(--wcd-color-surface-hover);
+  --wcd-debug-view-link-color: var(--wcd-color-accent-text);
+  --wcd-context-menu-background: var(--wcd-color-surface);
+  --wcd-context-menu-color: var(--wcd-color-text);
+  --wcd-context-menu-hover-background: var(--wcd-color-surface-hover);
+  --wcd-context-menu-disabled-color: var(--wcd-color-text-muted);
+  --wcd-context-menu-divider-color: var(--wcd-color-border);
+  --wcd-context-menu-border: 1px solid var(--wcd-color-border);
+  --wcd-plain-scrollbar-thumb-background-color: var(--wcd-color-border-strong);
+  --wcd-plain-scrollbar-thumb-background-color-hover: var(--wcd-color-text-muted);
+  --wcd-plain-scrollbar-track-background-color: var(--wcd-color-surface);
+  --wcd-plain-scrollbar-button-color: var(--wcd-color-text-muted);
+}
+
+body { background: var(--demo-background); color: var(--wcd-color-text); }
+nav { background: var(--demo-toolbar); color: var(--wcd-color-text); box-shadow: inset 0 -1px var(--wcd-color-border); }
+nav button { color: inherit; border-radius: 5px; cursor: pointer; }
+nav button:disabled { cursor: default; opacity: .4; }
+nav button:not(:disabled):hover { background: var(--wcd-color-surface-hover); }
+nav button:focus-visible { outline: 2px solid var(--wcd-color-focus); outline-offset: -2px; }
+nav button img, nav button:not([disabled]) img:hover { filter: var(--demo-icon-filter); }
+#load { background: var(--demo-background); }
+.lds-facebook div { background: var(--wcd-color-accent); }
+
+/* Sun/moon motion inspired by Adam Argyle's GUI Challenge:
+   https://web.dev/articles/building/a-theme-switch-component */
+nav .theme-toggle {
+  margin-inline-start: auto;
+  flex: 0 0 32px;
+  width: 32px;
+  height: 28px;
+  padding: 3px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.sun-and-moon { width: 22px; height: 22px; overflow: visible; }
+.sun-and-moon > :is(.sun, .sun-beams) { transform-origin: center; }
+.sun-and-moon > .sun { fill: currentColor; }
+.sun-and-moon > .sun-beams { stroke: currentColor; stroke-width: 2px; stroke-linecap: round; }
+[data-theme="dark"] .sun-and-moon > .sun { transform: scale(1.75); }
+[data-theme="dark"] .sun-and-moon > .sun-beams { opacity: 0; transform: rotate(-25deg); }
+[data-theme="dark"] .sun-and-moon .moon > circle { transform: translateX(-7px); }
+@media (prefers-reduced-motion: no-preference) {
+  .sun-and-moon > .sun { transition: transform .5s cubic-bezier(.34, 1.56, .64, 1); }
+  .sun-and-moon > .sun-beams { transition: transform .5s ease, opacity .2s ease; }
+  .sun-and-moon .moon > circle { transition: transform .3s ease; }
+  [data-theme="dark"] .sun-and-moon .moon > circle { transition-delay: .2s; }
+}

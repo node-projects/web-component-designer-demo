@@ -26,11 +26,11 @@
     "esbuild": "^0.28.2"
   },
   "dependencies": {
-    "@chenglou/pretext": "^0.0.9",
+    "@chenglou/pretext": "^1.0.0",
     "@doubletrade/lit-datepicker": "^1.0.0",
-    "@mlc-ai/web-llm": "^0.2.85",
-    "@node-projects/acad-ts": "^3.2.0",
-    "@node-projects/base-custom-webcomponent": "0.46.0",
+    "@mlc-ai/web-llm": "^0.2.86",
+    "@node-projects/acad-ts": "^3.3.0",
+    "@node-projects/base-custom-webcomponent": "^0.47.0",
     "@node-projects/css-parser": "^5.2.0",
     "@node-projects/layout2vector": "^5.29.0",
     "@node-projects/lean-he-esm": "^3.4.1",
@@ -40,17 +40,20 @@
     "@node-projects/web-component-designer-collaboration-service": "^1.1.7",
     "@node-projects/web-component-designer-htmlparserservice-nodehtmlparser": "^1.1.7",
     "@node-projects/web-component-designer-stylesheetservice-css-parser": "^1.1.7",
-    "@node-projects/web-component-designer-visualization-addons": "^1.1.7",
     "@node-projects/web-component-designer-widgets-wunderbaum": "^1.1.7",
     "@tarikjabiri/dxf": "^2.9.0",
-    "dock-spawn-ts": "^3.22.0",
+    "dock-spawn-ts": "^4.2.0",
     "es-module-shims": "^2.8.4",
     "esprima-next": "^6.0.3",
     "lit": "^3.3.3",
-    "mdn-data": "^2.36.0",
+    "mdn-data": "^2.37.2",
     "mobile-drag-drop": "^3.0.0-rc.0",
-    "monaco-editor": "^0.56.0",
-    "typescript": "^6.0.3",
-    "wunderbaum": "^0.14.1"
+    "monaco-editor": "^0.57.0",
+    "typescript": "^7.0.2",
+    "wunderbaum": "^0.14.1",
+    "@node-projects/web-component-designer-visualization-addons": "^1.1.7"
+  },
+  "overrides": {
+    "@node-projects/web-component-designer": "$@node-projects/web-component-designer"
   }
 }
