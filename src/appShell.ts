@@ -369,6 +369,7 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
               <div style="display: flex; height: 100%;">
                 <input list="npmInputList" id="npmInput" dock-spawn-title="NPM Package Name" placeholder="npm-package" type="text" style="height: 100%; box-sizing: border-box; width: 100%">
                 <datalist id="npmInputList">
+                  <option value="@node-projects/luma-elements"></option>
                   <option value="@node-projects/wired-elements"></option>
                   <option value="@node-projects/gauge.webcomponent"></option>
                   <option value="@vanillawc/wc-marquee"></option>
