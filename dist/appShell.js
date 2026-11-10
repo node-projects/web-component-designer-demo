@@ -1,3 +1,4 @@
+import { setupVisualizationDemo, visualizationDemoHtml, visualizationDemoStyle } from './visualizationDemo.js';
 import { createDefaultServiceContainer, NpmPackageLoader, BaseCustomWebcomponentBindingsService, JsonFileElementsService, DocumentContainer, CopyPasteAsJsonService, UnkownElementsPropertiesService, sleep, BindingsRefactorService, TextRefactorService, SeperatorContextMenu, DomConverter, ValueType, ObservedCustomElementsRegistry, PreDefinedElementsService, ContextMenu, CommandType, showPopup, ExtensionType, SkewExtensionProvider } from '@node-projects/web-component-designer';
 import { NodeHtmlParserService } from '@node-projects/web-component-designer-htmlparserservice-nodehtmlparser';
 import { ThemedCodeViewMonaco } from './theme.js';
@@ -10,6 +11,7 @@ import { CssParserStylesheetService } from '@node-projects/web-component-designe
 import '@node-projects/web-component-designer-widgets-wunderbaum';
 import { ExpandCollapseContextMenu } from '@node-projects/web-component-designer-widgets-wunderbaum';
 let serviceContainer = createDefaultServiceContainer();
+setupVisualizationDemo(serviceContainer);
 import { defaultWebRtcTabCollaborationSignalingChannels, setupCollaborationService, WebRtcTabCollaborationTransport } from '@node-projects/web-component-designer-collaboration-service';
 setupCollaborationService(serviceContainer);
 serviceContainer.register("bindingService", new BaseCustomWebcomponentBindingsService());
@@ -477,6 +479,10 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
             if (p.startsWith('demo=')) {
                 const d = decodeURIComponent(p.substring(5));
                 code = '';
+                if (d === 'bindings') {
+                    code = visualizationDemoHtml;
+                    style = visualizationDemoStyle;
+                }
                 if (d == '1') {
                     for (let i = 0; i < 300; i++) {
                         let l = 20 + (80 * (i % 10));
@@ -617,7 +623,6 @@ export class AppShell extends BaseCustomWebComponentConstructorAppend {
     async _setupServiceContainer() {
         serviceContainer.register('elementsService', new JsonFileElementsService('demo', './dist/elements-demo.json'));
         serviceContainer.register('elementsService', new JsonFileElementsService('native', rootDir + '/node_modules/@node-projects/web-component-designer/config/elements-native.json'));
-        serviceContainer.register('bindableObjectsService', new CustomBindableObjectsService());
         serviceContainer.register('bindableObjectDragDropService', new CustomBindableObjectDragDropService());
         this._paletteTree.loadControls(serviceContainer, serviceContainer.elementsServices);
         this._propertyGrid.serviceContainer = serviceContainer;
